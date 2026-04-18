@@ -44,6 +44,8 @@ exports.Map = class {
           y: player.y,
           cells: player.cells,
           massTotal: Math.round(player.massTotal),
+          materialization: player.materialization,
+          materializationStage: player.materializationStage,
           hue: player.hue,
           id: player.id,
           name: player.name

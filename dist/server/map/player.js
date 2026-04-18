@@ -3,6 +3,7 @@
 const util = require('../lib/util');
 const sat = require('sat');
 const gameLogic = require('../game-logic');
+const materialization = require('../materialization');
 const MIN_SPEED = 6.25;
 const SPLIT_CELL_SPEED = 20;
 const SPEED_DECREMENT = 0.5;
@@ -81,6 +82,7 @@ exports.Player = class {
     this.screenHeight = null;
     this.timeToMerge = null;
     this.setLastHeartbeat();
+    materialization.applyMaterializationState(this);
   }
 
   /* Initalizes things that change with every respawn */
@@ -93,6 +95,7 @@ exports.Player = class {
       x: 0,
       y: 0
     };
+    materialization.applyMaterializationState(this);
   }
   clientProvidedData(playerData) {
     this.name = playerData.name;
