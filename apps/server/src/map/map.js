@@ -56,6 +56,9 @@ exports.Map = class {
                     intimacy: player.intimacy,
                     spike: player.spike,
                     pollution: player.pollution,
+                    bodyParts: player.bodyParts,
+                    bodyPartCount: player.bodyPartCount,
+                    bodyPartCounts: player.bodyPartCounts,
                     hue: player.hue,
                     id: player.id,
                     name: player.name

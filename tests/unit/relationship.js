@@ -5,6 +5,7 @@ const config = require('../../configs/game/config');
 const relationshipConfig = require('../../configs/game/relationship');
 const relationship = require('../../apps/server/src/relationship');
 const connection = require('../../apps/server/src/connection');
+const body = require('../../apps/server/src/body');
 const playerUtils = require('../../apps/server/src/map/player');
 const mapUtils = require('../../apps/server/src/map/map');
 
@@ -43,6 +44,27 @@ describe('relationship.js', () => {
       expect(target.intimacy).to.equal(0);
       expect(actor.spike).to.equal(relationshipConfig.breakDelta.spike);
       expect(target.pollution).to.equal(relationshipConfig.breakDelta.pollution);
+    });
+
+    it('should boost resonance intimacy for players with extra hearts', () => {
+      const actor = Object.assign(
+        relationship.createRelationshipState(),
+        body.createBodyState([
+          body.createBodyPart('HEART', 1),
+          body.createBodyPart('HEART', 2)
+        ])
+      );
+      const target = Object.assign(
+        relationship.createRelationshipState(),
+        body.createBodyState([
+          body.createBodyPart('HEART', 1)
+        ])
+      );
+
+      relationship.applyConnectionOutcome(actor, target, connection.STATES.RESONATING);
+
+      expect(actor.intimacy).to.equal(relationshipConfig.resonatingDelta.intimacy + 1);
+      expect(target.intimacy).to.equal(relationshipConfig.resonatingDelta.intimacy);
     });
   });
 

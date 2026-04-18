@@ -18,6 +18,7 @@ const {
 } = require("./lib/entityUtils");
 const connection = require('./connection');
 const relationship = require('./relationship');
+const body = require('./body');
 let map = new mapUtils.Map(config);
 let sockets = {};
 let spectators = [];
@@ -292,6 +293,7 @@ const tickGame = () => {
     map.players.data[eater.playerIndex].changeCellMass(eater.cellIndex, cellGotEaten.mass);
     const playerDied = map.players.removeCell(gotEaten.playerIndex, gotEaten.cellIndex);
     if (playerDied) {
+      body.stealRandomCorePart(map.players.data[gotEaten.playerIndex], map.players.data[eater.playerIndex]);
       let playerGotEaten = map.players.data[gotEaten.playerIndex];
       io.emit('playerDied', {
         name: playerGotEaten.name

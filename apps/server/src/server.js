@@ -17,6 +17,7 @@ const mapUtils = require('./map/map');
 const {getPosition} = require("./lib/entityUtils");
 const connection = require('./connection');
 const relationship = require('./relationship');
+const body = require('./body');
 
 let map = new mapUtils.Map(config);
 
@@ -349,6 +350,10 @@ const tickGame = () => {
 
         const playerDied = map.players.removeCell(gotEaten.playerIndex, gotEaten.cellIndex);
         if (playerDied) {
+            body.stealRandomCorePart(
+                map.players.data[gotEaten.playerIndex],
+                map.players.data[eater.playerIndex]
+            );
             let playerGotEaten = map.players.data[gotEaten.playerIndex];
             io.emit('playerDied', { name: playerGotEaten.name }); //TODO: on client it is `playerEatenName` instead of `name`
             sockets[playerGotEaten.id].emit('RIP');

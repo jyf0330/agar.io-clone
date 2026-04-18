@@ -3,6 +3,7 @@
 const path = require('path');
 const relationshipConfig = require(path.resolve(process.cwd(), 'configs/game/relationship'));
 const connection = require('./connection');
+const body = require('./body');
 
 function createRelationshipState() {
     return {
@@ -27,8 +28,16 @@ function applyConnectionOutcome(actor, target, outcome) {
         ? relationshipConfig.resonatingDelta
         : relationshipConfig.breakDelta;
 
-    applyDelta(actor, delta);
-    applyDelta(target, delta);
+    const actorDelta = Object.assign({}, delta);
+    const targetDelta = Object.assign({}, delta);
+
+    if (outcome === connection.STATES.RESONATING) {
+        actorDelta.intimacy += body.getResonanceIntimacyBonus(actor);
+        targetDelta.intimacy += body.getResonanceIntimacyBonus(target);
+    }
+
+    applyDelta(actor, actorDelta);
+    applyDelta(target, targetDelta);
 }
 
 module.exports = {

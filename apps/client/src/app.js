@@ -6,6 +6,7 @@ var global = require('./global');
 var formatMaterializationStatus = require('./materialization-status');
 var formatConnectionStatus = require('./connection-status');
 var formatRelationshipStatus = require('./relationship-status');
+var formatBodyStatus = require('./body-status');
 
 var playerNameInput = document.getElementById('playerNameInput');
 var socket;
@@ -160,6 +161,7 @@ function renderStatusPanel() {
     status += formatMaterializationStatus(player);
     status += formatConnectionStatus(player);
     status += formatRelationshipStatus(player);
+    status += formatBodyStatus(player);
     document.getElementById('status').innerHTML = status;
 }
 
@@ -260,6 +262,9 @@ function setupSocket(socket) {
             player.intimacy = playerData.intimacy;
             player.spike = playerData.spike;
             player.pollution = playerData.pollution;
+            player.bodyParts = playerData.bodyParts;
+            player.bodyPartCount = playerData.bodyPartCount;
+            player.bodyPartCounts = playerData.bodyPartCounts;
             player.cells = playerData.cells;
         }
         users = userData;
