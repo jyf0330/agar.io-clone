@@ -34,6 +34,9 @@ function applyConnectionOutcome(actor, target, outcome) {
     if (outcome === connection.STATES.RESONATING) {
         actorDelta.intimacy += body.getResonanceIntimacyBonus(actor);
         targetDelta.intimacy += body.getResonanceIntimacyBonus(target);
+    } else if (outcome === connection.STATES.BREAK) {
+        actorDelta.spike += body.getBreakSpikeBonus(actor);
+        targetDelta.spike += body.getBreakSpikeBonus(target);
     }
 
     applyDelta(actor, actorDelta);

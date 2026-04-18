@@ -70,7 +70,8 @@ function attemptConnection(currentPlayer) {
   if (currentPlayer.connectionStatus !== connection.STATES.IDLE) {
     return;
   }
-  const targetPlayer = connection.findConnectionTarget(currentPlayer, map.players.data, connection.config.attemptRange);
+  const attemptRange = body.getConnectionRange(connection.config.attemptRange, currentPlayer);
+  const targetPlayer = connection.findConnectionTarget(currentPlayer, map.players.data, attemptRange);
   if (!targetPlayer) {
     connection.applyConnectionState(currentPlayer, {
       connectionStatus: connection.STATES.BREAK
@@ -89,7 +90,7 @@ function attemptConnection(currentPlayer) {
     if (currentPlayer.connectionTargetId !== targetPlayer.id || targetPlayer.connectionTargetId !== currentPlayer.id) {
       return;
     }
-    const outcome = connection.resolveConnectionOutcome(currentPlayer, targetPlayer, connection.config.attemptRange);
+    const outcome = connection.resolveConnectionOutcome(currentPlayer, targetPlayer, attemptRange);
     setConnectionPairState(currentPlayer, targetPlayer, outcome);
     setConnectionPairState(targetPlayer, currentPlayer, outcome);
     relationship.applyConnectionOutcome(currentPlayer, targetPlayer, outcome);
@@ -290,10 +291,12 @@ const tickGame = () => {
   map.massFood.move(config.gameWidth, config.gameHeight);
   map.players.handleCollisions(function (gotEaten, eater) {
     const cellGotEaten = map.players.getCell(gotEaten.playerIndex, gotEaten.cellIndex);
-    map.players.data[eater.playerIndex].changeCellMass(eater.cellIndex, cellGotEaten.mass);
+    const eaterPlayer = map.players.data[eater.playerIndex];
+    const massGain = body.getPlayerDevourMassGain(cellGotEaten.mass, eaterPlayer);
+    eaterPlayer.changeCellMass(eater.cellIndex, massGain);
     const playerDied = map.players.removeCell(gotEaten.playerIndex, gotEaten.cellIndex);
     if (playerDied) {
-      body.stealRandomCorePart(map.players.data[gotEaten.playerIndex], map.players.data[eater.playerIndex]);
+      body.stealRandomCorePart(map.players.data[gotEaten.playerIndex], eaterPlayer);
       let playerGotEaten = map.players.data[gotEaten.playerIndex];
       io.emit('playerDied', {
         name: playerGotEaten.name

@@ -67,7 +67,8 @@ function createBodyState(parts) {
     return {
         bodyParts: normalizedParts,
         bodyPartCount: normalizedParts.length,
-        bodyPartCounts: countBodyParts(normalizedParts)
+        bodyPartCounts: countBodyParts(normalizedParts),
+        bodyBonuses: createBodyBonuses(normalizedParts)
     };
 }
 
@@ -83,6 +84,10 @@ function getStealableParts(target) {
 }
 
 function getPartCount(target, type) {
+    if (Array.isArray(target)) {
+        return target.filter((part) => part.type === type).length;
+    }
+
     if (target.bodyPartCounts && typeof target.bodyPartCounts[type] === 'number') {
         return target.bodyPartCounts[type];
     }
@@ -90,9 +95,53 @@ function getPartCount(target, type) {
     return (target.bodyParts || []).filter((part) => part.type === type).length;
 }
 
+function createBodyBonuses(target) {
+    return {
+        movementSpeedMultiplier: getMovementSpeedMultiplier(target),
+        connectionRangeBonus: getConnectionRangeBonus(target),
+        visionRangeBonus: getVisionRangeBonus(target),
+        resonanceIntimacyBonus: getResonanceIntimacyBonus(target),
+        breakSpikeBonus: getBreakSpikeBonus(target),
+        playerDevourMassMultiplier: getPlayerDevourMassMultiplier(target)
+    };
+}
+
+function getMovementSpeedMultiplier(target) {
+    const extraFeet = Math.max(0, getPartCount(target, TYPES.FOOT) - 1);
+    return 1 + (extraFeet * bodyConfig.abilityModifiers.movementSpeedMultiplierPerExtraFoot);
+}
+
+function getConnectionRangeBonus(target) {
+    const extraHands = Math.max(0, getPartCount(target, TYPES.HAND) - 1);
+    return extraHands * bodyConfig.abilityModifiers.connectionRangePerExtraHand;
+}
+
+function getConnectionRange(baseRange, target) {
+    return baseRange + getConnectionRangeBonus(target);
+}
+
+function getVisionRangeBonus(target) {
+    const extraHeads = Math.max(0, getPartCount(target, TYPES.HEAD) - 1);
+    return extraHeads * bodyConfig.abilityModifiers.visionRangePerExtraHead;
+}
+
 function getResonanceIntimacyBonus(target) {
     const extraHearts = Math.max(0, getPartCount(target, TYPES.HEART) - 1);
     return extraHearts * bodyConfig.abilityModifiers.resonanceIntimacyPerExtraHeart;
+}
+
+function getBreakSpikeBonus(target) {
+    const extraSpikes = Math.max(0, getPartCount(target, TYPES.SPIKE) - 1);
+    return extraSpikes * bodyConfig.abilityModifiers.breakSpikePerExtraSpike;
+}
+
+function getPlayerDevourMassGain(baseMass, target) {
+    return baseMass * getPlayerDevourMassMultiplier(target);
+}
+
+function getPlayerDevourMassMultiplier(target) {
+    const extraMouths = Math.max(0, getPartCount(target, TYPES.MOUTH) - 1);
+    return 1 + (extraMouths * bodyConfig.abilityModifiers.playerDevourMassBonusPerExtraMouth);
 }
 
 function stealRandomCorePart(loser, eater, randomFn) {
@@ -129,6 +178,14 @@ module.exports = {
     applyBodyState,
     getStealableParts,
     getPartCount,
+    createBodyBonuses,
+    getMovementSpeedMultiplier,
+    getConnectionRangeBonus,
+    getConnectionRange,
+    getVisionRangeBonus,
     getResonanceIntimacyBonus,
+    getBreakSpikeBonus,
+    getPlayerDevourMassGain,
+    getPlayerDevourMassMultiplier,
     stealRandomCorePart
 };

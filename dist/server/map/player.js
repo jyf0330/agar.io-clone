@@ -34,7 +34,7 @@ class Cell {
   toCircle() {
     return new sat.Circle(new sat.Vector(this.x, this.y), this.radius);
   }
-  move(playerX, playerY, playerTarget, slowBase, initMassLog) {
+  move(playerX, playerY, playerTarget, slowBase, initMassLog, speedMultiplier) {
     var target = {
       x: playerX - this.x + playerTarget.x,
       y: playerY - this.y + playerTarget.y
@@ -42,11 +42,12 @@ class Cell {
     var dist = Math.hypot(target.y, target.x);
     var deg = Math.atan2(target.y, target.x);
     var slowDown = 1;
+    var movementMultiplier = speedMultiplier || 1;
     if (this.speed <= MIN_SPEED) {
       slowDown = util.mathLog(this.mass, slowBase) - initMassLog + 1;
     }
-    var deltaY = this.speed * Math.sin(deg) / slowDown;
-    var deltaX = this.speed * Math.cos(deg) / slowDown;
+    var deltaY = this.speed * movementMultiplier * Math.sin(deg) / slowDown;
+    var deltaX = this.speed * movementMultiplier * Math.cos(deg) / slowDown;
     if (this.speed > MIN_SPEED) {
       this.speed -= SPEED_DECREMENT;
     }
@@ -233,9 +234,10 @@ exports.Player = class {
     }
     let xSum = 0,
       ySum = 0;
+    const movementSpeedMultiplier = this.bodyBonuses ? this.bodyBonuses.movementSpeedMultiplier : 1;
     for (let i = 0; i < this.cells.length; i++) {
       let cell = this.cells[i];
-      cell.move(this.x, this.y, this.target, slowBase, initMassLog);
+      cell.move(this.x, this.y, this.target, slowBase, initMassLog, movementSpeedMultiplier);
       gameLogic.adjustForBoundaries(cell, cell.radius / 3, 0, gameWidth, gameHeight);
       xSum += cell.x;
       ySum += cell.y;

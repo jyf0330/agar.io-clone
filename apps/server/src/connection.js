@@ -43,7 +43,7 @@ function isEligibleConnectionTarget(actor, target, range) {
 }
 
 function findConnectionTarget(actor, players, range) {
-    const attemptRange = range || connectionConfig.attemptRange;
+    const attemptRange = typeof range === 'number' ? range : connectionConfig.attemptRange;
     let target = null;
     let bestDistance = Infinity;
 
@@ -63,7 +63,7 @@ function findConnectionTarget(actor, players, range) {
 }
 
 function resolveConnectionOutcome(actor, target, range) {
-    const attemptRange = range || connectionConfig.attemptRange;
+    const attemptRange = typeof range === 'number' ? range : connectionConfig.attemptRange;
     return distance(actor, target) <= attemptRange ? STATES.RESONATING : STATES.BREAK;
 }
 

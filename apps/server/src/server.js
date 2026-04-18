@@ -81,7 +81,8 @@ function attemptConnection(currentPlayer) {
         return;
     }
 
-    const targetPlayer = connection.findConnectionTarget(currentPlayer, map.players.data, connection.config.attemptRange);
+    const attemptRange = body.getConnectionRange(connection.config.attemptRange, currentPlayer);
+    const targetPlayer = connection.findConnectionTarget(currentPlayer, map.players.data, attemptRange);
     if (!targetPlayer) {
         connection.applyConnectionState(currentPlayer, {
             connectionStatus: connection.STATES.BREAK
@@ -105,7 +106,7 @@ function attemptConnection(currentPlayer) {
             return;
         }
 
-        const outcome = connection.resolveConnectionOutcome(currentPlayer, targetPlayer, connection.config.attemptRange);
+        const outcome = connection.resolveConnectionOutcome(currentPlayer, targetPlayer, attemptRange);
         setConnectionPairState(currentPlayer, targetPlayer, outcome);
         setConnectionPairState(targetPlayer, currentPlayer, outcome);
         relationship.applyConnectionOutcome(currentPlayer, targetPlayer, outcome);
@@ -345,14 +346,16 @@ const tickGame = () => {
 
     map.players.handleCollisions(function (gotEaten, eater) {
         const cellGotEaten = map.players.getCell(gotEaten.playerIndex, gotEaten.cellIndex);
+        const eaterPlayer = map.players.data[eater.playerIndex];
+        const massGain = body.getPlayerDevourMassGain(cellGotEaten.mass, eaterPlayer);
 
-        map.players.data[eater.playerIndex].changeCellMass(eater.cellIndex, cellGotEaten.mass);
+        eaterPlayer.changeCellMass(eater.cellIndex, massGain);
 
         const playerDied = map.players.removeCell(gotEaten.playerIndex, gotEaten.cellIndex);
         if (playerDied) {
             body.stealRandomCorePart(
                 map.players.data[gotEaten.playerIndex],
-                map.players.data[eater.playerIndex]
+                eaterPlayer
             );
             let playerGotEaten = map.players.data[gotEaten.playerIndex];
             io.emit('playerDied', { name: playerGotEaten.name }); //TODO: on client it is `playerEatenName` instead of `name`

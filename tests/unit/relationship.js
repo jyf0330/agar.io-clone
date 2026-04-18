@@ -66,6 +66,27 @@ describe('relationship.js', () => {
       expect(actor.intimacy).to.equal(relationshipConfig.resonatingDelta.intimacy + 1);
       expect(target.intimacy).to.equal(relationshipConfig.resonatingDelta.intimacy);
     });
+
+    it('should grant extra spike on break for players with extra spikes', () => {
+      const actor = Object.assign(
+        relationship.createRelationshipState(),
+        body.createBodyState([
+          body.createBodyPart('SPIKE', 1),
+          body.createBodyPart('SPIKE', 2)
+        ])
+      );
+      const target = Object.assign(
+        relationship.createRelationshipState(),
+        body.createBodyState([
+          body.createBodyPart('HEART', 1)
+        ])
+      );
+
+      relationship.applyConnectionOutcome(actor, target, connection.STATES.BREAK);
+
+      expect(actor.spike).to.equal(relationshipConfig.breakDelta.spike + 1);
+      expect(target.spike).to.equal(relationshipConfig.breakDelta.spike);
+    });
   });
 
   describe('map synchronization payload', () => {

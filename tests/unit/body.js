@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 const config = require('../../configs/game/config');
 const bodyConfig = require('../../configs/game/body');
 const body = require('../../apps/server/src/body');
+const entityUtils = require('../../apps/server/src/lib/entityUtils');
 const playerUtils = require('../../apps/server/src/map/player');
 const mapUtils = require('../../apps/server/src/map/map');
 
@@ -72,6 +73,85 @@ describe('body.js', () => {
       expect(stolen).to.equal(null);
       expect(loser.bodyPartCount).to.equal(1);
       expect(eater.bodyPartCount).to.equal(1);
+    });
+  });
+
+  describe('getPlayerDevourMassGain', () => {
+    it('should grant bonus mass to players with extra mouths', () => {
+      const eater = body.createBodyState([
+        body.createBodyPart('MOUTH', 1),
+        body.createBodyPart('MOUTH', 2)
+      ]);
+
+      const gainedMass = body.getPlayerDevourMassGain(20, eater);
+
+      expect(gainedMass).to.equal(25);
+    });
+
+    it('should keep base mass gain when there is no extra mouth', () => {
+      const eater = body.createBodyState([
+        body.createBodyPart('MOUTH', 1)
+      ]);
+
+      const gainedMass = body.getPlayerDevourMassGain(20, eater);
+
+      expect(gainedMass).to.equal(20);
+    });
+  });
+
+  describe('movement and perception integration', () => {
+    it('should move farther when a player has extra feet', () => {
+      const defaultPlayer = new playerUtils.Player('default-player');
+      defaultPlayer.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+      defaultPlayer.target = { x: 300, y: 0 };
+
+      const fastPlayer = new playerUtils.Player('fast-player');
+      fastPlayer.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+      body.applyBodyState(fastPlayer, {
+        bodyParts: [
+          body.createBodyPart('HEAD', 1),
+          body.createBodyPart('HAND', 1),
+          body.createBodyPart('FOOT', 1),
+          body.createBodyPart('FOOT', 2),
+          body.createBodyPart('MOUTH', 1),
+          body.createBodyPart('HEART', 1)
+        ]
+      });
+      fastPlayer.target = { x: 300, y: 0 };
+
+      defaultPlayer.move(config.slowBase, config.gameWidth, config.gameHeight, 1);
+      fastPlayer.move(config.slowBase, config.gameWidth, config.gameHeight, 1);
+
+      expect(fastPlayer.x).to.be.greaterThan(defaultPlayer.x);
+    });
+
+    it('should see farther when a player has extra heads', () => {
+      const viewer = new playerUtils.Player('viewer');
+      viewer.init({ x: 200, y: 200 }, config.defaultPlayerMass);
+      viewer.clientProvidedData({
+        name: 'viewer',
+        screenWidth: 200,
+        screenHeight: 200
+      });
+
+      body.applyBodyState(viewer, {
+        bodyParts: [
+          body.createBodyPart('HEAD', 1),
+          body.createBodyPart('HEAD', 2),
+          body.createBodyPart('HAND', 1),
+          body.createBodyPart('FOOT', 1),
+          body.createBodyPart('MOUTH', 1),
+          body.createBodyPart('HEART', 1)
+        ]
+      });
+
+      const farEntity = {
+        x: 360,
+        y: 200,
+        radius: 10
+      };
+
+      expect(entityUtils.isVisibleEntity(farEntity, viewer)).to.equal(true);
     });
   });
 

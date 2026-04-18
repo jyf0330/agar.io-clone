@@ -1,7 +1,12 @@
 module.exports = {
     defaultLoadout: ['HEAD', 'HAND', 'FOOT', 'MOUTH', 'HEART'],
     abilityModifiers: {
-        resonanceIntimacyPerExtraHeart: 1
+        resonanceIntimacyPerExtraHeart: 1,
+        breakSpikePerExtraSpike: 1,
+        playerDevourMassBonusPerExtraMouth: 0.25,
+        movementSpeedMultiplierPerExtraFoot: 0.1,
+        connectionRangePerExtraHand: 40,
+        visionRangePerExtraHead: 120
     },
     partDefinitions: {
         HEAD: {

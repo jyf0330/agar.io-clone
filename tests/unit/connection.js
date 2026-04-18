@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 const config = require('../../configs/game/config');
 const connectionConfig = require('../../configs/game/connection');
 const connection = require('../../apps/server/src/connection');
+const body = require('../../apps/server/src/body');
 const playerUtils = require('../../apps/server/src/map/player');
 
 describe('connection.js', () => {
@@ -71,6 +72,33 @@ describe('connection.js', () => {
       const target = connection.findConnectionTarget(actor, [busy, far], connectionConfig.attemptRange);
 
       expect(target).to.equal(null);
+    });
+
+    it('should allow extra hands to extend connection range', () => {
+      const actor = body.createBodyState([
+        body.createBodyPart('HAND', 1),
+        body.createBodyPart('HAND', 2)
+      ]);
+      actor.id = 'actor';
+      actor.x = 0;
+      actor.y = 0;
+      actor.connectionStatus = connection.STATES.IDLE;
+
+      const target = {
+        id: 'far-but-reachable',
+        x: connectionConfig.attemptRange + 20,
+        y: 0,
+        name: 'reachable',
+        connectionStatus: connection.STATES.IDLE
+      };
+
+      const resolved = connection.findConnectionTarget(
+        actor,
+        [target],
+        body.getConnectionRange(connectionConfig.attemptRange, actor)
+      );
+
+      expect(resolved.id).to.equal('far-but-reachable');
     });
   });
 
