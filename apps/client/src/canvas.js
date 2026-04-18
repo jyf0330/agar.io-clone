@@ -145,6 +145,10 @@ class Canvas {
             this.parent.socket.emit('2');
             this.parent.reenviar = false;
         }
+        else if (key === global.KEY_CONNECT && this.parent.reenviar) {
+            this.parent.socket.emit('3');
+            this.parent.reenviar = false;
+        }
         else if (key === global.KEY_CHAT) {
             document.getElementById('chatInput').focus();
         }

@@ -4,6 +4,8 @@ const util = require('../lib/util');
 const sat = require('sat');
 const gameLogic = require('../game-logic');
 const materialization = require('../materialization');
+const connection = require('../connection');
+const relationship = require('../relationship');
 
 const MIN_SPEED = 6.25;
 const SPLIT_CELL_SPEED = 20;
@@ -94,6 +96,8 @@ exports.Player = class {
         this.timeToMerge = null;
         this.setLastHeartbeat();
         materialization.applyMaterializationState(this);
+        connection.applyConnectionState(this);
+        relationship.applyRelationshipState(this);
     }
 
     /* Initalizes things that change with every respawn */
@@ -107,6 +111,8 @@ exports.Player = class {
             y: 0
         };
         materialization.applyMaterializationState(this);
+        connection.applyConnectionState(this);
+        relationship.applyRelationshipState(this);
     }
 
     clientProvidedData(playerData) {

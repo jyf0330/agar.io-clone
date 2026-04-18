@@ -4,6 +4,8 @@ var ChatClient = require('./chat-client');
 var Canvas = require('./canvas');
 var global = require('./global');
 var formatMaterializationStatus = require('./materialization-status');
+var formatConnectionStatus = require('./connection-status');
+var formatRelationshipStatus = require('./relationship-status');
 
 var playerNameInput = document.getElementById('playerNameInput');
 var socket;
@@ -139,6 +141,28 @@ roundFoodSetting.onchange = settings.toggleRoundFood;
 var c = window.canvas.cv;
 var graph = c.getContext('2d');
 
+function renderStatusPanel() {
+    var status = '<span class="title">Leaderboard</span>';
+    for (var i = 0; i < leaderboard.length; i++) {
+        status += '<br />';
+        if (leaderboard[i].id == player.id) {
+            if (leaderboard[i].name.length !== 0)
+                status += '<span class="me">' + (i + 1) + '. ' + leaderboard[i].name + "</span>";
+            else
+                status += '<span class="me">' + (i + 1) + ". An unnamed cell</span>";
+        } else {
+            if (leaderboard[i].name.length !== 0)
+                status += (i + 1) + '. ' + leaderboard[i].name;
+            else
+                status += (i + 1) + '. An unnamed cell';
+        }
+    }
+    status += formatMaterializationStatus(player);
+    status += formatConnectionStatus(player);
+    status += formatRelationshipStatus(player);
+    document.getElementById('status').innerHTML = status;
+}
+
 $("#feed").click(function () {
     socket.emit('1');
     window.canvas.reenviar = false;
@@ -209,24 +233,7 @@ function setupSocket(socket) {
 
     socket.on('leaderboard', (data) => {
         leaderboard = data.leaderboard;
-        var status = '<span class="title">Leaderboard</span>';
-        for (var i = 0; i < leaderboard.length; i++) {
-            status += '<br />';
-            if (leaderboard[i].id == player.id) {
-                if (leaderboard[i].name.length !== 0)
-                    status += '<span class="me">' + (i + 1) + '. ' + leaderboard[i].name + "</span>";
-                else
-                    status += '<span class="me">' + (i + 1) + ". An unnamed cell</span>";
-            } else {
-                if (leaderboard[i].name.length !== 0)
-                    status += (i + 1) + '. ' + leaderboard[i].name;
-                else
-                    status += (i + 1) + '. An unnamed cell';
-            }
-        }
-        //status += '<br />Players: ' + data.players;
-        status += formatMaterializationStatus(player);
-        document.getElementById('status').innerHTML = status;
+        renderStatusPanel();
     });
 
     socket.on('serverMSG', function (data) {
@@ -247,12 +254,19 @@ function setupSocket(socket) {
             player.massTotal = playerData.massTotal;
             player.materialization = playerData.materialization;
             player.materializationStage = playerData.materializationStage;
+            player.connectionStatus = playerData.connectionStatus;
+            player.connectionTargetId = playerData.connectionTargetId;
+            player.connectionTargetName = playerData.connectionTargetName;
+            player.intimacy = playerData.intimacy;
+            player.spike = playerData.spike;
+            player.pollution = playerData.pollution;
             player.cells = playerData.cells;
         }
         users = userData;
         foods = foodsList;
         viruses = virusList;
         fireFood = massList;
+        renderStatusPanel();
     });
 
     // Death.

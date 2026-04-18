@@ -16,12 +16,15 @@ const mapUtils = require('./map/map');
 const {
   getPosition
 } = require("./lib/entityUtils");
+const connection = require('./connection');
+const relationship = require('./relationship');
 let map = new mapUtils.Map(config);
 let sockets = {};
 let spectators = [];
 const INIT_MASS_LOG = util.mathLog(config.defaultPlayerMass, config.slowBase);
 let leaderboard = [];
 let leaderboardChanged = false;
+let connectionTimers = {};
 const Vector = SAT.Vector;
 app.use(express.static(path.join(__dirname, '../client')));
 io.on('connection', function (socket) {
@@ -41,6 +44,62 @@ io.on('connection', function (socket) {
 function generateSpawnpoint() {
   let radius = util.massToRadius(config.defaultPlayerMass);
   return getPosition(config.newPlayerInitialPosition === 'farthest', radius, map.players.data);
+}
+function clearConnectionTimer(playerId) {
+  if (connectionTimers[playerId]) {
+    clearTimeout(connectionTimers[playerId]);
+    delete connectionTimers[playerId];
+  }
+}
+function scheduleConnectionReset(player, delayMs) {
+  clearConnectionTimer(player.id);
+  connectionTimers[player.id] = setTimeout(() => {
+    connection.clearConnectionState(player);
+    delete connectionTimers[player.id];
+  }, delayMs);
+}
+function setConnectionPairState(sourcePlayer, targetPlayer, status) {
+  connection.applyConnectionState(sourcePlayer, {
+    connectionStatus: status,
+    connectionTargetId: targetPlayer ? targetPlayer.id : null,
+    connectionTargetName: targetPlayer ? targetPlayer.name : null
+  });
+}
+function attemptConnection(currentPlayer) {
+  if (currentPlayer.connectionStatus !== connection.STATES.IDLE) {
+    return;
+  }
+  const targetPlayer = connection.findConnectionTarget(currentPlayer, map.players.data, connection.config.attemptRange);
+  if (!targetPlayer) {
+    connection.applyConnectionState(currentPlayer, {
+      connectionStatus: connection.STATES.BREAK
+    });
+    scheduleConnectionReset(currentPlayer, connection.config.breakDurationMs);
+    return;
+  }
+  setConnectionPairState(currentPlayer, targetPlayer, connection.STATES.CHANNELING);
+  setConnectionPairState(targetPlayer, currentPlayer, connection.STATES.CHANNELING);
+  scheduleConnectionReset(currentPlayer, connection.config.channelDurationMs + connection.config.resonanceDurationMs);
+  scheduleConnectionReset(targetPlayer, connection.config.channelDurationMs + connection.config.resonanceDurationMs);
+  setTimeout(() => {
+    if (!map.players.data.includes(currentPlayer) || !map.players.data.includes(targetPlayer)) {
+      return;
+    }
+    if (currentPlayer.connectionTargetId !== targetPlayer.id || targetPlayer.connectionTargetId !== currentPlayer.id) {
+      return;
+    }
+    const outcome = connection.resolveConnectionOutcome(currentPlayer, targetPlayer, connection.config.attemptRange);
+    setConnectionPairState(currentPlayer, targetPlayer, outcome);
+    setConnectionPairState(targetPlayer, currentPlayer, outcome);
+    relationship.applyConnectionOutcome(currentPlayer, targetPlayer, outcome);
+    if (outcome === connection.STATES.BREAK) {
+      scheduleConnectionReset(currentPlayer, connection.config.breakDurationMs);
+      scheduleConnectionReset(targetPlayer, connection.config.breakDurationMs);
+    } else {
+      scheduleConnectionReset(currentPlayer, connection.config.resonanceDurationMs);
+      scheduleConnectionReset(targetPlayer, connection.config.resonanceDurationMs);
+    }
+  }, connection.config.channelDurationMs);
 }
 const addPlayer = socket => {
   var currentPlayer = new mapUtils.playerUtils.Player(socket.id);
@@ -82,6 +141,7 @@ const addPlayer = socket => {
     console.log('[INFO] User ' + currentPlayer.name + ' has respawned');
   });
   socket.on('disconnect', () => {
+    clearConnectionTimer(currentPlayer.id);
     map.players.removePlayerByID(currentPlayer.id);
     console.log('[INFO] User ' + currentPlayer.name + ' has disconnected');
     socket.broadcast.emit('playerDisconnect', {
@@ -168,6 +228,9 @@ const addPlayer = socket => {
   });
   socket.on('2', () => {
     currentPlayer.userSplit(config.limitSplit, config.defaultPlayerMass);
+  });
+  socket.on('3', () => {
+    attemptConnection(currentPlayer);
   });
 };
 const addSpectator = socket => {

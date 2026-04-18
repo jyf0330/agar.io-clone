@@ -46,6 +46,12 @@ exports.Map = class {
           massTotal: Math.round(player.massTotal),
           materialization: player.materialization,
           materializationStage: player.materializationStage,
+          connectionStatus: player.connectionStatus,
+          connectionTargetId: player.connectionTargetId,
+          connectionTargetName: player.connectionTargetName,
+          intimacy: player.intimacy,
+          spike: player.spike,
+          pollution: player.pollution,
           hue: player.hue,
           id: player.id,
           name: player.name
