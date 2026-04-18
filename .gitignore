@@ -3,3 +3,20 @@ npm-debug.log
 .idea
 client/bower_components
 bin
+
+# Build output
+dist/
+
+# Local agent state
+.codex/
+.omx/
+
+# Knowledge graph output
+graphify-out/
+
+# Runtime database files
+*.db
+*.sqlite
+
+# Local environment variables
+.env
