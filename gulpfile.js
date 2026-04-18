@@ -11,6 +11,15 @@ const fs = require("fs");
 const path = require("path");
 const PluginError = require('plugin-error');
 
+const PATHS = {
+    serverSrc: 'apps/server/src',
+    clientRoot: 'apps/client',
+    clientSrc: 'apps/client/src',
+    clientAssets: 'apps/client/assets',
+    tests: 'tests',
+    dist: 'dist',
+};
+
 function getWebpackConfig() {
     return require('./webpack.config.js')(!process.env.IS_DEV)
 }
@@ -18,8 +27,8 @@ function getWebpackConfig() {
 function runServer(done) {
     nodemon({
         delay: 10,
-        script: './bin/server/server.js',
-        ignore: ['bin/'],
+        script: './dist/server/server.js',
+        ignore: ['dist/'],
         ext: 'js html css',
         done,
         tasks: [process.env.IS_DEV ? 'dev' : 'build']
@@ -27,22 +36,30 @@ function runServer(done) {
 }
 
 function buildServer() {
-    let task = gulp.src(['src/server/**/*.*', 'src/server/**/*.js']);
+    let task = gulp.src([`${PATHS.serverSrc}/**/*.*`, `${PATHS.serverSrc}/**/*.js`]);
     if (!process.env.IS_DEV) {
         task = task.pipe(babel())
     }
-    return task.pipe(gulp.dest('bin/server/'));
+    return task.pipe(gulp.dest(`${PATHS.dist}/server/`));
 }
 
-function copyClientResources() {
-    return gulp.src(['src/client/**/*.*', '!src/client/**/*.js'])
-        .pipe(gulp.dest('./bin/client/'));
+function copyClientHtml() {
+    const sourcePath = path.resolve(PATHS.clientRoot, 'index.html');
+    const destinationDir = path.resolve(PATHS.dist, 'client');
+    fs.mkdirSync(destinationDir, { recursive: true });
+    fs.copyFileSync(sourcePath, path.join(destinationDir, 'index.html'));
+    return Promise.resolve();
+}
+
+function copyClientAssets() {
+    return gulp.src([`${PATHS.clientAssets}/**/*.*`], { base: PATHS.clientAssets })
+        .pipe(gulp.dest(`./${PATHS.dist}/client/`));
 }
 
 function buildClientJS() {
-    return gulp.src(['src/client/js/app.js'])
+    return gulp.src([`${PATHS.clientSrc}/*.js`])
         .pipe(webpack(getWebpackConfig()))
-        .pipe(gulp.dest('bin/client/js/'));
+        .pipe(gulp.dest(`${PATHS.dist}/client/js/`));
 }
 
 function setDev(done) {
@@ -53,8 +70,8 @@ function setDev(done) {
 function mocha(done) {
     const mochaInstance = new Mocha()
     const files = fs
-        .readdirSync('test/', {recursive: true})
-        .filter(x => x.endsWith('.js')).map(x => path.resolve('test/' + x));
+        .readdirSync(PATHS.tests, {recursive: true})
+        .filter(x => x.endsWith('.js')).map(x => path.resolve(`${PATHS.tests}/` + x));
     for (const file of files) {
         mochaInstance.addFile(file);
     }
@@ -62,7 +79,7 @@ function mocha(done) {
 }
 
 gulp.task('lint', () => {
-    return gulp.src(['**/*.js', '!node_modules/**/*.js', '!bin/**/*.js'])
+    return gulp.src(['**/*.js', '!node_modules/**/*.js', '!dist/**/*.js', '!graphify-out/**/*.js'])
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError())
@@ -71,14 +88,14 @@ gulp.task('lint', () => {
 gulp.task('test', gulp.series('lint', mocha));
 
 gulp.task('todo', gulp.series('lint', () => {
-    return gulp.src('src/**/*.js')
+    return gulp.src('apps/**/*.js')
         .pipe(todo())
         .pipe(gulp.dest('./'));
 }));
 
-gulp.task('build', gulp.series('lint', gulp.parallel(copyClientResources, buildClientJS, buildServer, mocha)));
+gulp.task('build', gulp.series('lint', gulp.parallel(copyClientHtml, copyClientAssets, buildClientJS, buildServer, mocha)));
 
-gulp.task('dev', gulp.parallel(copyClientResources, buildClientJS, buildServer));
+gulp.task('dev', gulp.parallel(copyClientHtml, copyClientAssets, buildClientJS, buildServer));
 
 gulp.task('run', gulp.series('build', runServer));
 

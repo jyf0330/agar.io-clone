@@ -1,0 +1,690 @@
+{
+  "nodes": [
+    {
+      "id": "doc_agents",
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "doc_todo",
+      "label": "TODO.md",
+      "file_type": "document",
+      "source_file": "TODO.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "doc_readme",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "agar_io_clone_game_ui",
+      "label": "Agar.IO Clone game UI",
+      "file_type": "image",
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "player_huy",
+      "label": "Player cell huy",
+      "file_type": "image",
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "player_dragon",
+      "label": "Player cell dragon",
+      "file_type": "image",
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "leaderboard_panel",
+      "label": "Leaderboard panel",
+      "file_type": "image",
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "multiplayer_viewports",
+      "label": "Two simultaneous game viewports",
+      "file_type": "image",
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "food_pellets",
+      "label": "Colored food pellets",
+      "file_type": "image",
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "virus_cells",
+      "label": "Large green virus cells",
+      "file_type": "image",
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "mobile_controls",
+      "label": "Mobile joystick and targeting controls",
+      "file_type": "image",
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "grid_arena",
+      "label": "Grid-based arena",
+      "file_type": "image",
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "asset:bin/client/img/split.png",
+      "label": "split icon",
+      "file_type": "image",
+      "source_file": "bin/client/img/split.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept:split_control",
+      "label": "split",
+      "file_type": "image",
+      "source_file": "bin/client/img/split.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept:horizontal_division",
+      "label": "horizontal separation",
+      "file_type": "image",
+      "source_file": "bin/client/img/split.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept:left_right_direction",
+      "label": "left-right arrows",
+      "file_type": "image",
+      "source_file": "bin/client/img/split.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "asset:bin/client/img/feed.png",
+      "label": "feed icon",
+      "file_type": "image",
+      "source_file": "bin/client/img/feed.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept:crosshair",
+      "label": "crosshair/target reticle",
+      "file_type": "image",
+      "source_file": "bin/client/img/feed.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "action:feed",
+      "label": "feed mass",
+      "file_type": "image",
+      "source_file": "bin/client/img/feed.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "control:feed",
+      "label": "feed control",
+      "file_type": "image",
+      "source_file": "bin/client/img/feed.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "img:src/client/img/split.png",
+      "label": "split control icon",
+      "file_type": "image",
+      "source_file": "src/client/img/split.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept:split_action",
+      "label": "split",
+      "file_type": "image",
+      "source_file": "src/client/img/split.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept:player_control",
+      "label": "player input control",
+      "file_type": "image",
+      "source_file": "src/client/img/split.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept:horizontal_separation",
+      "label": "horizontal separation",
+      "file_type": "image",
+      "source_file": "src/client/img/split.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "feed_icon_crosshair",
+      "label": "Feed Control Icon",
+      "file_type": "image",
+      "source_file": "src/client/img/feed.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "crosshair_targeting",
+      "label": "Targeting Reticle",
+      "file_type": "image",
+      "source_file": "src/client/img/feed.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "feed_action",
+      "label": "Feed Action",
+      "file_type": "image",
+      "source_file": "src/client/img/feed.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "player_control_input",
+      "label": "Player Control Input",
+      "file_type": "image",
+      "source_file": "src/client/img/feed.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "doc_readme",
+      "target": "doc_todo",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.86,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 0.86
+    },
+    {
+      "source": "doc_readme",
+      "target": "doc_agents",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 0.78
+    },
+    {
+      "source": "doc_agents",
+      "target": "doc_todo",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.64,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 0.64
+    },
+    {
+      "source": "leaderboard_panel",
+      "target": "player_huy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.99,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "leaderboard_panel",
+      "target": "player_dragon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.99,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "agar_io_clone_game_ui",
+      "target": "leaderboard_panel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "agar_io_clone_game_ui",
+      "target": "multiplayer_viewports",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.96,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "agar_io_clone_game_ui",
+      "target": "grid_arena",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.97,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "player_huy",
+      "target": "player_dragon",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "player_huy",
+      "target": "food_pellets",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "player_dragon",
+      "target": "food_pellets",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "player_huy",
+      "target": "virus_cells",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.84,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "player_dragon",
+      "target": "virus_cells",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.84,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mobile_controls",
+      "target": "player_huy",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mobile_controls",
+      "target": "player_dragon",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.74,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "multiplayer_viewports",
+      "target": "player_huy",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.93,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "multiplayer_viewports",
+      "target": "player_dragon",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.93,
+      "source_file": "screenshot.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "asset:bin/client/img/split.png",
+      "target": "concept:split_control",
+      "relation": "depicts",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "bin/client/img/split.png",
+      "source_location": null,
+      "weight": 0.95
+    },
+    {
+      "source": "asset:bin/client/img/split.png",
+      "target": "concept:horizontal_division",
+      "relation": "uses_visual_motif",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.93,
+      "source_file": "bin/client/img/split.png",
+      "source_location": null,
+      "weight": 0.93
+    },
+    {
+      "source": "asset:bin/client/img/split.png",
+      "target": "concept:left_right_direction",
+      "relation": "uses_directional_cue",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.96,
+      "source_file": "bin/client/img/split.png",
+      "source_location": null,
+      "weight": 0.96
+    },
+    {
+      "source": "concept:left_right_direction",
+      "target": "concept:split_control",
+      "relation": "suggests",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "bin/client/img/split.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "concept:horizontal_division",
+      "target": "concept:split_control",
+      "relation": "reinforces",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88,
+      "source_file": "bin/client/img/split.png",
+      "source_location": null,
+      "weight": 0.88
+    },
+    {
+      "source": "asset:bin/client/img/feed.png",
+      "target": "concept:crosshair",
+      "relation": "depicts",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.8,
+      "source_file": "bin/client/img/feed.png",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "asset:bin/client/img/feed.png",
+      "target": "action:feed",
+      "relation": "represents",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "bin/client/img/feed.png",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "control:feed",
+      "target": "action:feed",
+      "relation": "triggers",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "bin/client/img/feed.png",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "img:src/client/img/split.png",
+      "target": "concept:split_action",
+      "relation": "depicts",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.8,
+      "source_file": "src/client/img/split.png",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "img:src/client/img/split.png",
+      "target": "concept:player_control",
+      "relation": "represents",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/client/img/split.png",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "img:src/client/img/split.png",
+      "target": "concept:horizontal_separation",
+      "relation": "uses_visual_motif",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.8,
+      "source_file": "src/client/img/split.png",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "concept:split_action",
+      "target": "concept:player_control",
+      "relation": "triggered_by",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/client/img/split.png",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "feed_icon_crosshair",
+      "target": "crosshair_targeting",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/client/img/feed.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "feed_icon_crosshair",
+      "target": "feed_action",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "src/client/img/feed.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "feed_action",
+      "target": "player_control_input",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.86,
+      "source_file": "src/client/img/feed.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "crosshair_targeting",
+      "target": "player_control_input",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.73,
+      "source_file": "src/client/img/feed.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "gameplay_scene",
+      "label": "Gameplay Scene",
+      "nodes": [
+        "agar_io_clone_game_ui",
+        "grid_arena",
+        "food_pellets",
+        "virus_cells",
+        "leaderboard_panel"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "screenshot.png"
+    },
+    {
+      "id": "multiplayer_match",
+      "label": "Multiplayer Match",
+      "nodes": [
+        "player_huy",
+        "player_dragon",
+        "multiplayer_viewports",
+        "leaderboard_panel"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.84,
+      "source_file": "screenshot.png"
+    },
+    {
+      "id": "mobile_input_layer",
+      "label": "Mobile Input Layer",
+      "nodes": [
+        "mobile_controls",
+        "player_huy",
+        "player_dragon"
+      ],
+      "relation": "implement",
+      "confidence": "INFERRED",
+      "confidence_score": 0.76,
+      "source_file": "screenshot.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,649 @@
+{
+  "community_labels": {
+    "0": "f() / p / .open()",
+    "1": "h / a() / c",
+    "2": "player.js / Cell / tickGame()",
+    "3": "app.js / registerFunctions() / addSystemLine()",
+    "4": "ChatClient / .registerFunctions() / .addSystemLine()",
+    "5": ".emit() / addPlayer() / server.js",
+    "6": "u / .flush() / .onHandshake()",
+    "7": "render.js / _() / gameLoop()",
+    "8": "Canvas / .directionUp() / .directional()",
+    "9": "move() / massFood.js / adjustForBoundaries()",
+    "10": "Player cell dragon / Player cell huy / Agar.IO Clone game UI",
+    "11": "gulpfile.js / buildClientJS() / getWebpackConfig()",
+    "12": "food.js / addNew() / Food",
+    "13": "isVisibleEntity() / entityUtils.js / getPosition()",
+    "14": "split icon / split / horizontal separation",
+    "15": "feed mass / feed icon / crosshair/target reticle",
+    "16": "split control icon / player input control / split",
+    "17": "Targeting Reticle / Feed Action / Feed Control Icon",
+    "18": "logChatMessage() / chat-repository.js",
+    "19": "logFailedLoginAttempt() / logging-repository.js",
+    "20": "AGENTS.md / README.md / TODO.md",
+    "21": "getRules() / webpack.config.js",
+    "22": "util.js / Point()",
+    "23": "config.js",
+    "24": "sql.js",
+    "25": "util.js",
+    "26": "sql.js",
+    "27": "util.js",
+    "28": "global.js",
+    "29": "server.js"
+  },
+  "communities": {
+    "0": [
+      "app_e",
+      "app_f",
+      "app_f_cleanup",
+      "app_f_close",
+      "app_f_connect",
+      "app_f_constructor",
+      "app_f_destroy",
+      "app_f_disconnect",
+      "app_f_maybereconnectonopen",
+      "app_f_onclose",
+      "app_f_ondecoded",
+      "app_f_onopen",
+      "app_f_onping",
+      "app_f_onreconnect",
+      "app_f_open",
+      "app_f_packet",
+      "app_f_randomizationfactor",
+      "app_f_reconnect",
+      "app_f_reconnection",
+      "app_f_reconnectionattempts",
+      "app_f_reconnectiondelay",
+      "app_f_reconnectiondelaymax",
+      "app_f_socket",
+      "app_f_timeout",
+      "app_h_connect",
+      "app_h_constructor",
+      "app_h_destroy",
+      "app_h_open",
+      "app_h_send",
+      "app_h_subevents",
+      "app_h_timeout",
+      "app_m",
+      "app_m_constructor",
+      "app_m_doclose",
+      "app_m_doopen",
+      "app_m_dopoll",
+      "app_m_dowrite",
+      "app_m_name",
+      "app_m_ondata",
+      "app_m_poll",
+      "app_m_request",
+      "app_m_uri",
+      "app_m_write",
+      "app_p",
+      "app_p_addeventlisteners",
+      "app_p_check",
+      "app_p_constructor",
+      "app_p_doopen",
+      "app_p_name",
+      "app_p_uri",
+      "app_p_write",
+      "app_u_constructor",
+      "app_u_onerror",
+      "app_y",
+      "app_y_abort",
+      "app_y_cleanup",
+      "app_y_constructor",
+      "app_y_create",
+      "app_y_onerror",
+      "app_y_onload"
+    ],
+    "1": [
+      "app_a",
+      "app_c",
+      "app_c_add",
+      "app_c_constructor",
+      "app_c_decodestring",
+      "app_c_destroy",
+      "app_c_ispayloadvalid",
+      "app_c_tryparse",
+      "app_d",
+      "app_f_ondata",
+      "app_h",
+      "app_h_ack",
+      "app_h_active",
+      "app_h_addtoqueue",
+      "app_h_compress",
+      "app_h_disconnected",
+      "app_h_drainqueue",
+      "app_h_emitbuffered",
+      "app_h_emitevent",
+      "app_h_emitwithack",
+      "app_h_finishedreconstruction",
+      "app_h_listenersany",
+      "app_h_listenersanyoutgoing",
+      "app_h_notifyoutgoinglisteners",
+      "app_h_offany",
+      "app_h_offanyoutgoing",
+      "app_h_onack",
+      "app_h_onany",
+      "app_h_onanyoutgoing",
+      "app_h_onclose",
+      "app_h_onconnect",
+      "app_h_ondata",
+      "app_h_ondisconnect",
+      "app_h_onerror",
+      "app_h_onevent",
+      "app_h_onopen",
+      "app_h_onpacket",
+      "app_h_pause",
+      "app_h_prependany",
+      "app_h_prependanyoutgoing",
+      "app_h_registerackcallback",
+      "app_h_sendconnectpacket",
+      "app_h_takebinarydata",
+      "app_h_volatile",
+      "app_r"
+    ],
+    "2": [
+      "bin_server_map_player_js",
+      "player_cell",
+      "player_cell_addmass",
+      "player_cell_checkwhoatewho",
+      "player_cell_constructor",
+      "player_cell_move",
+      "player_cell_recalculateradius",
+      "player_cell_setmass",
+      "player_cell_tocircle",
+      "player_changecellmass",
+      "player_checkforcollisions",
+      "player_clientprovideddata",
+      "player_constructor",
+      "player_enumeratecollidingcells",
+      "player_findindexbyid",
+      "player_getcell",
+      "player_gettopplayers",
+      "player_gettotalmass",
+      "player_handlecollisions",
+      "player_init",
+      "player_losemassifneeded",
+      "player_mergecollidingcells",
+      "player_move",
+      "player_pushawaycollidingcells",
+      "player_pushnew",
+      "player_removecell",
+      "player_removeplayerbyid",
+      "player_removeplayerbyindex",
+      "player_setlastheartbeat",
+      "player_setlastsplit",
+      "player_shrinkcells",
+      "player_splitcell",
+      "player_usersplit",
+      "player_virussplit",
+      "server_tickgame",
+      "src_server_map_player_js"
+    ],
+    "3": [
+      "app_addchatline",
+      "app_addsystemline",
+      "app_appendmessage",
+      "app_checklatency",
+      "app_constructor",
+      "app_directional",
+      "app_directiondown",
+      "app_directionup",
+      "app_encode",
+      "app_encodeasbinary",
+      "app_encodeasstring",
+      "app_gameinput",
+      "app_horizontal",
+      "app_i",
+      "app_k",
+      "app_keyinput",
+      "app_m_pause",
+      "app_n",
+      "app_newdirection",
+      "app_o",
+      "app_outofbounds",
+      "app_printhelp",
+      "app_registercommand",
+      "app_registerfunctions",
+      "app_sendchat",
+      "app_t",
+      "app_toggleborder",
+      "app_togglecontinuity",
+      "app_toggledarkmode",
+      "app_togglemass",
+      "app_toggleroundfood",
+      "app_touchinput",
+      "app_updatetarget",
+      "app_vertical",
+      "bin_client_js_app_js"
+    ],
+    "4": [
+      "app_getposition",
+      "app_h_close",
+      "app_handledisconnect",
+      "app_isunnamedcell",
+      "app_p_doclose",
+      "app_resize",
+      "app_setupsocket",
+      "app_startgame",
+      "app_u_onclose",
+      "app_v",
+      "app_validnick",
+      "chat_client_chatclient",
+      "chat_client_chatclient_addchatline",
+      "chat_client_chatclient_addsystemline",
+      "chat_client_chatclient_appendmessage",
+      "chat_client_chatclient_checklatency",
+      "chat_client_chatclient_constructor",
+      "chat_client_chatclient_printhelp",
+      "chat_client_chatclient_registercommand",
+      "chat_client_chatclient_registerfunctions",
+      "chat_client_chatclient_sendchat",
+      "chat_client_chatclient_toggleborder",
+      "chat_client_chatclient_togglecontinuity",
+      "chat_client_chatclient_toggledarkmode",
+      "chat_client_chatclient_togglemass",
+      "chat_client_chatclient_toggleroundfood",
+      "render_drawerrormessage",
+      "src_client_js_app_js",
+      "src_client_js_chat_client_js"
+    ],
+    "5": [
+      "app_h_disconnect",
+      "app_h_emit",
+      "app_h_packet",
+      "bin_server_map_map_js",
+      "bin_server_map_virus_js",
+      "bin_server_server_js",
+      "map_balancemass",
+      "map_constructor",
+      "map_enumeratewhatplayerssee",
+      "server_addplayer",
+      "server_addspectator",
+      "server_calculateleaderboard",
+      "server_gameloop",
+      "server_generatespawnpoint",
+      "server_sendleaderboard",
+      "server_sendupdates",
+      "server_tickplayer",
+      "server_updatespectator",
+      "src_server_map_map_js",
+      "src_server_map_virus_js",
+      "src_server_server_js",
+      "virus_addnew",
+      "virus_constructor",
+      "virus_delete",
+      "virus_pushnew",
+      "virus_virus",
+      "virus_virus_constructor"
+    ],
+    "6": [
+      "app_f_onerror",
+      "app_s",
+      "app_u",
+      "app_u_close",
+      "app_u_createtransport",
+      "app_u_filterupgrades",
+      "app_u_flush",
+      "app_u_getwritablepackets",
+      "app_u_ondrain",
+      "app_u_onhandshake",
+      "app_u_onopen",
+      "app_u_onpacket",
+      "app_u_open",
+      "app_u_probe",
+      "app_u_resetpingtimeout",
+      "app_u_send",
+      "app_u_sendpacket",
+      "app_u_settransport",
+      "app_u_write"
+    ],
+    "7": [
+      "app",
+      "app_animloop",
+      "app_gameloop",
+      "render_celltouchingborders",
+      "render_circlepoint",
+      "render_drawborder",
+      "render_drawcells",
+      "render_drawcellwithlines",
+      "render_drawfirefood",
+      "render_drawfood",
+      "render_drawgrid",
+      "render_drawroundobject",
+      "render_drawvirus",
+      "render_regulatepoint",
+      "render_valueinrange",
+      "src_client_js_render_js"
+    ],
+    "8": [
+      "canvas_canvas",
+      "canvas_canvas_constructor",
+      "canvas_canvas_directional",
+      "canvas_canvas_directiondown",
+      "canvas_canvas_directionup",
+      "canvas_canvas_gameinput",
+      "canvas_canvas_horizontal",
+      "canvas_canvas_keyinput",
+      "canvas_canvas_newdirection",
+      "canvas_canvas_outofbounds",
+      "canvas_canvas_touchinput",
+      "canvas_canvas_updatetarget",
+      "canvas_canvas_vertical",
+      "src_client_js_canvas_js"
+    ],
+    "9": [
+      "bin_server_game_logic_js",
+      "bin_server_map_massfood_js",
+      "game_logic_adjustforboundaries",
+      "massfood_addnew",
+      "massfood_constructor",
+      "massfood_move",
+      "massfood_remove",
+      "src_server_game_logic_js",
+      "src_server_map_massfood_js"
+    ],
+    "10": [
+      "agar_io_clone_game_ui",
+      "food_pellets",
+      "grid_arena",
+      "leaderboard_panel",
+      "mobile_controls",
+      "multiplayer_viewports",
+      "player_dragon",
+      "player_huy",
+      "virus_cells"
+    ],
+    "11": [
+      "gulpfile_buildclientjs",
+      "gulpfile_buildserver",
+      "gulpfile_copyclientresources",
+      "gulpfile_getwebpackconfig",
+      "gulpfile_js",
+      "gulpfile_mocha",
+      "gulpfile_runserver",
+      "gulpfile_setdev"
+    ],
+    "12": [
+      "bin_server_map_food_js",
+      "food_addnew",
+      "food_constructor",
+      "food_delete",
+      "food_food",
+      "food_food_constructor",
+      "food_removeexcess",
+      "src_server_map_food_js"
+    ],
+    "13": [
+      "bin_server_lib_entityutils_js",
+      "entityutils_getposition",
+      "entityutils_isvisibleentity",
+      "src_server_lib_entityutils_js"
+    ],
+    "14": [
+      "asset:bin/client/img/split.png",
+      "concept:horizontal_division",
+      "concept:left_right_direction",
+      "concept:split_control"
+    ],
+    "15": [
+      "action:feed",
+      "asset:bin/client/img/feed.png",
+      "concept:crosshair",
+      "control:feed"
+    ],
+    "16": [
+      "concept:horizontal_separation",
+      "concept:player_control",
+      "concept:split_action",
+      "img:src/client/img/split.png"
+    ],
+    "17": [
+      "crosshair_targeting",
+      "feed_action",
+      "feed_icon_crosshair",
+      "player_control_input"
+    ],
+    "18": [
+      "bin_server_repositories_chat_repository_js",
+      "chat_repository_logchatmessage",
+      "src_server_repositories_chat_repository_js"
+    ],
+    "19": [
+      "bin_server_repositories_logging_repository_js",
+      "logging_repository_logfailedloginattempt",
+      "src_server_repositories_logging_repository_js"
+    ],
+    "20": [
+      "doc_agents",
+      "doc_readme",
+      "doc_todo"
+    ],
+    "21": [
+      "webpack_config_getrules",
+      "webpack_config_js"
+    ],
+    "22": [
+      "test_util_js",
+      "util_point"
+    ],
+    "23": [
+      "config_js"
+    ],
+    "24": [
+      "bin_server_sql_js"
+    ],
+    "25": [
+      "bin_server_lib_util_js"
+    ],
+    "26": [
+      "src_server_sql_js"
+    ],
+    "27": [
+      "src_server_lib_util_js"
+    ],
+    "28": [
+      "src_client_js_global_js"
+    ],
+    "29": [
+      "test_server_js"
+    ]
+  },
+  "cohesion": {
+    "0": 0.06,
+    "1": 0.07,
+    "2": 0.14,
+    "3": 0.12,
+    "4": 0.13,
+    "5": 0.16,
+    "6": 0.19,
+    "7": 0.23,
+    "8": 0.24,
+    "9": 0.31,
+    "10": 0.39,
+    "11": 0.29,
+    "12": 0.39,
+    "13": 0.67,
+    "14": 0.83,
+    "15": 0.5,
+    "16": 0.67,
+    "17": 0.67,
+    "18": 0.67,
+    "19": 0.67,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0
+  },
+  "gods": [
+    {
+      "id": "app_h",
+      "label": "h",
+      "degree": 55
+    },
+    {
+      "id": "app_f",
+      "label": "f()",
+      "degree": 25
+    },
+    {
+      "id": "app_p",
+      "label": "p",
+      "degree": 24
+    },
+    {
+      "id": "app_u",
+      "label": "u",
+      "degree": 20
+    },
+    {
+      "id": "app_a",
+      "label": "a()",
+      "degree": 15
+    },
+    {
+      "id": "chat_client_chatclient",
+      "label": "ChatClient",
+      "degree": 15
+    },
+    {
+      "id": "app_m",
+      "label": "m",
+      "degree": 13
+    },
+    {
+      "id": "canvas_canvas",
+      "label": "Canvas",
+      "degree": 13
+    },
+    {
+      "id": "server_addplayer",
+      "label": "addPlayer()",
+      "degree": 12
+    },
+    {
+      "id": "app_registerfunctions",
+      "label": "registerFunctions()",
+      "degree": 11
+    }
+  ],
+  "surprises": [
+    {
+      "source": "addPlayer()",
+      "target": "validNick()",
+      "source_files": [
+        "src\\server\\server.js",
+        "src\\client\\js\\app.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities; peripheral node `validNick()` unexpectedly reaches hub `addPlayer()`"
+    },
+    {
+      "source": "generateSpawnpoint()",
+      "target": "getPosition()",
+      "source_files": [
+        "src\\server\\server.js",
+        "src\\client\\js\\app.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "addPlayer()",
+      "target": "init()",
+      "source_files": [
+        "src\\server\\server.js",
+        "src\\server\\map\\player.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "addPlayer()",
+      "target": "findIndexByID()",
+      "source_files": [
+        "src\\server\\server.js",
+        "src\\server\\map\\player.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "addPlayer()",
+      "target": "clientProvidedData()",
+      "source_files": [
+        "src\\server\\server.js",
+        "src\\server\\map\\player.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `h` connect `h / a() / c` to `f() / p / .open()`, `app.js / registerFunctions() / addSystemLine()`, `ChatClient / .registerFunctions() / .addSystemLine()`, `.emit() / addPlayer() / server.js`, `render.js / _() / gameLoop()`?",
+      "why": "High betweenness centrality (0.203) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `tickPlayer()` connect `.emit() / addPlayer() / server.js` to `move() / massFood.js / adjustForBoundaries()`, `player.js / Cell / tickGame()`?",
+      "why": "High betweenness centrality (0.075) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `addPlayer()` connect `.emit() / addPlayer() / server.js` to `player.js / Cell / tickGame()`, `ChatClient / .registerFunctions() / .addSystemLine()`?",
+      "why": "High betweenness centrality (0.073) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Grid-based arena`, `crosshair/target reticle`, `feed control` to the rest of the system?",
+      "why": "4 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `f() / p / .open()` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `h / a() / c` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.07 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `player.js / Cell / tickGame()` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14 - nodes in this community are weakly interconnected."
+    }
+  ],
+  "benchmark": {
+    "corpus_tokens": 38904,
+    "corpus_words": 29178,
+    "nodes": 355,
+    "edges": 711,
+    "avg_query_tokens": 2101,
+    "reduction_ratio": 18.5,
+    "per_question": [
+      {
+        "question": "How do players move and split?",
+        "query_tokens": 2535,
+        "reduction": 15.3
+      },
+      {
+        "question": "What controls gameplay actions?",
+        "query_tokens": 1668,
+        "reduction": 23.3
+      }
+    ]
+  }
+}

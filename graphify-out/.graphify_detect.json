@@ -1,0 +1,66 @@
+{
+  "files": {
+    "code": [
+      "config.js",
+      "gulpfile.js",
+      "webpack.config.js",
+      "bin\\server\\server.js",
+      "bin\\server\\game-logic.js",
+      "bin\\server\\sql.js",
+      "bin\\server\\lib\\util.js",
+      "bin\\server\\lib\\entityUtils.js",
+      "bin\\server\\map\\map.js",
+      "bin\\server\\map\\player.js",
+      "bin\\server\\map\\food.js",
+      "bin\\server\\map\\massFood.js",
+      "bin\\server\\map\\virus.js",
+      "bin\\server\\repositories\\chat-repository.js",
+      "bin\\server\\repositories\\logging-repository.js",
+      "bin\\client\\js\\app.js",
+      "src\\server\\server.js",
+      "src\\server\\game-logic.js",
+      "src\\server\\sql.js",
+      "src\\server\\lib\\util.js",
+      "src\\server\\lib\\entityUtils.js",
+      "src\\server\\map\\map.js",
+      "src\\server\\map\\player.js",
+      "src\\server\\map\\food.js",
+      "src\\server\\map\\massFood.js",
+      "src\\server\\map\\virus.js",
+      "src\\server\\repositories\\chat-repository.js",
+      "src\\server\\repositories\\logging-repository.js",
+      "src\\client\\js\\global.js",
+      "src\\client\\js\\canvas.js",
+      "src\\client\\js\\chat-client.js",
+      "src\\client\\js\\render.js",
+      "src\\client\\js\\app.js",
+      "test\\server.js",
+      "test\\util.js"
+    ],
+    "document": [
+      "AGENTS.md",
+      "TODO.md",
+      "README.md"
+    ],
+    "paper": [],
+    "image": [
+      "screenshot.png",
+      "bin\\client\\img\\split.png",
+      "bin\\client\\img\\feed.png",
+      "src\\client\\img\\split.png",
+      "src\\client\\img\\feed.png"
+    ],
+    "video": [
+      "bin\\client\\audio\\spawn.mp3",
+      "bin\\client\\audio\\split.mp3",
+      "src\\client\\audio\\spawn.mp3",
+      "src\\client\\audio\\split.mp3"
+    ]
+  },
+  "total_files": 47,
+  "total_words": 29178,
+  "needs_graph": false,
+  "warning": "Corpus is ~29,178 words - fits in a single context window. You may not need a graph.",
+  "skipped_sensitive": [],
+  "graphifyignore_patterns": 0
+}

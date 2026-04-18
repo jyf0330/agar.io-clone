@@ -1,5 +1,5 @@
 module.exports = (isProduction) => ({
-    entry: "./src/client/js/app.js",
+    entry: "./apps/client/src/app.js",
     mode: isProduction ? 'production' : 'development',
     output: {
         library: "app",
