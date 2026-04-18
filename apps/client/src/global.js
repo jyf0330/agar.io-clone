@@ -27,6 +27,7 @@ module.exports = {
     continuity: false,
     startPingTime: 0,
     toggleMassState: 0,
+    playerCard: null,
     backgroundColor: '#f2fbff',
     lineColor: '#000000',
 };

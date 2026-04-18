@@ -14,6 +14,7 @@
 <body>
     <div id="gameAreaWrapper">
         <div id="status"><span class="title">Leaderboard</span></div>
+        <div id="playerCardHud"></div>
         <div class="chatbox" id="chatbox">
             <ul id="chatList" class="chat-list"></ul>
             <input id="chatInput" type="text" class="chat-input" placeholder="Chat here..." maxlength="35" />
@@ -32,8 +33,10 @@
             <br />
             <a onclick="document.getElementById('spawn_cell').play();"><button id="startButton">Play</button></a>
             <button id="spectateButton">Spectate</button>
+            <button id="paintCardButton">Draw Card</button>
             <button id="settingsButton">Settings</button>
             <br />
+            <div id="playerCardStartPreview"></div>
             <div id="settings">
                 <h3>Settings</h3>
                 <ul>
@@ -54,6 +57,25 @@
                     <li>A player's mass is the number of food particles eaten.</li>
                     <li>Objective: Try to get fat and eat other players.</li>
                 </ul>
+            </div>
+        </div>
+        <div id="playerCardPanel">
+            <div class="player-card-panel-inner">
+                <h3>Draw Your Card</h3>
+                <div class="player-card-toolbar">
+                    <button id="drawToolButton" type="button">Brush</button>
+                    <button id="eraseToolButton" type="button">Eraser</button>
+                    <button id="undoCardButton" type="button">Undo</button>
+                    <button id="clearCardButton" type="button">Clear</button>
+                    <button id="saveCardButton" type="button">Save</button>
+                    <button id="closeCardPanelButton" type="button">Close</button>
+                </div>
+                <div class="player-card-controls">
+                    <label>Color <input id="cardBrushColor" type="color" value="#111111"></label>
+                    <label>Size <input id="cardBrushSize" type="range" min="2" max="24" value="6"></label>
+                </div>
+                <div id="playerCardPanelMessage"></div>
+                <canvas id="playerCardCanvas" width="320" height="220"></canvas>
             </div>
         </div>
     </div>

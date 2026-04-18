@@ -7,9 +7,13 @@ var formatMaterializationStatus = require('./materialization-status');
 var formatConnectionStatus = require('./connection-status');
 var formatRelationshipStatus = require('./relationship-status');
 var formatBodyStatus = require('./body-status');
+var playerCardStorage = require('./player-card-storage');
+var formatPlayerCardPreview = require('./player-card-preview');
+var createPlayerCardEditor = require('./player-card-editor');
 
 var playerNameInput = document.getElementById('playerNameInput');
 var socket;
+var playerCardEditor;
 
 var debug = function (args) {
     if (console && console.log) {
@@ -24,6 +28,7 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
 function startGame(type) {
     global.playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0, 25);
     global.playerType = type;
+    global.playerCard = playerCardStorage.loadPlayerCard();
 
     global.screen.width = window.innerWidth;
     global.screen.height = window.innerHeight;
@@ -55,6 +60,27 @@ window.onload = function () {
     var btn = document.getElementById('startButton'),
         btnS = document.getElementById('spectateButton'),
         nickErrorText = document.querySelector('#startMenu .input-error');
+
+    renderPlayerCardPreviews();
+
+    playerCardEditor = createPlayerCardEditor({
+        panelEl: document.getElementById('playerCardPanel'),
+        openButton: document.getElementById('paintCardButton'),
+        closeButton: document.getElementById('closeCardPanelButton'),
+        drawButton: document.getElementById('drawToolButton'),
+        eraseButton: document.getElementById('eraseToolButton'),
+        undoButton: document.getElementById('undoCardButton'),
+        clearButton: document.getElementById('clearCardButton'),
+        saveButton: document.getElementById('saveCardButton'),
+        colorInput: document.getElementById('cardBrushColor'),
+        sizeInput: document.getElementById('cardBrushSize'),
+        messageEl: document.getElementById('playerCardPanelMessage'),
+        canvasId: 'playerCardCanvas',
+        onSave: function (payload) {
+            global.playerCard = payload;
+            renderPlayerCardPreviews();
+        }
+    });
 
     btnS.onclick = function () {
         startGame('spectator');
@@ -163,6 +189,14 @@ function renderStatusPanel() {
     status += formatRelationshipStatus(player);
     status += formatBodyStatus(player);
     document.getElementById('status').innerHTML = status;
+}
+
+function renderPlayerCardPreviews() {
+    var savedCard = playerCardStorage.loadPlayerCard();
+    var previewDataUrl = savedCard ? savedCard.previewDataUrl : null;
+
+    document.getElementById('playerCardStartPreview').innerHTML = formatPlayerCardPreview(previewDataUrl, 'Player Card');
+    document.getElementById('playerCardHud').innerHTML = formatPlayerCardPreview(previewDataUrl, 'My Card');
 }
 
 $("#feed").click(function () {
