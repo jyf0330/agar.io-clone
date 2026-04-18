@@ -363,6 +363,75 @@ div {
     box-sizing: border-box;
 }
 
+.avatar-draft-panel {
+    display: none;
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 6px;
+    background: #f4f7ff;
+}
+
+.avatar-draft-panel.active {
+    display: block;
+}
+
+.avatar-draft-header {
+    margin-bottom: 10px;
+}
+
+#avatarDraftTimer {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+#avatarDraftHint {
+    color: #5b6473;
+}
+
+#avatarDraftCandidates {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.avatar-draft-candidate {
+    padding: 10px;
+    border: 1px solid #cfd8ec;
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+    text-align: left;
+}
+
+.avatar-draft-candidate.active {
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 1px #2ecc71;
+}
+
+.avatar-draft-candidate-title {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.avatar-draft-candidate-subtitle {
+    display: block;
+    color: #5b6473;
+    margin-bottom: 4px;
+}
+
+.avatar-draft-candidate-missing {
+    display: block;
+    color: #c0392b;
+    font-weight: bold;
+}
+
+.avatar-draft-actions {
+    display: flex;
+    gap: 8px;
+}
+
 .player-card-toolbar,
 .player-card-controls {
     display: flex;

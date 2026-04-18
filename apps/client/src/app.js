@@ -10,10 +10,15 @@ var formatBodyStatus = require('./body-status');
 var playerCardStorage = require('./player-card-storage');
 var formatPlayerCardPreview = require('./player-card-preview');
 var createPlayerCardEditor = require('./player-card-editor');
+var avatarDraftConfig = require('./avatar-draft-config');
+var avatarHistoryStore = require('./avatar-history-store');
+var avatarDraftCandidates = require('./avatar-draft-candidates');
 
 var playerNameInput = document.getElementById('playerNameInput');
 var socket;
 var playerCardEditor;
+var activeDraftSession = null;
+var draftTimerHandle = null;
 
 var debug = function (args) {
     if (console && console.log) {
@@ -25,7 +30,7 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
     global.mobile = true;
 }
 
-function startGame(type) {
+function enterGame(type) {
     global.playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0, 25);
     global.playerType = type;
     global.playerCard = playerCardStorage.loadPlayerCard();
@@ -49,6 +54,15 @@ function startGame(type) {
     global.socket = socket;
 }
 
+function startGame(type) {
+    if (type === 'player' && avatarDraftConfig.enableAvatarDraftFeature) {
+        beginAvatarDraftFlow(type);
+        return;
+    }
+
+    enterGame(type);
+}
+
 // Checks if the nick chosen contains valid alphanumeric characters (and underscores).
 function validNick() {
     var regex = /^\w*$/;
@@ -60,7 +74,8 @@ window.onload = function () {
 
     var btn = document.getElementById('startButton'),
         btnS = document.getElementById('spectateButton'),
-        nickErrorText = document.querySelector('#startMenu .input-error');
+        nickErrorText = document.querySelector('#startMenu .input-error'),
+        paintCardButton = document.getElementById('paintCardButton');
 
     renderPlayerCardPreviews();
 
@@ -89,11 +104,14 @@ window.onload = function () {
         onSave: function (payload) {
             global.playerCard = payload;
             renderPlayerCardPreviews();
+            if (activeDraftSession) {
+                completeAvatarDraft(payload);
+            }
         }
     });
 
     btnS.onclick = function () {
-        startGame('spectator');
+        enterGame('spectator');
     };
 
     btn.onclick = function () {
@@ -105,6 +123,12 @@ window.onload = function () {
         } else {
             nickErrorText.style.opacity = 1;
         }
+    };
+
+    paintCardButton.onclick = function () {
+        deactivateDraftMode();
+        resetPlayerCardPanelToManualMode();
+        playerCardEditor.open();
     };
 
     var settingsMenu = document.getElementById('settingsButton');
@@ -217,6 +241,192 @@ function renderPlayerCardPreviews() {
         targetCardHud.style.display = 'none';
         targetCardHud.innerHTML = '';
     }
+}
+
+function getDraftPanelElements() {
+    return {
+        panel: document.getElementById('avatarDraftPanel'),
+        timer: document.getElementById('avatarDraftTimer'),
+        hint: document.getElementById('avatarDraftHint'),
+        candidates: document.getElementById('avatarDraftCandidates'),
+        rerollButton: document.getElementById('avatarDraftRerollButton'),
+        skipButton: document.getElementById('avatarDraftSkipButton'),
+        saveButton: document.getElementById('saveCardButton'),
+        closeButton: document.getElementById('closeCardPanelButton')
+    };
+}
+
+function resetPlayerCardPanelToManualMode() {
+    var draftUi = getDraftPanelElements();
+    draftUi.panel.classList.remove('active');
+    draftUi.timer.textContent = '';
+    draftUi.hint.textContent = '';
+    draftUi.candidates.innerHTML = '';
+    draftUi.saveButton.textContent = 'Save';
+    draftUi.closeButton.textContent = 'Close';
+}
+
+function clearDraftTimer() {
+    if (draftTimerHandle) {
+        window.clearInterval(draftTimerHandle);
+        draftTimerHandle = null;
+    }
+}
+
+function deactivateDraftMode() {
+    activeDraftSession = null;
+    clearDraftTimer();
+    resetPlayerCardPanelToManualMode();
+}
+
+function formatMissingPartLabel(partType) {
+    return partType.charAt(0).toUpperCase() + partType.slice(1);
+}
+
+function renderDraftCandidates() {
+    var draftUi = getDraftPanelElements();
+    draftUi.candidates.innerHTML = activeDraftSession.candidates.map(function (candidate) {
+        var isActive = activeDraftSession.selectedCandidateId === candidate.id ? ' active' : '';
+        return [
+            '<button type="button" class="avatar-draft-candidate' + isActive + '" data-candidate-id="' + candidate.id + '">',
+            '<span class="avatar-draft-candidate-title">' + candidate.previewMeta.title + '</span>',
+            '<span class="avatar-draft-candidate-subtitle">' + candidate.previewMeta.subtitle + '</span>',
+            '<span class="avatar-draft-candidate-missing">Missing: ' + formatMissingPartLabel(candidate.missingPartType) + '</span>',
+            '</button>'
+        ].join('');
+    }).join('');
+
+    Array.prototype.forEach.call(draftUi.candidates.querySelectorAll('[data-candidate-id]'), function (button) {
+        button.addEventListener('click', function () {
+            selectDraftCandidate(button.getAttribute('data-candidate-id'));
+        });
+    });
+}
+
+function selectDraftCandidate(candidateId) {
+    var candidate = activeDraftSession.candidates.find(function (entry) {
+        return entry.id === candidateId;
+    });
+    if (!candidate) {
+        return;
+    }
+
+    activeDraftSession.selectedCandidateId = candidateId;
+    renderDraftCandidates();
+    playerCardEditor.loadCanvasJson(candidate.baseShapeData);
+    getDraftPanelElements().hint.textContent = 'Fill the missing ' + formatMissingPartLabel(candidate.missingPartType) + ' before the timer ends.';
+}
+
+function updateDraftTimer() {
+    if (!activeDraftSession) {
+        return;
+    }
+
+    var remainingMs = Math.max(0, activeDraftSession.deadlineAt - Date.now());
+    var remainingSeconds = Math.ceil(remainingMs / 1000);
+    getDraftPanelElements().timer.textContent = 'Time left: ' + remainingSeconds + 's';
+
+    if (remainingMs <= 0) {
+        clearDraftTimer();
+        playerCardEditor.saveCurrent();
+    }
+}
+
+function buildDraftSession(playerType) {
+    var historyEntries = avatarHistoryStore.loadHistory();
+    var candidates = avatarDraftCandidates.buildDraftCandidates({
+        config: avatarDraftConfig,
+        historyEntries: historyEntries
+    });
+
+    return {
+        playerType: playerType,
+        candidates: candidates,
+        selectedCandidateId: candidates[0] ? candidates[0].id : null,
+        remainingRerolls: avatarDraftConfig.allowRedrawCount,
+        deadlineAt: Date.now() + (avatarDraftConfig.drawTimeLimitSeconds * 1000)
+    };
+}
+
+function rerollDraftCandidates() {
+    if (!activeDraftSession || activeDraftSession.remainingRerolls <= 0) {
+        return;
+    }
+
+    activeDraftSession.remainingRerolls -= 1;
+    activeDraftSession.candidates = avatarDraftCandidates.buildDraftCandidates({
+        config: avatarDraftConfig,
+        historyEntries: avatarHistoryStore.loadHistory()
+    });
+    activeDraftSession.selectedCandidateId = activeDraftSession.candidates[0] ? activeDraftSession.candidates[0].id : null;
+    activeDraftSession.deadlineAt = Date.now() + (avatarDraftConfig.drawTimeLimitSeconds * 1000);
+    renderDraftCandidates();
+    selectDraftCandidate(activeDraftSession.selectedCandidateId);
+    updateDraftButtons();
+}
+
+function updateDraftButtons() {
+    var draftUi = getDraftPanelElements();
+    draftUi.rerollButton.style.display = activeDraftSession ? 'inline-block' : 'none';
+    draftUi.skipButton.style.display = activeDraftSession && avatarDraftConfig.allowSkipForDebug ? 'inline-block' : 'none';
+    draftUi.rerollButton.disabled = !activeDraftSession || activeDraftSession.remainingRerolls <= 0;
+    draftUi.rerollButton.textContent = 'Reroll (' + (activeDraftSession ? activeDraftSession.remainingRerolls : 0) + ')';
+}
+
+function beginAvatarDraftFlow(playerType) {
+    activeDraftSession = buildDraftSession(playerType);
+
+    var draftUi = getDraftPanelElements();
+    draftUi.panel.classList.add('active');
+    draftUi.saveButton.textContent = 'Confirm & Play';
+    draftUi.closeButton.textContent = 'Cancel';
+
+    updateDraftButtons();
+    renderDraftCandidates();
+
+    playerCardEditor.open().then(function () {
+        selectDraftCandidate(activeDraftSession.selectedCandidateId);
+    });
+
+    draftUi.rerollButton.onclick = rerollDraftCandidates;
+    draftUi.skipButton.onclick = function () {
+        deactivateDraftMode();
+        playerCardEditor.close();
+        enterGame(playerType);
+    };
+    draftUi.closeButton.onclick = function () {
+        deactivateDraftMode();
+        playerCardEditor.close();
+    };
+
+    clearDraftTimer();
+    updateDraftTimer();
+    draftTimerHandle = window.setInterval(updateDraftTimer, 250);
+}
+
+function completeAvatarDraft(payload) {
+    if (!activeDraftSession) {
+        return;
+    }
+
+    var selectedCandidate = activeDraftSession.candidates.find(function (candidate) {
+        return candidate.id === activeDraftSession.selectedCandidateId;
+    });
+    var finalPayload = Object.assign({}, payload, {
+        templateId: selectedCandidate.templateId,
+        missingPartType: selectedCandidate.missingPartType,
+        sourceType: selectedCandidate.sourceType
+    });
+
+    playerCardStorage.savePlayerCard(finalPayload);
+    avatarHistoryStore.addHistoryEntry(avatarHistoryStore.createHistoryEntry(finalPayload));
+    global.playerCard = finalPayload;
+    renderPlayerCardPreviews();
+
+    var playerType = activeDraftSession.playerType;
+    deactivateDraftMode();
+    playerCardEditor.close();
+    enterGame(playerType);
 }
 
 function findConnectedTargetCardPreview(userData) {

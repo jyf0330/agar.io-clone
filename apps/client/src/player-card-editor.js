@@ -105,18 +105,28 @@ function createPlayerCardEditor(options) {
     function loadSavedState() {
         var savedCard = playerCardStorage.loadPlayerCard();
         if (!savedCard || !savedCard.canvasJson) {
-            state.canvas.backgroundColor = '#ffffff';
-            state.canvas.requestRenderAll();
-            state.history = playerCardHistory.createHistoryState(50);
-            pushHistory();
-            return Promise.resolve();
+            return loadCanvasJson({
+                version: '6.7.1',
+                background: '#ffffff',
+                objects: []
+            });
         }
 
-        return state.canvas.loadFromJSON(savedCard.canvasJson).then(function () {
+        return loadCanvasJson(savedCard.canvasJson);
+    }
+
+    function loadCanvasJson(canvasJson) {
+        state.loading = true;
+        return state.canvas.loadFromJSON(canvasJson || {
+            version: '6.7.1',
+            background: '#ffffff',
+            objects: []
+        }).then(function () {
             state.canvas.backgroundColor = '#ffffff';
             state.canvas.requestRenderAll();
             state.history = playerCardHistory.createHistoryState(50);
             pushHistory();
+            state.loading = false;
         });
     }
 
@@ -321,28 +331,33 @@ function createPlayerCardEditor(options) {
     }
 
     function save() {
-        if (!state.canvas) {
+        var payload = exportPayload();
+        if (!payload) {
             return;
         }
-
-        var payload = {
-            previewDataUrl: state.canvas.toDataURL({
-                format: 'png',
-                multiplier: 1
-            }),
-            canvasJson: state.canvas.toJSON()
-        };
 
         playerCardStorage.savePlayerCard(payload);
         if (options.onSave) {
             options.onSave(payload);
         }
         setPanelMessage('Card saved.');
+        return payload;
     }
 
-    options.openButton.addEventListener('click', function () {
-        open();
-    });
+    function exportPayload() {
+        if (!state.canvas) {
+            return null;
+        }
+
+        return {
+            previewDataUrl: state.canvas.toDataURL({
+                format: 'png',
+                multiplier: 1
+            }),
+            canvasJson: state.canvas.toJSON()
+        };
+    }
+
     options.closeButton.addEventListener('click', function () {
         close();
     });
@@ -390,7 +405,15 @@ function createPlayerCardEditor(options) {
 
     return {
         open: open,
-        close: close
+        close: close,
+        loadCanvasJson: function (canvasJson) {
+            return ensureCanvas().then(function () {
+                return loadCanvasJson(canvasJson);
+            });
+        },
+        exportPayload: exportPayload,
+        saveCurrent: save,
+        setMessage: setPanelMessage
     };
 }
 
