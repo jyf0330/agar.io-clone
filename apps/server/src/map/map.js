@@ -59,6 +59,7 @@ exports.Map = class {
                     bodyParts: player.bodyParts,
                     bodyPartCount: player.bodyPartCount,
                     bodyPartCounts: player.bodyPartCounts,
+                    playerCardPreviewDataUrl: player.playerCardPreviewDataUrl,
                     hue: player.hue,
                     id: player.id,
                     name: player.name

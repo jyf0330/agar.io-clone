@@ -29,6 +29,7 @@ function startGame(type) {
     global.playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0, 25);
     global.playerType = type;
     global.playerCard = playerCardStorage.loadPlayerCard();
+    global.targetPlayerCardPreviewDataUrl = null;
 
     global.screen.width = window.innerWidth;
     global.screen.height = window.innerHeight;
@@ -194,9 +195,33 @@ function renderStatusPanel() {
 function renderPlayerCardPreviews() {
     var savedCard = playerCardStorage.loadPlayerCard();
     var previewDataUrl = savedCard ? savedCard.previewDataUrl : null;
+    var targetPreviewDataUrl = global.targetPlayerCardPreviewDataUrl;
+    var targetCardHud = document.getElementById('targetCardHud');
 
     document.getElementById('playerCardStartPreview').innerHTML = formatPlayerCardPreview(previewDataUrl, 'Player Card');
     document.getElementById('playerCardHud').innerHTML = formatPlayerCardPreview(previewDataUrl, 'My Card');
+
+    if (targetPreviewDataUrl) {
+        targetCardHud.style.display = 'block';
+        targetCardHud.innerHTML = formatPlayerCardPreview(targetPreviewDataUrl, 'Target Card');
+    } else {
+        targetCardHud.style.display = 'none';
+        targetCardHud.innerHTML = '';
+    }
+}
+
+function findConnectedTargetCardPreview(userData) {
+    if (!player.connectionTargetId || !userData) {
+        return null;
+    }
+
+    for (var i = 0; i < userData.length; i++) {
+        if (userData[i].id === player.connectionTargetId) {
+            return userData[i].playerCardPreviewDataUrl || null;
+        }
+    }
+
+    return null;
 }
 
 $("#feed").click(function () {
@@ -236,6 +261,7 @@ function setupSocket(socket) {
         player.screenWidth = global.screen.width;
         player.screenHeight = global.screen.height;
         player.target = window.canvas.target;
+        player.playerCardPreviewDataUrl = global.playerCard ? global.playerCard.previewDataUrl : null;
         global.player = player;
         window.chat.player = player;
         socket.emit('gotit', player);
@@ -299,13 +325,16 @@ function setupSocket(socket) {
             player.bodyParts = playerData.bodyParts;
             player.bodyPartCount = playerData.bodyPartCount;
             player.bodyPartCounts = playerData.bodyPartCounts;
+            player.playerCardPreviewDataUrl = playerData.playerCardPreviewDataUrl;
             player.cells = playerData.cells;
         }
         users = userData;
+        global.targetPlayerCardPreviewDataUrl = findConnectedTargetCardPreview(userData);
         foods = foodsList;
         viruses = virusList;
         fireFood = massList;
         renderStatusPanel();
+        renderPlayerCardPreviews();
     });
 
     // Death.

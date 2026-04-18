@@ -67,6 +67,18 @@ div {
     text-align: center;
 }
 
+#targetCardHud {
+    position: absolute;
+    top: 210px;
+    left: 10px;
+    width: 180px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #FFF;
+    text-align: center;
+    display: none;
+}
+
 #playerCardStartPreview {
     margin-top: 10px;
 }

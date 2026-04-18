@@ -93,6 +93,7 @@ exports.Player = class {
         this.hue = Math.round(Math.random() * 360);
         this.name = null;
         this.admin = false;
+        this.playerCardPreviewDataUrl = null;
         this.screenWidth = null;
         this.screenHeight = null;
         this.timeToMerge = null;
@@ -123,6 +124,7 @@ exports.Player = class {
         this.name = playerData.name;
         this.screenWidth = playerData.screenWidth;
         this.screenHeight = playerData.screenHeight;
+        this.playerCardPreviewDataUrl = playerData.playerCardPreviewDataUrl || null;
         this.setLastHeartbeat();
     }
 
