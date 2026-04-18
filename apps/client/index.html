@@ -64,15 +64,24 @@
             <div class="player-card-panel-inner">
                 <h3>Draw Your Card</h3>
                 <div class="player-card-toolbar">
+                    <button id="selectToolButton" type="button">Select</button>
                     <button id="drawToolButton" type="button">Brush</button>
+                    <button id="rectToolButton" type="button">Rect</button>
+                    <button id="circleToolButton" type="button">Circle</button>
+                    <button id="lineToolButton" type="button">Line</button>
+                    <button id="textToolButton" type="button">Text</button>
                     <button id="eraseToolButton" type="button">Eraser</button>
                     <button id="undoCardButton" type="button">Undo</button>
+                    <button id="redoCardButton" type="button">Redo</button>
                     <button id="clearCardButton" type="button">Clear</button>
                     <button id="saveCardButton" type="button">Save</button>
+                    <button id="exportPngButton" type="button">Export PNG</button>
+                    <button id="exportJsonButton" type="button">Export JSON</button>
                     <button id="closeCardPanelButton" type="button">Close</button>
                 </div>
                 <div class="player-card-controls">
-                    <label>Color <input id="cardBrushColor" type="color" value="#111111"></label>
+                    <label>Stroke <input id="cardStrokeColor" type="color" value="#111111"></label>
+                    <label>Fill <input id="cardFillColor" type="color" value="#f2fbff"></label>
                     <label>Size <input id="cardBrushSize" type="range" min="2" max="24" value="6"></label>
                 </div>
                 <div id="playerCardPanelMessage"></div>
