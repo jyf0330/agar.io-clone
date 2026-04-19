@@ -3,10 +3,13 @@
 var playerCardStorage = require('./player-card-storage');
 var playerCardHistory = require('./player-card-history');
 var playerCardScale = require('./player-card-scale');
+var playerCardCanvasTransform = require('./player-card-canvas-transform');
+var i18n = require('./i18n');
 
 var FABRIC_SCRIPT_URL = 'https://cdn.jsdelivr.net/npm/fabric@6.7.1/dist/index.min.js';
 var CANVAS_SIZE = 320;
 var CIRCLE_RADIUS = CANVAS_SIZE / 2;
+var KEYBOARD_PAN_STEP = 12;
 
 var fabricLoadPromise;
 
@@ -42,7 +45,10 @@ function createPlayerCardEditor(options) {
         history: playerCardHistory.createHistoryState(50),
         activeTool: 'draw',
         loading: false,
-        contentScale: 1
+        contentScale: 1,
+        isPanning: false,
+        panDirty: false,
+        panOrigin: null
     };
 
     function setPanelMessage(message) {
@@ -197,6 +203,7 @@ function createPlayerCardEditor(options) {
             options.sizeInput.addEventListener('input', updateBrush);
             updateBrush();
             updateZoomButtons();
+            bindCanvasGestures();
 
             return loadSavedState().then(function () {
                 return state.canvas;
@@ -206,13 +213,13 @@ function createPlayerCardEditor(options) {
 
     function open() {
         options.panelEl.classList.add('open');
-        setPanelMessage('Loading drawing tools...');
+        setPanelMessage(i18n.t('editor.loading'));
 
         return ensureCanvas().then(function () {
             updateBrush();
             setPanelMessage('');
         }).catch(function () {
-            setPanelMessage('Failed to load drawing tools.');
+            setPanelMessage(i18n.t('editor.failed'));
         });
     }
 
@@ -358,7 +365,7 @@ function createPlayerCardEditor(options) {
         link.href = exportCircularCanvas().toDataURL('image/png');
         link.download = 'player-card.png';
         link.click();
-        setPanelMessage('PNG exported.');
+        setPanelMessage(i18n.t('editor.exportPng'));
     }
 
     function exportJson() {
@@ -371,7 +378,7 @@ function createPlayerCardEditor(options) {
             'application/json',
             'player-card.json'
         );
-        setPanelMessage('JSON exported.');
+        setPanelMessage(i18n.t('editor.exportJson'));
     }
 
     function save() {
@@ -384,7 +391,7 @@ function createPlayerCardEditor(options) {
         if (options.onSave) {
             options.onSave(payload);
         }
-        setPanelMessage('Card saved.');
+        setPanelMessage(i18n.t('editor.saved'));
         return payload;
     }
 
@@ -417,10 +424,7 @@ function createPlayerCardEditor(options) {
 
         state.loading = true;
         state.canvas.getObjects().forEach(function (object) {
-            object.scaleX *= ratio;
-            object.scaleY *= ratio;
-            object.left = centerX + ((object.left || 0) - centerX) * ratio;
-            object.top = centerY + ((object.top || 0) - centerY) * ratio;
+            playerCardCanvasTransform.scaleObjectAroundPoint(object, ratio, centerX, centerY);
             object.setCoords();
         });
         state.contentScale = nextScale;
@@ -428,7 +432,110 @@ function createPlayerCardEditor(options) {
         state.canvas.requestRenderAll();
         updateZoomButtons();
         pushHistory();
-        setPanelMessage('Scale: ' + nextScale.toFixed(2) + 'x');
+        setPanelMessage(i18n.t('editor.scale', { value: nextScale.toFixed(2) }));
+    }
+
+    function translateCanvasContent(deltaX, deltaY) {
+        if (!state.canvas) {
+            return;
+        }
+
+        state.loading = true;
+        state.canvas.getObjects().forEach(function (object) {
+            playerCardCanvasTransform.translateObject(object, deltaX, deltaY);
+            object.setCoords();
+        });
+        state.loading = false;
+        state.canvas.requestRenderAll();
+        state.panDirty = true;
+    }
+
+    function stopPan() {
+        if (!state.isPanning) {
+            return;
+        }
+
+        state.isPanning = false;
+        state.panOrigin = null;
+        document.body.style.cursor = '';
+        if (state.panDirty) {
+            pushHistory();
+            state.panDirty = false;
+        }
+    }
+
+    function bindCanvasGestures() {
+        var upperCanvas = state.canvas.upperCanvasEl;
+
+        upperCanvas.addEventListener('wheel', function (event) {
+            event.preventDefault();
+            scaleCanvasContent(event.deltaY < 0 ? 'in' : 'out');
+        }, { passive: false });
+
+        upperCanvas.addEventListener('mousedown', function (event) {
+            if (event.button !== 1) {
+                return;
+            }
+
+            event.preventDefault();
+            state.isPanning = true;
+            state.panDirty = false;
+            state.panOrigin = {
+                x: event.clientX,
+                y: event.clientY
+            };
+            document.body.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', function (event) {
+            if (!state.isPanning || !state.panOrigin) {
+                return;
+            }
+
+            var deltaX = event.clientX - state.panOrigin.x;
+            var deltaY = event.clientY - state.panOrigin.y;
+            state.panOrigin = {
+                x: event.clientX,
+                y: event.clientY
+            };
+            translateCanvasContent(deltaX, deltaY);
+        });
+
+        window.addEventListener('mouseup', function () {
+            stopPan();
+        });
+
+        window.addEventListener('keydown', function (event) {
+            var activeElement = document.activeElement;
+            var activeObject = state.canvas && state.canvas.getActiveObject ? state.canvas.getActiveObject() : null;
+            var panDelta;
+
+            if (!options.panelEl.classList.contains('open')) {
+                return;
+            }
+
+            if (activeElement && (
+                activeElement.tagName === 'INPUT' ||
+                activeElement.tagName === 'TEXTAREA' ||
+                activeElement.isContentEditable
+            )) {
+                return;
+            }
+
+            if (activeObject && activeObject.isEditing) {
+                return;
+            }
+
+            panDelta = playerCardCanvasTransform.getKeyboardPanDelta(event.key, KEYBOARD_PAN_STEP);
+            if (!panDelta) {
+                return;
+            }
+
+            event.preventDefault();
+            translateCanvasContent(panDelta.x, panDelta.y);
+            pushHistory();
+            state.panDirty = false;
+        });
     }
 
     function bindPressAndHold(button, direction) {

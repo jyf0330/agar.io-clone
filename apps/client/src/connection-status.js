@@ -1,4 +1,5 @@
 'use strict';
+var i18n = require('./i18n');
 
 function formatConnectionStatus(player) {
     if (!player || !player.connectionStatus) {
@@ -7,10 +8,10 @@ function formatConnectionStatus(player) {
 
     return [
         '<br />',
-        '<span class="title">Connection</span>',
+        '<span class="title">' + i18n.t('hud.connection') + '</span>',
         '<br />',
-        'Status: ' + player.connectionStatus,
-        player.connectionTargetName ? '<br />Target: ' + player.connectionTargetName : ''
+        i18n.t('hud.connectionStatus', { status: player.connectionStatus }),
+        player.connectionTargetName ? '<br />' + i18n.t('hud.connectionTarget', { target: player.connectionTargetName }) : ''
     ].join('');
 }
 

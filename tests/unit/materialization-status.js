@@ -10,8 +10,8 @@ describe('materialization-status.js', () => {
       materializationStage: 'HOLLOW'
     });
 
-    expect(markup).to.contain('Materialization: 0');
-    expect(markup).to.contain('Stage: HOLLOW');
+    expect(markup).to.contain('实体化值：0');
+    expect(markup).to.contain('阶段：HOLLOW');
   });
 
   it('should hide the status block when player data is not ready', () => {

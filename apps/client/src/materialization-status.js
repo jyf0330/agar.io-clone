@@ -1,4 +1,5 @@
 'use strict';
+var i18n = require('./i18n');
 
 function formatMaterializationStatus(player) {
     if (!player || typeof player.materialization !== 'number' || !player.materializationStage) {
@@ -7,11 +8,11 @@ function formatMaterializationStatus(player) {
 
     return [
         '<br />',
-        '<span class="title">Materialization</span>',
+        '<span class="title">' + i18n.t('hud.materialization') + '</span>',
         '<br />',
-        'Materialization: ' + player.materialization,
+        i18n.t('hud.materializationValue', { value: player.materialization }),
         '<br />',
-        'Stage: ' + player.materializationStage
+        i18n.t('hud.materializationStage', { stage: player.materializationStage })
     ].join('');
 }
 

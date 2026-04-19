@@ -16,6 +16,6 @@ describe('player-card-preview.js', () => {
     const markup = formatPlayerCardPreview(null, 'My Card');
 
     expect(markup).to.contain('My Card');
-    expect(markup).to.contain('No card yet');
+    expect(markup).to.contain('还没有名片');
   });
 });

@@ -10,6 +10,7 @@ var formatBodyStatus = require('./body-status');
 var playerCardStorage = require('./player-card-storage');
 var formatPlayerCardPreview = require('./player-card-preview');
 var createPlayerCardEditor = require('./player-card-editor');
+var i18n = require('./i18n');
 var avatarDraftConfig = require('./avatar-draft-config');
 var avatarHistoryStore = require('./avatar-history-store');
 var avatarDraftCandidates = require('./avatar-draft-candidates');
@@ -30,6 +31,8 @@ var debug = function (args) {
 if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
     global.mobile = true;
 }
+
+i18n.loadLocale();
 
 function enterGame(type) {
     global.playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0, 25);
@@ -76,8 +79,10 @@ window.onload = function () {
     var btn = document.getElementById('startButton'),
         btnS = document.getElementById('spectateButton'),
         nickErrorText = document.querySelector('#startMenu .input-error'),
-        paintCardButton = document.getElementById('paintCardButton');
+        paintCardButton = document.getElementById('paintCardButton'),
+        languageToggleButton = document.getElementById('languageToggleButton');
 
+    applyTranslations();
     renderPlayerCardPreviews();
 
     playerCardEditor = createPlayerCardEditor({
@@ -132,6 +137,18 @@ window.onload = function () {
         deactivateDraftMode();
         resetPlayerCardPanelToManualMode();
         playerCardEditor.open();
+    };
+
+    languageToggleButton.onclick = function () {
+        i18n.setLocale(i18n.getLocale() === 'zh-CN' ? 'en' : 'zh-CN');
+        applyTranslations();
+        renderPlayerCardPreviews();
+        renderStatusPanel();
+        if (activeDraftSession) {
+            renderDraftCandidates();
+            updateDraftButtons();
+            updateDraftTimer();
+        }
     };
 
     var settingsMenu = document.getElementById('settingsButton');
@@ -206,19 +223,19 @@ var c = window.canvas.cv;
 var graph = c.getContext('2d');
 
 function renderStatusPanel() {
-    var status = '<span class="title">Leaderboard</span>';
+    var status = '<span class="title">' + i18n.t('hud.leaderboard') + '</span>';
     for (var i = 0; i < leaderboard.length; i++) {
         status += '<br />';
         if (leaderboard[i].id == player.id) {
             if (leaderboard[i].name.length !== 0)
                 status += '<span class="me">' + (i + 1) + '. ' + leaderboard[i].name + "</span>";
             else
-                status += '<span class="me">' + (i + 1) + ". An unnamed cell</span>";
+                status += '<span class="me">' + (i + 1) + '. ' + i18n.t('hud.unnamedCell') + '</span>';
         } else {
             if (leaderboard[i].name.length !== 0)
                 status += (i + 1) + '. ' + leaderboard[i].name;
             else
-                status += (i + 1) + '. An unnamed cell';
+                status += (i + 1) + '. ' + i18n.t('hud.unnamedCell');
         }
     }
     status += formatMaterializationStatus(player);
@@ -234,16 +251,45 @@ function renderPlayerCardPreviews() {
     var targetPreviewDataUrl = global.targetPlayerCardPreviewDataUrl;
     var targetCardHud = document.getElementById('targetCardHud');
 
-    document.getElementById('playerCardStartPreview').innerHTML = formatPlayerCardPreview(previewDataUrl, 'Player Card');
-    document.getElementById('playerCardHud').innerHTML = formatPlayerCardPreview(previewDataUrl, 'My Card');
+    document.getElementById('playerCardStartPreview').innerHTML = formatPlayerCardPreview(previewDataUrl, i18n.t('hud.playerCard'));
+    document.getElementById('playerCardHud').innerHTML = formatPlayerCardPreview(previewDataUrl, i18n.t('hud.myCard'));
 
     if (targetPreviewDataUrl) {
         targetCardHud.style.display = 'block';
-        targetCardHud.innerHTML = formatPlayerCardPreview(targetPreviewDataUrl, 'Target Card');
+        targetCardHud.innerHTML = formatPlayerCardPreview(targetPreviewDataUrl, i18n.t('hud.targetCard'));
     } else {
         targetCardHud.style.display = 'none';
         targetCardHud.innerHTML = '';
     }
+}
+
+function applyTranslations() {
+    document.title = i18n.t('appTitle');
+    document.querySelectorAll('[data-i18n]').forEach(function (element) {
+        element.textContent = i18n.t(element.getAttribute('data-i18n'));
+    });
+    playerNameInput.placeholder = i18n.t('startMenu.namePlaceholder');
+    document.getElementById('languageToggleButton').textContent = i18n.t('language.toggle');
+    document.getElementById('playerCardPanelTitle').textContent = i18n.t('editor.panelTitle');
+    document.getElementById('strokeLabel').textContent = i18n.t('editor.stroke');
+    document.getElementById('fillLabel').textContent = i18n.t('editor.fill');
+    document.getElementById('sizeLabel').textContent = i18n.t('editor.size');
+    document.getElementById('selectToolButton').textContent = i18n.t('editor.select');
+    document.getElementById('drawToolButton').textContent = i18n.t('editor.brush');
+    document.getElementById('rectToolButton').textContent = i18n.t('editor.rect');
+    document.getElementById('circleToolButton').textContent = i18n.t('editor.circle');
+    document.getElementById('lineToolButton').textContent = i18n.t('editor.line');
+    document.getElementById('textToolButton').textContent = i18n.t('editor.text');
+    document.getElementById('eraseToolButton').textContent = i18n.t('editor.eraser');
+    document.getElementById('undoCardButton').textContent = i18n.t('editor.undo');
+    document.getElementById('redoCardButton').textContent = i18n.t('editor.redo');
+    document.getElementById('clearCardButton').textContent = i18n.t('editor.clear');
+    document.getElementById('saveCardButton').textContent = activeDraftSession ? i18n.t('draft.confirm') : i18n.t('editor.save');
+    document.getElementById('exportPngButton').textContent = i18n.t('editor.exportPngButton');
+    document.getElementById('exportJsonButton').textContent = i18n.t('editor.exportJsonButton');
+    document.getElementById('closeCardPanelButton').textContent = activeDraftSession ? i18n.t('draft.cancel') : i18n.t('editor.close');
+    document.getElementById('zoomOutCardButton').textContent = i18n.t('editor.zoomOut');
+    document.getElementById('zoomInCardButton').textContent = i18n.t('editor.zoomIn');
 }
 
 function getDraftPanelElements() {
@@ -265,8 +311,7 @@ function resetPlayerCardPanelToManualMode() {
     draftUi.timer.textContent = '';
     draftUi.hint.textContent = '';
     draftUi.candidates.innerHTML = '';
-    draftUi.saveButton.textContent = 'Save';
-    draftUi.closeButton.textContent = 'Close';
+    applyTranslations();
 }
 
 function clearDraftTimer() {
@@ -283,7 +328,7 @@ function deactivateDraftMode() {
 }
 
 function formatMissingPartLabel(partType) {
-    return partType.charAt(0).toUpperCase() + partType.slice(1);
+    return i18n.t('parts.' + partType.toUpperCase());
 }
 
 function renderDraftCandidates() {
@@ -294,8 +339,8 @@ function renderDraftCandidates() {
             '<button type="button" class="avatar-draft-candidate' + isActive + '" data-candidate-id="' + candidate.id + '">',
             '<img class="avatar-draft-candidate-preview" src="' + (avatarDraftPreview.createDraftPreviewDataUrl(candidate) || '') + '" alt="' + candidate.previewMeta.title + '" />',
             '<span class="avatar-draft-candidate-title">' + candidate.previewMeta.title + '</span>',
-            '<span class="avatar-draft-candidate-subtitle">' + candidate.previewMeta.subtitle + '</span>',
-            '<span class="avatar-draft-candidate-missing">Missing: ' + formatMissingPartLabel(candidate.missingPartType) + '</span>',
+            '<span class="avatar-draft-candidate-subtitle">' + (candidate.previewMeta.subtitleKey ? i18n.t(candidate.previewMeta.subtitleKey) : candidate.previewMeta.subtitle) + '</span>',
+            '<span class="avatar-draft-candidate-missing">' + i18n.t('draft.missing', { part: formatMissingPartLabel(candidate.missingPartType) }) + '</span>',
             '</button>'
         ].join('');
     }).join('');
@@ -318,7 +363,7 @@ function selectDraftCandidate(candidateId) {
     activeDraftSession.selectedCandidateId = candidateId;
     renderDraftCandidates();
     playerCardEditor.loadCanvasJson(candidate.baseShapeData);
-    getDraftPanelElements().hint.textContent = 'Fill the missing ' + formatMissingPartLabel(candidate.missingPartType) + ' before the timer ends.';
+    getDraftPanelElements().hint.textContent = i18n.t('draft.fillHint', { part: formatMissingPartLabel(candidate.missingPartType) });
 }
 
 function updateDraftTimer() {
@@ -328,7 +373,7 @@ function updateDraftTimer() {
 
     var remainingMs = Math.max(0, activeDraftSession.deadlineAt - Date.now());
     var remainingSeconds = Math.ceil(remainingMs / 1000);
-    getDraftPanelElements().timer.textContent = 'Time left: ' + remainingSeconds + 's';
+    getDraftPanelElements().timer.textContent = i18n.t('draft.timeLeft', { seconds: remainingSeconds });
 
     if (remainingMs <= 0) {
         clearDraftTimer();
@@ -374,7 +419,7 @@ function updateDraftButtons() {
     draftUi.rerollButton.style.display = activeDraftSession ? 'inline-block' : 'none';
     draftUi.skipButton.style.display = activeDraftSession && avatarDraftConfig.allowSkipForDebug ? 'inline-block' : 'none';
     draftUi.rerollButton.disabled = !activeDraftSession || activeDraftSession.remainingRerolls <= 0;
-    draftUi.rerollButton.textContent = 'Reroll (' + (activeDraftSession ? activeDraftSession.remainingRerolls : 0) + ')';
+    draftUi.rerollButton.textContent = i18n.t('draft.reroll', { count: activeDraftSession ? activeDraftSession.remainingRerolls : 0 });
 }
 
 function beginAvatarDraftFlow(playerType) {
@@ -382,8 +427,8 @@ function beginAvatarDraftFlow(playerType) {
 
     var draftUi = getDraftPanelElements();
     draftUi.panel.classList.add('active');
-    draftUi.saveButton.textContent = 'Confirm & Play';
-    draftUi.closeButton.textContent = 'Cancel';
+    draftUi.saveButton.textContent = i18n.t('draft.confirm');
+    draftUi.closeButton.textContent = i18n.t('draft.cancel');
 
     updateDraftButtons();
     renderDraftCandidates();
@@ -460,7 +505,7 @@ $("#split").click(function () {
 function handleDisconnect() {
     socket.close();
     if (!global.kicked) { // We have a more specific error message 
-        render.drawErrorMessage('Disconnected!', graph, global.screen);
+        render.drawErrorMessage(i18n.t('system.disconnected'), graph, global.screen);
     }
 }
 
@@ -470,7 +515,7 @@ function setupSocket(socket) {
     socket.on('pongcheck', function () {
         var latency = Date.now() - global.startPingTime;
         debug('Latency: ' + latency + 'ms');
-        window.chat.addSystemLine('Ping: ' + latency + 'ms');
+        window.chat.addSystemLine(i18n.t('system.ping', { latency: latency }));
     });
 
     // Handle error.
@@ -489,8 +534,8 @@ function setupSocket(socket) {
         window.chat.player = player;
         socket.emit('gotit', player);
         global.gameStart = true;
-        window.chat.addSystemLine('Connected to the game!');
-        window.chat.addSystemLine('Type <b>-help</b> for a list of commands.');
+        window.chat.addSystemLine(i18n.t('system.connected'));
+        window.chat.addSystemLine(i18n.t('system.help'));
         if (global.mobile) {
             document.getElementById('gameAreaWrapper').removeChild(document.getElementById('chatbox'));
         }
@@ -501,19 +546,23 @@ function setupSocket(socket) {
     });
 
     socket.on('playerDied', (data) => {
-        const player = isUnnamedCell(data.playerEatenName) ? 'An unnamed cell' : data.playerEatenName;
+        const player = isUnnamedCell(data.playerEatenName) ? i18n.t('hud.unnamedCell') : data.playerEatenName;
         //const killer = isUnnamedCell(data.playerWhoAtePlayerName) ? 'An unnamed cell' : data.playerWhoAtePlayerName;
 
         //window.chat.addSystemLine('{GAME} - <b>' + (player) + '</b> was eaten by <b>' + (killer) + '</b>');
-        window.chat.addSystemLine('{GAME} - <b>' + (player) + '</b> was eaten');
+        window.chat.addSystemLine(i18n.t('system.playerEaten', { name: player }));
     });
 
     socket.on('playerDisconnect', (data) => {
-        window.chat.addSystemLine('{GAME} - <b>' + (isUnnamedCell(data.name) ? 'An unnamed cell' : data.name) + '</b> disconnected.');
+        window.chat.addSystemLine(i18n.t('system.playerDisconnected', {
+            name: isUnnamedCell(data.name) ? i18n.t('hud.unnamedCell') : data.name
+        }));
     });
 
     socket.on('playerJoin', (data) => {
-        window.chat.addSystemLine('{GAME} - <b>' + (isUnnamedCell(data.name) ? 'An unnamed cell' : data.name) + '</b> joined.');
+        window.chat.addSystemLine(i18n.t('system.playerJoined', {
+            name: isUnnamedCell(data.name) ? i18n.t('hud.unnamedCell') : data.name
+        }));
     });
 
     socket.on('leaderboard', (data) => {
@@ -563,7 +612,7 @@ function setupSocket(socket) {
     // Death.
     socket.on('RIP', function () {
         global.gameStart = false;
-        render.drawErrorMessage('You died!', graph, global.screen);
+        render.drawErrorMessage(i18n.t('system.youDied'), graph, global.screen);
         window.setTimeout(() => {
             document.getElementById('gameAreaWrapper').style.opacity = 0;
             document.getElementById('startMenuWrapper').style.maxHeight = '1000px';
@@ -578,10 +627,10 @@ function setupSocket(socket) {
         global.gameStart = false;
         global.kicked = true;
         if (reason !== '') {
-            render.drawErrorMessage('You were kicked for: ' + reason, graph, global.screen);
+            render.drawErrorMessage(i18n.t('system.kickedReason', { reason: reason }), graph, global.screen);
         }
         else {
-            render.drawErrorMessage('You were kicked!', graph, global.screen);
+            render.drawErrorMessage(i18n.t('system.kicked'), graph, global.screen);
         }
         socket.close();
     });

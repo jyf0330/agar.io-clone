@@ -3,7 +3,7 @@
 <head>
     <!-- Meta Properties -->
     <meta charset="UTF-8">
-    <title>Open Agar</title>
+    <title>开放吞噬</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <!-- CSS -->
     <link rel="stylesheet" href="css/main.css" />
@@ -13,7 +13,7 @@
 </head>
 <body>
     <div id="gameAreaWrapper">
-        <div id="status"><span class="title">Leaderboard</span></div>
+        <div id="status"><span class="title">排行榜</span></div>
         <div id="playerCardHud"></div>
         <div id="targetCardHud"></div>
         <div class="chatbox" id="chatbox">
@@ -28,41 +28,42 @@
     </div>
     <div id="startMenuWrapper">
         <div id="startMenu">
-            <p>Open Agar</p>
-            <input type="text" tabindex="0" autofocus placeholder="Enter your name here" id="playerNameInput" maxlength="25" />
-            <b class="input-error">Nick must be alphanumeric characters only!</b>
+            <button id="languageToggleButton" type="button">English</button>
+            <p data-i18n="startMenu.title">开放吞噬</p>
+            <input type="text" tabindex="0" autofocus placeholder="请输入你的名字" id="playerNameInput" maxlength="25" />
+            <b class="input-error" data-i18n="startMenu.invalidName">昵称只能包含字母、数字或下划线</b>
             <br />
-            <a onclick="document.getElementById('spawn_cell').play();"><button id="startButton">Play</button></a>
-            <button id="spectateButton">Spectate</button>
-            <button id="paintCardButton">Draw Card</button>
-            <button id="settingsButton">Settings</button>
+            <a onclick="document.getElementById('spawn_cell').play();"><button id="startButton" data-i18n="startMenu.play">开始游戏</button></a>
+            <button id="spectateButton" data-i18n="startMenu.spectate">观战</button>
+            <button id="paintCardButton" data-i18n="startMenu.drawCard">绘制名片</button>
+            <button id="settingsButton" data-i18n="startMenu.settings">设置</button>
             <br />
             <div id="playerCardStartPreview"></div>
             <div id="settings">
-                <h3>Settings</h3>
+                <h3 data-i18n="startMenu.settings">设置</h3>
                 <ul>
-                    <label><input id="visBord" type="checkbox">Show border</label>
-                    <label><input id="showMass" type="checkbox">Show mass</label>
+                    <label><input id="visBord" type="checkbox"><span data-i18n="settings.showBorder">显示边界</span></label>
+                    <label><input id="showMass" type="checkbox"><span data-i18n="settings.showMass">显示质量</span></label>
                     <br />
-                    <label><input id="continuity" type="checkbox">Continue moving when mouse is off-screen</label>
+                    <label><input id="continuity" type="checkbox"><span data-i18n="settings.continuity">鼠标离开屏幕后继续移动</span></label>
                     <br />
-                    <label><input id="roundFood" type="checkbox" checked>Rounded food</label>
-                    <label><input id="darkMode" type="checkbox">Toggle Dark Mode</label>
+                    <label><input id="roundFood" type="checkbox" checked><span data-i18n="settings.roundFood">圆形食物</span></label>
+                    <label><input id="darkMode" type="checkbox"><span data-i18n="settings.darkMode">切换深色模式</span></label>
                 </ul>
             </div>
             <div id="instructions">
-                <h3>Gameplay</h3>
+                <h3 data-i18n="startMenu.gameplay">玩法说明</h3>
                 <ul>
-                    <li>Move your mouse on the screen to move your character.</li>
-                    <li>Eat food and other players in order to grow your character (food respawns every time a player eats it).</li>
-                    <li>A player's mass is the number of food particles eaten.</li>
-                    <li>Objective: Try to get fat and eat other players.</li>
+                    <li data-i18n="startMenu.instructions.move">用鼠标在屏幕上移动角色。</li>
+                    <li data-i18n="startMenu.instructions.eat">吃食物和其他玩家来成长（吃掉食物后会刷新新的食物）。</li>
+                    <li data-i18n="startMenu.instructions.mass">角色质量由吃下的食物数量决定。</li>
+                    <li data-i18n="startMenu.instructions.goal">目标：尽可能长大并吞噬其他玩家。</li>
                 </ul>
             </div>
         </div>
         <div id="playerCardPanel">
             <div class="player-card-panel-inner">
-                <h3>Draw Your Card</h3>
+                <h3 id="playerCardPanelTitle">绘制你的名片</h3>
                 <div id="avatarDraftPanel" class="avatar-draft-panel">
                     <div class="avatar-draft-header">
                         <div id="avatarDraftTimer"></div>
@@ -70,34 +71,34 @@
                     </div>
                     <div id="avatarDraftCandidates"></div>
                     <div class="avatar-draft-actions">
-                        <button id="avatarDraftRerollButton" type="button">Reroll</button>
-                        <button id="avatarDraftSkipButton" type="button">Skip</button>
+                        <button id="avatarDraftRerollButton" type="button">重抽</button>
+                        <button id="avatarDraftSkipButton" type="button">跳过</button>
                     </div>
                 </div>
                 <div class="player-card-toolbar">
-                    <button id="selectToolButton" type="button">Select</button>
-                    <button id="drawToolButton" type="button">Brush</button>
-                    <button id="rectToolButton" type="button">Rect</button>
-                    <button id="circleToolButton" type="button">Circle</button>
-                    <button id="lineToolButton" type="button">Line</button>
-                    <button id="textToolButton" type="button">Text</button>
-                    <button id="eraseToolButton" type="button">Eraser</button>
-                    <button id="undoCardButton" type="button">Undo</button>
-                    <button id="redoCardButton" type="button">Redo</button>
-                    <button id="clearCardButton" type="button">Clear</button>
-                    <button id="saveCardButton" type="button">Save</button>
-                    <button id="exportPngButton" type="button">Export PNG</button>
-                    <button id="exportJsonButton" type="button">Export JSON</button>
-                    <button id="closeCardPanelButton" type="button">Close</button>
+                    <button id="selectToolButton" type="button">选择</button>
+                    <button id="drawToolButton" type="button">画笔</button>
+                    <button id="rectToolButton" type="button">矩形</button>
+                    <button id="circleToolButton" type="button">圆形</button>
+                    <button id="lineToolButton" type="button">直线</button>
+                    <button id="textToolButton" type="button">文字</button>
+                    <button id="eraseToolButton" type="button">橡皮</button>
+                    <button id="undoCardButton" type="button">撤销</button>
+                    <button id="redoCardButton" type="button">重做</button>
+                    <button id="clearCardButton" type="button">清空</button>
+                    <button id="saveCardButton" type="button">保存</button>
+                    <button id="exportPngButton" type="button">导出 PNG</button>
+                    <button id="exportJsonButton" type="button">导出 JSON</button>
+                    <button id="closeCardPanelButton" type="button">关闭</button>
                 </div>
                 <div class="player-card-controls">
-                    <label>Stroke <input id="cardStrokeColor" type="color" value="#111111"></label>
-                    <label>Fill <input id="cardFillColor" type="color" value="#f2fbff"></label>
-                    <label>Size <input id="cardBrushSize" type="range" min="2" max="24" value="6"></label>
+                    <label><span id="strokeLabel">描边</span> <input id="cardStrokeColor" type="color" value="#111111"></label>
+                    <label><span id="fillLabel">填充</span> <input id="cardFillColor" type="color" value="#f2fbff"></label>
+                    <label><span id="sizeLabel">粗细</span> <input id="cardBrushSize" type="range" min="2" max="24" value="6"></label>
                 </div>
                 <div class="player-card-zoom-controls">
-                    <button id="zoomOutCardButton" type="button">Zoom Out</button>
-                    <button id="zoomInCardButton" type="button">Zoom In</button>
+                    <button id="zoomOutCardButton" type="button">缩小</button>
+                    <button id="zoomInCardButton" type="button">放大</button>
                 </div>
                 <div id="playerCardPanelMessage"></div>
                 <div class="player-card-canvas-shell">

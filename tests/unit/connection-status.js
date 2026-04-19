@@ -10,9 +10,9 @@ describe('connection-status.js', () => {
       connectionTargetName: 'targetA'
     });
 
-    expect(markup).to.contain('Connection');
-    expect(markup).to.contain('CHANNELING');
-    expect(markup).to.contain('targetA');
+    expect(markup).to.contain('连接');
+    expect(markup).to.contain('状态：CHANNELING');
+    expect(markup).to.contain('目标：targetA');
   });
 
   it('should stay empty when the player has no connection state', () => {

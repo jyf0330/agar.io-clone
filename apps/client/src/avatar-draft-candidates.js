@@ -57,7 +57,7 @@ function buildDraftCandidates(options) {
                 'history',
                 historyEntry.missingPartType || randomPick(missingPartsPool, randomFn),
                 {
-                    subtitle: 'History pick',
+                    subtitleKey: 'draft.historyPick',
                     previewDataUrl: historyEntry.previewDataUrl
                 }
             ));

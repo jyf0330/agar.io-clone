@@ -1,4 +1,5 @@
 'use strict';
+var i18n = require('./i18n');
 
 function formatRelationshipStatus(player) {
     if (!player || typeof player.intimacy !== 'number' || typeof player.spike !== 'number' || typeof player.pollution !== 'number') {
@@ -7,13 +8,13 @@ function formatRelationshipStatus(player) {
 
     return [
         '<br />',
-        '<span class="title">Resonance</span>',
+        '<span class="title">' + i18n.t('hud.resonance') + '</span>',
         '<br />',
-        'Intimacy: ' + player.intimacy,
+        i18n.t('hud.intimacy', { value: player.intimacy }),
         '<br />',
-        'Spike: ' + player.spike,
+        i18n.t('hud.spike', { value: player.spike }),
         '<br />',
-        'Pollution: ' + player.pollution
+        i18n.t('hud.pollution', { value: player.pollution })
     ].join('');
 }
 

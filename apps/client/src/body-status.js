@@ -1,12 +1,13 @@
 'use strict';
+var i18n = require('./i18n');
 
 const PART_LABELS = {
-    HEAD: 'Head',
-    HAND: 'Hand',
-    FOOT: 'Foot',
-    MOUTH: 'Mouth',
-    HEART: 'Heart',
-    SPIKE: 'Spike'
+    HEAD: 'parts.HEAD',
+    HAND: 'parts.HAND',
+    FOOT: 'parts.FOOT',
+    MOUTH: 'parts.MOUTH',
+    HEART: 'parts.HEART',
+    SPIKE: 'parts.SPIKE'
 };
 
 function formatBodyStatus(player) {
@@ -17,14 +18,14 @@ function formatBodyStatus(player) {
     const counts = player.bodyPartCounts || {};
     const summary = Object.keys(PART_LABELS)
         .filter((type) => counts[type] > 0)
-        .map((type) => PART_LABELS[type] + ': ' + counts[type])
+        .map((type) => i18n.t(PART_LABELS[type]) + ': ' + counts[type])
         .join(', ');
 
     return [
         '<br />',
-        '<span class="title">Body</span>',
+        '<span class="title">' + i18n.t('hud.body') + '</span>',
         '<br />',
-        'Parts: ' + player.bodyPartCount,
+        i18n.t('hud.bodyParts', { count: player.bodyPartCount }),
         summary ? '<br />' + summary : ''
     ].join('');
 }
