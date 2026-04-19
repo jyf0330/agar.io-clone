@@ -1,4 +1,7 @@
 const FULL_ANGLE = 2 * Math.PI;
+const avatarDraftConfig = require('./avatar-draft-config');
+const avatarRuntimeRender = require('./avatar-runtime-render');
+const avatarImageCache = {};
 
 const drawRoundObject = (position, radius, graph) => {
     graph.beginPath();
@@ -74,18 +77,86 @@ const drawCellWithLines = (cell, borders, graph) => {
     graph.stroke();
 }
 
+const getAvatarImage = (previewDataUrl) => {
+    if (!previewDataUrl) {
+        return null;
+    }
+
+    if (!avatarImageCache[previewDataUrl]) {
+        const image = new Image();
+        image.src = previewDataUrl;
+        avatarImageCache[previewDataUrl] = image;
+    }
+
+    return avatarImageCache[previewDataUrl];
+};
+
+const drawAvatarCell = (cell, graph) => {
+    graph.save();
+    graph.beginPath();
+    graph.arc(cell.x, cell.y, cell.radius, 0, FULL_ANGLE);
+    graph.closePath();
+    graph.fillStyle = 'rgba(255, 255, 255, 0.16)';
+    graph.fill();
+
+    const image = getAvatarImage(cell.playerCardPreviewDataUrl);
+    const innerRadius = avatarRuntimeRender.getAvatarInnerRadius(cell);
+    if (image && image.complete) {
+        graph.save();
+        graph.beginPath();
+        graph.arc(cell.x, cell.y, innerRadius, 0, FULL_ANGLE);
+        graph.closePath();
+        graph.clip();
+        graph.globalAlpha = 0.82;
+        graph.drawImage(
+            image,
+            cell.x - innerRadius,
+            cell.y - innerRadius,
+            innerRadius * 2,
+            innerRadius * 2
+        );
+        graph.restore();
+    }
+
+    graph.beginPath();
+    graph.arc(cell.x, cell.y, cell.radius, 0, FULL_ANGLE);
+    graph.closePath();
+    graph.lineWidth = 6;
+    graph.strokeStyle = cell.borderColor;
+    graph.stroke();
+
+    graph.beginPath();
+    graph.arc(cell.x, cell.y, cell.radius * 0.86, 0, FULL_ANGLE);
+    graph.closePath();
+    graph.lineWidth = 2;
+    graph.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+    graph.stroke();
+    graph.restore();
+};
+
 const drawCells = (cells, playerConfig, toggleMassState, borders, graph) => {
     for (let cell of cells) {
+        const touchingBorders = cellTouchingBorders(cell, borders);
+        const useAvatarRuntimeRender = avatarRuntimeRender.shouldUseAvatarRuntimeRender(
+            cell,
+            avatarDraftConfig,
+            touchingBorders
+        );
+
         // Draw the cell itself
-        graph.fillStyle = cell.color;
-        graph.strokeStyle = cell.borderColor;
-        graph.lineWidth = 6;
-        if (cellTouchingBorders(cell, borders)) {
+        if (useAvatarRuntimeRender) {
+            drawAvatarCell(cell, graph);
+        } else {
+            graph.fillStyle = cell.color;
+            graph.strokeStyle = cell.borderColor;
+            graph.lineWidth = 6;
+        if (touchingBorders) {
             // Asssemble the cell from lines
             drawCellWithLines(cell, borders, graph);
         } else {
             // Border corrections are not needed, the cell can be drawn as a circle
             drawRoundObject(cell, cell.radius, graph);
+        }
         }
 
         // Draw the name of the player

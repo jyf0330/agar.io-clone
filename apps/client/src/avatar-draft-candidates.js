@@ -28,6 +28,7 @@ function buildCandidateFromTemplate(template, sourceType, missingPartType, extra
         sourceType: sourceType,
         templateId: template.id,
         baseShapeData: removeMissingPart(template.fullShapeData, missingPartType),
+        fullShapeData: clone(template.fullShapeData),
         missingPartType: missingPartType,
         previewMeta: Object.assign({
             title: template.previewMeta.title,

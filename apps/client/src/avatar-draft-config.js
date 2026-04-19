@@ -8,5 +8,7 @@ module.exports = {
     historyMaxCount: 20,
     defaultMissingPartsPool: ['hair', 'eye', 'arm', 'leg', 'accessory'],
     enableHistoryPool: true,
-    allowSkipForDebug: true
+    allowSkipForDebug: true,
+    useOuterRingSkin: true,
+    fallbackToLegacyPlayerRender: true
 };

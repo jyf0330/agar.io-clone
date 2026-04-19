@@ -409,6 +409,17 @@ div {
     box-shadow: 0 0 0 1px #2ecc71;
 }
 
+.avatar-draft-candidate-preview {
+    display: block;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 8px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #d8dfef;
+    object-fit: cover;
+}
+
 .avatar-draft-candidate-title {
     display: block;
     font-weight: bold;

@@ -13,6 +13,7 @@ var createPlayerCardEditor = require('./player-card-editor');
 var avatarDraftConfig = require('./avatar-draft-config');
 var avatarHistoryStore = require('./avatar-history-store');
 var avatarDraftCandidates = require('./avatar-draft-candidates');
+var avatarDraftPreview = require('./avatar-draft-preview');
 
 var playerNameInput = document.getElementById('playerNameInput');
 var socket;
@@ -291,6 +292,7 @@ function renderDraftCandidates() {
         var isActive = activeDraftSession.selectedCandidateId === candidate.id ? ' active' : '';
         return [
             '<button type="button" class="avatar-draft-candidate' + isActive + '" data-candidate-id="' + candidate.id + '">',
+            '<img class="avatar-draft-candidate-preview" src="' + (avatarDraftPreview.createDraftPreviewDataUrl(candidate) || '') + '" alt="' + candidate.previewMeta.title + '" />',
             '<span class="avatar-draft-candidate-title">' + candidate.previewMeta.title + '</span>',
             '<span class="avatar-draft-candidate-subtitle">' + candidate.previewMeta.subtitle + '</span>',
             '<span class="avatar-draft-candidate-missing">Missing: ' + formatMissingPartLabel(candidate.missingPartType) + '</span>',
@@ -654,6 +656,7 @@ function gameLoop() {
                     borderColor: borderColor,
                     mass: users[i].cells[j].mass,
                     name: users[i].name,
+                    playerCardPreviewDataUrl: users[i].playerCardPreviewDataUrl,
                     radius: users[i].cells[j].radius,
                     x: users[i].cells[j].x - player.x + global.screen.width / 2,
                     y: users[i].cells[j].y - player.y + global.screen.height / 2
