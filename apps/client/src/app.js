@@ -96,6 +96,8 @@ window.onload = function () {
         saveButton: document.getElementById('saveCardButton'),
         exportPngButton: document.getElementById('exportPngButton'),
         exportJsonButton: document.getElementById('exportJsonButton'),
+        zoomInButton: document.getElementById('zoomInCardButton'),
+        zoomOutButton: document.getElementById('zoomOutCardButton'),
         strokeColorInput: document.getElementById('cardStrokeColor'),
         fillColorInput: document.getElementById('cardFillColor'),
         sizeInput: document.getElementById('cardBrushSize'),

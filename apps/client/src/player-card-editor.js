@@ -2,8 +2,11 @@
 
 var playerCardStorage = require('./player-card-storage');
 var playerCardHistory = require('./player-card-history');
+var playerCardScale = require('./player-card-scale');
 
 var FABRIC_SCRIPT_URL = 'https://cdn.jsdelivr.net/npm/fabric@6.7.1/dist/index.min.js';
+var CANVAS_SIZE = 320;
+var CIRCLE_RADIUS = CANVAS_SIZE / 2;
 
 var fabricLoadPromise;
 
@@ -38,7 +41,8 @@ function createPlayerCardEditor(options) {
         fabric: null,
         history: playerCardHistory.createHistoryState(50),
         activeTool: 'draw',
-        loading: false
+        loading: false,
+        contentScale: 1
     };
 
     function setPanelMessage(message) {
@@ -102,6 +106,15 @@ function createPlayerCardEditor(options) {
         state.canvas.requestRenderAll();
     }
 
+    function updateZoomButtons() {
+        if (!options.zoomInButton || !options.zoomOutButton) {
+            return;
+        }
+
+        options.zoomInButton.disabled = !playerCardScale.canScaleIn(state.contentScale);
+        options.zoomOutButton.disabled = !playerCardScale.canScaleOut(state.contentScale);
+    }
+
     function loadSavedState() {
         var savedCard = playerCardStorage.loadPlayerCard();
         if (!savedCard || !savedCard.canvasJson) {
@@ -109,13 +122,13 @@ function createPlayerCardEditor(options) {
                 version: '6.7.1',
                 background: '#ffffff',
                 objects: []
-            });
+            }, 1);
         }
 
-        return loadCanvasJson(savedCard.canvasJson);
+        return loadCanvasJson(savedCard.canvasJson, savedCard.contentScale || 1);
     }
 
-    function loadCanvasJson(canvasJson) {
+    function loadCanvasJson(canvasJson, contentScale) {
         state.loading = true;
         return state.canvas.loadFromJSON(canvasJson || {
             version: '6.7.1',
@@ -123,10 +136,23 @@ function createPlayerCardEditor(options) {
             objects: []
         }).then(function () {
             state.canvas.backgroundColor = '#ffffff';
+            state.contentScale = contentScale || 1;
             state.canvas.requestRenderAll();
             state.history = playerCardHistory.createHistoryState(50);
             pushHistory();
             state.loading = false;
+            updateZoomButtons();
+        });
+    }
+
+    function createCanvasClipPath() {
+        return new state.fabric.Circle({
+            radius: CIRCLE_RADIUS,
+            originX: 'center',
+            originY: 'center',
+            left: CANVAS_SIZE / 2,
+            top: CANVAS_SIZE / 2,
+            absolutePositioned: true
         });
     }
 
@@ -140,10 +166,11 @@ function createPlayerCardEditor(options) {
             state.canvas = new fabric.Canvas(options.canvasId, {
                 isDrawingMode: true,
                 backgroundColor: '#ffffff',
-                width: 320,
-                height: 220,
+                width: CANVAS_SIZE,
+                height: CANVAS_SIZE,
                 selection: true
             });
+            state.canvas.clipPath = createCanvasClipPath();
 
             state.canvas.on('path:created', function () {
                 if (!state.loading) {
@@ -169,6 +196,7 @@ function createPlayerCardEditor(options) {
             options.strokeColorInput.addEventListener('input', updateBrush);
             options.sizeInput.addEventListener('input', updateBrush);
             updateBrush();
+            updateZoomButtons();
 
             return loadSavedState().then(function () {
                 return state.canvas;
@@ -237,7 +265,7 @@ function createPlayerCardEditor(options) {
 
         state.canvas.add(new state.fabric.Rect({
             left: 80,
-            top: 60,
+            top: 110,
             width: 120,
             height: 70,
             fill: options.fillColorInput.value,
@@ -254,7 +282,7 @@ function createPlayerCardEditor(options) {
 
         state.canvas.add(new state.fabric.Circle({
             left: 100,
-            top: 45,
+            top: 85,
             radius: 45,
             fill: options.fillColorInput.value,
             stroke: options.strokeColorInput.value,
@@ -268,7 +296,7 @@ function createPlayerCardEditor(options) {
             return;
         }
 
-        state.canvas.add(new state.fabric.Line([60, 110, 240, 110], {
+        state.canvas.add(new state.fabric.Line([60, 160, 240, 160], {
             stroke: options.strokeColorInput.value,
             strokeWidth: parseInt(options.sizeInput.value, 10)
         }));
@@ -282,7 +310,7 @@ function createPlayerCardEditor(options) {
 
         var text = new state.fabric.Textbox('Text', {
             left: 70,
-            top: 80,
+            top: 140,
             width: 160,
             fontSize: 28,
             fill: options.strokeColorInput.value
@@ -302,16 +330,32 @@ function createPlayerCardEditor(options) {
         URL.revokeObjectURL(url);
     }
 
+    function exportCircularCanvas() {
+        var sourceCanvas = state.canvas.toCanvasElement();
+        var exportCanvas = document.createElement('canvas');
+        exportCanvas.width = CANVAS_SIZE;
+        exportCanvas.height = CANVAS_SIZE;
+        var exportContext = exportCanvas.getContext('2d');
+
+        exportContext.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        exportContext.save();
+        exportContext.beginPath();
+        exportContext.arc(CANVAS_SIZE / 2, CANVAS_SIZE / 2, CIRCLE_RADIUS, 0, Math.PI * 2);
+        exportContext.closePath();
+        exportContext.clip();
+        exportContext.drawImage(sourceCanvas, 0, 0);
+        exportContext.restore();
+
+        return exportCanvas;
+    }
+
     function exportPng() {
         if (!state.canvas) {
             return;
         }
 
         var link = document.createElement('a');
-        link.href = state.canvas.toDataURL({
-            format: 'png',
-            multiplier: 1
-        });
+        link.href = exportCircularCanvas().toDataURL('image/png');
         link.download = 'player-card.png';
         link.click();
         setPanelMessage('PNG exported.');
@@ -350,12 +394,96 @@ function createPlayerCardEditor(options) {
         }
 
         return {
-            previewDataUrl: state.canvas.toDataURL({
-                format: 'png',
-                multiplier: 1
-            }),
-            canvasJson: state.canvas.toJSON()
+            previewDataUrl: exportCircularCanvas().toDataURL('image/png'),
+            canvasJson: state.canvas.toJSON(),
+            contentScale: state.contentScale
         };
+    }
+
+    function scaleCanvasContent(direction) {
+        if (!state.canvas) {
+            return;
+        }
+
+        var nextScale = playerCardScale.getNextScale(state.contentScale, direction);
+        if (nextScale === state.contentScale) {
+            updateZoomButtons();
+            return;
+        }
+
+        var ratio = nextScale / state.contentScale;
+        var centerX = CANVAS_SIZE / 2;
+        var centerY = CANVAS_SIZE / 2;
+
+        state.loading = true;
+        state.canvas.getObjects().forEach(function (object) {
+            object.scaleX *= ratio;
+            object.scaleY *= ratio;
+            object.left = centerX + ((object.left || 0) - centerX) * ratio;
+            object.top = centerY + ((object.top || 0) - centerY) * ratio;
+            object.setCoords();
+        });
+        state.contentScale = nextScale;
+        state.loading = false;
+        state.canvas.requestRenderAll();
+        updateZoomButtons();
+        pushHistory();
+        setPanelMessage('Scale: ' + nextScale.toFixed(2) + 'x');
+    }
+
+    function bindPressAndHold(button, direction) {
+        var timeoutHandle = null;
+        var intervalHandle = null;
+        var longPressTriggered = false;
+
+        function clearTimers() {
+            if (timeoutHandle) {
+                window.clearTimeout(timeoutHandle);
+                timeoutHandle = null;
+            }
+            if (intervalHandle) {
+                window.clearInterval(intervalHandle);
+                intervalHandle = null;
+            }
+        }
+
+        function stop() {
+            clearTimers();
+        }
+
+        button.addEventListener('mousedown', function () {
+            longPressTriggered = false;
+            timeoutHandle = window.setTimeout(function () {
+                longPressTriggered = true;
+                scaleCanvasContent(direction);
+                intervalHandle = window.setInterval(function () {
+                    scaleCanvasContent(direction);
+                }, 500);
+            }, 500);
+        });
+
+        button.addEventListener('mouseup', stop);
+        button.addEventListener('mouseleave', stop);
+        button.addEventListener('touchstart', function (event) {
+            event.preventDefault();
+            longPressTriggered = false;
+            timeoutHandle = window.setTimeout(function () {
+                longPressTriggered = true;
+                scaleCanvasContent(direction);
+                intervalHandle = window.setInterval(function () {
+                    scaleCanvasContent(direction);
+                }, 500);
+            }, 500);
+        }, { passive: false });
+        button.addEventListener('touchend', stop);
+        button.addEventListener('touchcancel', stop);
+        button.addEventListener('click', function () {
+            if (longPressTriggered) {
+                longPressTriggered = false;
+                return;
+            }
+            scaleCanvasContent(direction);
+        });
     }
 
     options.closeButton.addEventListener('click', function () {
@@ -400,8 +528,11 @@ function createPlayerCardEditor(options) {
     options.exportJsonButton.addEventListener('click', function () {
         exportJson();
     });
+    bindPressAndHold(options.zoomInButton, 'in');
+    bindPressAndHold(options.zoomOutButton, 'out');
 
     setTool('draw');
+    updateZoomButtons();
 
     return {
         open: open,

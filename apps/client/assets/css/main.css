@@ -446,6 +446,12 @@ div {
     font-size: 13px;
 }
 
+.player-card-zoom-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
 .player-card-toolbar button.active {
     background: #2ecc71;
     color: #ffffff;
@@ -455,11 +461,22 @@ div {
     min-width: 72px;
 }
 
+.player-card-canvas-shell {
+    width: 320px;
+    height: 320px;
+    max-width: 100%;
+    max-height: calc(100vw - 40px);
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid #dddddd;
+    background: #ffffff;
+}
+
 #playerCardCanvas {
     width: 320px;
-    height: 220px;
+    height: 320px;
     max-width: 100%;
-    border: 1px solid #dddddd;
     background: #ffffff;
 }
 

@@ -95,8 +95,14 @@
                     <label>Fill <input id="cardFillColor" type="color" value="#f2fbff"></label>
                     <label>Size <input id="cardBrushSize" type="range" min="2" max="24" value="6"></label>
                 </div>
+                <div class="player-card-zoom-controls">
+                    <button id="zoomOutCardButton" type="button">Zoom Out</button>
+                    <button id="zoomInCardButton" type="button">Zoom In</button>
+                </div>
                 <div id="playerCardPanelMessage"></div>
-                <canvas id="playerCardCanvas" width="320" height="220"></canvas>
+                <div class="player-card-canvas-shell">
+                    <canvas id="playerCardCanvas" width="320" height="320"></canvas>
+                </div>
             </div>
         </div>
     </div>
