@@ -1,6 +1,7 @@
 'use strict';
 
 var STORAGE_KEY = 'agar.playerCard';
+var playerCardLayers = require('./player-card-layers');
 
 function getStorage(storageOverride) {
     if (storageOverride) {
@@ -29,7 +30,7 @@ function loadPlayerCard(storageOverride) {
         return null;
     }
 
-    return JSON.parse(raw);
+    return normalizePlayerCardPayload(JSON.parse(raw));
 }
 
 function savePlayerCard(payload, storageOverride) {
@@ -38,8 +39,9 @@ function savePlayerCard(payload, storageOverride) {
         return null;
     }
 
-    storage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    return payload;
+    var normalizedPayload = normalizePlayerCardPayload(payload);
+    storage.setItem(STORAGE_KEY, JSON.stringify(normalizedPayload));
+    return normalizedPayload;
 }
 
 function clearPlayerCard(storageOverride) {
@@ -56,3 +58,18 @@ module.exports = {
     savePlayerCard: savePlayerCard,
     clearPlayerCard: clearPlayerCard
 };
+
+function normalizePlayerCardPayload(payload) {
+    if (!payload) {
+        return payload;
+    }
+
+    var layers = payload.layers || playerCardLayers.createLegacyLayerPayload(payload.canvasJson);
+    var mergedCanvasJson = payload.canvasJson || playerCardLayers.mergeLayerPayloadToCanvasJson(layers);
+
+    return Object.assign({}, payload, {
+        canvasJson: mergedCanvasJson,
+        activeLayerId: payload.activeLayerId || 'base',
+        layers: playerCardLayers.createLayerPayload(layers)
+    });
+}

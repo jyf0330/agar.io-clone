@@ -456,6 +456,49 @@ div {
     gap: 8px;
 }
 
+.player-card-layer-bar {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #d8dfef;
+    border-radius: 6px;
+    background: #f8faff;
+}
+
+.player-card-layer-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #5b6473;
+}
+
+.player-card-layer-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.player-card-layer-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 6px;
+}
+
+.player-card-layer-row button {
+    font-size: 12px;
+}
+
+.player-card-layer-row button.active {
+    background: #2ecc71;
+    color: #ffffff;
+}
+
+.player-card-layer-row button.off,
+.player-card-layer-row button.locked {
+    background: #d6dbe6;
+    color: #34495e;
+}
+
 .player-card-toolbar,
 .player-card-controls {
     display: flex;

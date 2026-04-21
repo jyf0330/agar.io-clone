@@ -104,6 +104,23 @@ window.onload = function () {
         exportJsonButton: document.getElementById('exportJsonButton'),
         zoomInButton: document.getElementById('zoomInCardButton'),
         zoomOutButton: document.getElementById('zoomOutCardButton'),
+        layerButtons: {
+            base: {
+                select: document.getElementById('layerBaseButton'),
+                visibility: document.getElementById('layerBaseVisibilityButton'),
+                lock: document.getElementById('layerBaseLockButton')
+            },
+            eyes: {
+                select: document.getElementById('layerEyesButton'),
+                visibility: document.getElementById('layerEyesVisibilityButton'),
+                lock: document.getElementById('layerEyesLockButton')
+            },
+            hair: {
+                select: document.getElementById('layerHairButton'),
+                visibility: document.getElementById('layerHairVisibilityButton'),
+                lock: document.getElementById('layerHairLockButton')
+            }
+        },
         strokeColorInput: document.getElementById('cardStrokeColor'),
         fillColorInput: document.getElementById('cardFillColor'),
         sizeInput: document.getElementById('cardBrushSize'),

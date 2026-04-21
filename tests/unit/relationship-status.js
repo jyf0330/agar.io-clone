@@ -1,9 +1,14 @@
 /*jshint expr:true */
 
 const expect = require('chai').expect;
+const i18n = require('../../apps/client/src/i18n');
 const formatRelationshipStatus = require('../../apps/client/src/relationship-status');
 
 describe('relationship-status.js', () => {
+  beforeEach(() => {
+    i18n.setLocale('en');
+  });
+
   it('should render the three relationship attributes for the HUD', () => {
     const markup = formatRelationshipStatus({
       intimacy: 2,

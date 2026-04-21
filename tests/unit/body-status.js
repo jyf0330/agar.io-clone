@@ -1,9 +1,14 @@
 /*jshint expr:true */
 
 const expect = require('chai').expect;
+const i18n = require('../../apps/client/src/i18n');
 const formatBodyStatus = require('../../apps/client/src/body-status');
 
 describe('body-status.js', () => {
+  beforeEach(() => {
+    i18n.setLocale('en');
+  });
+
   it('should render body part totals for the HUD', () => {
     const markup = formatBodyStatus({
       bodyPartCount: 6,

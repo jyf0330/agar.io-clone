@@ -4,6 +4,7 @@ var playerCardStorage = require('./player-card-storage');
 var playerCardHistory = require('./player-card-history');
 var playerCardScale = require('./player-card-scale');
 var playerCardCanvasTransform = require('./player-card-canvas-transform');
+var playerCardLayers = require('./player-card-layers');
 var i18n = require('./i18n');
 
 var FABRIC_SCRIPT_URL = 'https://cdn.jsdelivr.net/npm/fabric@6.7.1/dist/index.min.js';
@@ -48,7 +49,9 @@ function createPlayerCardEditor(options) {
         contentScale: 1,
         isPanning: false,
         panDirty: false,
-        panOrigin: null
+        panOrigin: null,
+        activeLayerId: 'base',
+        layerPayload: playerCardLayers.createLayerPayload()
     };
 
     function setPanelMessage(message) {
@@ -64,7 +67,10 @@ function createPlayerCardEditor(options) {
 
         state.history = playerCardHistory.pushSnapshot(
             state.history,
-            JSON.stringify(state.canvas.toJSON())
+            JSON.stringify({
+                activeLayerId: state.activeLayerId,
+                layerPayload: exportLayerPayload()
+            })
         );
     }
 
@@ -74,11 +80,58 @@ function createPlayerCardEditor(options) {
         }
 
         state.loading = true;
-        return state.canvas.loadFromJSON(JSON.parse(serialized)).then(function () {
-            state.canvas.backgroundColor = '#ffffff';
-            state.canvas.requestRenderAll();
-            state.loading = false;
+        var snapshot = JSON.parse(serialized);
+        return loadLayerPayload(snapshot.layerPayload || playerCardLayers.createLayerPayload(), snapshot.activeLayerId || 'base');
+    }
+
+    function exportLayerPayload() {
+        if (!state.canvas) {
+            return playerCardLayers.createLayerPayload(state.layerPayload);
+        }
+
+        var split = playerCardLayers.splitCanvasJsonByLayer(state.canvas.toJSON());
+        var payload = playerCardLayers.createLayerPayload(state.layerPayload);
+        playerCardLayers.LAYER_IDS.forEach(function (layerId) {
+            payload[layerId].canvasJson = split[layerId].canvasJson;
         });
+        return payload;
+    }
+
+    function refreshLayerButtons() {
+        playerCardLayers.LAYER_IDS.forEach(function (layerId) {
+            var controls = options.layerButtons && options.layerButtons[layerId];
+            var layerState = state.layerPayload[layerId];
+            var button = controls && controls.select;
+            if (button) {
+                button.classList.toggle('active', state.activeLayerId === layerId);
+            }
+            if (controls && controls.visibility) {
+                controls.visibility.classList.toggle('off', !layerState.visible);
+                controls.visibility.textContent = layerState.visible ? '显示' : '隐藏';
+            }
+            if (controls && controls.lock) {
+                controls.lock.classList.toggle('locked', layerState.locked);
+                controls.lock.textContent = layerState.locked ? '解锁' : '锁定';
+            }
+        });
+    }
+
+    function applyLayerLocks() {
+        if (!state.canvas) {
+            return;
+        }
+
+        state.canvas.getObjects().forEach(function (object) {
+            var objectLayerId = object.layerId || 'base';
+            var isActiveLayer = objectLayerId === state.activeLayerId;
+            var layerState = state.layerPayload[objectLayerId] || playerCardLayers.createDefaultLayerState(objectLayerId);
+            var editable = isActiveLayer && !layerState.locked && layerState.visible;
+            object.visible = layerState.visible;
+            object.selectable = !state.canvas.isDrawingMode && editable;
+            object.evented = editable;
+            object.opacity = isActiveLayer ? 1 : 0.4;
+        });
+        refreshLayerButtons();
     }
 
     function updateBrush() {
@@ -86,11 +139,13 @@ function createPlayerCardEditor(options) {
             return;
         }
 
-        state.canvas.isDrawingMode = state.activeTool === 'draw' || state.activeTool === 'erase';
+        var currentLayerState = state.layerPayload[state.activeLayerId];
+        state.canvas.isDrawingMode = (state.activeTool === 'draw' || state.activeTool === 'erase') && currentLayerState.visible && !currentLayerState.locked;
 
         if (!state.canvas.isDrawingMode) {
             state.canvas.defaultCursor = 'default';
             state.canvas.selection = true;
+            applyLayerLocks();
             state.canvas.requestRenderAll();
             return;
         }
@@ -109,6 +164,7 @@ function createPlayerCardEditor(options) {
 
         state.canvas.freeDrawingBrush.width = parseInt(options.sizeInput.value, 10);
         state.canvas.selection = false;
+        applyLayerLocks();
         state.canvas.requestRenderAll();
     }
 
@@ -124,31 +180,48 @@ function createPlayerCardEditor(options) {
     function loadSavedState() {
         var savedCard = playerCardStorage.loadPlayerCard();
         if (!savedCard || !savedCard.canvasJson) {
-            return loadCanvasJson({
-                version: '6.7.1',
-                background: '#ffffff',
-                objects: []
-            }, 1);
+            return loadLayerPayload(playerCardLayers.createLayerPayload(), 'base', 1);
         }
 
-        return loadCanvasJson(savedCard.canvasJson, savedCard.contentScale || 1);
+        return loadLayerPayload(savedCard.layers || playerCardLayers.createLegacyLayerPayload(savedCard.canvasJson), savedCard.activeLayerId || 'base', savedCard.contentScale || 1);
     }
 
     function loadCanvasJson(canvasJson, contentScale) {
+        return loadLayerPayload(playerCardLayers.createLegacyLayerPayload(canvasJson), 'base', contentScale);
+    }
+
+    function loadLayerPayload(layerPayload, activeLayerId, contentScale) {
         state.loading = true;
-        return state.canvas.loadFromJSON(canvasJson || {
-            version: '6.7.1',
-            background: '#ffffff',
-            objects: []
-        }).then(function () {
+        state.layerPayload = playerCardLayers.createLayerPayload(layerPayload);
+        state.activeLayerId = activeLayerId || 'base';
+        return state.canvas.loadFromJSON(playerCardLayers.mergeLayerPayloadToCanvasJson(state.layerPayload)).then(function () {
             state.canvas.backgroundColor = '#ffffff';
             state.contentScale = contentScale || 1;
+            applyLayerLocks();
             state.canvas.requestRenderAll();
             state.history = playerCardHistory.createHistoryState(50);
             pushHistory();
             state.loading = false;
             updateZoomButtons();
+            refreshLayerButtons();
         });
+    }
+
+    function storeCurrentLayer() {
+        if (!state.canvas) {
+            return;
+        }
+
+        state.layerPayload = exportLayerPayload();
+    }
+
+    function switchLayer(layerId) {
+        if (!state.canvas || state.activeLayerId === layerId) {
+            return;
+        }
+
+        storeCurrentLayer();
+        loadLayerPayload(state.layerPayload, layerId, state.contentScale);
     }
 
     function createCanvasClipPath() {
@@ -179,11 +252,21 @@ function createPlayerCardEditor(options) {
             state.canvas.clipPath = createCanvasClipPath();
 
             state.canvas.on('path:created', function () {
+                var latestObject = state.canvas.getObjects()[state.canvas.getObjects().length - 1];
+                if (latestObject) {
+                    latestObject.layerId = state.activeLayerId;
+                }
+                applyLayerLocks();
                 if (!state.loading) {
                     pushHistory();
                 }
             });
             state.canvas.on('object:added', function () {
+                var latestObject = state.canvas.getObjects()[state.canvas.getObjects().length - 1];
+                if (latestObject && !latestObject.layerId) {
+                    latestObject.layerId = state.activeLayerId;
+                }
+                applyLayerLocks();
                 if (!state.loading) {
                     pushHistory();
                 }
@@ -216,6 +299,12 @@ function createPlayerCardEditor(options) {
         setPanelMessage(i18n.t('editor.loading'));
 
         return ensureCanvas().then(function () {
+            state.layerPayload.base.visible = true;
+            state.layerPayload.base.locked = false;
+            state.activeLayerId = 'base';
+            return loadLayerPayload(state.layerPayload, 'base', state.contentScale);
+        }).then(function () {
+            setTool('draw');
             updateBrush();
             setPanelMessage('');
         }).catch(function () {
@@ -259,8 +348,29 @@ function createPlayerCardEditor(options) {
             return;
         }
 
-        state.canvas.clear();
+        var objectsToRemove = state.canvas.getObjects().filter(function (object) {
+            return (object.layerId || 'base') === state.activeLayerId;
+        });
+        objectsToRemove.forEach(function (object) {
+            state.canvas.remove(object);
+        });
         state.canvas.backgroundColor = '#ffffff';
+        applyLayerLocks();
+        state.canvas.requestRenderAll();
+        pushHistory();
+    }
+
+    function toggleLayerVisibility(layerId) {
+        state.layerPayload[layerId].visible = !state.layerPayload[layerId].visible;
+        applyLayerLocks();
+        state.canvas.requestRenderAll();
+        pushHistory();
+    }
+
+    function toggleLayerLock(layerId) {
+        state.layerPayload[layerId].locked = !state.layerPayload[layerId].locked;
+        updateBrush();
+        applyLayerLocks();
         state.canvas.requestRenderAll();
         pushHistory();
     }
@@ -277,7 +387,8 @@ function createPlayerCardEditor(options) {
             height: 70,
             fill: options.fillColorInput.value,
             stroke: options.strokeColorInput.value,
-            strokeWidth: parseInt(options.sizeInput.value, 10)
+            strokeWidth: parseInt(options.sizeInput.value, 10),
+            layerId: state.activeLayerId
         }));
         setTool('select');
     }
@@ -293,7 +404,8 @@ function createPlayerCardEditor(options) {
             radius: 45,
             fill: options.fillColorInput.value,
             stroke: options.strokeColorInput.value,
-            strokeWidth: parseInt(options.sizeInput.value, 10)
+            strokeWidth: parseInt(options.sizeInput.value, 10),
+            layerId: state.activeLayerId
         }));
         setTool('select');
     }
@@ -305,7 +417,8 @@ function createPlayerCardEditor(options) {
 
         state.canvas.add(new state.fabric.Line([60, 160, 240, 160], {
             stroke: options.strokeColorInput.value,
-            strokeWidth: parseInt(options.sizeInput.value, 10)
+            strokeWidth: parseInt(options.sizeInput.value, 10),
+            layerId: state.activeLayerId
         }));
         setTool('select');
     }
@@ -320,7 +433,8 @@ function createPlayerCardEditor(options) {
             top: 140,
             width: 160,
             fontSize: 28,
-            fill: options.strokeColorInput.value
+            fill: options.strokeColorInput.value,
+            layerId: state.activeLayerId
         });
         state.canvas.add(text);
         state.canvas.setActiveObject(text);
@@ -374,7 +488,11 @@ function createPlayerCardEditor(options) {
         }
 
         downloadBlob(
-            JSON.stringify(state.canvas.toJSON(), null, 2),
+            JSON.stringify({
+                activeLayerId: state.activeLayerId,
+                contentScale: state.contentScale,
+                layers: exportLayerPayload()
+            }, null, 2),
             'application/json',
             'player-card.json'
         );
@@ -402,8 +520,10 @@ function createPlayerCardEditor(options) {
 
         return {
             previewDataUrl: exportCircularCanvas().toDataURL('image/png'),
-            canvasJson: state.canvas.toJSON(),
-            contentScale: state.contentScale
+            canvasJson: playerCardLayers.mergeLayerPayloadToCanvasJson(exportLayerPayload()),
+            contentScale: state.contentScale,
+            activeLayerId: state.activeLayerId,
+            layers: exportLayerPayload()
         };
     }
 
@@ -637,9 +757,21 @@ function createPlayerCardEditor(options) {
     });
     bindPressAndHold(options.zoomInButton, 'in');
     bindPressAndHold(options.zoomOutButton, 'out');
+    Object.keys(options.layerButtons || {}).forEach(function (layerId) {
+        options.layerButtons[layerId].select.addEventListener('click', function () {
+            switchLayer(layerId);
+        });
+        options.layerButtons[layerId].visibility.addEventListener('click', function () {
+            toggleLayerVisibility(layerId);
+        });
+        options.layerButtons[layerId].lock.addEventListener('click', function () {
+            toggleLayerLock(layerId);
+        });
+    });
 
     setTool('draw');
     updateZoomButtons();
+    refreshLayerButtons();
 
     return {
         open: open,
@@ -647,6 +779,11 @@ function createPlayerCardEditor(options) {
         loadCanvasJson: function (canvasJson) {
             return ensureCanvas().then(function () {
                 return loadCanvasJson(canvasJson);
+            });
+        },
+        loadLayerPayload: function (layerPayload, activeLayerId, contentScale) {
+            return ensureCanvas().then(function () {
+                return loadLayerPayload(layerPayload, activeLayerId, contentScale);
             });
         },
         exportPayload: exportPayload,
