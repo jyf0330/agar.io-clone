@@ -89,7 +89,7 @@ function createPlayerCardEditor(options) {
             return playerCardLayers.createLayerPayload(state.layerPayload);
         }
 
-        var split = playerCardLayers.splitCanvasJsonByLayer(state.canvas.toJSON());
+        var split = playerCardLayers.splitCanvasJsonByLayer(playerCardLayers.serializeCanvas(state.canvas));
         var payload = playerCardLayers.createLayerPayload(state.layerPayload);
         playerCardLayers.LAYER_IDS.forEach(function (layerId) {
             payload[layerId].canvasJson = split[layerId].canvasJson;
@@ -125,11 +125,11 @@ function createPlayerCardEditor(options) {
             var objectLayerId = object.layerId || 'base';
             var isActiveLayer = objectLayerId === state.activeLayerId;
             var layerState = state.layerPayload[objectLayerId] || playerCardLayers.createDefaultLayerState(objectLayerId);
-            var editable = isActiveLayer && !layerState.locked && layerState.visible;
-            object.visible = layerState.visible;
-            object.selectable = !state.canvas.isDrawingMode && editable;
-            object.evented = editable;
-            object.opacity = isActiveLayer ? 1 : 0.4;
+            var renderState = playerCardLayers.getLayerRenderState(layerState, isActiveLayer);
+            object.visible = renderState.visible;
+            object.selectable = !state.canvas.isDrawingMode && renderState.editable;
+            object.evented = renderState.editable;
+            object.opacity = renderState.opacity;
         });
         refreshLayerButtons();
     }

@@ -37,4 +37,29 @@ describe('player-card-layers.js', () => {
     expect(split.eyes.canvasJson.objects).to.have.length(1);
     expect(split.hair.canvasJson.objects).to.have.length(1);
   });
+
+  it('should keep visible layers fully opaque and only gate editability by active state', () => {
+    const activeVisible = layers.getLayerRenderState({ visible: true, locked: false }, true);
+    const inactiveVisible = layers.getLayerRenderState({ visible: true, locked: false }, false);
+    const hiddenLayer = layers.getLayerRenderState({ visible: false, locked: false }, false);
+
+    expect(activeVisible).to.deep.equal({ visible: true, editable: true, opacity: 1 });
+    expect(inactiveVisible).to.deep.equal({ visible: true, editable: false, opacity: 1 });
+    expect(hiddenLayer).to.deep.equal({ visible: false, editable: false, opacity: 0 });
+  });
+
+  it('should serialize Fabric canvas data with layerId included', () => {
+    let capturedArgs = null;
+    const canvas = {
+      toJSON(args) {
+        capturedArgs = args;
+        return { version: '6.7.1', objects: [] };
+      }
+    };
+
+    const result = layers.serializeCanvas(canvas);
+
+    expect(capturedArgs).to.deep.equal(['layerId']);
+    expect(result).to.deep.equal({ version: '6.7.1', objects: [] });
+  });
 });

@@ -66,6 +66,22 @@ function splitCanvasJsonByLayer(canvasJson) {
     return payload;
 }
 
+function serializeCanvas(canvas) {
+    return canvas.toJSON(['layerId']);
+}
+
+function getLayerRenderState(layerState, isActiveLayer) {
+    var normalizedState = Object.assign(createDefaultLayerState(), layerState || {});
+    var visible = !!normalizedState.visible;
+    var editable = isActiveLayer && visible && !normalizedState.locked;
+
+    return {
+        visible: visible,
+        editable: editable,
+        opacity: visible ? 1 : 0
+    };
+}
+
 module.exports = {
     LAYER_IDS: LAYER_IDS,
     createEmptyCanvasJson: createEmptyCanvasJson,
@@ -73,5 +89,7 @@ module.exports = {
     createLayerPayload: createLayerPayload,
     createLegacyLayerPayload: createLegacyLayerPayload,
     mergeLayerPayloadToCanvasJson: mergeLayerPayloadToCanvasJson,
-    splitCanvasJsonByLayer: splitCanvasJsonByLayer
+    splitCanvasJsonByLayer: splitCanvasJsonByLayer,
+    getLayerRenderState: getLayerRenderState,
+    serializeCanvas: serializeCanvas
 };
