@@ -464,6 +464,27 @@ div {
     background: #f8faff;
 }
 
+.player-card-layer-toggle-button {
+    width: 100%;
+    text-align: left;
+    font-size: 13px;
+}
+
+.player-card-layer-toggle-button.active {
+    background: #dff4e8;
+    color: #1d6b42;
+}
+
+.player-card-layer-panel {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e5ebf5;
+}
+
+.player-card-layer-panel.hidden {
+    display: none;
+}
+
 .player-card-layer-label {
     display: block;
     margin-bottom: 8px;
@@ -499,12 +520,84 @@ div {
     color: #34495e;
 }
 
+#layerBaseLockButton,
+#layerEyesLockButton,
+#layerHairLockButton {
+    display: none;
+}
+
 .player-card-toolbar,
 .player-card-controls {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
     margin-bottom: 10px;
+}
+
+.player-card-draft-manager {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #d8dfef;
+    border-radius: 6px;
+    background: #fafcff;
+}
+
+.player-card-draft-manager.hidden {
+    display: none;
+}
+
+.player-card-draft-actions-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.player-card-draft-history {
+    display: none;
+    border-top: 1px solid #e5ebf5;
+    padding-top: 8px;
+}
+
+.player-card-draft-history.open {
+    display: block;
+}
+
+.player-card-draft-empty {
+    color: #6f7a8a;
+    font-size: 12px;
+}
+
+.player-card-draft-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.player-card-draft-item {
+    padding: 6px;
+    border: 1px solid #d8dfef;
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+    text-align: center;
+}
+
+.player-card-draft-item-preview {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #e1e7f2;
+    margin-bottom: 6px;
+}
+
+.player-card-draft-item-time {
+    display: block;
+    color: #6f7a8a;
+    font-size: 11px;
 }
 
 .player-card-toolbar button,

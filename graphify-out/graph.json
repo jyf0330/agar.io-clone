@@ -54,7 +54,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\config.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_config_js",
-      "community": 30,
+      "community": 32,
       "norm_label": "config.js"
     },
     {
@@ -144,7 +144,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\webpack.config.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_webpack_config_js",
-      "community": 22,
+      "community": 23,
       "norm_label": "webpack.config.js"
     },
     {
@@ -153,7 +153,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\webpack.config.js",
       "source_location": "L14",
       "id": "webpack_config_getrules",
-      "community": 22,
+      "community": 23,
       "norm_label": "getrules()"
     },
     {
@@ -162,7 +162,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\server.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_server_js",
-      "community": 31,
+      "community": 33,
       "norm_label": "server.js"
     },
     {
@@ -171,7 +171,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\util.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_util_js",
-      "community": 23,
+      "community": 24,
       "norm_label": "util.js"
     },
     {
@@ -180,7 +180,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\util.js",
       "source_location": "L84",
       "id": "util_point",
-      "community": 23,
+      "community": 24,
       "norm_label": "point()"
     },
     {
@@ -189,7 +189,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\materialization-status.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_materialization_status_js",
-      "community": 32,
+      "community": 34,
       "norm_label": "materialization-status.js"
     },
     {
@@ -198,7 +198,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\connection.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_connection_js",
-      "community": 33,
+      "community": 35,
       "norm_label": "connection.js"
     },
     {
@@ -207,8 +207,17 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\avatar-runtime-render.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_avatar_runtime_render_js",
-      "community": 34,
+      "community": 36,
       "norm_label": "avatar-runtime-render.js"
+    },
+    {
+      "label": "player-card-lock-controls.js",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-lock-controls.js",
+      "source_location": "L1",
+      "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_lock_controls_js",
+      "community": 37,
+      "norm_label": "player-card-lock-controls.js"
     },
     {
       "label": "player-card-sync.js",
@@ -216,8 +225,17 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-sync.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_sync_js",
-      "community": 35,
+      "community": 38,
       "norm_label": "player-card-sync.js"
+    },
+    {
+      "label": "client-index.js",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\client-index.js",
+      "source_location": "L1",
+      "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_client_index_js",
+      "community": 39,
+      "norm_label": "client-index.js"
     },
     {
       "label": "player-card-scale.js",
@@ -225,7 +243,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-scale.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_scale_js",
-      "community": 36,
+      "community": 40,
       "norm_label": "player-card-scale.js"
     },
     {
@@ -234,7 +252,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\avatar-draft-candidates.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_avatar_draft_candidates_js",
-      "community": 37,
+      "community": 41,
       "norm_label": "avatar-draft-candidates.js"
     },
     {
@@ -243,7 +261,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\materialization.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_materialization_js",
-      "community": 38,
+      "community": 42,
       "norm_label": "materialization.js"
     },
     {
@@ -252,8 +270,26 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\relationship.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_relationship_js",
-      "community": 39,
+      "community": 43,
       "norm_label": "relationship.js"
+    },
+    {
+      "label": "player-card-advanced-layer-menu.js",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-advanced-layer-menu.js",
+      "source_location": "L1",
+      "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_advanced_layer_menu_js",
+      "community": 44,
+      "norm_label": "player-card-advanced-layer-menu.js"
+    },
+    {
+      "label": "player-card-layers.js",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-layers.js",
+      "source_location": "L1",
+      "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_layers_js",
+      "community": 45,
+      "norm_label": "player-card-layers.js"
     },
     {
       "label": "connection-status.js",
@@ -261,7 +297,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\connection-status.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_connection_status_js",
-      "community": 40,
+      "community": 46,
       "norm_label": "connection-status.js"
     },
     {
@@ -270,7 +306,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-preview.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_preview_js",
-      "community": 41,
+      "community": 47,
       "norm_label": "player-card-preview.js"
     },
     {
@@ -279,7 +315,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\body.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_body_js",
-      "community": 42,
+      "community": 48,
       "norm_label": "body.js"
     },
     {
@@ -288,7 +324,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\avatar-history-store.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_avatar_history_store_js",
-      "community": 24,
+      "community": 25,
       "norm_label": "avatar-history-store.js"
     },
     {
@@ -297,7 +333,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\avatar-history-store.js",
       "source_location": "L7",
       "id": "avatar_history_store_creatememorystorage",
-      "community": 24,
+      "community": 25,
       "norm_label": "creatememorystorage()"
     },
     {
@@ -306,7 +342,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\avatar-draft-preview.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_avatar_draft_preview_js",
-      "community": 43,
+      "community": 49,
       "norm_label": "avatar-draft-preview.js"
     },
     {
@@ -315,7 +351,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-canvas-transform.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_canvas_transform_js",
-      "community": 44,
+      "community": 50,
       "norm_label": "player-card-canvas-transform.js"
     },
     {
@@ -324,7 +360,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\i18n.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_i18n_js",
-      "community": 25,
+      "community": 26,
       "norm_label": "i18n.js"
     },
     {
@@ -333,7 +369,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\i18n.js",
       "source_location": "L7",
       "id": "i18n_creatememorystorage",
-      "community": 25,
+      "community": 26,
       "norm_label": "creatememorystorage()"
     },
     {
@@ -342,16 +378,16 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-storage.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_storage_js",
-      "community": 26,
+      "community": 27,
       "norm_label": "player-card-storage.js"
     },
     {
       "label": "createMemoryStorage()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-storage.js",
-      "source_location": "L7",
+      "source_location": "L8",
       "id": "player_card_storage_creatememorystorage",
-      "community": 26,
+      "community": 27,
       "norm_label": "creatememorystorage()"
     },
     {
@@ -360,7 +396,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\relationship-status.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_relationship_status_js",
-      "community": 45,
+      "community": 51,
       "norm_label": "relationship-status.js"
     },
     {
@@ -369,8 +405,26 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\body-status.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_body_status_js",
-      "community": 46,
+      "community": 52,
       "norm_label": "body-status.js"
+    },
+    {
+      "label": "player-card-draft-store.js",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-draft-store.js",
+      "source_location": "L1",
+      "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_draft_store_js",
+      "community": 28,
+      "norm_label": "player-card-draft-store.js"
+    },
+    {
+      "label": "createMemoryStorage()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-draft-store.js",
+      "source_location": "L8",
+      "id": "player_card_draft_store_creatememorystorage",
+      "community": 28,
+      "norm_label": "creatememorystorage()"
     },
     {
       "label": "player-card-history.js",
@@ -378,7 +432,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-history.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_history_js",
-      "community": 47,
+      "community": 53,
       "norm_label": "player-card-history.js"
     },
     {
@@ -387,7 +441,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tools\\windows\\run-server.ps1",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tools_windows_run_server_ps1",
-      "community": 27,
+      "community": 29,
       "norm_label": "run-server.ps1"
     },
     {
@@ -396,7 +450,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tools\\windows\\run-server.ps1",
       "source_location": "L9",
       "id": "run_server_convert_towsllocation",
-      "community": 27,
+      "community": 29,
       "norm_label": "convert-towsllocation()"
     },
     {
@@ -405,7 +459,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tools\\windows\\launch-agario.ps1",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tools_windows_launch_agario_ps1",
-      "community": 20,
+      "community": 21,
       "norm_label": "launch-agario.ps1"
     },
     {
@@ -414,7 +468,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tools\\windows\\launch-agario.ps1",
       "source_location": "L14",
       "id": "launch_agario_test_localurl",
-      "community": 20,
+      "community": 21,
       "norm_label": "test-localurl()"
     },
     {
@@ -423,7 +477,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tools\\windows\\launch-agario.ps1",
       "source_location": "L28",
       "id": "launch_agario_open_gameurl",
-      "community": 20,
+      "community": 21,
       "norm_label": "open-gameurl()"
     },
     {
@@ -432,7 +486,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tools\\windows\\install-desktop-shortcut.ps1",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tools_windows_install_desktop_shortcut_ps1",
-      "community": 48,
+      "community": 54,
       "norm_label": "install-desktop-shortcut.ps1"
     },
     {
@@ -441,7 +495,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\configs\\game\\config.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_configs_game_config_js",
-      "community": 49,
+      "community": 55,
       "norm_label": "config.js"
     },
     {
@@ -450,7 +504,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\configs\\game\\connection.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_configs_game_connection_js",
-      "community": 50,
+      "community": 56,
       "norm_label": "connection.js"
     },
     {
@@ -459,7 +513,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\configs\\game\\materialization.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_configs_game_materialization_js",
-      "community": 51,
+      "community": 57,
       "norm_label": "materialization.js"
     },
     {
@@ -468,7 +522,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\configs\\game\\relationship.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_configs_game_relationship_js",
-      "community": 52,
+      "community": 58,
       "norm_label": "relationship.js"
     },
     {
@@ -477,7 +531,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\configs\\game\\body.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_configs_game_body_js",
-      "community": 53,
+      "community": 59,
       "norm_label": "body.js"
     },
     {
@@ -522,7 +576,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\server.js",
       "source_location": "L71",
       "id": "server_setconnectionpairstate",
-      "community": 2,
+      "community": 10,
       "norm_label": "setconnectionpairstate()"
     },
     {
@@ -531,7 +585,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\server.js",
       "source_location": "L79",
       "id": "server_attemptconnection",
-      "community": 2,
+      "community": 10,
       "norm_label": "attemptconnection()"
     },
     {
@@ -576,7 +630,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\server.js",
       "source_location": "L369",
       "id": "server_calculateleaderboard",
-      "community": 1,
+      "community": 2,
       "norm_label": "calculateleaderboard()"
     },
     {
@@ -585,7 +639,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\server.js",
       "source_location": "L386",
       "id": "server_gameloop",
-      "community": 1,
+      "community": 2,
       "norm_label": "gameloop()"
     },
     {
@@ -639,7 +693,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\connection.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_server_src_connection_js",
-      "community": 3,
+      "community": 10,
       "norm_label": "connection.js"
     },
     {
@@ -648,7 +702,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\connection.js",
       "source_location": "L13",
       "id": "connection_createconnectionstate",
-      "community": 3,
+      "community": 10,
       "norm_label": "createconnectionstate()"
     },
     {
@@ -657,7 +711,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\connection.js",
       "source_location": "L21",
       "id": "connection_applyconnectionstate",
-      "community": 3,
+      "community": 10,
       "norm_label": "applyconnectionstate()"
     },
     {
@@ -666,7 +720,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\connection.js",
       "source_location": "L25",
       "id": "connection_clearconnectionstate",
-      "community": 3,
+      "community": 10,
       "norm_label": "clearconnectionstate()"
     },
     {
@@ -675,7 +729,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\connection.js",
       "source_location": "L29",
       "id": "connection_distance",
-      "community": 3,
+      "community": 10,
       "norm_label": "distance()"
     },
     {
@@ -684,7 +738,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\connection.js",
       "source_location": "L33",
       "id": "connection_iseligibleconnectiontarget",
-      "community": 3,
+      "community": 10,
       "norm_label": "iseligibleconnectiontarget()"
     },
     {
@@ -693,7 +747,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\connection.js",
       "source_location": "L45",
       "id": "connection_findconnectiontarget",
-      "community": 3,
+      "community": 10,
       "norm_label": "findconnectiontarget()"
     },
     {
@@ -702,7 +756,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\connection.js",
       "source_location": "L65",
       "id": "connection_resolveconnectionoutcome",
-      "community": 3,
+      "community": 10,
       "norm_label": "resolveconnectionoutcome()"
     },
     {
@@ -792,7 +846,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_server_src_body_js",
-      "community": 4,
+      "community": 3,
       "norm_label": "body.js"
     },
     {
@@ -801,7 +855,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L15",
       "id": "body_getpartdefinition",
-      "community": 4,
+      "community": 3,
       "norm_label": "getpartdefinition()"
     },
     {
@@ -810,7 +864,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L24",
       "id": "body_createbodypart",
-      "community": 4,
+      "community": 3,
       "norm_label": "createbodypart()"
     },
     {
@@ -819,7 +873,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L37",
       "id": "body_normalizebodyparts",
-      "community": 4,
+      "community": 3,
       "norm_label": "normalizebodyparts()"
     },
     {
@@ -828,7 +882,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L47",
       "id": "body_countbodyparts",
-      "community": 4,
+      "community": 3,
       "norm_label": "countbodyparts()"
     },
     {
@@ -837,7 +891,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L60",
       "id": "body_createdefaultbodyparts",
-      "community": 4,
+      "community": 3,
       "norm_label": "createdefaultbodyparts()"
     },
     {
@@ -846,7 +900,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L64",
       "id": "body_createbodystate",
-      "community": 4,
+      "community": 3,
       "norm_label": "createbodystate()"
     },
     {
@@ -855,7 +909,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L75",
       "id": "body_applybodystate",
-      "community": 4,
+      "community": 3,
       "norm_label": "applybodystate()"
     },
     {
@@ -864,7 +918,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L82",
       "id": "body_getstealableparts",
-      "community": 4,
+      "community": 3,
       "norm_label": "getstealableparts()"
     },
     {
@@ -873,7 +927,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L86",
       "id": "body_getpartcount",
-      "community": 4,
+      "community": 3,
       "norm_label": "getpartcount()"
     },
     {
@@ -882,7 +936,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L98",
       "id": "body_createbodybonuses",
-      "community": 4,
+      "community": 3,
       "norm_label": "createbodybonuses()"
     },
     {
@@ -891,7 +945,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L109",
       "id": "body_getmovementspeedmultiplier",
-      "community": 4,
+      "community": 3,
       "norm_label": "getmovementspeedmultiplier()"
     },
     {
@@ -900,7 +954,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L114",
       "id": "body_getconnectionrangebonus",
-      "community": 4,
+      "community": 3,
       "norm_label": "getconnectionrangebonus()"
     },
     {
@@ -909,7 +963,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L119",
       "id": "body_getconnectionrange",
-      "community": 4,
+      "community": 3,
       "norm_label": "getconnectionrange()"
     },
     {
@@ -918,7 +972,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L123",
       "id": "body_getvisionrangebonus",
-      "community": 4,
+      "community": 3,
       "norm_label": "getvisionrangebonus()"
     },
     {
@@ -927,7 +981,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L128",
       "id": "body_getresonanceintimacybonus",
-      "community": 4,
+      "community": 3,
       "norm_label": "getresonanceintimacybonus()"
     },
     {
@@ -936,7 +990,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L133",
       "id": "body_getbreakspikebonus",
-      "community": 4,
+      "community": 3,
       "norm_label": "getbreakspikebonus()"
     },
     {
@@ -945,7 +999,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L138",
       "id": "body_getplayerdevourmassgain",
-      "community": 4,
+      "community": 3,
       "norm_label": "getplayerdevourmassgain()"
     },
     {
@@ -954,7 +1008,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L142",
       "id": "body_getplayerdevourmassmultiplier",
-      "community": 4,
+      "community": 3,
       "norm_label": "getplayerdevourmassmultiplier()"
     },
     {
@@ -963,7 +1017,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\body.js",
       "source_location": "L147",
       "id": "body_stealrandomcorepart",
-      "community": 4,
+      "community": 3,
       "norm_label": "stealrandomcorepart()"
     },
     {
@@ -999,7 +1053,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\lib\\util.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_server_src_lib_util_js",
-      "community": 54,
+      "community": 60,
       "norm_label": "util.js"
     },
     {
@@ -1359,7 +1413,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\map\\player.js",
       "source_location": "L347",
       "id": "player_gettopplayers",
-      "community": 1,
+      "community": 2,
       "norm_label": "gettopplayers()"
     },
     {
@@ -1539,7 +1593,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\map\\virus.js",
       "source_location": "L40",
       "id": "virus_delete",
-      "community": 2,
+      "community": 1,
       "norm_label": "delete()"
     },
     {
@@ -1548,7 +1602,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\repositories\\chat-repository.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_server_src_repositories_chat_repository_js",
-      "community": 28,
+      "community": 30,
       "norm_label": "chat-repository.js"
     },
     {
@@ -1557,7 +1611,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\repositories\\chat-repository.js",
       "source_location": "L3",
       "id": "chat_repository_logchatmessage",
-      "community": 28,
+      "community": 30,
       "norm_label": "logchatmessage()"
     },
     {
@@ -1566,7 +1620,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\repositories\\logging-repository.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_server_src_repositories_logging_repository_js",
-      "community": 29,
+      "community": 31,
       "norm_label": "logging-repository.js"
     },
     {
@@ -1575,7 +1629,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\repositories\\logging-repository.js",
       "source_location": "L3",
       "id": "logging_repository_logfailedloginattempt",
-      "community": 29,
+      "community": 31,
       "norm_label": "logfailedloginattempt()"
     },
     {
@@ -1602,7 +1656,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\global.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_global_js",
-      "community": 55,
+      "community": 61,
       "norm_label": "global.js"
     },
     {
@@ -1611,7 +1665,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-runtime-render.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_avatar_runtime_render_js",
-      "community": 6,
+      "community": 5,
       "norm_label": "avatar-runtime-render.js"
     },
     {
@@ -1620,7 +1674,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-runtime-render.js",
       "source_location": "L3",
       "id": "avatar_runtime_render_shoulduseavatarruntimerender",
-      "community": 6,
+      "community": 5,
       "norm_label": "shoulduseavatarruntimerender()"
     },
     {
@@ -1629,7 +1683,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-runtime-render.js",
       "source_location": "L19",
       "id": "avatar_runtime_render_getavatarinnerradius",
-      "community": 6,
+      "community": 5,
       "norm_label": "getavatarinnerradius()"
     },
     {
@@ -1638,7 +1692,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_canvas_js",
-      "community": 8,
+      "community": 7,
       "norm_label": "canvas.js"
     },
     {
@@ -1647,7 +1701,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L3",
       "id": "canvas_canvas",
-      "community": 8,
+      "community": 7,
       "norm_label": "canvas"
     },
     {
@@ -1656,7 +1710,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L4",
       "id": "canvas_canvas_constructor",
-      "community": 8,
+      "community": 7,
       "norm_label": ".constructor()"
     },
     {
@@ -1665,7 +1719,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L30",
       "id": "canvas_canvas_directiondown",
-      "community": 8,
+      "community": 7,
       "norm_label": ".directiondown()"
     },
     {
@@ -1674,7 +1728,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L43",
       "id": "canvas_canvas_directionup",
-      "community": 8,
+      "community": 7,
       "norm_label": ".directionup()"
     },
     {
@@ -1683,7 +1737,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L55",
       "id": "canvas_canvas_newdirection",
-      "community": 8,
+      "community": 7,
       "norm_label": ".newdirection()"
     },
     {
@@ -1692,7 +1746,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L79",
       "id": "canvas_canvas_updatetarget",
-      "community": 8,
+      "community": 7,
       "norm_label": ".updatetarget()"
     },
     {
@@ -1701,7 +1755,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L98",
       "id": "canvas_canvas_directional",
-      "community": 8,
+      "community": 7,
       "norm_label": ".directional()"
     },
     {
@@ -1710,7 +1764,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L102",
       "id": "canvas_canvas_horizontal",
-      "community": 8,
+      "community": 7,
       "norm_label": ".horizontal()"
     },
     {
@@ -1719,7 +1773,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L106",
       "id": "canvas_canvas_vertical",
-      "community": 8,
+      "community": 7,
       "norm_label": ".vertical()"
     },
     {
@@ -1728,7 +1782,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L111",
       "id": "canvas_canvas_outofbounds",
-      "community": 8,
+      "community": 7,
       "norm_label": ".outofbounds()"
     },
     {
@@ -1737,7 +1791,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L118",
       "id": "canvas_canvas_gameinput",
-      "community": 8,
+      "community": 7,
       "norm_label": ".gameinput()"
     },
     {
@@ -1746,7 +1800,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L126",
       "id": "canvas_canvas_touchinput",
-      "community": 8,
+      "community": 7,
       "norm_label": ".touchinput()"
     },
     {
@@ -1755,7 +1809,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\canvas.js",
       "source_location": "L137",
       "id": "canvas_canvas_keyinput",
-      "community": 8,
+      "community": 7,
       "norm_label": ".keyinput()"
     },
     {
@@ -1764,7 +1818,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-templates.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_avatar_draft_templates_js",
-      "community": 5,
+      "community": 8,
       "norm_label": "avatar-draft-templates.js"
     },
     {
@@ -1773,7 +1827,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-templates.js",
       "source_location": "L3",
       "id": "avatar_draft_templates_createrect",
-      "community": 5,
+      "community": 8,
       "norm_label": "createrect()"
     },
     {
@@ -1782,7 +1836,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-templates.js",
       "source_location": "L19",
       "id": "avatar_draft_templates_createcircle",
-      "community": 5,
+      "community": 8,
       "norm_label": "createcircle()"
     },
     {
@@ -1791,7 +1845,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-templates.js",
       "source_location": "L34",
       "id": "avatar_draft_templates_createline",
-      "community": 5,
+      "community": 8,
       "norm_label": "createline()"
     },
     {
@@ -1800,7 +1854,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-templates.js",
       "source_location": "L136",
       "id": "avatar_draft_templates_getdefaulttemplates",
-      "community": 5,
+      "community": 8,
       "norm_label": "getdefaulttemplates()"
     },
     {
@@ -1809,7 +1863,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-templates.js",
       "source_location": "L142",
       "id": "avatar_draft_templates_getdefaulttemplatebyid",
-      "community": 5,
+      "community": 8,
       "norm_label": "getdefaulttemplatebyid()"
     },
     {
@@ -1818,7 +1872,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-scale.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_scale_js",
-      "community": 14,
+      "community": 15,
       "norm_label": "player-card-scale.js"
     },
     {
@@ -1827,7 +1881,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-scale.js",
       "source_location": "L7",
       "id": "player_card_scale_clampscale",
-      "community": 14,
+      "community": 15,
       "norm_label": "clampscale()"
     },
     {
@@ -1836,7 +1890,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-scale.js",
       "source_location": "L11",
       "id": "player_card_scale_getnextscale",
-      "community": 14,
+      "community": 15,
       "norm_label": "getnextscale()"
     },
     {
@@ -1845,7 +1899,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-scale.js",
       "source_location": "L24",
       "id": "player_card_scale_canscalein",
-      "community": 14,
+      "community": 15,
       "norm_label": "canscalein()"
     },
     {
@@ -1854,7 +1908,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-scale.js",
       "source_location": "L28",
       "id": "player_card_scale_canscaleout",
-      "community": 14,
+      "community": 15,
       "norm_label": "canscaleout()"
     },
     {
@@ -1863,7 +1917,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-config.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_avatar_draft_config_js",
-      "community": 56,
+      "community": 62,
       "norm_label": "avatar-draft-config.js"
     },
     {
@@ -1872,7 +1926,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_chat_client_js",
-      "community": 7,
+      "community": 6,
       "norm_label": "chat-client.js"
     },
     {
@@ -1881,7 +1935,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L3",
       "id": "chat_client_chatclient",
-      "community": 7,
+      "community": 6,
       "norm_label": "chatclient"
     },
     {
@@ -1890,7 +1944,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L4",
       "id": "chat_client_chatclient_constructor",
-      "community": 7,
+      "community": 6,
       "norm_label": ".constructor()"
     },
     {
@@ -1899,7 +1953,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L26",
       "id": "chat_client_chatclient_registerfunctions",
-      "community": 7,
+      "community": 6,
       "norm_label": ".registerfunctions()"
     },
     {
@@ -1908,7 +1962,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L67",
       "id": "chat_client_chatclient_addchatline",
-      "community": 7,
+      "community": 6,
       "norm_label": ".addchatline()"
     },
     {
@@ -1917,7 +1971,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L81",
       "id": "chat_client_chatclient_addsystemline",
-      "community": 7,
+      "community": 6,
       "norm_label": ".addsystemline()"
     },
     {
@@ -1926,7 +1980,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L96",
       "id": "chat_client_chatclient_appendmessage",
-      "community": 7,
+      "community": 6,
       "norm_label": ".appendmessage()"
     },
     {
@@ -1935,7 +1989,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L108",
       "id": "chat_client_chatclient_sendchat",
-      "community": 7,
+      "community": 6,
       "norm_label": ".sendchat()"
     },
     {
@@ -1944,7 +1998,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L141",
       "id": "chat_client_chatclient_registercommand",
-      "community": 7,
+      "community": 6,
       "norm_label": ".registercommand()"
     },
     {
@@ -1953,7 +2007,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L149",
       "id": "chat_client_chatclient_printhelp",
-      "community": 7,
+      "community": 6,
       "norm_label": ".printhelp()"
     },
     {
@@ -1962,7 +2016,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L158",
       "id": "chat_client_chatclient_checklatency",
-      "community": 7,
+      "community": 6,
       "norm_label": ".checklatency()"
     },
     {
@@ -1971,7 +2025,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L164",
       "id": "chat_client_chatclient_toggledarkmode",
-      "community": 7,
+      "community": 6,
       "norm_label": ".toggledarkmode()"
     },
     {
@@ -1980,7 +2034,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L181",
       "id": "chat_client_chatclient_toggleborder",
-      "community": 7,
+      "community": 6,
       "norm_label": ".toggleborder()"
     },
     {
@@ -1989,7 +2043,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L191",
       "id": "chat_client_chatclient_togglemass",
-      "community": 7,
+      "community": 6,
       "norm_label": ".togglemass()"
     },
     {
@@ -1998,7 +2052,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L201",
       "id": "chat_client_chatclient_togglecontinuity",
-      "community": 7,
+      "community": 6,
       "norm_label": ".togglecontinuity()"
     },
     {
@@ -2007,7 +2061,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\chat-client.js",
       "source_location": "L211",
       "id": "chat_client_chatclient_toggleroundfood",
-      "community": 7,
+      "community": 6,
       "norm_label": ".toggleroundfood()"
     },
     {
@@ -2016,7 +2070,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-candidates.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_avatar_draft_candidates_js",
-      "community": 5,
+      "community": 8,
       "norm_label": "avatar-draft-candidates.js"
     },
     {
@@ -2025,7 +2079,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-candidates.js",
       "source_location": "L6",
       "id": "avatar_draft_candidates_clone",
-      "community": 5,
+      "community": 8,
       "norm_label": "clone()"
     },
     {
@@ -2034,7 +2088,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-candidates.js",
       "source_location": "L10",
       "id": "avatar_draft_candidates_removemissingpart",
-      "community": 5,
+      "community": 8,
       "norm_label": "removemissingpart()"
     },
     {
@@ -2043,7 +2097,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-candidates.js",
       "source_location": "L18",
       "id": "avatar_draft_candidates_randompick",
-      "community": 5,
+      "community": 8,
       "norm_label": "randompick()"
     },
     {
@@ -2052,7 +2106,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-candidates.js",
       "source_location": "L25",
       "id": "avatar_draft_candidates_buildcandidatefromtemplate",
-      "community": 5,
+      "community": 8,
       "norm_label": "buildcandidatefromtemplate()"
     },
     {
@@ -2061,8 +2115,107 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-candidates.js",
       "source_location": "L40",
       "id": "avatar_draft_candidates_builddraftcandidates",
-      "community": 5,
+      "community": 8,
       "norm_label": "builddraftcandidates()"
+    },
+    {
+      "label": "player-card-layers.js",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L1",
+      "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "community": 4,
+      "norm_label": "player-card-layers.js"
+    },
+    {
+      "label": "clone()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L5",
+      "id": "player_card_layers_clone",
+      "community": 4,
+      "norm_label": "clone()"
+    },
+    {
+      "label": "createEmptyCanvasJson()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L9",
+      "id": "player_card_layers_createemptycanvasjson",
+      "community": 4,
+      "norm_label": "createemptycanvasjson()"
+    },
+    {
+      "label": "createDefaultLayerState()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L16",
+      "id": "player_card_layers_createdefaultlayerstate",
+      "community": 4,
+      "norm_label": "createdefaultlayerstate()"
+    },
+    {
+      "label": "createLayerPayload()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L24",
+      "id": "player_card_layers_createlayerpayload",
+      "community": 4,
+      "norm_label": "createlayerpayload()"
+    },
+    {
+      "label": "createLegacyLayerPayload()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L37",
+      "id": "player_card_layers_createlegacylayerpayload",
+      "community": 4,
+      "norm_label": "createlegacylayerpayload()"
+    },
+    {
+      "label": "mergeLayerPayloadToCanvasJson()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L45",
+      "id": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "community": 4,
+      "norm_label": "mergelayerpayloadtocanvasjson()"
+    },
+    {
+      "label": "splitCanvasJsonByLayer()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L58",
+      "id": "player_card_layers_splitcanvasjsonbylayer",
+      "community": 4,
+      "norm_label": "splitcanvasjsonbylayer()"
+    },
+    {
+      "label": "serializeCanvas()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L69",
+      "id": "player_card_layers_serializecanvas",
+      "community": 4,
+      "norm_label": "serializecanvas()"
+    },
+    {
+      "label": "getLayerRenderState()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L73",
+      "id": "player_card_layers_getlayerrenderstate",
+      "community": 4,
+      "norm_label": "getlayerrenderstate()"
+    },
+    {
+      "label": "hasAnyContent()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L85",
+      "id": "player_card_layers_hasanycontent",
+      "community": 4,
+      "norm_label": "hasanycontent()"
     },
     {
       "label": "connection-status.js",
@@ -2106,7 +2259,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_render_js",
-      "community": 6,
+      "community": 5,
       "norm_label": "render.js"
     },
     {
@@ -2115,7 +2268,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L6",
       "id": "render_drawroundobject",
-      "community": 6,
+      "community": 5,
       "norm_label": "drawroundobject()"
     },
     {
@@ -2124,7 +2277,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L14",
       "id": "render_drawfood",
-      "community": 6,
+      "community": 5,
       "norm_label": "drawfood()"
     },
     {
@@ -2133,7 +2286,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L21",
       "id": "render_drawvirus",
-      "community": 6,
+      "community": 5,
       "norm_label": "drawvirus()"
     },
     {
@@ -2142,7 +2295,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L38",
       "id": "render_drawfirefood",
-      "community": 6,
+      "community": 5,
       "norm_label": "drawfirefood()"
     },
     {
@@ -2151,7 +2304,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L45",
       "id": "render_valueinrange",
-      "community": 6,
+      "community": 5,
       "norm_label": "valueinrange()"
     },
     {
@@ -2160,7 +2313,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L47",
       "id": "render_circlepoint",
-      "community": 6,
+      "community": 5,
       "norm_label": "circlepoint()"
     },
     {
@@ -2169,7 +2322,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L52",
       "id": "render_celltouchingborders",
-      "community": 6,
+      "community": 5,
       "norm_label": "celltouchingborders()"
     },
     {
@@ -2178,7 +2331,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L58",
       "id": "render_regulatepoint",
-      "community": 6,
+      "community": 5,
       "norm_label": "regulatepoint()"
     },
     {
@@ -2187,7 +2340,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L63",
       "id": "render_drawcellwithlines",
-      "community": 6,
+      "community": 5,
       "norm_label": "drawcellwithlines()"
     },
     {
@@ -2196,7 +2349,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L80",
       "id": "render_getavatarimage",
-      "community": 6,
+      "community": 5,
       "norm_label": "getavatarimage()"
     },
     {
@@ -2205,7 +2358,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L94",
       "id": "render_drawavatarcell",
-      "community": 6,
+      "community": 5,
       "norm_label": "drawavatarcell()"
     },
     {
@@ -2214,7 +2367,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L137",
       "id": "render_drawcells",
-      "community": 6,
+      "community": 5,
       "norm_label": "drawcells()"
     },
     {
@@ -2223,7 +2376,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L185",
       "id": "render_drawgrid",
-      "community": 6,
+      "community": 5,
       "norm_label": "drawgrid()"
     },
     {
@@ -2232,7 +2385,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L205",
       "id": "render_drawborder",
-      "community": 6,
+      "community": 5,
       "norm_label": "drawborder()"
     },
     {
@@ -2250,7 +2403,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-history-store.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_avatar_history_store_js",
-      "community": 5,
+      "community": 12,
       "norm_label": "avatar-history-store.js"
     },
     {
@@ -2259,7 +2412,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-history-store.js",
       "source_location": "L7",
       "id": "avatar_history_store_getstorage",
-      "community": 5,
+      "community": 12,
       "norm_label": "getstorage()"
     },
     {
@@ -2268,7 +2421,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-history-store.js",
       "source_location": "L23",
       "id": "avatar_history_store_loadhistory",
-      "community": 5,
+      "community": 12,
       "norm_label": "loadhistory()"
     },
     {
@@ -2277,7 +2430,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-history-store.js",
       "source_location": "L37",
       "id": "avatar_history_store_savehistory",
-      "community": 5,
+      "community": 12,
       "norm_label": "savehistory()"
     },
     {
@@ -2286,7 +2439,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-history-store.js",
       "source_location": "L47",
       "id": "avatar_history_store_addhistoryentry",
-      "community": 5,
+      "community": 12,
       "norm_label": "addhistoryentry()"
     },
     {
@@ -2295,7 +2448,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-history-store.js",
       "source_location": "L55",
       "id": "avatar_history_store_createhistoryentry",
-      "community": 5,
+      "community": 12,
       "norm_label": "createhistoryentry()"
     },
     {
@@ -2311,7 +2464,7 @@
       "label": "enterGame()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L37",
+      "source_location": "L39",
       "id": "app_entergame",
       "community": 0,
       "norm_label": "entergame()"
@@ -2320,7 +2473,7 @@
       "label": "startGame()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L61",
+      "source_location": "L63",
       "id": "app_startgame",
       "community": 0,
       "norm_label": "startgame()"
@@ -2329,7 +2482,7 @@
       "label": "validNick()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L71",
+      "source_location": "L73",
       "id": "app_validnick",
       "community": 2,
       "norm_label": "validnick()"
@@ -2338,7 +2491,7 @@
       "label": "renderStatusPanel()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L225",
+      "source_location": "L250",
       "id": "app_renderstatuspanel",
       "community": 0,
       "norm_label": "renderstatuspanel()"
@@ -2347,7 +2500,7 @@
       "label": "renderPlayerCardPreviews()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L248",
+      "source_location": "L273",
       "id": "app_renderplayercardpreviews",
       "community": 0,
       "norm_label": "renderplayercardpreviews()"
@@ -2356,7 +2509,7 @@
       "label": "applyTranslations()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L266",
+      "source_location": "L291",
       "id": "app_applytranslations",
       "community": 0,
       "norm_label": "applytranslations()"
@@ -2365,7 +2518,7 @@
       "label": "getDraftPanelElements()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L295",
+      "source_location": "L326",
       "id": "app_getdraftpanelelements",
       "community": 0,
       "norm_label": "getdraftpanelelements()"
@@ -2374,16 +2527,52 @@
       "label": "resetPlayerCardPanelToManualMode()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L308",
+      "source_location": "L339",
       "id": "app_resetplayercardpaneltomanualmode",
       "community": 0,
       "norm_label": "resetplayercardpaneltomanualmode()"
     },
     {
+      "label": "createDraftTimestampLabel()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L350",
+      "id": "app_createdrafttimestamplabel",
+      "community": 0,
+      "norm_label": "createdrafttimestamplabel()"
+    },
+    {
+      "label": "renderPlayerCardDrafts()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L359",
+      "id": "app_renderplayercarddrafts",
+      "community": 0,
+      "norm_label": "renderplayercarddrafts()"
+    },
+    {
+      "label": "saveCurrentPlayerCardAsDraft()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L390",
+      "id": "app_savecurrentplayercardasdraft",
+      "community": 0,
+      "norm_label": "savecurrentplayercardasdraft()"
+    },
+    {
+      "label": "bindPlayerCardDraftControls()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L403",
+      "id": "app_bindplayercarddraftcontrols",
+      "community": 0,
+      "norm_label": "bindplayercarddraftcontrols()"
+    },
+    {
       "label": "clearDraftTimer()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L317",
+      "source_location": "L427",
       "id": "app_cleardrafttimer",
       "community": 0,
       "norm_label": "cleardrafttimer()"
@@ -2392,7 +2581,7 @@
       "label": "deactivateDraftMode()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L324",
+      "source_location": "L434",
       "id": "app_deactivatedraftmode",
       "community": 0,
       "norm_label": "deactivatedraftmode()"
@@ -2401,7 +2590,7 @@
       "label": "formatMissingPartLabel()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L330",
+      "source_location": "L440",
       "id": "app_formatmissingpartlabel",
       "community": 0,
       "norm_label": "formatmissingpartlabel()"
@@ -2410,7 +2599,7 @@
       "label": "renderDraftCandidates()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L334",
+      "source_location": "L444",
       "id": "app_renderdraftcandidates",
       "community": 0,
       "norm_label": "renderdraftcandidates()"
@@ -2419,7 +2608,7 @@
       "label": "selectDraftCandidate()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L355",
+      "source_location": "L465",
       "id": "app_selectdraftcandidate",
       "community": 0,
       "norm_label": "selectdraftcandidate()"
@@ -2428,7 +2617,7 @@
       "label": "updateDraftTimer()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L369",
+      "source_location": "L479",
       "id": "app_updatedrafttimer",
       "community": 0,
       "norm_label": "updatedrafttimer()"
@@ -2437,16 +2626,16 @@
       "label": "buildDraftSession()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L384",
+      "source_location": "L494",
       "id": "app_builddraftsession",
-      "community": 5,
+      "community": 0,
       "norm_label": "builddraftsession()"
     },
     {
       "label": "rerollDraftCandidates()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L400",
+      "source_location": "L510",
       "id": "app_rerolldraftcandidates",
       "community": 0,
       "norm_label": "rerolldraftcandidates()"
@@ -2455,7 +2644,7 @@
       "label": "updateDraftButtons()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L417",
+      "source_location": "L527",
       "id": "app_updatedraftbuttons",
       "community": 0,
       "norm_label": "updatedraftbuttons()"
@@ -2464,7 +2653,7 @@
       "label": "beginAvatarDraftFlow()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L425",
+      "source_location": "L535",
       "id": "app_beginavatardraftflow",
       "community": 0,
       "norm_label": "beginavatardraftflow()"
@@ -2473,7 +2662,7 @@
       "label": "completeAvatarDraft()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L456",
+      "source_location": "L567",
       "id": "app_completeavatardraft",
       "community": 0,
       "norm_label": "completeavatardraft()"
@@ -2482,7 +2671,7 @@
       "label": "findConnectedTargetCardPreview()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L481",
+      "source_location": "L592",
       "id": "app_findconnectedtargetcardpreview",
       "community": 0,
       "norm_label": "findconnectedtargetcardpreview()"
@@ -2491,7 +2680,7 @@
       "label": "handleDisconnect()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L505",
+      "source_location": "L616",
       "id": "app_handledisconnect",
       "community": 0,
       "norm_label": "handledisconnect()"
@@ -2500,7 +2689,7 @@
       "label": "setupSocket()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L513",
+      "source_location": "L624",
       "id": "app_setupsocket",
       "community": 0,
       "norm_label": "setupsocket()"
@@ -2509,7 +2698,7 @@
       "label": "isUnnamedCell()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L639",
+      "source_location": "L750",
       "id": "app_isunnamedcell",
       "community": 0,
       "norm_label": "isunnamedcell()"
@@ -2518,7 +2707,7 @@
       "label": "getPosition()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L641",
+      "source_location": "L752",
       "id": "app_getposition",
       "community": 2,
       "norm_label": "getposition()"
@@ -2527,7 +2716,7 @@
       "label": "animloop()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L663",
+      "source_location": "L774",
       "id": "app_animloop",
       "community": 0,
       "norm_label": "animloop()"
@@ -2536,16 +2725,16 @@
       "label": "gameLoop()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L668",
+      "source_location": "L779",
       "id": "app_gameloop",
-      "community": 6,
+      "community": 5,
       "norm_label": "gameloop()"
     },
     {
       "label": "resize()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L726",
+      "source_location": "L837",
       "id": "app_resize",
       "community": 0,
       "norm_label": "resize()"
@@ -2610,7 +2799,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-canvas-transform.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_canvas_transform_js",
-      "community": 15,
+      "community": 16,
       "norm_label": "player-card-canvas-transform.js"
     },
     {
@@ -2619,7 +2808,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-canvas-transform.js",
       "source_location": "L3",
       "id": "player_card_canvas_transform_scaleobjectaroundpoint",
-      "community": 15,
+      "community": 16,
       "norm_label": "scaleobjectaroundpoint()"
     },
     {
@@ -2628,7 +2817,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-canvas-transform.js",
       "source_location": "L10",
       "id": "player_card_canvas_transform_translateobject",
-      "community": 15,
+      "community": 16,
       "norm_label": "translateobject()"
     },
     {
@@ -2637,7 +2826,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-canvas-transform.js",
       "source_location": "L15",
       "id": "player_card_canvas_transform_getkeyboardpandelta",
-      "community": 15,
+      "community": 16,
       "norm_label": "getkeyboardpandelta()"
     },
     {
@@ -2646,59 +2835,59 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_i18n_js",
-      "community": 12,
+      "community": 14,
       "norm_label": "i18n.js"
     },
     {
       "label": "getStorage()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L187",
+      "source_location": "L209",
       "id": "i18n_getstorage",
-      "community": 12,
+      "community": 14,
       "norm_label": "getstorage()"
     },
     {
       "label": "setLocale()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L203",
+      "source_location": "L225",
       "id": "i18n_setlocale",
-      "community": 12,
+      "community": 14,
       "norm_label": "setlocale()"
     },
     {
       "label": "loadLocale()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L212",
+      "source_location": "L234",
       "id": "i18n_loadlocale",
-      "community": 12,
+      "community": 14,
       "norm_label": "loadlocale()"
     },
     {
       "label": "getLocale()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L224",
+      "source_location": "L246",
       "id": "i18n_getlocale",
-      "community": 12,
+      "community": 14,
       "norm_label": "getlocale()"
     },
     {
       "label": "interpolate()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L228",
+      "source_location": "L250",
       "id": "i18n_interpolate",
-      "community": 12,
+      "community": 14,
       "norm_label": "interpolate()"
     },
     {
       "label": "t()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L234",
+      "source_location": "L256",
       "id": "i18n_t",
       "community": 0,
       "norm_label": "t()"
@@ -2709,44 +2898,53 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_storage_js",
-      "community": 0,
+      "community": 4,
       "norm_label": "player-card-storage.js"
     },
     {
       "label": "getStorage()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L5",
+      "source_location": "L6",
       "id": "player_card_storage_getstorage",
-      "community": 0,
+      "community": 4,
       "norm_label": "getstorage()"
     },
     {
       "label": "loadPlayerCard()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L21",
+      "source_location": "L22",
       "id": "player_card_storage_loadplayercard",
-      "community": 0,
+      "community": 4,
       "norm_label": "loadplayercard()"
     },
     {
       "label": "savePlayerCard()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L35",
+      "source_location": "L36",
       "id": "player_card_storage_saveplayercard",
-      "community": 0,
+      "community": 4,
       "norm_label": "saveplayercard()"
     },
     {
       "label": "clearPlayerCard()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L45",
+      "source_location": "L47",
       "id": "player_card_storage_clearplayercard",
-      "community": 0,
+      "community": 4,
       "norm_label": "clearplayercard()"
+    },
+    {
+      "label": "normalizePlayerCardPayload()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
+      "source_location": "L62",
+      "id": "player_card_storage_normalizeplayercardpayload",
+      "community": 4,
+      "norm_label": "normalizeplayercardpayload()"
     },
     {
       "label": "player-card-editor.js",
@@ -2754,25 +2952,25 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-editor.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_editor_js",
-      "community": 11,
+      "community": 4,
       "norm_label": "player-card-editor.js"
     },
     {
       "label": "loadFabric()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-editor.js",
-      "source_location": "L16",
+      "source_location": "L17",
       "id": "player_card_editor_loadfabric",
-      "community": 11,
+      "community": 4,
       "norm_label": "loadfabric()"
     },
     {
       "label": "createPlayerCardEditor()",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-editor.js",
-      "source_location": "L41",
+      "source_location": "L42",
       "id": "player_card_editor_createplayercardeditor",
-      "community": 11,
+      "community": 4,
       "norm_label": "createplayercardeditor()"
     },
     {
@@ -2812,12 +3010,66 @@
       "norm_label": "formatbodystatus()"
     },
     {
+      "label": "player-card-draft-store.js",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L1",
+      "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "community": 4,
+      "norm_label": "player-card-draft-store.js"
+    },
+    {
+      "label": "getStorage()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L8",
+      "id": "player_card_draft_store_getstorage",
+      "community": 4,
+      "norm_label": "getstorage()"
+    },
+    {
+      "label": "createDraftId()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L24",
+      "id": "player_card_draft_store_createdraftid",
+      "community": 4,
+      "norm_label": "createdraftid()"
+    },
+    {
+      "label": "normalizeDraftPayload()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L29",
+      "id": "player_card_draft_store_normalizedraftpayload",
+      "community": 4,
+      "norm_label": "normalizedraftpayload()"
+    },
+    {
+      "label": "loadDrafts()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L51",
+      "id": "player_card_draft_store_loaddrafts",
+      "community": 4,
+      "norm_label": "loaddrafts()"
+    },
+    {
+      "label": "saveDraft()",
+      "file_type": "code",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L67",
+      "id": "player_card_draft_store_savedraft",
+      "community": 4,
+      "norm_label": "savedraft()"
+    },
+    {
       "label": "player-card-history.js",
       "file_type": "code",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-history.js",
       "source_location": "L1",
       "id": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_history_js",
-      "community": 11,
+      "community": 4,
       "norm_label": "player-card-history.js"
     },
     {
@@ -2826,7 +3078,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-history.js",
       "source_location": "L3",
       "id": "player_card_history_createhistorystate",
-      "community": 11,
+      "community": 4,
       "norm_label": "createhistorystate()"
     },
     {
@@ -2835,7 +3087,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-history.js",
       "source_location": "L11",
       "id": "player_card_history_pushsnapshot",
-      "community": 11,
+      "community": 4,
       "norm_label": "pushsnapshot()"
     },
     {
@@ -2844,7 +3096,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-history.js",
       "source_location": "L34",
       "id": "player_card_history_undo",
-      "community": 11,
+      "community": 4,
       "norm_label": "undo()"
     },
     {
@@ -2853,7 +3105,7 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-history.js",
       "source_location": "L53",
       "id": "player_card_history_redo",
-      "community": 11,
+      "community": 4,
       "norm_label": "redo()"
     },
     {
@@ -2865,7 +3117,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 21,
+      "community": 22,
       "norm_label": "agents.md",
       "id": "doc_agents"
     },
@@ -2878,7 +3130,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 21,
+      "community": 22,
       "norm_label": "todo.md",
       "id": "doc_todo"
     },
@@ -2891,7 +3143,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 21,
+      "community": 22,
       "norm_label": "readme.md",
       "id": "doc_readme"
     },
@@ -2904,7 +3156,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 11,
       "norm_label": "agar.io clone game ui",
       "id": "agar_io_clone_game_ui"
     },
@@ -2917,7 +3169,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 11,
       "norm_label": "player cell huy",
       "id": "player_huy"
     },
@@ -2930,7 +3182,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 11,
       "norm_label": "player cell dragon",
       "id": "player_dragon"
     },
@@ -2943,7 +3195,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 11,
       "norm_label": "leaderboard panel",
       "id": "leaderboard_panel"
     },
@@ -2956,7 +3208,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 11,
       "norm_label": "two simultaneous game viewports",
       "id": "multiplayer_viewports"
     },
@@ -2969,7 +3221,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 11,
       "norm_label": "colored food pellets",
       "id": "food_pellets"
     },
@@ -2982,7 +3234,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 11,
       "norm_label": "large green virus cells",
       "id": "virus_cells"
     },
@@ -2995,7 +3247,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 11,
       "norm_label": "mobile joystick and targeting controls",
       "id": "mobile_controls"
     },
@@ -3008,7 +3260,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 11,
       "norm_label": "grid-based arena",
       "id": "grid_arena"
     },
@@ -3021,7 +3273,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 16,
+      "community": 17,
       "norm_label": "split icon",
       "id": "asset:bin/client/img/split.png"
     },
@@ -3034,7 +3286,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 16,
+      "community": 17,
       "norm_label": "split",
       "id": "concept:split_control"
     },
@@ -3047,7 +3299,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 16,
+      "community": 17,
       "norm_label": "horizontal separation",
       "id": "concept:horizontal_division"
     },
@@ -3060,7 +3312,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 16,
+      "community": 17,
       "norm_label": "left-right arrows",
       "id": "concept:left_right_direction"
     },
@@ -3073,7 +3325,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 17,
+      "community": 18,
       "norm_label": "feed icon",
       "id": "asset:bin/client/img/feed.png"
     },
@@ -3086,7 +3338,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 17,
+      "community": 18,
       "norm_label": "crosshair/target reticle",
       "id": "concept:crosshair"
     },
@@ -3099,7 +3351,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 17,
+      "community": 18,
       "norm_label": "feed mass",
       "id": "action:feed"
     },
@@ -3112,7 +3364,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 17,
+      "community": 18,
       "norm_label": "feed control",
       "id": "control:feed"
     },
@@ -3125,7 +3377,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 18,
+      "community": 19,
       "norm_label": "split control icon",
       "id": "img:src/client/img/split.png"
     },
@@ -3138,7 +3390,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 18,
+      "community": 19,
       "norm_label": "split",
       "id": "concept:split_action"
     },
@@ -3151,7 +3403,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 18,
+      "community": 19,
       "norm_label": "player input control",
       "id": "concept:player_control"
     },
@@ -3164,7 +3416,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 18,
+      "community": 19,
       "norm_label": "horizontal separation",
       "id": "concept:horizontal_separation"
     },
@@ -3177,7 +3429,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 19,
+      "community": 20,
       "norm_label": "feed control icon",
       "id": "feed_icon_crosshair"
     },
@@ -3190,7 +3442,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 19,
+      "community": 20,
       "norm_label": "targeting reticle",
       "id": "crosshair_targeting"
     },
@@ -3203,7 +3455,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 19,
+      "community": 20,
       "norm_label": "feed action",
       "id": "feed_action"
     },
@@ -3216,7 +3468,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 19,
+      "community": 20,
       "norm_label": "player control input",
       "id": "player_control_input"
     }
@@ -3394,12 +3646,24 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-storage.js",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_storage_js",
       "_tgt": "player_card_storage_creatememorystorage",
       "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_storage_js",
       "target": "player_card_storage_creatememorystorage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\tests\\unit\\player-card-draft-store.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_draft_store_js",
+      "_tgt": "player_card_draft_store_creatememorystorage",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_tests_unit_player_card_draft_store_js",
+      "target": "player_card_draft_store_creatememorystorage",
       "confidence_score": 1.0
     },
     {
@@ -4201,8 +4465,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\map\\player.js",
       "source_location": "L102",
       "weight": 1.0,
-      "_src": "player_constructor",
-      "_tgt": "connection_applyconnectionstate",
+      "_src": "connection_applyconnectionstate",
+      "_tgt": "player_constructor",
       "source": "connection_applyconnectionstate",
       "target": "player_constructor"
     },
@@ -4213,8 +4477,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\map\\player.js",
       "source_location": "L118",
       "weight": 1.0,
-      "_src": "player_init",
-      "_tgt": "connection_applyconnectionstate",
+      "_src": "connection_applyconnectionstate",
+      "_tgt": "player_init",
       "source": "connection_applyconnectionstate",
       "target": "player_init"
     },
@@ -4333,8 +4597,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\map\\player.js",
       "source_location": "L101",
       "weight": 1.0,
-      "_src": "player_constructor",
-      "_tgt": "materialization_applymaterializationstate",
+      "_src": "materialization_applymaterializationstate",
+      "_tgt": "player_constructor",
       "source": "materialization_applymaterializationstate",
       "target": "player_constructor"
     },
@@ -4345,8 +4609,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\map\\player.js",
       "source_location": "L117",
       "weight": 1.0,
-      "_src": "player_init",
-      "_tgt": "materialization_applymaterializationstate",
+      "_src": "materialization_applymaterializationstate",
+      "_tgt": "player_init",
       "source": "materialization_applymaterializationstate",
       "target": "player_init"
     },
@@ -4417,8 +4681,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\map\\player.js",
       "source_location": "L103",
       "weight": 1.0,
-      "_src": "player_constructor",
-      "_tgt": "relationship_applyrelationshipstate",
+      "_src": "relationship_applyrelationshipstate",
+      "_tgt": "player_constructor",
       "source": "relationship_applyrelationshipstate",
       "target": "player_constructor"
     },
@@ -4429,8 +4693,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\map\\player.js",
       "source_location": "L119",
       "weight": 1.0,
-      "_src": "player_init",
-      "_tgt": "relationship_applyrelationshipstate",
+      "_src": "relationship_applyrelationshipstate",
+      "_tgt": "player_init",
       "source": "relationship_applyrelationshipstate",
       "target": "player_init"
     },
@@ -4801,8 +5065,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\map\\player.js",
       "source_location": "L104",
       "weight": 1.0,
-      "_src": "player_constructor",
-      "_tgt": "body_applybodystate",
+      "_src": "body_applybodystate",
+      "_tgt": "player_constructor",
       "source": "body_applybodystate",
       "target": "player_constructor"
     },
@@ -4813,8 +5077,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\server\\src\\map\\player.js",
       "source_location": "L120",
       "weight": 1.0,
-      "_src": "player_init",
-      "_tgt": "body_applybodystate",
+      "_src": "body_applybodystate",
+      "_tgt": "player_init",
       "source": "body_applybodystate",
       "target": "player_init"
     },
@@ -5029,8 +5293,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L443",
       "weight": 1.0,
-      "_src": "app_beginavatardraftflow",
-      "_tgt": "sql_close",
+      "_src": "sql_close",
+      "_tgt": "app_beginavatardraftflow",
       "source": "sql_close",
       "target": "app_beginavatardraftflow"
     },
@@ -5041,8 +5305,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L477",
       "weight": 1.0,
-      "_src": "app_completeavatardraft",
-      "_tgt": "sql_close",
+      "_src": "sql_close",
+      "_tgt": "app_completeavatardraft",
       "source": "sql_close",
       "target": "app_completeavatardraft"
     },
@@ -5053,8 +5317,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L506",
       "weight": 1.0,
-      "_src": "app_handledisconnect",
-      "_tgt": "sql_close",
+      "_src": "sql_close",
+      "_tgt": "app_handledisconnect",
       "source": "sql_close",
       "target": "app_handledisconnect"
     },
@@ -5065,8 +5329,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L635",
       "weight": 1.0,
-      "_src": "app_setupsocket",
-      "_tgt": "sql_close",
+      "_src": "sql_close",
+      "_tgt": "app_setupsocket",
       "source": "sql_close",
       "target": "app_setupsocket"
     },
@@ -5077,8 +5341,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-editor.js",
       "source_location": "L597",
       "weight": 1.0,
-      "_src": "player_card_editor_createplayercardeditor",
-      "_tgt": "sql_close",
+      "_src": "sql_close",
+      "_tgt": "player_card_editor_createplayercardeditor",
       "source": "sql_close",
       "target": "player_card_editor_createplayercardeditor"
     },
@@ -5989,8 +6253,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L310",
       "weight": 1.0,
-      "_src": "app_resetplayercardpaneltomanualmode",
-      "_tgt": "massfood_remove",
+      "_src": "massfood_remove",
+      "_tgt": "app_resetplayercardpaneltomanualmode",
       "source": "massfood_remove",
       "target": "app_resetplayercardpaneltomanualmode"
     },
@@ -6145,8 +6409,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L241",
       "weight": 1.0,
-      "_src": "app_renderstatuspanel",
-      "_tgt": "materialization_status_formatmaterializationstatus",
+      "_src": "materialization_status_formatmaterializationstatus",
+      "_tgt": "app_renderstatuspanel",
       "source": "materialization_status_formatmaterializationstatus",
       "target": "app_renderstatuspanel"
     },
@@ -6181,8 +6445,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L140",
       "weight": 1.0,
-      "_src": "render_drawcells",
-      "_tgt": "avatar_runtime_render_shoulduseavatarruntimerender",
+      "_src": "avatar_runtime_render_shoulduseavatarruntimerender",
+      "_tgt": "render_drawcells",
       "source": "avatar_runtime_render_shoulduseavatarruntimerender",
       "target": "render_drawcells"
     },
@@ -6193,8 +6457,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\render.js",
       "source_location": "L103",
       "weight": 1.0,
-      "_src": "render_drawavatarcell",
-      "_tgt": "avatar_runtime_render_getavatarinnerradius",
+      "_src": "avatar_runtime_render_getavatarinnerradius",
+      "_tgt": "render_drawavatarcell",
       "source": "avatar_runtime_render_getavatarinnerradius",
       "target": "render_drawavatarcell"
     },
@@ -6541,8 +6805,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-candidates.js",
       "source_location": "L42",
       "weight": 1.0,
-      "_src": "avatar_draft_candidates_builddraftcandidates",
-      "_tgt": "avatar_draft_templates_getdefaulttemplates",
+      "_src": "avatar_draft_templates_getdefaulttemplates",
+      "_tgt": "avatar_draft_candidates_builddraftcandidates",
       "source": "avatar_draft_templates_getdefaulttemplates",
       "target": "avatar_draft_candidates_builddraftcandidates"
     },
@@ -6553,8 +6817,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\avatar-draft-candidates.js",
       "source_location": "L54",
       "weight": 1.0,
-      "_src": "avatar_draft_candidates_builddraftcandidates",
-      "_tgt": "avatar_draft_templates_getdefaulttemplatebyid",
+      "_src": "avatar_draft_templates_getdefaulttemplatebyid",
+      "_tgt": "avatar_draft_candidates_builddraftcandidates",
       "source": "avatar_draft_templates_getdefaulttemplatebyid",
       "target": "avatar_draft_candidates_builddraftcandidates"
     },
@@ -6901,8 +7165,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L56",
       "weight": 1.0,
-      "_src": "app_entergame",
-      "_tgt": "chat_client_chatclient_registerfunctions",
+      "_src": "chat_client_chatclient_registerfunctions",
+      "_tgt": "app_entergame",
       "source": "chat_client_chatclient_registerfunctions",
       "target": "app_entergame"
     },
@@ -7189,8 +7453,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L386",
       "weight": 1.0,
-      "_src": "app_builddraftsession",
-      "_tgt": "avatar_draft_candidates_builddraftcandidates",
+      "_src": "avatar_draft_candidates_builddraftcandidates",
+      "_tgt": "app_builddraftsession",
       "source": "avatar_draft_candidates_builddraftcandidates",
       "target": "app_builddraftsession"
     },
@@ -7201,10 +7465,382 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L406",
       "weight": 1.0,
-      "_src": "app_rerolldraftcandidates",
-      "_tgt": "avatar_draft_candidates_builddraftcandidates",
+      "_src": "avatar_draft_candidates_builddraftcandidates",
+      "_tgt": "app_rerolldraftcandidates",
       "source": "avatar_draft_candidates_builddraftcandidates",
       "target": "app_rerolldraftcandidates"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "_tgt": "player_card_layers_clone",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "target": "player_card_layers_clone",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "_tgt": "player_card_layers_createemptycanvasjson",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "target": "player_card_layers_createemptycanvasjson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "_tgt": "player_card_layers_createdefaultlayerstate",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "target": "player_card_layers_createdefaultlayerstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "_tgt": "player_card_layers_createlayerpayload",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "target": "player_card_layers_createlayerpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "_tgt": "player_card_layers_createlegacylayerpayload",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "target": "player_card_layers_createlegacylayerpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "_tgt": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "target": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "_tgt": "player_card_layers_splitcanvasjsonbylayer",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "target": "player_card_layers_splitcanvasjsonbylayer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "_tgt": "player_card_layers_serializecanvas",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "target": "player_card_layers_serializecanvas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "_tgt": "player_card_layers_getlayerrenderstate",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "target": "player_card_layers_getlayerrenderstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L85",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "_tgt": "player_card_layers_hasanycontent",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_layers_js",
+      "target": "player_card_layers_hasanycontent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "player_card_layers_createlayerpayload",
+      "_tgt": "player_card_layers_clone",
+      "source": "player_card_layers_clone",
+      "target": "player_card_layers_createlayerpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "_tgt": "player_card_layers_clone",
+      "source": "player_card_layers_clone",
+      "target": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_src": "player_card_layers_splitcanvasjsonbylayer",
+      "_tgt": "player_card_layers_clone",
+      "source": "player_card_layers_clone",
+      "target": "player_card_layers_splitcanvasjsonbylayer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_src": "player_card_layers_createdefaultlayerstate",
+      "_tgt": "player_card_layers_createemptycanvasjson",
+      "source": "player_card_layers_createemptycanvasjson",
+      "target": "player_card_layers_createdefaultlayerstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "player_card_layers_createlegacylayerpayload",
+      "_tgt": "player_card_layers_createemptycanvasjson",
+      "source": "player_card_layers_createemptycanvasjson",
+      "target": "player_card_layers_createlegacylayerpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_src": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "_tgt": "player_card_layers_createemptycanvasjson",
+      "source": "player_card_layers_createemptycanvasjson",
+      "target": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_src": "player_card_layers_createlayerpayload",
+      "_tgt": "player_card_layers_createdefaultlayerstate",
+      "source": "player_card_layers_createdefaultlayerstate",
+      "target": "player_card_layers_createlayerpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "player_card_layers_getlayerrenderstate",
+      "_tgt": "player_card_layers_createdefaultlayerstate",
+      "source": "player_card_layers_createdefaultlayerstate",
+      "target": "player_card_layers_getlayerrenderstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "player_card_layers_createlegacylayerpayload",
+      "_tgt": "player_card_layers_createlayerpayload",
+      "source": "player_card_layers_createlayerpayload",
+      "target": "player_card_layers_createlegacylayerpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "_tgt": "player_card_layers_createlayerpayload",
+      "source": "player_card_layers_createlayerpayload",
+      "target": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_src": "player_card_layers_splitcanvasjsonbylayer",
+      "_tgt": "player_card_layers_createlayerpayload",
+      "source": "player_card_layers_createlayerpayload",
+      "target": "player_card_layers_splitcanvasjsonbylayer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-layers.js",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_src": "player_card_layers_hasanycontent",
+      "_tgt": "player_card_layers_createlayerpayload",
+      "source": "player_card_layers_createlayerpayload",
+      "target": "player_card_layers_hasanycontent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_src": "player_card_layers_createlayerpayload",
+      "_tgt": "player_card_storage_normalizeplayercardpayload",
+      "source": "player_card_layers_createlayerpayload",
+      "target": "player_card_storage_normalizeplayercardpayload"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-editor.js",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_src": "player_card_layers_createlayerpayload",
+      "_tgt": "player_card_editor_createplayercardeditor",
+      "source": "player_card_layers_createlayerpayload",
+      "target": "player_card_editor_createplayercardeditor"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_src": "player_card_layers_createlayerpayload",
+      "_tgt": "player_card_draft_store_normalizedraftpayload",
+      "source": "player_card_layers_createlayerpayload",
+      "target": "player_card_draft_store_normalizedraftpayload"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_src": "player_card_layers_createlegacylayerpayload",
+      "_tgt": "player_card_storage_normalizeplayercardpayload",
+      "source": "player_card_layers_createlegacylayerpayload",
+      "target": "player_card_storage_normalizeplayercardpayload"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_src": "player_card_layers_createlegacylayerpayload",
+      "_tgt": "player_card_draft_store_normalizedraftpayload",
+      "source": "player_card_layers_createlegacylayerpayload",
+      "target": "player_card_draft_store_normalizedraftpayload"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_src": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "_tgt": "player_card_storage_normalizeplayercardpayload",
+      "source": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "target": "player_card_storage_normalizeplayercardpayload"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "_tgt": "player_card_draft_store_normalizedraftpayload",
+      "source": "player_card_layers_mergelayerpayloadtocanvasjson",
+      "target": "player_card_draft_store_normalizedraftpayload"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L388",
+      "weight": 1.0,
+      "_src": "player_card_layers_hasanycontent",
+      "_tgt": "app_savecurrentplayercardasdraft",
+      "source": "player_card_layers_hasanycontent",
+      "target": "app_savecurrentplayercardasdraft"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-editor.js",
+      "source_location": "L796",
+      "weight": 1.0,
+      "_src": "player_card_layers_hasanycontent",
+      "_tgt": "player_card_editor_createplayercardeditor",
+      "source": "player_card_layers_hasanycontent",
+      "target": "player_card_editor_createplayercardeditor"
     },
     {
       "relation": "contains",
@@ -7237,8 +7873,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L242",
       "weight": 1.0,
-      "_src": "app_renderstatuspanel",
-      "_tgt": "connection_status_formatconnectionstatus",
+      "_src": "connection_status_formatconnectionstatus",
+      "_tgt": "app_renderstatuspanel",
       "source": "connection_status_formatconnectionstatus",
       "target": "app_renderstatuspanel"
     },
@@ -7273,8 +7909,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L254",
       "weight": 1.0,
-      "_src": "app_renderplayercardpreviews",
-      "_tgt": "player_card_preview_formatplayercardpreview",
+      "_src": "player_card_preview_formatplayercardpreview",
+      "_tgt": "app_renderplayercardpreviews",
       "source": "player_card_preview_formatplayercardpreview",
       "target": "app_renderplayercardpreviews"
     },
@@ -7753,8 +8389,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L385",
       "weight": 1.0,
-      "_src": "app_builddraftsession",
-      "_tgt": "avatar_history_store_loadhistory",
+      "_src": "avatar_history_store_loadhistory",
+      "_tgt": "app_builddraftsession",
       "source": "avatar_history_store_loadhistory",
       "target": "app_builddraftsession"
     },
@@ -7765,8 +8401,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L408",
       "weight": 1.0,
-      "_src": "app_rerolldraftcandidates",
-      "_tgt": "avatar_history_store_loadhistory",
+      "_src": "avatar_history_store_loadhistory",
+      "_tgt": "app_rerolldraftcandidates",
       "source": "avatar_history_store_loadhistory",
       "target": "app_rerolldraftcandidates"
     },
@@ -7789,8 +8425,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L471",
       "weight": 1.0,
-      "_src": "app_completeavatardraft",
-      "_tgt": "avatar_history_store_addhistoryentry",
+      "_src": "avatar_history_store_addhistoryentry",
+      "_tgt": "app_completeavatardraft",
       "source": "avatar_history_store_addhistoryentry",
       "target": "app_completeavatardraft"
     },
@@ -7801,8 +8437,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
       "source_location": "L471",
       "weight": 1.0,
-      "_src": "app_completeavatardraft",
-      "_tgt": "avatar_history_store_createhistoryentry",
+      "_src": "avatar_history_store_createhistoryentry",
+      "_tgt": "app_completeavatardraft",
       "source": "avatar_history_store_createhistoryentry",
       "target": "app_completeavatardraft"
     },
@@ -7810,7 +8446,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L37",
+      "source_location": "L39",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_entergame",
@@ -7822,7 +8458,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L61",
+      "source_location": "L63",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_startgame",
@@ -7834,7 +8470,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L71",
+      "source_location": "L73",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_validnick",
@@ -7846,7 +8482,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L225",
+      "source_location": "L250",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_renderstatuspanel",
@@ -7858,7 +8494,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L248",
+      "source_location": "L273",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_renderplayercardpreviews",
@@ -7870,7 +8506,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L266",
+      "source_location": "L291",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_applytranslations",
@@ -7882,7 +8518,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L295",
+      "source_location": "L326",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_getdraftpanelelements",
@@ -7894,7 +8530,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L308",
+      "source_location": "L339",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_resetplayercardpaneltomanualmode",
@@ -7906,7 +8542,55 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L317",
+      "source_location": "L350",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
+      "_tgt": "app_createdrafttimestamplabel",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
+      "target": "app_createdrafttimestamplabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L359",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
+      "_tgt": "app_renderplayercarddrafts",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
+      "target": "app_renderplayercarddrafts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L390",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
+      "_tgt": "app_savecurrentplayercardasdraft",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
+      "target": "app_savecurrentplayercardasdraft",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L403",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
+      "_tgt": "app_bindplayercarddraftcontrols",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
+      "target": "app_bindplayercarddraftcontrols",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L427",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_cleardrafttimer",
@@ -7918,7 +8602,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L324",
+      "source_location": "L434",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_deactivatedraftmode",
@@ -7930,7 +8614,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L330",
+      "source_location": "L440",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_formatmissingpartlabel",
@@ -7942,7 +8626,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L334",
+      "source_location": "L444",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_renderdraftcandidates",
@@ -7954,7 +8638,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L355",
+      "source_location": "L465",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_selectdraftcandidate",
@@ -7966,7 +8650,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L369",
+      "source_location": "L479",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_updatedrafttimer",
@@ -7978,7 +8662,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L384",
+      "source_location": "L494",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_builddraftsession",
@@ -7990,7 +8674,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L400",
+      "source_location": "L510",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_rerolldraftcandidates",
@@ -8002,7 +8686,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L417",
+      "source_location": "L527",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_updatedraftbuttons",
@@ -8014,7 +8698,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L425",
+      "source_location": "L535",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_beginavatardraftflow",
@@ -8026,7 +8710,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L456",
+      "source_location": "L567",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_completeavatardraft",
@@ -8038,7 +8722,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L481",
+      "source_location": "L592",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_findconnectedtargetcardpreview",
@@ -8050,7 +8734,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L505",
+      "source_location": "L616",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_handledisconnect",
@@ -8062,7 +8746,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L513",
+      "source_location": "L624",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_setupsocket",
@@ -8074,7 +8758,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L639",
+      "source_location": "L750",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_isunnamedcell",
@@ -8086,7 +8770,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L641",
+      "source_location": "L752",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_getposition",
@@ -8098,7 +8782,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L663",
+      "source_location": "L774",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_animloop",
@@ -8110,7 +8794,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L668",
+      "source_location": "L779",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_gameloop",
@@ -8122,7 +8806,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L726",
+      "source_location": "L837",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_app_js",
       "_tgt": "app_resize",
@@ -8134,7 +8818,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L50",
+      "source_location": "L52",
       "weight": 1.0,
       "_src": "app_entergame",
       "_tgt": "app_setupsocket",
@@ -8146,7 +8830,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L53",
+      "source_location": "L55",
       "weight": 1.0,
       "_src": "app_entergame",
       "_tgt": "app_animloop",
@@ -8158,7 +8842,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L67",
+      "source_location": "L69",
       "weight": 1.0,
       "_src": "app_startgame",
       "_tgt": "app_entergame",
@@ -8170,7 +8854,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L444",
+      "source_location": "L555",
       "weight": 1.0,
       "_src": "app_beginavatardraftflow",
       "_tgt": "app_entergame",
@@ -8182,7 +8866,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L478",
+      "source_location": "L589",
       "weight": 1.0,
       "_src": "app_completeavatardraft",
       "_tgt": "app_entergame",
@@ -8206,7 +8890,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L63",
+      "source_location": "L65",
       "weight": 1.0,
       "_src": "app_startgame",
       "_tgt": "app_beginavatardraftflow",
@@ -8218,7 +8902,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L608",
+      "source_location": "L719",
       "weight": 1.0,
       "_src": "app_setupsocket",
       "_tgt": "app_renderstatuspanel",
@@ -8266,7 +8950,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L473",
+      "source_location": "L584",
       "weight": 1.0,
       "_src": "app_completeavatardraft",
       "_tgt": "app_renderplayercardpreviews",
@@ -8278,7 +8962,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L609",
+      "source_location": "L720",
       "weight": 1.0,
       "_src": "app_setupsocket",
       "_tgt": "app_renderplayercardpreviews",
@@ -8314,7 +8998,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L314",
+      "source_location": "L347",
       "weight": 1.0,
       "_src": "app_resetplayercardpaneltomanualmode",
       "_tgt": "app_applytranslations",
@@ -8338,7 +9022,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L309",
+      "source_location": "L340",
       "weight": 1.0,
       "_src": "app_resetplayercardpaneltomanualmode",
       "_tgt": "app_getdraftpanelelements",
@@ -8350,7 +9034,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L335",
+      "source_location": "L445",
       "weight": 1.0,
       "_src": "app_renderdraftcandidates",
       "_tgt": "app_getdraftpanelelements",
@@ -8362,7 +9046,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L366",
+      "source_location": "L476",
       "weight": 1.0,
       "_src": "app_selectdraftcandidate",
       "_tgt": "app_getdraftpanelelements",
@@ -8374,7 +9058,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L376",
+      "source_location": "L486",
       "weight": 1.0,
       "_src": "app_updatedrafttimer",
       "_tgt": "app_getdraftpanelelements",
@@ -8386,7 +9070,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L418",
+      "source_location": "L528",
       "weight": 1.0,
       "_src": "app_updatedraftbuttons",
       "_tgt": "app_getdraftpanelelements",
@@ -8398,7 +9082,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L428",
+      "source_location": "L538",
       "weight": 1.0,
       "_src": "app_beginavatardraftflow",
       "_tgt": "app_getdraftpanelelements",
@@ -8410,7 +9094,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L327",
+      "source_location": "L437",
       "weight": 1.0,
       "_src": "app_deactivatedraftmode",
       "_tgt": "app_resetplayercardpaneltomanualmode",
@@ -8422,7 +9106,115 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L326",
+      "source_location": "L368",
+      "weight": 1.0,
+      "_src": "app_renderplayercarddrafts",
+      "_tgt": "app_createdrafttimestamplabel",
+      "source": "app_createdrafttimestamplabel",
+      "target": "app_renderplayercarddrafts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L398",
+      "weight": 1.0,
+      "_src": "app_savecurrentplayercardasdraft",
+      "_tgt": "app_renderplayercarddrafts",
+      "source": "app_renderplayercarddrafts",
+      "target": "app_savecurrentplayercardasdraft",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L422",
+      "weight": 1.0,
+      "_src": "app_bindplayercarddraftcontrols",
+      "_tgt": "app_renderplayercarddrafts",
+      "source": "app_renderplayercarddrafts",
+      "target": "app_bindplayercarddraftcontrols",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L356",
+      "weight": 1.0,
+      "_src": "app_renderplayercarddrafts",
+      "_tgt": "player_card_draft_store_loaddrafts",
+      "source": "app_renderplayercarddrafts",
+      "target": "player_card_draft_store_loaddrafts"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L380",
+      "weight": 1.0,
+      "_src": "app_renderplayercarddrafts",
+      "_tgt": "i18n_t",
+      "source": "app_renderplayercarddrafts",
+      "target": "i18n_t"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L407",
+      "weight": 1.0,
+      "_src": "app_bindplayercarddraftcontrols",
+      "_tgt": "app_savecurrentplayercardasdraft",
+      "source": "app_savecurrentplayercardasdraft",
+      "target": "app_bindplayercarddraftcontrols",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L389",
+      "weight": 1.0,
+      "_src": "app_savecurrentplayercardasdraft",
+      "_tgt": "i18n_t",
+      "source": "app_savecurrentplayercardasdraft",
+      "target": "i18n_t"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L393",
+      "weight": 1.0,
+      "_src": "app_savecurrentplayercardasdraft",
+      "_tgt": "player_card_draft_store_savedraft",
+      "source": "app_savecurrentplayercardasdraft",
+      "target": "player_card_draft_store_savedraft"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L406",
+      "weight": 1.0,
+      "_src": "app_bindplayercarddraftcontrols",
+      "_tgt": "i18n_t",
+      "source": "app_bindplayercarddraftcontrols",
+      "target": "i18n_t"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
+      "source_location": "L436",
       "weight": 1.0,
       "_src": "app_deactivatedraftmode",
       "_tgt": "app_cleardrafttimer",
@@ -8434,7 +9226,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L379",
+      "source_location": "L489",
       "weight": 1.0,
       "_src": "app_updatedrafttimer",
       "_tgt": "app_cleardrafttimer",
@@ -8446,7 +9238,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L451",
+      "source_location": "L562",
       "weight": 1.0,
       "_src": "app_beginavatardraftflow",
       "_tgt": "app_cleardrafttimer",
@@ -8458,7 +9250,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L442",
+      "source_location": "L553",
       "weight": 1.0,
       "_src": "app_beginavatardraftflow",
       "_tgt": "app_deactivatedraftmode",
@@ -8470,7 +9262,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L476",
+      "source_location": "L587",
       "weight": 1.0,
       "_src": "app_completeavatardraft",
       "_tgt": "app_deactivatedraftmode",
@@ -8482,7 +9274,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L343",
+      "source_location": "L453",
       "weight": 1.0,
       "_src": "app_renderdraftcandidates",
       "_tgt": "app_formatmissingpartlabel",
@@ -8494,7 +9286,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L366",
+      "source_location": "L476",
       "weight": 1.0,
       "_src": "app_selectdraftcandidate",
       "_tgt": "app_formatmissingpartlabel",
@@ -8518,7 +9310,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L364",
+      "source_location": "L474",
       "weight": 1.0,
       "_src": "app_selectdraftcandidate",
       "_tgt": "app_renderdraftcandidates",
@@ -8530,7 +9322,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L412",
+      "source_location": "L522",
       "weight": 1.0,
       "_src": "app_rerolldraftcandidates",
       "_tgt": "app_renderdraftcandidates",
@@ -8542,7 +9334,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L434",
+      "source_location": "L545",
       "weight": 1.0,
       "_src": "app_beginavatardraftflow",
       "_tgt": "app_renderdraftcandidates",
@@ -8578,7 +9370,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L413",
+      "source_location": "L523",
       "weight": 1.0,
       "_src": "app_rerolldraftcandidates",
       "_tgt": "app_selectdraftcandidate",
@@ -8590,7 +9382,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L437",
+      "source_location": "L548",
       "weight": 1.0,
       "_src": "app_beginavatardraftflow",
       "_tgt": "app_selectdraftcandidate",
@@ -8614,7 +9406,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L452",
+      "source_location": "L563",
       "weight": 1.0,
       "_src": "app_beginavatardraftflow",
       "_tgt": "app_updatedrafttimer",
@@ -8638,7 +9430,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L426",
+      "source_location": "L536",
       "weight": 1.0,
       "_src": "app_beginavatardraftflow",
       "_tgt": "app_builddraftsession",
@@ -8650,7 +9442,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L414",
+      "source_location": "L524",
       "weight": 1.0,
       "_src": "app_rerolldraftcandidates",
       "_tgt": "app_updatedraftbuttons",
@@ -8662,7 +9454,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L433",
+      "source_location": "L544",
       "weight": 1.0,
       "_src": "app_beginavatardraftflow",
       "_tgt": "app_updatedraftbuttons",
@@ -8710,7 +9502,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L604",
+      "source_location": "L715",
       "weight": 1.0,
       "_src": "app_setupsocket",
       "_tgt": "app_findconnectedtargetcardpreview",
@@ -8734,7 +9526,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L545",
+      "source_location": "L656",
       "weight": 1.0,
       "_src": "app_setupsocket",
       "_tgt": "app_resize",
@@ -8758,7 +9550,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\app.js",
-      "source_location": "L665",
+      "source_location": "L776",
       "weight": 1.0,
       "_src": "app_animloop",
       "_tgt": "app_gameloop",
@@ -8914,7 +9706,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L187",
+      "source_location": "L209",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_i18n_js",
       "_tgt": "i18n_getstorage",
@@ -8926,7 +9718,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L203",
+      "source_location": "L225",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_i18n_js",
       "_tgt": "i18n_setlocale",
@@ -8938,7 +9730,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L212",
+      "source_location": "L234",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_i18n_js",
       "_tgt": "i18n_loadlocale",
@@ -8950,7 +9742,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L224",
+      "source_location": "L246",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_i18n_js",
       "_tgt": "i18n_getlocale",
@@ -8962,7 +9754,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L228",
+      "source_location": "L250",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_i18n_js",
       "_tgt": "i18n_interpolate",
@@ -8974,7 +9766,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L234",
+      "source_location": "L256",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_i18n_js",
       "_tgt": "i18n_t",
@@ -8986,7 +9778,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L205",
+      "source_location": "L227",
       "weight": 1.0,
       "_src": "i18n_setlocale",
       "_tgt": "i18n_getstorage",
@@ -8998,7 +9790,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L213",
+      "source_location": "L235",
       "weight": 1.0,
       "_src": "i18n_loadlocale",
       "_tgt": "i18n_getstorage",
@@ -9010,7 +9802,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\i18n.js",
-      "source_location": "L237",
+      "source_location": "L259",
       "weight": 1.0,
       "_src": "i18n_t",
       "_tgt": "i18n_interpolate",
@@ -9025,8 +9817,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\relationship-status.js",
       "source_location": "L11",
       "weight": 1.0,
-      "_src": "relationship_status_formatrelationshipstatus",
-      "_tgt": "i18n_t",
+      "_src": "i18n_t",
+      "_tgt": "relationship_status_formatrelationshipstatus",
       "source": "i18n_t",
       "target": "relationship_status_formatrelationshipstatus"
     },
@@ -9037,8 +9829,8 @@
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\body-status.js",
       "source_location": "L26",
       "weight": 1.0,
-      "_src": "body_status_formatbodystatus",
-      "_tgt": "i18n_t",
+      "_src": "i18n_t",
+      "_tgt": "body_status_formatbodystatus",
       "source": "i18n_t",
       "target": "body_status_formatbodystatus"
     },
@@ -9046,7 +9838,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_storage_js",
       "_tgt": "player_card_storage_getstorage",
@@ -9058,7 +9850,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_storage_js",
       "_tgt": "player_card_storage_loadplayercard",
@@ -9070,7 +9862,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_storage_js",
       "_tgt": "player_card_storage_saveplayercard",
@@ -9082,7 +9874,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L45",
+      "source_location": "L47",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_storage_js",
       "_tgt": "player_card_storage_clearplayercard",
@@ -9091,10 +9883,22 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_storage_js",
+      "_tgt": "player_card_storage_normalizeplayercardpayload",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_storage_js",
+      "target": "player_card_storage_normalizeplayercardpayload",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0,
       "_src": "player_card_storage_loadplayercard",
       "_tgt": "player_card_storage_getstorage",
@@ -9106,7 +9910,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L36",
+      "source_location": "L37",
       "weight": 1.0,
       "_src": "player_card_storage_saveplayercard",
       "_tgt": "player_card_storage_getstorage",
@@ -9118,7 +9922,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 1.0,
       "_src": "player_card_storage_clearplayercard",
       "_tgt": "player_card_storage_getstorage",
@@ -9127,10 +9931,34 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_src": "player_card_storage_loadplayercard",
+      "_tgt": "player_card_storage_normalizeplayercardpayload",
+      "source": "player_card_storage_loadplayercard",
+      "target": "player_card_storage_normalizeplayercardpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-storage.js",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "player_card_storage_saveplayercard",
+      "_tgt": "player_card_storage_normalizeplayercardpayload",
+      "source": "player_card_storage_saveplayercard",
+      "target": "player_card_storage_normalizeplayercardpayload",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-editor.js",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_editor_js",
       "_tgt": "player_card_editor_loadfabric",
@@ -9142,7 +9970,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-editor.js",
-      "source_location": "L41",
+      "source_location": "L42",
       "weight": 1.0,
       "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_editor_js",
       "_tgt": "player_card_editor_createplayercardeditor",
@@ -9208,6 +10036,138 @@
       "_tgt": "body_status_formatbodystatus",
       "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_body_status_js",
       "target": "body_status_formatbodystatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "_tgt": "player_card_draft_store_getstorage",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "target": "player_card_draft_store_getstorage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "_tgt": "player_card_draft_store_createdraftid",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "target": "player_card_draft_store_createdraftid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "_tgt": "player_card_draft_store_normalizedraftpayload",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "target": "player_card_draft_store_normalizedraftpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "_tgt": "player_card_draft_store_loaddrafts",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "target": "player_card_draft_store_loaddrafts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_src": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "_tgt": "player_card_draft_store_savedraft",
+      "source": "wsl_localhost_ubuntu_full_home_jyf_projects_agar_io_clone_apps_client_src_player_card_draft_store_js",
+      "target": "player_card_draft_store_savedraft",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "player_card_draft_store_loaddrafts",
+      "_tgt": "player_card_draft_store_getstorage",
+      "source": "player_card_draft_store_getstorage",
+      "target": "player_card_draft_store_loaddrafts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_src": "player_card_draft_store_savedraft",
+      "_tgt": "player_card_draft_store_getstorage",
+      "source": "player_card_draft_store_getstorage",
+      "target": "player_card_draft_store_savedraft",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "player_card_draft_store_normalizedraftpayload",
+      "_tgt": "player_card_draft_store_createdraftid",
+      "source": "player_card_draft_store_createdraftid",
+      "target": "player_card_draft_store_normalizedraftpayload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_src": "player_card_draft_store_loaddrafts",
+      "_tgt": "player_card_draft_store_normalizedraftpayload",
+      "source": "player_card_draft_store_normalizedraftpayload",
+      "target": "player_card_draft_store_loaddrafts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_src": "player_card_draft_store_savedraft",
+      "_tgt": "player_card_draft_store_normalizedraftpayload",
+      "source": "player_card_draft_store_normalizedraftpayload",
+      "target": "player_card_draft_store_savedraft",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "\\\\wsl.localhost\\Ubuntu-Full\\home\\jyf\\projects\\agar.io-clone\\apps\\client\\src\\player-card-draft-store.js",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "player_card_draft_store_savedraft",
+      "_tgt": "player_card_draft_store_loaddrafts",
+      "source": "player_card_draft_store_loaddrafts",
+      "target": "player_card_draft_store_savedraft",
       "confidence_score": 1.0
     },
     {

@@ -76,22 +76,25 @@
                     </div>
                 </div>
                 <div class="player-card-layer-bar">
-                    <span class="player-card-layer-label">图层</span>
-                    <div class="player-card-layer-buttons">
-                        <div class="player-card-layer-row">
-                            <button id="layerBaseButton" type="button">Base</button>
-                            <button id="layerBaseVisibilityButton" type="button">显示</button>
-                            <button id="layerBaseLockButton" type="button">锁定</button>
-                        </div>
-                        <div class="player-card-layer-row">
-                            <button id="layerEyesButton" type="button">Eyes</button>
-                            <button id="layerEyesVisibilityButton" type="button">显示</button>
-                            <button id="layerEyesLockButton" type="button">锁定</button>
-                        </div>
-                        <div class="player-card-layer-row">
-                            <button id="layerHairButton" type="button">Hair</button>
-                            <button id="layerHairVisibilityButton" type="button">显示</button>
-                            <button id="layerHairLockButton" type="button">锁定</button>
+                    <button id="toggleAdvancedLayersButton" class="player-card-layer-toggle-button" type="button">高级图层</button>
+                    <div id="playerCardLayerPanel" class="player-card-layer-panel hidden">
+                        <span id="playerCardLayerLabel" class="player-card-layer-label">图层</span>
+                        <div class="player-card-layer-buttons">
+                            <div class="player-card-layer-row">
+                                <button id="layerBaseButton" type="button">Base</button>
+                                <button id="layerBaseVisibilityButton" type="button">显示</button>
+                                <button id="layerBaseLockButton" type="button">锁定</button>
+                            </div>
+                            <div class="player-card-layer-row">
+                                <button id="layerEyesButton" type="button">Eyes</button>
+                                <button id="layerEyesVisibilityButton" type="button">显示</button>
+                                <button id="layerEyesLockButton" type="button">锁定</button>
+                            </div>
+                            <div class="player-card-layer-row">
+                                <button id="layerHairButton" type="button">Hair</button>
+                                <button id="layerHairVisibilityButton" type="button">显示</button>
+                                <button id="layerHairLockButton" type="button">锁定</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -115,6 +118,17 @@
                     <label><span id="strokeLabel">描边</span> <input id="cardStrokeColor" type="color" value="#111111"></label>
                     <label><span id="fillLabel">填充</span> <input id="cardFillColor" type="color" value="#f2fbff"></label>
                     <label><span id="sizeLabel">粗细</span> <input id="cardBrushSize" type="range" min="2" max="24" value="6"></label>
+                </div>
+                <div id="playerCardDraftManager" class="player-card-draft-manager">
+                    <div class="player-card-draft-actions-row">
+                        <button id="newDraftImageButton" type="button">新建图片</button>
+                        <button id="saveDraftImageButton" type="button">保存到草稿</button>
+                        <button id="toggleDraftHistoryButton" type="button">历史草稿</button>
+                    </div>
+                    <div id="playerCardDraftHistory" class="player-card-draft-history">
+                        <div id="playerCardDraftEmpty" class="player-card-draft-empty">还没有草稿</div>
+                        <div id="playerCardDraftList" class="player-card-draft-list"></div>
+                    </div>
                 </div>
                 <div class="player-card-zoom-controls">
                     <button id="zoomOutCardButton" type="button">缩小</button>

@@ -28,4 +28,24 @@ describe('i18n.js', () => {
     expect(i18n.t('startMenu.play')).to.equal('Play');
     expect(storage.getItem('agar.locale')).to.equal('en');
   });
+
+  it('should expose labels for the draft management controls', () => {
+    i18n.setLocale('zh-CN');
+    expect(i18n.t('editor.newImage')).to.equal('新建图片');
+    expect(i18n.t('editor.saveDraft')).to.equal('保存到草稿');
+    expect(i18n.t('editor.draftHistory')).to.equal('历史草稿');
+
+    i18n.setLocale('en');
+    expect(i18n.t('editor.newImage')).to.equal('New Image');
+    expect(i18n.t('editor.saveDraft')).to.equal('Save Draft');
+    expect(i18n.t('editor.draftHistory')).to.equal('Draft History');
+  });
+
+  it('should expose labels for the advanced layer menu', () => {
+    i18n.setLocale('zh-CN');
+    expect(i18n.t('editor.advancedLayers')).to.equal('高级图层');
+
+    i18n.setLocale('en');
+    expect(i18n.t('editor.advancedLayers')).to.equal('Advanced Layers');
+  });
 });

@@ -8,6 +8,7 @@ var formatConnectionStatus = require('./connection-status');
 var formatRelationshipStatus = require('./relationship-status');
 var formatBodyStatus = require('./body-status');
 var playerCardStorage = require('./player-card-storage');
+var playerCardDraftStore = require('./player-card-draft-store');
 var formatPlayerCardPreview = require('./player-card-preview');
 var createPlayerCardEditor = require('./player-card-editor');
 var i18n = require('./i18n');
@@ -15,6 +16,7 @@ var avatarDraftConfig = require('./avatar-draft-config');
 var avatarHistoryStore = require('./avatar-history-store');
 var avatarDraftCandidates = require('./avatar-draft-candidates');
 var avatarDraftPreview = require('./avatar-draft-preview');
+var playerCardLayers = require('./player-card-layers');
 
 var playerNameInput = document.getElementById('playerNameInput');
 var socket;
@@ -104,6 +106,8 @@ window.onload = function () {
         exportJsonButton: document.getElementById('exportJsonButton'),
         zoomInButton: document.getElementById('zoomInCardButton'),
         zoomOutButton: document.getElementById('zoomOutCardButton'),
+        advancedLayersToggleButton: document.getElementById('toggleAdvancedLayersButton'),
+        layerPanelEl: document.getElementById('playerCardLayerPanel'),
         layerButtons: {
             base: {
                 select: document.getElementById('layerBaseButton'),
@@ -135,6 +139,8 @@ window.onload = function () {
         }
     });
 
+    bindPlayerCardDraftControls();
+
     btnS.onclick = function () {
         enterGame('spectator');
     };
@@ -153,7 +159,9 @@ window.onload = function () {
     paintCardButton.onclick = function () {
         deactivateDraftMode();
         resetPlayerCardPanelToManualMode();
-        playerCardEditor.open();
+        playerCardEditor.open().then(function () {
+            renderPlayerCardDrafts();
+        });
     };
 
     languageToggleButton.onclick = function () {
@@ -307,6 +315,12 @@ function applyTranslations() {
     document.getElementById('closeCardPanelButton').textContent = activeDraftSession ? i18n.t('draft.cancel') : i18n.t('editor.close');
     document.getElementById('zoomOutCardButton').textContent = i18n.t('editor.zoomOut');
     document.getElementById('zoomInCardButton').textContent = i18n.t('editor.zoomIn');
+    document.getElementById('toggleAdvancedLayersButton').textContent = i18n.t('editor.advancedLayers');
+    document.getElementById('playerCardLayerLabel').textContent = i18n.t('editor.layers');
+    document.getElementById('newDraftImageButton').textContent = i18n.t('editor.newImage');
+    document.getElementById('saveDraftImageButton').textContent = i18n.t('editor.saveDraft');
+    document.getElementById('toggleDraftHistoryButton').textContent = i18n.t('editor.draftHistory');
+    document.getElementById('playerCardDraftEmpty').textContent = i18n.t('editor.noDrafts');
 }
 
 function getDraftPanelElements() {
@@ -328,7 +342,86 @@ function resetPlayerCardPanelToManualMode() {
     draftUi.timer.textContent = '';
     draftUi.hint.textContent = '';
     draftUi.candidates.innerHTML = '';
+    document.getElementById('playerCardDraftHistory').classList.remove('open');
+    document.getElementById('playerCardDraftManager').classList.remove('hidden');
     applyTranslations();
+}
+
+function createDraftTimestampLabel(isoString) {
+    var date = new Date(isoString);
+    var month = String(date.getMonth() + 1).padStart(2, '0');
+    var day = String(date.getDate()).padStart(2, '0');
+    var hour = String(date.getHours()).padStart(2, '0');
+    var minute = String(date.getMinutes()).padStart(2, '0');
+    return month + '-' + day + ' ' + hour + ':' + minute;
+}
+
+function renderPlayerCardDrafts() {
+    var drafts = playerCardDraftStore.loadDrafts();
+    var listEl = document.getElementById('playerCardDraftList');
+    var emptyEl = document.getElementById('playerCardDraftEmpty');
+
+    listEl.innerHTML = drafts.map(function (draft) {
+        return [
+            '<button type="button" class="player-card-draft-item" data-draft-id="' + draft.id + '">',
+            '<img class="player-card-draft-item-preview" src="' + draft.previewDataUrl + '" alt="draft preview" />',
+            '<span class="player-card-draft-item-time">' + createDraftTimestampLabel(draft.updatedAt) + '</span>',
+            '</button>'
+        ].join('');
+    }).join('');
+
+    emptyEl.style.display = drafts.length ? 'none' : 'block';
+
+    Array.prototype.forEach.call(listEl.querySelectorAll('[data-draft-id]'), function (button) {
+        button.addEventListener('click', function () {
+            var draft = drafts.find(function (entry) {
+                return entry.id === button.getAttribute('data-draft-id');
+            });
+            if (!draft) {
+                return;
+            }
+            playerCardEditor.loadLayerPayload(draft.layers, draft.activeLayerId, draft.contentScale).then(function () {
+                playerCardEditor.setMessage(i18n.t('editor.draftLoaded'));
+            });
+        });
+    });
+}
+
+function saveCurrentPlayerCardAsDraft() {
+    var payload = playerCardEditor.exportPayload();
+    if (!payload || !playerCardLayers.hasAnyContent(payload.layers)) {
+        playerCardEditor.setMessage(i18n.t('editor.emptyDraft'));
+        return null;
+    }
+
+    var draft = playerCardDraftStore.saveDraft(payload);
+    renderPlayerCardDrafts();
+    playerCardEditor.setMessage(i18n.t('editor.draftSaved'));
+    return draft;
+}
+
+function bindPlayerCardDraftControls() {
+    document.getElementById('newDraftImageButton').addEventListener('click', function () {
+        var hadContent = playerCardEditor.hasContent();
+        if (hadContent) {
+            saveCurrentPlayerCardAsDraft();
+        }
+        playerCardEditor.loadEmptyState().then(function () {
+            playerCardEditor.setMessage(i18n.t(hadContent ? 'editor.newImageFromDraft' : 'editor.newImageBlank'));
+        });
+    });
+
+    document.getElementById('saveDraftImageButton').addEventListener('click', function () {
+        saveCurrentPlayerCardAsDraft();
+    });
+
+    document.getElementById('toggleDraftHistoryButton').addEventListener('click', function () {
+        var historyEl = document.getElementById('playerCardDraftHistory');
+        historyEl.classList.toggle('open');
+        if (historyEl.classList.contains('open')) {
+            renderPlayerCardDrafts();
+        }
+    });
 }
 
 function clearDraftTimer() {
@@ -444,6 +537,7 @@ function beginAvatarDraftFlow(playerType) {
 
     var draftUi = getDraftPanelElements();
     draftUi.panel.classList.add('active');
+    document.getElementById('playerCardDraftManager').classList.add('hidden');
     draftUi.saveButton.textContent = i18n.t('draft.confirm');
     draftUi.closeButton.textContent = i18n.t('draft.cancel');
 

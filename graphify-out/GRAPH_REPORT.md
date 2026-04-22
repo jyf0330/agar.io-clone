@@ -1,12 +1,12 @@
-# Graph Report - \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone  (2026-04-20)
+# Graph Report - \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone  (2026-04-22)
 
 ## Corpus Check
-- 70 files · ~34,553 words
+- 77 files · ~37,657 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 340 nodes · 536 edges · 57 communities detected
-- Extraction: 78% EXTRACTED · 22% INFERRED · 0% AMBIGUOUS · INFERRED: 117 edges (avg confidence: 0.8)
+- 368 nodes · 595 edges · 63 communities detected
+- Extraction: 78% EXTRACTED · 22% INFERRED · 0% AMBIGUOUS · INFERRED: 131 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -67,30 +67,36 @@
 - [[_COMMUNITY_Community 54|Community 54]]
 - [[_COMMUNITY_Community 55|Community 55]]
 - [[_COMMUNITY_Community 56|Community 56]]
+- [[_COMMUNITY_Community 57|Community 57]]
+- [[_COMMUNITY_Community 58|Community 58]]
+- [[_COMMUNITY_Community 59|Community 59]]
+- [[_COMMUNITY_Community 60|Community 60]]
+- [[_COMMUNITY_Community 61|Community 61]]
+- [[_COMMUNITY_Community 62|Community 62]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `t()` - 18 edges
+1. `t()` - 21 edges
 2. `ChatClient` - 15 edges
 3. `Canvas` - 13 edges
 4. `beginAvatarDraftFlow()` - 13 edges
 5. `setupSocket()` - 11 edges
-6. `addPlayer()` - 9 edges
-7. `tickGame()` - 9 edges
-8. `createBodyBonuses()` - 8 edges
-9. `Cell` - 8 edges
-10. `enterGame()` - 8 edges
+6. `createLayerPayload()` - 10 edges
+7. `addPlayer()` - 9 edges
+8. `tickGame()` - 9 edges
+9. `createBodyBonuses()` - 8 edges
+10. `Cell` - 8 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `tickPlayer()` --calls--> `delete()`  [INFERRED]
-  \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\server.js → \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\map\virus.js
-- `completeAvatarDraft()` --calls--> `createHistoryEntry()`  [INFERRED]
-  \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\client\src\app.js → \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\client\src\avatar-history-store.js
-- `setConnectionPairState()` --calls--> `applyConnectionState()`  [INFERRED]
-  \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\server.js → \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\connection.js
+- `createHistoryEntry()` --calls--> `completeAvatarDraft()`  [INFERRED]
+  \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\client\src\avatar-history-store.js → \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\client\src\app.js
 - `attemptConnection()` --calls--> `getConnectionRange()`  [INFERRED]
   \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\server.js → \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\body.js
-- `attemptConnection()` --calls--> `findConnectionTarget()`  [INFERRED]
-  \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\server.js → \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\connection.js
+- `addPlayer()` --calls--> `init()`  [INFERRED]
+  \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\server.js → \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\map\player.js
+- `addPlayer()` --calls--> `findIndexByID()`  [INFERRED]
+  \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\server.js → \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\map\player.js
+- `addPlayer()` --calls--> `validNick()`  [INFERRED]
+  \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\server\src\server.js → \\wsl.localhost\Ubuntu-Full\home\jyf\projects\agar.io-clone\apps\client\src\app.js
 
 ## Hyperedges (group relationships)
 - **Gameplay Scene** — agar_io_clone_game_ui, grid_arena, food_pellets, virus_cells, leaderboard_panel [EXTRACTED 0.95]
@@ -100,91 +106,91 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.11
-Nodes (34): animloop(), applyTranslations(), beginAvatarDraftFlow(), clearDraftTimer(), completeAvatarDraft(), deactivateDraftMode(), enterGame(), findConnectedTargetCardPreview() (+26 more)
+Cohesion: 0.12
+Nodes (35): animloop(), applyTranslations(), beginAvatarDraftFlow(), bindPlayerCardDraftControls(), buildDraftSession(), clearDraftTimer(), completeAvatarDraft(), createDraftTimestampLabel() (+27 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.09
-Nodes (27): adjustForBoundaries(), move(), remove(), Cell, changeCellMass(), checkForCollisions(), enumerateCollidingCells(), findIndexByID() (+19 more)
+Nodes (25): adjustForBoundaries(), move(), remove(), Cell, changeCellMass(), checkForCollisions(), enumerateCollidingCells(), findIndexByID() (+17 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.08
 Nodes (22): getPosition(), validNick(), isVisibleEntity(), addNew(), Food, removeExcess(), balanceMass(), enumerateWhatPlayersSee() (+14 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.15
-Nodes (18): applyConnectionState(), clearConnectionState(), createConnectionState(), distance(), findConnectionTarget(), isEligibleConnectionTarget(), resolveConnectionOutcome(), applyMaterializationState() (+10 more)
+Cohesion: 0.12
+Nodes (30): applyBodyState(), countBodyParts(), createBodyBonuses(), createBodyPart(), createBodyState(), createDefaultBodyParts(), getBreakSpikeBonus(), getConnectionRange() (+22 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.22
-Nodes (19): applyBodyState(), countBodyParts(), createBodyBonuses(), createBodyPart(), createBodyState(), createDefaultBodyParts(), getBreakSpikeBonus(), getConnectionRange() (+11 more)
+Cohesion: 0.13
+Nodes (23): createDraftId(), getStorage(), loadDrafts(), normalizeDraftPayload(), saveDraft(), createPlayerCardEditor(), createHistoryState(), redo() (+15 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.17
-Nodes (13): buildDraftSession(), buildCandidateFromTemplate(), buildDraftCandidates(), clone(), randomPick(), removeMissingPart(), getDefaultTemplateById(), getDefaultTemplates() (+5 more)
-
-### Community 6 - "Community 6"
 Cohesion: 0.19
 Nodes (17): gameLoop(), getAvatarInnerRadius(), shouldUseAvatarRuntimeRender(), cellTouchingBorders(), circlePoint(), drawAvatarCell(), drawBorder(), drawCells() (+9 more)
 
-### Community 7 - "Community 7"
+### Community 6 - "Community 6"
 Cohesion: 0.28
 Nodes (1): ChatClient
 
-### Community 8 - "Community 8"
+### Community 7 - "Community 7"
 Cohesion: 0.24
 Nodes (1): Canvas
+
+### Community 8 - "Community 8"
+Cohesion: 0.27
+Nodes (7): buildCandidateFromTemplate(), buildDraftCandidates(), clone(), randomPick(), removeMissingPart(), getDefaultTemplateById(), getDefaultTemplates()
 
 ### Community 9 - "Community 9"
 Cohesion: 0.2
 Nodes (4): buildClientJS(), getWebpackConfig(), mocha(), run()
 
 ### Community 10 - "Community 10"
+Cohesion: 0.38
+Nodes (9): applyConnectionState(), clearConnectionState(), createConnectionState(), distance(), findConnectionTarget(), isEligibleConnectionTarget(), resolveConnectionOutcome(), attemptConnection() (+1 more)
+
+### Community 11 - "Community 11"
 Cohesion: 0.39
 Nodes (9): Agar.IO Clone game UI, Colored food pellets, Grid-based arena, Leaderboard panel, Mobile joystick and targeting controls, Two simultaneous game viewports, Player cell dragon, Player cell huy (+1 more)
 
-### Community 11 - "Community 11"
-Cohesion: 0.32
-Nodes (4): createPlayerCardEditor(), createHistoryState(), redo(), undo()
-
 ### Community 12 - "Community 12"
-Cohesion: 0.47
-Nodes (4): getStorage(), interpolate(), loadLocale(), setLocale()
+Cohesion: 0.6
+Nodes (5): addHistoryEntry(), createHistoryEntry(), getStorage(), loadHistory(), saveHistory()
 
 ### Community 13 - "Community 13"
 Cohesion: 0.6
 Nodes (5): createDraftPreviewDataUrl(), drawCircle(), drawLine(), drawRect(), drawShape()
 
 ### Community 14 - "Community 14"
-Cohesion: 0.5
-Nodes (2): clampScale(), getNextScale()
+Cohesion: 0.47
+Nodes (4): getStorage(), interpolate(), loadLocale(), setLocale()
 
 ### Community 15 - "Community 15"
 Cohesion: 0.5
-Nodes (0): 
+Nodes (2): clampScale(), getNextScale()
 
 ### Community 16 - "Community 16"
+Cohesion: 0.5
+Nodes (0): 
+
+### Community 17 - "Community 17"
 Cohesion: 0.83
 Nodes (4): split icon, horizontal separation, left-right arrows, split
 
-### Community 17 - "Community 17"
+### Community 18 - "Community 18"
 Cohesion: 0.5
 Nodes (4): feed mass, feed icon, crosshair/target reticle, feed control
 
-### Community 18 - "Community 18"
+### Community 19 - "Community 19"
 Cohesion: 0.67
 Nodes (4): horizontal separation, player input control, split, split control icon
 
-### Community 19 - "Community 19"
+### Community 20 - "Community 20"
 Cohesion: 0.67
 Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Input
 
-### Community 20 - "Community 20"
-Cohesion: 0.67
-Nodes (0): 
-
 ### Community 21 - "Community 21"
-Cohesion: 1.0
+Cohesion: 0.67
 Nodes (0): 
 
 ### Community 22 - "Community 22"
@@ -327,91 +333,125 @@ Nodes (0):
 Cohesion: 1.0
 Nodes (0): 
 
+### Community 57 - "Community 57"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 58 - "Community 58"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 59 - "Community 59"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 60 - "Community 60"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 61 - "Community 61"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 62 - "Community 62"
+Cohesion: 1.0
+Nodes (0): 
+
 ## Knowledge Gaps
 - **4 isolated node(s):** `Grid-based arena`, `crosshair/target reticle`, `feed control`, `horizontal separation`
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 22`** (2 nodes): `getRules()`, `webpack.config.js`
+- **Thin community `Community 23`** (2 nodes): `getRules()`, `webpack.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 23`** (2 nodes): `Point()`, `util.js`
+- **Thin community `Community 24`** (2 nodes): `Point()`, `util.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (2 nodes): `createMemoryStorage()`, `avatar-history-store.js`
+- **Thin community `Community 25`** (2 nodes): `createMemoryStorage()`, `avatar-history-store.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (2 nodes): `createMemoryStorage()`, `i18n.js`
+- **Thin community `Community 26`** (2 nodes): `createMemoryStorage()`, `i18n.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (2 nodes): `createMemoryStorage()`, `player-card-storage.js`
+- **Thin community `Community 27`** (2 nodes): `createMemoryStorage()`, `player-card-storage.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (2 nodes): `Convert-ToWslLocation()`, `run-server.ps1`
+- **Thin community `Community 28`** (2 nodes): `createMemoryStorage()`, `player-card-draft-store.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (2 nodes): `logChatMessage()`, `chat-repository.js`
+- **Thin community `Community 29`** (2 nodes): `Convert-ToWslLocation()`, `run-server.ps1`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (2 nodes): `logFailedLoginAttempt()`, `logging-repository.js`
+- **Thin community `Community 30`** (2 nodes): `logChatMessage()`, `chat-repository.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 30`** (1 nodes): `config.js`
+- **Thin community `Community 31`** (2 nodes): `logFailedLoginAttempt()`, `logging-repository.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 31`** (1 nodes): `server.js`
+- **Thin community `Community 32`** (1 nodes): `config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 32`** (1 nodes): `materialization-status.js`
+- **Thin community `Community 33`** (1 nodes): `server.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 33`** (1 nodes): `connection.js`
+- **Thin community `Community 34`** (1 nodes): `materialization-status.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 34`** (1 nodes): `avatar-runtime-render.js`
+- **Thin community `Community 35`** (1 nodes): `connection.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (1 nodes): `player-card-sync.js`
+- **Thin community `Community 36`** (1 nodes): `avatar-runtime-render.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (1 nodes): `player-card-scale.js`
+- **Thin community `Community 37`** (1 nodes): `player-card-lock-controls.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (1 nodes): `avatar-draft-candidates.js`
+- **Thin community `Community 38`** (1 nodes): `player-card-sync.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (1 nodes): `materialization.js`
+- **Thin community `Community 39`** (1 nodes): `client-index.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (1 nodes): `relationship.js`
+- **Thin community `Community 40`** (1 nodes): `player-card-scale.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (1 nodes): `connection-status.js`
+- **Thin community `Community 41`** (1 nodes): `avatar-draft-candidates.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (1 nodes): `player-card-preview.js`
+- **Thin community `Community 42`** (1 nodes): `materialization.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (1 nodes): `body.js`
+- **Thin community `Community 43`** (1 nodes): `relationship.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (1 nodes): `avatar-draft-preview.js`
+- **Thin community `Community 44`** (1 nodes): `player-card-advanced-layer-menu.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 44`** (1 nodes): `player-card-canvas-transform.js`
+- **Thin community `Community 45`** (1 nodes): `player-card-layers.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 45`** (1 nodes): `relationship-status.js`
+- **Thin community `Community 46`** (1 nodes): `connection-status.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 46`** (1 nodes): `body-status.js`
+- **Thin community `Community 47`** (1 nodes): `player-card-preview.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (1 nodes): `player-card-history.js`
+- **Thin community `Community 48`** (1 nodes): `body.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (1 nodes): `install-desktop-shortcut.ps1`
+- **Thin community `Community 49`** (1 nodes): `avatar-draft-preview.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 49`** (1 nodes): `config.js`
+- **Thin community `Community 50`** (1 nodes): `player-card-canvas-transform.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (1 nodes): `connection.js`
+- **Thin community `Community 51`** (1 nodes): `relationship-status.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `materialization.js`
+- **Thin community `Community 52`** (1 nodes): `body-status.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `relationship.js`
+- **Thin community `Community 53`** (1 nodes): `player-card-history.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 53`** (1 nodes): `body.js`
+- **Thin community `Community 54`** (1 nodes): `install-desktop-shortcut.ps1`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 54`** (1 nodes): `util.js`
+- **Thin community `Community 55`** (1 nodes): `config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 55`** (1 nodes): `global.js`
+- **Thin community `Community 56`** (1 nodes): `connection.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 56`** (1 nodes): `avatar-draft-config.js`
+- **Thin community `Community 57`** (1 nodes): `materialization.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 58`** (1 nodes): `relationship.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 59`** (1 nodes): `body.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 60`** (1 nodes): `util.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 61`** (1 nodes): `global.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 62`** (1 nodes): `avatar-draft-config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `addPlayer()` connect `Community 2` to `Community 1`, `Community 3`?**
-  _High betweenness centrality (0.169) - this node is a cross-community bridge._
+  _High betweenness centrality (0.167) - this node is a cross-community bridge._
 - **Why does `validNick()` connect `Community 2` to `Community 0`?**
   _High betweenness centrality (0.154) - this node is a cross-community bridge._
-- **Why does `init()` connect `Community 3` to `Community 1`, `Community 2`, `Community 4`?**
-  _High betweenness centrality (0.097) - this node is a cross-community bridge._
-- **Are the 16 inferred relationships involving `t()` (e.g. with `formatMaterializationStatus()` and `formatConnectionStatus()`) actually correct?**
-  _`t()` has 16 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `init()` connect `Community 3` to `Community 1`, `Community 2`, `Community 10`?**
+  _High betweenness centrality (0.094) - this node is a cross-community bridge._
+- **Are the 19 inferred relationships involving `t()` (e.g. with `formatMaterializationStatus()` and `formatConnectionStatus()`) actually correct?**
+  _`t()` has 19 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 2 inferred relationships involving `beginAvatarDraftFlow()` (e.g. with `t()` and `close()`) actually correct?**
   _`beginAvatarDraftFlow()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 5 inferred relationships involving `setupSocket()` (e.g. with `.addSystemLine()` and `t()`) actually correct?**

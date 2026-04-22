@@ -47,6 +47,7 @@ function createPlayerCardEditor(options) {
         activeTool: 'draw',
         loading: false,
         contentScale: 1,
+        advancedLayersOpen: false,
         isPanning: false,
         panDirty: false,
         panOrigin: null,
@@ -114,6 +115,27 @@ function createPlayerCardEditor(options) {
                 controls.lock.textContent = layerState.locked ? '解锁' : '锁定';
             }
         });
+    }
+
+    function syncAdvancedLayerMenu() {
+        if (options.layerPanelEl) {
+            options.layerPanelEl.classList.toggle('hidden', !state.advancedLayersOpen);
+        }
+
+        if (options.advancedLayersToggleButton) {
+            options.advancedLayersToggleButton.classList.toggle('active', state.advancedLayersOpen);
+            options.advancedLayersToggleButton.setAttribute('aria-expanded', state.advancedLayersOpen ? 'true' : 'false');
+        }
+    }
+
+    function closeAdvancedLayerMenu() {
+        state.advancedLayersOpen = false;
+        syncAdvancedLayerMenu();
+    }
+
+    function toggleAdvancedLayerMenu() {
+        state.advancedLayersOpen = !state.advancedLayersOpen;
+        syncAdvancedLayerMenu();
     }
 
     function applyLayerLocks() {
@@ -297,6 +319,7 @@ function createPlayerCardEditor(options) {
     function open() {
         options.panelEl.classList.add('open');
         setPanelMessage(i18n.t('editor.loading'));
+        closeAdvancedLayerMenu();
 
         return ensureCanvas().then(function () {
             state.layerPayload.base.visible = true;
@@ -314,6 +337,7 @@ function createPlayerCardEditor(options) {
 
     function close() {
         options.panelEl.classList.remove('open');
+        closeAdvancedLayerMenu();
         setPanelMessage('');
     }
 
@@ -757,6 +781,11 @@ function createPlayerCardEditor(options) {
     });
     bindPressAndHold(options.zoomInButton, 'in');
     bindPressAndHold(options.zoomOutButton, 'out');
+    if (options.advancedLayersToggleButton) {
+        options.advancedLayersToggleButton.addEventListener('click', function () {
+            toggleAdvancedLayerMenu();
+        });
+    }
     Object.keys(options.layerButtons || {}).forEach(function (layerId) {
         options.layerButtons[layerId].select.addEventListener('click', function () {
             switchLayer(layerId);
@@ -772,6 +801,7 @@ function createPlayerCardEditor(options) {
     setTool('draw');
     updateZoomButtons();
     refreshLayerButtons();
+    syncAdvancedLayerMenu();
 
     return {
         open: open,
@@ -781,12 +811,20 @@ function createPlayerCardEditor(options) {
                 return loadCanvasJson(canvasJson);
             });
         },
+        loadEmptyState: function () {
+            return ensureCanvas().then(function () {
+                return loadLayerPayload(playerCardLayers.createLayerPayload(), 'base', 1);
+            });
+        },
         loadLayerPayload: function (layerPayload, activeLayerId, contentScale) {
             return ensureCanvas().then(function () {
                 return loadLayerPayload(layerPayload, activeLayerId, contentScale);
             });
         },
         exportPayload: exportPayload,
+        hasContent: function () {
+            return playerCardLayers.hasAnyContent(exportLayerPayload());
+        },
         saveCurrent: save,
         setMessage: setPanelMessage
     };

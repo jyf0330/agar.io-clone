@@ -62,4 +62,16 @@ describe('player-card-layers.js', () => {
     expect(capturedArgs).to.deep.equal(['layerId']);
     expect(result).to.deep.equal({ version: '6.7.1', objects: [] });
   });
+
+  it('should detect whether any fixed layer contains drawable content', () => {
+    const empty = layers.hasAnyContent(layers.createLayerPayload());
+    const filled = layers.hasAnyContent(layers.createLayerPayload({
+      eyes: {
+        canvasJson: { version: '6.7.1', objects: [{ type: 'Circle', layerId: 'eyes' }] }
+      }
+    }));
+
+    expect(empty).to.equal(false);
+    expect(filled).to.equal(true);
+  });
 });

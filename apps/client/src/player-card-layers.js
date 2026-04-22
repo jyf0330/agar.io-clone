@@ -82,6 +82,13 @@ function getLayerRenderState(layerState, isActiveLayer) {
     };
 }
 
+function hasAnyContent(layerPayload) {
+    var payload = createLayerPayload(layerPayload);
+    return LAYER_IDS.some(function (layerId) {
+        return (payload[layerId].canvasJson.objects || []).length > 0;
+    });
+}
+
 module.exports = {
     LAYER_IDS: LAYER_IDS,
     createEmptyCanvasJson: createEmptyCanvasJson,
@@ -91,5 +98,6 @@ module.exports = {
     mergeLayerPayloadToCanvasJson: mergeLayerPayloadToCanvasJson,
     splitCanvasJsonByLayer: splitCanvasJsonByLayer,
     getLayerRenderState: getLayerRenderState,
-    serializeCanvas: serializeCanvas
+    serializeCanvas: serializeCanvas,
+    hasAnyContent: hasAnyContent
 };
