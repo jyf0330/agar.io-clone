@@ -8,7 +8,12 @@
     "start": "node ./node_modules/gulp/bin/gulp.js run",
     "watch": "node ./node_modules/gulp/bin/gulp.js watch",
     "dev": "node ./node_modules/gulp/bin/gulp.js watch",
-    "test": "node ./node_modules/gulp/bin/gulp.js test"
+    "test": "node ./node_modules/gulp/bin/gulp.js test",
+    "w1:online": "node demo/scripts/week1-playthrough-online.js",
+    "w1:chat": "node demo/scripts/week1-playthrough-chat.js",
+    "w1:offline": "node demo/scripts/week1-playthrough-offline.js",
+    "w1:audit": "python3 demo/scripts/week1-audit-analysis.py",
+    "w1:all": "npm run w1:online && npm run w1:chat && npm run w1:offline && npm run w1:audit"
   },
   "repository": {
     "type": "git",
