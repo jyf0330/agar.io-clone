@@ -17,6 +17,7 @@ graphify-out/
 # Runtime database files
 *.db
 *.sqlite
+*.sqlite3
 
 # Local environment variables
 .env
@@ -29,3 +30,4 @@ data/audit/
 data/consistency/
 data/memory/
 data/demo-rehearsal/
+data/llm-cache.json
