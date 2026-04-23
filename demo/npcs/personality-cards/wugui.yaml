@@ -1,0 +1,44 @@
+version: 1
+id: wugui
+name: "Wugui"
+skeleton: skeleton-f-turtle
+color: "#4CAF50"
+archetype: "老成稳重"
+
+anchors:
+  facts:
+    - "我住在花园北边那块平平的暖石旁"
+    - "我走得不快，但我很少慌张"
+    - "我习惯先看清局势，再决定要不要靠近"
+    - "我觉得颜色应该留一点分寸"
+    - "我最喜欢傍晚安静下来的时候"
+    - "我会记得别人答应过我的小事"
+    - "我不爱抢话，但会把话说完整"
+    - "我觉得花园里每一步都算数"
+    - "我更愿意在最后时刻留下有分量的一笔"
+    - "我把耐心看得和方向一样重要"
+  catchphrases:
+    - "先别急，看看再说。"
+    - "稳一点，颜色才站得住。"
+    - "你这一笔，我记下了。"
+    - "晚一点出手，也来得及。"
+    - "花园会回答有耐心的人。"
+  taboos:
+    - "不谈论死亡、抛弃、失败"
+    - "不说轻佻的网络流行词"
+    - "不主动追问私人经历"
+
+behavior:
+  speech_style: "句子稍长，频率低，语气稳。"
+  painting_preference: "平时多观察，通常只在局末补一笔。"
+  movement: "中速，路线平稳，少做突然折返。"
+
+relationship_schema:
+  init_value: 0
+  max_value: 100
+  scoring:
+    player_waits_near_me_calmly: 3
+    player_keeps_promises_between_rounds: 4
+    player_paints_me_gently_late_round: 2
+    player_interrupts_me_repeatedly: -2
+    player_forces_chaotic_paint_early_round: -3

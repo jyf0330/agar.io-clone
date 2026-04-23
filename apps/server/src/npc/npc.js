@@ -44,6 +44,60 @@ function normalizeIntent(intent) {
     };
 }
 
+function normalizeNpcKey(value) {
+    return String(value || '').trim().toLowerCase();
+}
+
+function createBehaviorProfile(id, personality, overrides) {
+    const key = normalizeNpcKey(id || (personality && personality.id));
+    const baseProfile = {
+        speechCooldownMs: 18000,
+        paintCooldownMs: 22000,
+        movementStrideMultiplier: 1,
+        movementSpeedMultiplier: 1,
+        followPlayerRadius: 220,
+        paintEndgameOnly: false,
+        avoidIdle: false,
+        actionPriority: ['speak', 'paint']
+    };
+
+    let specificProfile = {};
+    if (key === 'doudou') {
+        specificProfile = {
+            speechCooldownMs: 9000,
+            paintCooldownMs: 12000,
+            movementStrideMultiplier: 1.7,
+            movementSpeedMultiplier: 1.25,
+            followPlayerRadius: 260,
+            avoidIdle: true,
+            actionPriority: ['speak', 'paint']
+        };
+    } else if (key === 'wugui') {
+        specificProfile = {
+            speechCooldownMs: 15000,
+            paintCooldownMs: 24000,
+            movementStrideMultiplier: 1,
+            movementSpeedMultiplier: 1,
+            followPlayerRadius: 220,
+            paintEndgameOnly: true,
+            avoidIdle: false,
+            actionPriority: ['speak', 'paint']
+        };
+    } else {
+        specificProfile = {
+            speechCooldownMs: 24000,
+            paintCooldownMs: 30000,
+            movementStrideMultiplier: 0.7,
+            movementSpeedMultiplier: 0.82,
+            followPlayerRadius: 180,
+            avoidIdle: false,
+            actionPriority: ['speak', 'paint']
+        };
+    }
+
+    return Object.assign({}, baseProfile, specificProfile, overrides || {});
+}
+
 class NpcState {
     constructor(options) {
         const settings = options || {};
@@ -53,6 +107,8 @@ class NpcState {
         this.id = settings.id || personality.id;
         this.personality = personality;
         this.color = settings.color || personality.color || '#FF6B9D';
+        this.behaviorProfile = createBehaviorProfile(this.id, personality, settings.behaviorProfile);
+        this.spawnedAt = Date.now();
         this.lastPaintTime = 0;
         this.lastSpeakTime = 0;
         this.currentIntent = {
@@ -69,6 +125,9 @@ class NpcState {
         this.player.name = settings.name || personality.name || this.id;
         this.player.hue = typeof settings.hue === 'number' ? settings.hue : hexToHue(this.color);
         this.player.playerCardPreviewDataUrl = settings.previewDataUrl || personality.previewDataUrl || null;
+        this.player.bodyBonuses = Object.assign({}, this.player.bodyBonuses || {}, {
+            movementSpeedMultiplier: this.behaviorProfile.movementSpeedMultiplier
+        });
         this.player.target = this.player.target || { x: 0, y: 0 };
         this.player.lastHeartbeat = Date.now();
         this.position = {
@@ -125,3 +184,4 @@ class NpcState {
 
 module.exports = NpcState;
 module.exports.NpcState = NpcState;
+module.exports.createBehaviorProfile = createBehaviorProfile;

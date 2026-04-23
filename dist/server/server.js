@@ -41,6 +41,8 @@ const orchestrator = new Orchestrator({
   timeoutMs: 4000,
   mapWidth: config.gameWidth,
   mapHeight: config.gameHeight,
+  sessionStartedAt: Date.now(),
+  roundDurationMs: 90000,
   emitEvent(eventName, payload) {
     io.emit(eventName, payload);
   },
@@ -50,8 +52,12 @@ const orchestrator = new Orchestrator({
     return targetPlayer.playerCardPreviewDataUrl;
   }
 });
-let mochiNpc = null;
-let npcAnchoredToPlayer = false;
+let npcRoster = [];
+let npcsAnchoredToPlayer = false;
+const roundClock = {
+  startedAt: Date.now(),
+  durationMs: 90000
+};
 let sockets = {};
 let spectators = [];
 app.use(express.static(path.join(__dirname, '../client')));
@@ -80,13 +86,24 @@ function generateSpawnpoint() {
   }
   return getPosition(config.newPlayerInitialPosition === 'farthest', radius, humanPlayers);
 }
-function placeNpcNearPlayer(npc, currentPlayer) {
+function placeNpcNearPlayer(npc, currentPlayer, index) {
   if (!npc || !currentPlayer || !npc.player || !npc.player.cells || !npc.player.cells.length) {
     return;
   }
+  const offsets = [{
+    x: 220,
+    y: 140
+  }, {
+    x: -180,
+    y: 100
+  }, {
+    x: 60,
+    y: -180
+  }];
+  const offset = offsets[index] || offsets[offsets.length - 1];
   const spawn = {
-    x: Math.min(config.gameWidth - 120, currentPlayer.x + 220),
-    y: Math.min(config.gameHeight - 120, currentPlayer.y + 140)
+    x: Math.max(120, Math.min(config.gameWidth - 120, currentPlayer.x + offset.x)),
+    y: Math.max(120, Math.min(config.gameHeight - 120, currentPlayer.y + offset.y))
   };
   npc.player.cells.forEach(cell => {
     cell.x = spawn.x;
@@ -108,14 +125,28 @@ function placeNpcNearPlayer(npc, currentPlayer) {
   });
   npc.move(0, config.gameWidth, config.gameHeight);
 }
-function bootstrapMochiNpc() {
-  const personality = loadPersonalityCard(path.resolve(process.cwd(), 'demo/npcs/personality-cards/mochi.yaml'));
+function bootstrapNpc(cardId, index) {
+  const personality = loadPersonalityCard(path.resolve(process.cwd(), 'demo/npcs/personality-cards/' + cardId + '.yaml'));
+  const offsets = [{
+    x: 180,
+    y: 120
+  }, {
+    x: -160,
+    y: 90
+  }, {
+    x: 40,
+    y: -170
+  }];
+  const offset = offsets[index] || {
+    x: 0,
+    y: 0
+  };
   const npc = new NpcState({
     id: personality.id,
     personality: personality,
     spawn: {
-      x: Math.round(config.gameWidth / 2 + 180),
-      y: Math.round(config.gameHeight / 2 + 120)
+      x: Math.round(config.gameWidth / 2 + offset.x),
+      y: Math.round(config.gameHeight / 2 + offset.y)
     },
     defaultPlayerMass: config.defaultPlayerMass
   });
@@ -132,7 +163,10 @@ function bootstrapMochiNpc() {
   map.players.pushNew(npc.player);
   return npc;
 }
-mochiNpc = bootstrapMochiNpc();
+function bootstrapDefaultNpcs() {
+  return ['mochi', 'doudou', 'wugui'].map((cardId, index) => bootstrapNpc(cardId, index));
+}
+npcRoster = bootstrapDefaultNpcs();
 const addPlayer = socket => {
   var currentPlayer = new mapUtils.playerUtils.Player(socket.id);
   socket.on('gotit', function (clientPlayerData) {
@@ -151,9 +185,11 @@ const addPlayer = socket => {
       clientPlayerData.name = sanitizedName;
       currentPlayer.clientProvidedData(clientPlayerData);
       map.players.pushNew(currentPlayer);
-      if (mochiNpc && !npcAnchoredToPlayer) {
-        placeNpcNearPlayer(mochiNpc, currentPlayer);
-        npcAnchoredToPlayer = true;
+      if (npcRoster.length && !npcsAnchoredToPlayer) {
+        npcRoster.forEach((npc, index) => {
+          placeNpcNearPlayer(npc, currentPlayer, index);
+        });
+        npcsAnchoredToPlayer = true;
       }
       io.emit('playerJoin', {
         name: currentPlayer.name
@@ -178,7 +214,7 @@ const addPlayer = socket => {
   });
   socket.on('disconnect', () => {
     delete sockets[socket.id];
-    npcAnchoredToPlayer = false;
+    npcsAnchoredToPlayer = false;
     connectionService.clearTimer(currentPlayer.id);
     map.players.removePlayerByID(currentPlayer.id);
     console.log('[INFO] User ' + currentPlayer.name + ' has disconnected');
@@ -294,7 +330,9 @@ setInterval(() => {
   orchestrator.tick({
     players: map.players.data,
     mapWidth: config.gameWidth,
-    mapHeight: config.gameHeight
+    mapHeight: config.gameHeight,
+    matchStartedAt: roundClock.startedAt,
+    roundDurationMs: roundClock.durationMs
   }, 1000).catch(error => {
     console.error('[NPC] orchestrator tick failed', error);
   });
