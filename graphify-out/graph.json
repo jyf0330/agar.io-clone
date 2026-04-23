@@ -54,7 +54,7 @@
       "source_file": "webpack.config.js",
       "source_location": "L1",
       "id": "webpack_config_js",
-      "community": 30,
+      "community": 32,
       "norm_label": "webpack.config.js"
     },
     {
@@ -63,7 +63,7 @@
       "source_file": "webpack.config.js",
       "source_location": "L15",
       "id": "webpack_config_getrules",
-      "community": 30,
+      "community": 32,
       "norm_label": "getrules()"
     },
     {
@@ -72,7 +72,7 @@
       "source_file": "config.js",
       "source_location": "L1",
       "id": "config_js",
-      "community": 44,
+      "community": 48,
       "norm_label": "config.js"
     },
     {
@@ -81,7 +81,7 @@
       "source_file": "gulpfile.js",
       "source_location": "L1",
       "id": "gulpfile_js",
-      "community": 14,
+      "community": 15,
       "norm_label": "gulpfile.js"
     },
     {
@@ -90,7 +90,7 @@
       "source_file": "gulpfile.js",
       "source_location": "L23",
       "id": "gulpfile_getwebpackconfig",
-      "community": 14,
+      "community": 15,
       "norm_label": "getwebpackconfig()"
     },
     {
@@ -99,7 +99,7 @@
       "source_file": "gulpfile.js",
       "source_location": "L27",
       "id": "gulpfile_runserver",
-      "community": 14,
+      "community": 15,
       "norm_label": "runserver()"
     },
     {
@@ -108,7 +108,7 @@
       "source_file": "gulpfile.js",
       "source_location": "L38",
       "id": "gulpfile_buildserver",
-      "community": 14,
+      "community": 15,
       "norm_label": "buildserver()"
     },
     {
@@ -117,7 +117,7 @@
       "source_file": "gulpfile.js",
       "source_location": "L46",
       "id": "gulpfile_copyclienthtml",
-      "community": 14,
+      "community": 15,
       "norm_label": "copyclienthtml()"
     },
     {
@@ -126,7 +126,7 @@
       "source_file": "gulpfile.js",
       "source_location": "L54",
       "id": "gulpfile_copyclientassets",
-      "community": 14,
+      "community": 15,
       "norm_label": "copyclientassets()"
     },
     {
@@ -135,7 +135,7 @@
       "source_file": "gulpfile.js",
       "source_location": "L59",
       "id": "gulpfile_buildclientjs",
-      "community": 14,
+      "community": 15,
       "norm_label": "buildclientjs()"
     },
     {
@@ -144,7 +144,7 @@
       "source_file": "gulpfile.js",
       "source_location": "L65",
       "id": "gulpfile_setdev",
-      "community": 14,
+      "community": 15,
       "norm_label": "setdev()"
     },
     {
@@ -153,7 +153,7 @@
       "source_file": "gulpfile.js",
       "source_location": "L70",
       "id": "gulpfile_mocha",
-      "community": 3,
+      "community": 4,
       "norm_label": "mocha()"
     },
     {
@@ -162,7 +162,7 @@
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L1",
       "id": "demo_scripts_generate_bots_py",
-      "community": 9,
+      "community": 10,
       "norm_label": "generate_bots.py"
     },
     {
@@ -171,7 +171,7 @@
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L70",
       "id": "generate_bots_clamp",
-      "community": 9,
+      "community": 10,
       "norm_label": "clamp()"
     },
     {
@@ -180,7 +180,7 @@
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L74",
       "id": "generate_bots_pick_random_target",
-      "community": 9,
+      "community": 10,
       "norm_label": "pick_random_target()"
     },
     {
@@ -189,7 +189,7 @@
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L83",
       "id": "generate_bots_smooth_step_toward",
-      "community": 9,
+      "community": 10,
       "norm_label": "smooth_step_toward()"
     },
     {
@@ -198,7 +198,7 @@
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L100",
       "id": "generate_bots_generate_frames",
-      "community": 9,
+      "community": 10,
       "norm_label": "generate_frames()"
     },
     {
@@ -207,7 +207,7 @@
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L186",
       "id": "generate_bots_build_bot_json",
-      "community": 9,
+      "community": 10,
       "norm_label": "build_bot_json()"
     },
     {
@@ -216,7 +216,7 @@
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L228",
       "id": "generate_bots_write_bot",
-      "community": 9,
+      "community": 10,
       "norm_label": "write_bot()"
     },
     {
@@ -225,7 +225,7 @@
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L247",
       "id": "generate_bots_parse_args",
-      "community": 9,
+      "community": 10,
       "norm_label": "parse_args()"
     },
     {
@@ -234,7 +234,7 @@
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L292",
       "id": "generate_bots_main",
-      "community": 9,
+      "community": 10,
       "norm_label": "main()"
     },
     {
@@ -242,7 +242,7 @@
       "file_type": "rationale",
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L76",
-      "community": 9,
+      "community": 10,
       "norm_label": "\u5728\u5730\u56fe\u5185\u968f\u673a\u6311\u4e00\u4e2a\u76ee\u6807\u70b9,\u7559\u4e00\u70b9\u8fb9\u8ddd\u907f\u514d\u8d34\u5899\u3002",
       "id": "generate_bots_rationale_76"
     },
@@ -251,7 +251,7 @@
       "file_type": "rationale",
       "source_file": "demo/scripts/generate_bots.py",
       "source_location": "L86",
-      "community": 9,
+      "community": 10,
       "norm_label": "\u671d\u76ee\u6807\u79fb\u52a8\u6700\u591a max_step,\u8fbe\u5230/\u8d85\u8fc7\u5219\u8d34\u4e0a\u3002",
       "id": "generate_bots_rationale_86"
     },
@@ -261,7 +261,7 @@
       "source_file": "tools/windows/run-server.ps1",
       "source_location": "L1",
       "id": "tools_windows_run_server_ps1",
-      "community": 31,
+      "community": 33,
       "norm_label": "run-server.ps1"
     },
     {
@@ -270,7 +270,7 @@
       "source_file": "tools/windows/run-server.ps1",
       "source_location": "L9",
       "id": "run_server_convert_towsllocation",
-      "community": 31,
+      "community": 33,
       "norm_label": "convert-towsllocation()"
     },
     {
@@ -279,7 +279,7 @@
       "source_file": "tools/windows/launch-agario.ps1",
       "source_location": "L1",
       "id": "tools_windows_launch_agario_ps1",
-      "community": 27,
+      "community": 29,
       "norm_label": "launch-agario.ps1"
     },
     {
@@ -288,7 +288,7 @@
       "source_file": "tools/windows/launch-agario.ps1",
       "source_location": "L14",
       "id": "launch_agario_test_localurl",
-      "community": 27,
+      "community": 29,
       "norm_label": "test-localurl()"
     },
     {
@@ -297,7 +297,7 @@
       "source_file": "tools/windows/launch-agario.ps1",
       "source_location": "L28",
       "id": "launch_agario_open_gameurl",
-      "community": 27,
+      "community": 29,
       "norm_label": "open-gameurl()"
     },
     {
@@ -306,7 +306,7 @@
       "source_file": "tools/windows/install-desktop-shortcut.ps1",
       "source_location": "L1",
       "id": "tools_windows_install_desktop_shortcut_ps1",
-      "community": 45,
+      "community": 49,
       "norm_label": "install-desktop-shortcut.ps1"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "tests/unit/player-card-storage.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_storage_js",
-      "community": 32,
+      "community": 34,
       "norm_label": "player-card-storage.js"
     },
     {
@@ -324,7 +324,7 @@
       "source_file": "tests/unit/player-card-storage.js",
       "source_location": "L8",
       "id": "player_card_storage_creatememorystorage",
-      "community": 32,
+      "community": 34,
       "norm_label": "creatememorystorage()"
     },
     {
@@ -333,7 +333,7 @@
       "source_file": "tests/unit/player-projection.js",
       "source_location": "L1",
       "id": "tests_unit_player_projection_js",
-      "community": 46,
+      "community": 50,
       "norm_label": "player-projection.js"
     },
     {
@@ -342,7 +342,7 @@
       "source_file": "tests/unit/connection-service.js",
       "source_location": "L1",
       "id": "tests_unit_connection_service_js",
-      "community": 6,
+      "community": 1,
       "norm_label": "connection-service.js"
     },
     {
@@ -351,7 +351,7 @@
       "source_file": "tests/unit/connection-service.js",
       "source_location": "L10",
       "id": "connection_service_createfakescheduler",
-      "community": 6,
+      "community": 1,
       "norm_label": "createfakescheduler()"
     },
     {
@@ -360,7 +360,7 @@
       "source_file": "tests/unit/connection-service.js",
       "source_location": "L34",
       "id": "connection_service_createplayer",
-      "community": 6,
+      "community": 1,
       "norm_label": "createplayer()"
     },
     {
@@ -369,7 +369,7 @@
       "source_file": "tests/unit/materialization-status.js",
       "source_location": "L1",
       "id": "tests_unit_materialization_status_js",
-      "community": 47,
+      "community": 51,
       "norm_label": "materialization-status.js"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "tests/unit/util.js",
       "source_location": "L1",
       "id": "tests_unit_util_js",
-      "community": 33,
+      "community": 35,
       "norm_label": "util.js"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "tests/unit/util.js",
       "source_location": "L84",
       "id": "util_point",
-      "community": 33,
+      "community": 35,
       "norm_label": "point()"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "tests/unit/map-visibility.js",
       "source_location": "L1",
       "id": "tests_unit_map_visibility_js",
-      "community": 48,
+      "community": 52,
       "norm_label": "map-visibility.js"
     },
     {
@@ -405,7 +405,7 @@
       "source_file": "tests/unit/player-hydration.js",
       "source_location": "L1",
       "id": "tests_unit_player_hydration_js",
-      "community": 49,
+      "community": 53,
       "norm_label": "player-hydration.js"
     },
     {
@@ -414,7 +414,7 @@
       "source_file": "tests/unit/connection-status.js",
       "source_location": "L1",
       "id": "tests_unit_connection_status_js",
-      "community": 50,
+      "community": 54,
       "norm_label": "connection-status.js"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "tests/unit/player-card-sync.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_sync_js",
-      "community": 51,
+      "community": 55,
       "norm_label": "player-card-sync.js"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "tests/unit/socket-emit.js",
       "source_location": "L1",
       "id": "tests_unit_socket_emit_js",
-      "community": 0,
+      "community": 2,
       "norm_label": "socket-emit.js"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "tests/unit/socket-emit.js",
       "source_location": "L22",
       "id": "socket_emit_emit",
-      "community": 0,
+      "community": 2,
       "norm_label": "emit()"
     },
     {
@@ -450,7 +450,7 @@
       "source_file": "tests/unit/relationship-status.js",
       "source_location": "L1",
       "id": "tests_unit_relationship_status_js",
-      "community": 52,
+      "community": 56,
       "norm_label": "relationship-status.js"
     },
     {
@@ -459,7 +459,7 @@
       "source_file": "tests/unit/avatar-draft-preview.js",
       "source_location": "L1",
       "id": "tests_unit_avatar_draft_preview_js",
-      "community": 53,
+      "community": 57,
       "norm_label": "avatar-draft-preview.js"
     },
     {
@@ -468,7 +468,7 @@
       "source_file": "tests/unit/avatar-draft-candidates.js",
       "source_location": "L1",
       "id": "tests_unit_avatar_draft_candidates_js",
-      "community": 54,
+      "community": 58,
       "norm_label": "avatar-draft-candidates.js"
     },
     {
@@ -477,8 +477,17 @@
       "source_file": "tests/unit/server.js",
       "source_location": "L1",
       "id": "tests_unit_server_js",
-      "community": 55,
+      "community": 59,
       "norm_label": "server.js"
+    },
+    {
+      "label": "npc-avatar-paint.js",
+      "file_type": "code",
+      "source_file": "tests/unit/npc-avatar-paint.js",
+      "source_location": "L1",
+      "id": "tests_unit_npc_avatar_paint_js",
+      "community": 60,
+      "norm_label": "npc-avatar-paint.js"
     },
     {
       "label": "avatar-runtime-render.js",
@@ -486,7 +495,7 @@
       "source_file": "tests/unit/avatar-runtime-render.js",
       "source_location": "L1",
       "id": "tests_unit_avatar_runtime_render_js",
-      "community": 56,
+      "community": 61,
       "norm_label": "avatar-runtime-render.js"
     },
     {
@@ -495,7 +504,7 @@
       "source_file": "tests/unit/avatar-history-store.js",
       "source_location": "L1",
       "id": "tests_unit_avatar_history_store_js",
-      "community": 34,
+      "community": 36,
       "norm_label": "avatar-history-store.js"
     },
     {
@@ -504,8 +513,17 @@
       "source_file": "tests/unit/avatar-history-store.js",
       "source_location": "L7",
       "id": "avatar_history_store_creatememorystorage",
-      "community": 34,
+      "community": 36,
       "norm_label": "creatememorystorage()"
+    },
+    {
+      "label": "npc-greetings.js",
+      "file_type": "code",
+      "source_file": "tests/unit/npc-greetings.js",
+      "source_location": "L1",
+      "id": "tests_unit_npc_greetings_js",
+      "community": 62,
+      "norm_label": "npc-greetings.js"
     },
     {
       "label": "player-card-advanced-layer-menu.js",
@@ -513,7 +531,7 @@
       "source_file": "tests/unit/player-card-advanced-layer-menu.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_advanced_layer_menu_js",
-      "community": 57,
+      "community": 63,
       "norm_label": "player-card-advanced-layer-menu.js"
     },
     {
@@ -522,7 +540,7 @@
       "source_file": "tests/unit/player-card-history.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_history_js",
-      "community": 58,
+      "community": 64,
       "norm_label": "player-card-history.js"
     },
     {
@@ -531,7 +549,7 @@
       "source_file": "tests/unit/player-card-lock-controls.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_lock_controls_js",
-      "community": 59,
+      "community": 65,
       "norm_label": "player-card-lock-controls.js"
     },
     {
@@ -540,7 +558,7 @@
       "source_file": "tests/unit/body-status.js",
       "source_location": "L1",
       "id": "tests_unit_body_status_js",
-      "community": 60,
+      "community": 66,
       "norm_label": "body-status.js"
     },
     {
@@ -549,7 +567,7 @@
       "source_file": "tests/unit/relationship.js",
       "source_location": "L1",
       "id": "tests_unit_relationship_js",
-      "community": 61,
+      "community": 67,
       "norm_label": "relationship.js"
     },
     {
@@ -558,7 +576,7 @@
       "source_file": "tests/unit/body.js",
       "source_location": "L1",
       "id": "tests_unit_body_js",
-      "community": 62,
+      "community": 68,
       "norm_label": "body.js"
     },
     {
@@ -567,7 +585,7 @@
       "source_file": "tests/unit/virus.js",
       "source_location": "L1",
       "id": "tests_unit_virus_js",
-      "community": 63,
+      "community": 69,
       "norm_label": "virus.js"
     },
     {
@@ -576,7 +594,7 @@
       "source_file": "tests/unit/client-index.js",
       "source_location": "L1",
       "id": "tests_unit_client_index_js",
-      "community": 64,
+      "community": 70,
       "norm_label": "client-index.js"
     },
     {
@@ -585,7 +603,7 @@
       "source_file": "tests/unit/player-card-draft-store.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_draft_store_js",
-      "community": 35,
+      "community": 37,
       "norm_label": "player-card-draft-store.js"
     },
     {
@@ -594,7 +612,7 @@
       "source_file": "tests/unit/player-card-draft-store.js",
       "source_location": "L8",
       "id": "player_card_draft_store_creatememorystorage",
-      "community": 35,
+      "community": 37,
       "norm_label": "creatememorystorage()"
     },
     {
@@ -603,7 +621,7 @@
       "source_file": "tests/unit/player-card-scale.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_scale_js",
-      "community": 65,
+      "community": 71,
       "norm_label": "player-card-scale.js"
     },
     {
@@ -612,7 +630,7 @@
       "source_file": "tests/unit/player-card-preview.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_preview_js",
-      "community": 66,
+      "community": 72,
       "norm_label": "player-card-preview.js"
     },
     {
@@ -621,7 +639,7 @@
       "source_file": "tests/unit/npc-orchestrator.js",
       "source_location": "L1",
       "id": "tests_unit_npc_orchestrator_js",
-      "community": 6,
+      "community": 1,
       "norm_label": "npc-orchestrator.js"
     },
     {
@@ -630,7 +648,7 @@
       "source_file": "tests/unit/npc-orchestrator.js",
       "source_location": "L10",
       "id": "npc_orchestrator_createpersonality",
-      "community": 6,
+      "community": 1,
       "norm_label": "createpersonality()"
     },
     {
@@ -639,7 +657,7 @@
       "source_file": "tests/unit/npc-orchestrator.js",
       "source_location": "L26",
       "id": "npc_orchestrator_createhumanplayer",
-      "community": 6,
+      "community": 1,
       "norm_label": "createhumanplayer()"
     },
     {
@@ -648,7 +666,7 @@
       "source_file": "tests/unit/connection.js",
       "source_location": "L1",
       "id": "tests_unit_connection_js",
-      "community": 67,
+      "community": 73,
       "norm_label": "connection.js"
     },
     {
@@ -657,7 +675,7 @@
       "source_file": "tests/unit/player-card-layers.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_layers_js",
-      "community": 68,
+      "community": 74,
       "norm_label": "player-card-layers.js"
     },
     {
@@ -666,7 +684,7 @@
       "source_file": "tests/unit/llm-wrapper.js",
       "source_location": "L1",
       "id": "tests_unit_llm_wrapper_js",
-      "community": 21,
+      "community": 23,
       "norm_label": "llm-wrapper.js"
     },
     {
@@ -675,7 +693,7 @@
       "source_file": "tests/unit/llm-wrapper.js",
       "source_location": "L9",
       "id": "llm_wrapper_clearmodule",
-      "community": 21,
+      "community": 23,
       "norm_label": "clearmodule()"
     },
     {
@@ -684,7 +702,7 @@
       "source_file": "tests/unit/llm-wrapper.js",
       "source_location": "L17",
       "id": "llm_wrapper_loadwrapperfixture",
-      "community": 21,
+      "community": 23,
       "norm_label": "loadwrapperfixture()"
     },
     {
@@ -693,7 +711,7 @@
       "source_file": "tests/unit/llm-wrapper.js",
       "source_location": "L38",
       "id": "llm_wrapper_createopenaimockserver",
-      "community": 21,
+      "community": 23,
       "norm_label": "createopenaimockserver()"
     },
     {
@@ -702,7 +720,7 @@
       "source_file": "tests/unit/i18n.js",
       "source_location": "L1",
       "id": "tests_unit_i18n_js",
-      "community": 36,
+      "community": 38,
       "norm_label": "i18n.js"
     },
     {
@@ -711,7 +729,7 @@
       "source_file": "tests/unit/i18n.js",
       "source_location": "L7",
       "id": "i18n_creatememorystorage",
-      "community": 36,
+      "community": 38,
       "norm_label": "creatememorystorage()"
     },
     {
@@ -720,7 +738,7 @@
       "source_file": "tests/unit/player-card-canvas-transform.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_canvas_transform_js",
-      "community": 69,
+      "community": 75,
       "norm_label": "player-card-canvas-transform.js"
     },
     {
@@ -729,7 +747,7 @@
       "source_file": "tests/unit/materialization.js",
       "source_location": "L1",
       "id": "tests_unit_materialization_js",
-      "community": 70,
+      "community": 76,
       "norm_label": "materialization.js"
     },
     {
@@ -738,7 +756,7 @@
       "source_file": "configs/game/relationship.js",
       "source_location": "L1",
       "id": "configs_game_relationship_js",
-      "community": 71,
+      "community": 77,
       "norm_label": "relationship.js"
     },
     {
@@ -747,7 +765,7 @@
       "source_file": "configs/game/body.js",
       "source_location": "L1",
       "id": "configs_game_body_js",
-      "community": 72,
+      "community": 78,
       "norm_label": "body.js"
     },
     {
@@ -756,7 +774,7 @@
       "source_file": "configs/game/config.js",
       "source_location": "L1",
       "id": "configs_game_config_js",
-      "community": 73,
+      "community": 79,
       "norm_label": "config.js"
     },
     {
@@ -765,7 +783,7 @@
       "source_file": "configs/game/connection.js",
       "source_location": "L1",
       "id": "configs_game_connection_js",
-      "community": 74,
+      "community": 80,
       "norm_label": "connection.js"
     },
     {
@@ -774,7 +792,7 @@
       "source_file": "configs/game/materialization.js",
       "source_location": "L1",
       "id": "configs_game_materialization_js",
-      "community": 75,
+      "community": 81,
       "norm_label": "materialization.js"
     },
     {
@@ -783,7 +801,7 @@
       "source_file": "apps/server/src/player-projection.js",
       "source_location": "L1",
       "id": "apps_server_src_player_projection_js",
-      "community": 15,
+      "community": 16,
       "norm_label": "player-projection.js"
     },
     {
@@ -792,7 +810,7 @@
       "source_file": "apps/server/src/player-projection.js",
       "source_location": "L3",
       "id": "player_projection_projectcellforsync",
-      "community": 15,
+      "community": 16,
       "norm_label": "projectcellforsync()"
     },
     {
@@ -801,7 +819,7 @@
       "source_file": "apps/server/src/player-projection.js",
       "source_location": "L13",
       "id": "player_projection_projectbodypartforsync",
-      "community": 15,
+      "community": 16,
       "norm_label": "projectbodypartforsync()"
     },
     {
@@ -810,7 +828,7 @@
       "source_file": "apps/server/src/player-projection.js",
       "source_location": "L17",
       "id": "player_projection_projectplayerforsync",
-      "community": 15,
+      "community": 16,
       "norm_label": "projectplayerforsync()"
     },
     {
@@ -819,7 +837,7 @@
       "source_file": "apps/server/src/player-projection.js",
       "source_location": "L44",
       "id": "player_projection_projectplayersforsync",
-      "community": 15,
+      "community": 16,
       "norm_label": "projectplayersforsync()"
     },
     {
@@ -828,7 +846,7 @@
       "source_file": "apps/server/src/player-projection.js",
       "source_location": "L48",
       "id": "player_projection_projectvisibleworldforsync",
-      "community": 15,
+      "community": 16,
       "norm_label": "projectvisibleworldforsync()"
     },
     {
@@ -837,7 +855,7 @@
       "source_file": "apps/server/src/player-projection.js",
       "source_location": "L58",
       "id": "player_projection_createspectatorsyncdata",
-      "community": 15,
+      "community": 16,
       "norm_label": "createspectatorsyncdata()"
     },
     {
@@ -846,7 +864,7 @@
       "source_file": "apps/server/src/connection-service.js",
       "source_location": "L1",
       "id": "apps_server_src_connection_service_js",
-      "community": 37,
+      "community": 39,
       "norm_label": "connection-service.js"
     },
     {
@@ -855,7 +873,7 @@
       "source_file": "apps/server/src/connection-service.js",
       "source_location": "L14",
       "id": "connection_service_createconnectionservice",
-      "community": 37,
+      "community": 39,
       "norm_label": "createconnectionservice()"
     },
     {
@@ -864,52 +882,52 @@
       "source_file": "apps/server/src/server.js",
       "source_location": "L1",
       "id": "apps_server_src_server_js",
-      "community": 0,
+      "community": 2,
       "norm_label": "server.js"
     },
     {
       "label": "generateSpawnpoint()",
       "file_type": "code",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L63",
+      "source_location": "L76",
       "id": "server_generatespawnpoint",
-      "community": 0,
+      "community": 2,
       "norm_label": "generatespawnpoint()"
     },
     {
       "label": "placeNpcNearPlayer()",
       "file_type": "code",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L77",
+      "source_location": "L90",
       "id": "server_placenpcnearplayer",
-      "community": 0,
+      "community": 8,
       "norm_label": "placenpcnearplayer()"
     },
     {
       "label": "bootstrapMochiNpc()",
       "file_type": "code",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L108",
+      "source_location": "L121",
       "id": "server_bootstrapmochinpc",
-      "community": 0,
+      "community": 8,
       "norm_label": "bootstrapmochinpc()"
     },
     {
       "label": "addPlayer()",
       "file_type": "code",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L137",
+      "source_location": "L150",
       "id": "server_addplayer",
-      "community": 0,
+      "community": 2,
       "norm_label": "addplayer()"
     },
     {
       "label": "addSpectator()",
       "file_type": "code",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L297",
+      "source_location": "L310",
       "id": "server_addspectator",
-      "community": 0,
+      "community": 2,
       "norm_label": "addspectator()"
     },
     {
@@ -918,7 +936,7 @@
       "source_file": "apps/server/src/game-logic.js",
       "source_location": "L1",
       "id": "apps_server_src_game_logic_js",
-      "community": 16,
+      "community": 17,
       "norm_label": "game-logic.js"
     },
     {
@@ -927,7 +945,7 @@
       "source_file": "apps/server/src/game-logic.js",
       "source_location": "L3",
       "id": "game_logic_adjustforboundaries",
-      "community": 16,
+      "community": 17,
       "norm_label": "adjustforboundaries()"
     },
     {
@@ -936,7 +954,7 @@
       "source_file": "apps/server/src/relationship.js",
       "source_location": "L1",
       "id": "apps_server_src_relationship_js",
-      "community": 4,
+      "community": 1,
       "norm_label": "relationship.js"
     },
     {
@@ -945,7 +963,7 @@
       "source_file": "apps/server/src/relationship.js",
       "source_location": "L8",
       "id": "relationship_createrelationshipstate",
-      "community": 4,
+      "community": 1,
       "norm_label": "createrelationshipstate()"
     },
     {
@@ -954,7 +972,7 @@
       "source_file": "apps/server/src/relationship.js",
       "source_location": "L16",
       "id": "relationship_applyrelationshipstate",
-      "community": 4,
+      "community": 1,
       "norm_label": "applyrelationshipstate()"
     },
     {
@@ -963,7 +981,7 @@
       "source_file": "apps/server/src/relationship.js",
       "source_location": "L20",
       "id": "relationship_applydelta",
-      "community": 4,
+      "community": 1,
       "norm_label": "applydelta()"
     },
     {
@@ -972,7 +990,7 @@
       "source_file": "apps/server/src/relationship.js",
       "source_location": "L26",
       "id": "relationship_applyconnectionoutcome",
-      "community": 4,
+      "community": 1,
       "norm_label": "applyconnectionoutcome()"
     },
     {
@@ -981,7 +999,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L1",
       "id": "apps_server_src_body_js",
-      "community": 4,
+      "community": 1,
       "norm_label": "body.js"
     },
     {
@@ -990,7 +1008,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L15",
       "id": "body_getpartdefinition",
-      "community": 4,
+      "community": 1,
       "norm_label": "getpartdefinition()"
     },
     {
@@ -999,7 +1017,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L24",
       "id": "body_createbodypart",
-      "community": 4,
+      "community": 1,
       "norm_label": "createbodypart()"
     },
     {
@@ -1008,7 +1026,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L37",
       "id": "body_normalizebodyparts",
-      "community": 4,
+      "community": 1,
       "norm_label": "normalizebodyparts()"
     },
     {
@@ -1017,7 +1035,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L47",
       "id": "body_countbodyparts",
-      "community": 4,
+      "community": 1,
       "norm_label": "countbodyparts()"
     },
     {
@@ -1026,7 +1044,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L60",
       "id": "body_createdefaultbodyparts",
-      "community": 4,
+      "community": 1,
       "norm_label": "createdefaultbodyparts()"
     },
     {
@@ -1035,7 +1053,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L64",
       "id": "body_createbodystate",
-      "community": 4,
+      "community": 1,
       "norm_label": "createbodystate()"
     },
     {
@@ -1044,7 +1062,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L75",
       "id": "body_applybodystate",
-      "community": 4,
+      "community": 1,
       "norm_label": "applybodystate()"
     },
     {
@@ -1053,7 +1071,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L82",
       "id": "body_getstealableparts",
-      "community": 4,
+      "community": 1,
       "norm_label": "getstealableparts()"
     },
     {
@@ -1062,7 +1080,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L86",
       "id": "body_getpartcount",
-      "community": 4,
+      "community": 1,
       "norm_label": "getpartcount()"
     },
     {
@@ -1071,7 +1089,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L98",
       "id": "body_createbodybonuses",
-      "community": 4,
+      "community": 1,
       "norm_label": "createbodybonuses()"
     },
     {
@@ -1080,7 +1098,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L109",
       "id": "body_getmovementspeedmultiplier",
-      "community": 4,
+      "community": 1,
       "norm_label": "getmovementspeedmultiplier()"
     },
     {
@@ -1089,7 +1107,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L114",
       "id": "body_getconnectionrangebonus",
-      "community": 4,
+      "community": 1,
       "norm_label": "getconnectionrangebonus()"
     },
     {
@@ -1098,7 +1116,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L119",
       "id": "body_getconnectionrange",
-      "community": 4,
+      "community": 1,
       "norm_label": "getconnectionrange()"
     },
     {
@@ -1107,7 +1125,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L123",
       "id": "body_getvisionrangebonus",
-      "community": 4,
+      "community": 1,
       "norm_label": "getvisionrangebonus()"
     },
     {
@@ -1116,7 +1134,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L128",
       "id": "body_getresonanceintimacybonus",
-      "community": 4,
+      "community": 1,
       "norm_label": "getresonanceintimacybonus()"
     },
     {
@@ -1125,7 +1143,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L133",
       "id": "body_getbreakspikebonus",
-      "community": 4,
+      "community": 1,
       "norm_label": "getbreakspikebonus()"
     },
     {
@@ -1134,7 +1152,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L138",
       "id": "body_getplayerdevourmassgain",
-      "community": 4,
+      "community": 1,
       "norm_label": "getplayerdevourmassgain()"
     },
     {
@@ -1143,7 +1161,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L142",
       "id": "body_getplayerdevourmassmultiplier",
-      "community": 4,
+      "community": 1,
       "norm_label": "getplayerdevourmassmultiplier()"
     },
     {
@@ -1152,7 +1170,7 @@
       "source_file": "apps/server/src/body.js",
       "source_location": "L147",
       "id": "body_stealrandomcorepart",
-      "community": 4,
+      "community": 1,
       "norm_label": "stealrandomcorepart()"
     },
     {
@@ -1161,7 +1179,7 @@
       "source_file": "apps/server/src/sql.js",
       "source_location": "L1",
       "id": "apps_server_src_sql_js",
-      "community": 3,
+      "community": 4,
       "norm_label": "sql.js"
     },
     {
@@ -1170,7 +1188,7 @@
       "source_file": "apps/server/src/sql.js",
       "source_location": "L19",
       "id": "sql_run",
-      "community": 3,
+      "community": 4,
       "norm_label": "run()"
     },
     {
@@ -1179,7 +1197,7 @@
       "source_file": "apps/server/src/sql.js",
       "source_location": "L22",
       "id": "sql_close",
-      "community": 3,
+      "community": 4,
       "norm_label": "close()"
     },
     {
@@ -1188,7 +1206,7 @@
       "source_file": "apps/server/src/game-loop-service.js",
       "source_location": "L1",
       "id": "apps_server_src_game_loop_service_js",
-      "community": 38,
+      "community": 40,
       "norm_label": "game-loop-service.js"
     },
     {
@@ -1197,7 +1215,7 @@
       "source_file": "apps/server/src/game-loop-service.js",
       "source_location": "L13",
       "id": "game_loop_service_creategameloopservice",
-      "community": 38,
+      "community": 40,
       "norm_label": "creategameloopservice()"
     },
     {
@@ -1206,7 +1224,7 @@
       "source_file": "apps/server/src/connection.js",
       "source_location": "L1",
       "id": "apps_server_src_connection_js",
-      "community": 6,
+      "community": 13,
       "norm_label": "connection.js"
     },
     {
@@ -1215,7 +1233,7 @@
       "source_file": "apps/server/src/connection.js",
       "source_location": "L10",
       "id": "connection_createconnectionstate",
-      "community": 6,
+      "community": 13,
       "norm_label": "createconnectionstate()"
     },
     {
@@ -1224,7 +1242,7 @@
       "source_file": "apps/server/src/connection.js",
       "source_location": "L18",
       "id": "connection_applyconnectionstate",
-      "community": 6,
+      "community": 13,
       "norm_label": "applyconnectionstate()"
     },
     {
@@ -1233,7 +1251,7 @@
       "source_file": "apps/server/src/connection.js",
       "source_location": "L22",
       "id": "connection_clearconnectionstate",
-      "community": 6,
+      "community": 13,
       "norm_label": "clearconnectionstate()"
     },
     {
@@ -1242,7 +1260,7 @@
       "source_file": "apps/server/src/connection.js",
       "source_location": "L26",
       "id": "connection_distance",
-      "community": 6,
+      "community": 13,
       "norm_label": "distance()"
     },
     {
@@ -1251,7 +1269,7 @@
       "source_file": "apps/server/src/connection.js",
       "source_location": "L30",
       "id": "connection_iseligibleconnectiontarget",
-      "community": 6,
+      "community": 13,
       "norm_label": "iseligibleconnectiontarget()"
     },
     {
@@ -1260,7 +1278,7 @@
       "source_file": "apps/server/src/connection.js",
       "source_location": "L42",
       "id": "connection_selecttarget",
-      "community": 6,
+      "community": 13,
       "norm_label": "selecttarget()"
     },
     {
@@ -1269,7 +1287,7 @@
       "source_file": "apps/server/src/connection.js",
       "source_location": "L62",
       "id": "connection_createstatepatch",
-      "community": 6,
+      "community": 13,
       "norm_label": "createstatepatch()"
     },
     {
@@ -1278,7 +1296,7 @@
       "source_file": "apps/server/src/connection.js",
       "source_location": "L70",
       "id": "connection_planattempt",
-      "community": 6,
+      "community": 13,
       "norm_label": "planattempt()"
     },
     {
@@ -1287,7 +1305,7 @@
       "source_file": "apps/server/src/connection.js",
       "source_location": "L101",
       "id": "connection_resolveoutcome",
-      "community": 6,
+      "community": 13,
       "norm_label": "resolveoutcome()"
     },
     {
@@ -1296,7 +1314,7 @@
       "source_file": "apps/server/src/materialization.js",
       "source_location": "L1",
       "id": "apps_server_src_materialization_js",
-      "community": 6,
+      "community": 0,
       "norm_label": "materialization.js"
     },
     {
@@ -1305,7 +1323,7 @@
       "source_file": "apps/server/src/materialization.js",
       "source_location": "L15",
       "id": "materialization_resolvematerializationstage",
-      "community": 6,
+      "community": 0,
       "norm_label": "resolvematerializationstage()"
     },
     {
@@ -1314,7 +1332,7 @@
       "source_file": "apps/server/src/materialization.js",
       "source_location": "L31",
       "id": "materialization_creatematerializationstate",
-      "community": 6,
+      "community": 0,
       "norm_label": "creatematerializationstate()"
     },
     {
@@ -1323,7 +1341,7 @@
       "source_file": "apps/server/src/materialization.js",
       "source_location": "L38",
       "id": "materialization_applymaterializationstate",
-      "community": 6,
+      "community": 0,
       "norm_label": "applymaterializationstate()"
     },
     {
@@ -1332,7 +1350,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L1",
       "id": "apps_server_src_llm_cache_js",
-      "community": 3,
+      "community": 4,
       "norm_label": "cache.js"
     },
     {
@@ -1341,7 +1359,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L11",
       "id": "cache_resolvecachepath",
-      "community": 3,
+      "community": 4,
       "norm_label": "resolvecachepath()"
     },
     {
@@ -1350,7 +1368,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L15",
       "id": "cache_resolvefallbackcachepath",
-      "community": 3,
+      "community": 4,
       "norm_label": "resolvefallbackcachepath()"
     },
     {
@@ -1359,7 +1377,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L19",
       "id": "cache_loaddatabaselibrary",
-      "community": 3,
+      "community": 4,
       "norm_label": "loaddatabaselibrary()"
     },
     {
@@ -1368,7 +1386,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L33",
       "id": "cache_ensuredatabase",
-      "community": 3,
+      "community": 4,
       "norm_label": "ensuredatabase()"
     },
     {
@@ -1377,7 +1395,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L57",
       "id": "cache_createcachekey",
-      "community": 3,
+      "community": 4,
       "norm_label": "createcachekey()"
     },
     {
@@ -1386,7 +1404,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L63",
       "id": "cache_get",
-      "community": 3,
+      "community": 4,
       "norm_label": "get()"
     },
     {
@@ -1395,7 +1413,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L91",
       "id": "cache_set",
-      "community": 3,
+      "community": 4,
       "norm_label": "set()"
     },
     {
@@ -1404,7 +1422,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L108",
       "id": "cache_reset",
-      "community": 3,
+      "community": 4,
       "norm_label": "reset()"
     },
     {
@@ -1413,7 +1431,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L117",
       "id": "cache_loadfilecache",
-      "community": 3,
+      "community": 4,
       "norm_label": "loadfilecache()"
     },
     {
@@ -1422,7 +1440,7 @@
       "source_file": "apps/server/src/llm/cache.js",
       "source_location": "L131",
       "id": "cache_persistfilecacheentry",
-      "community": 3,
+      "community": 4,
       "norm_label": "persistfilecacheentry()"
     },
     {
@@ -1431,7 +1449,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L1",
       "id": "apps_server_src_llm_wrapper_js",
-      "community": 3,
+      "community": 4,
       "norm_label": "wrapper.js"
     },
     {
@@ -1440,7 +1458,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L15",
       "id": "wrapper_createaborterror",
-      "community": 3,
+      "community": 4,
       "norm_label": "createaborterror()"
     },
     {
@@ -1449,7 +1467,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L21",
       "id": "wrapper_sleep",
-      "community": 3,
+      "community": 4,
       "norm_label": "sleep()"
     },
     {
@@ -1458,7 +1476,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L25",
       "id": "wrapper_acceptresponse",
-      "community": 3,
+      "community": 4,
       "norm_label": "acceptresponse()"
     },
     {
@@ -1467,7 +1485,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L33",
       "id": "wrapper_createmockprovider",
-      "community": 3,
+      "community": 4,
       "norm_label": "createmockprovider()"
     },
     {
@@ -1476,7 +1494,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L55",
       "id": "wrapper_getprovider",
-      "community": 3,
+      "community": 4,
       "norm_label": "getprovider()"
     },
     {
@@ -1485,7 +1503,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L77",
       "id": "wrapper_approximatetokencount",
-      "community": 3,
+      "community": 4,
       "norm_label": "approximatetokencount()"
     },
     {
@@ -1494,7 +1512,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L85",
       "id": "wrapper_buildpromptrequest",
-      "community": 3,
+      "community": 4,
       "norm_label": "buildpromptrequest()"
     },
     {
@@ -1503,7 +1521,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L116",
       "id": "wrapper_withtimeout",
-      "community": 3,
+      "community": 4,
       "norm_label": "withtimeout()"
     },
     {
@@ -1512,7 +1530,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L134",
       "id": "wrapper_buildresult",
-      "community": 3,
+      "community": 4,
       "norm_label": "buildresult()"
     },
     {
@@ -1521,7 +1539,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L146",
       "id": "wrapper_createauditentry",
-      "community": 3,
+      "community": 4,
       "norm_label": "createauditentry()"
     },
     {
@@ -1530,7 +1548,7 @@
       "source_file": "apps/server/src/llm/wrapper.js",
       "source_location": "L159",
       "id": "wrapper_ask",
-      "community": 3,
+      "community": 4,
       "norm_label": "ask()"
     },
     {
@@ -1539,7 +1557,7 @@
       "source_file": "apps/server/src/llm/audit.js",
       "source_location": "L1",
       "id": "apps_server_src_llm_audit_js",
-      "community": 9,
+      "community": 10,
       "norm_label": "audit.js"
     },
     {
@@ -1548,7 +1566,7 @@
       "source_file": "apps/server/src/llm/audit.js",
       "source_location": "L6",
       "id": "audit_resolveauditdir",
-      "community": 9,
+      "community": 10,
       "norm_label": "resolveauditdir()"
     },
     {
@@ -1557,7 +1575,7 @@
       "source_file": "apps/server/src/llm/audit.js",
       "source_location": "L10",
       "id": "audit_todatestamp",
-      "community": 9,
+      "community": 10,
       "norm_label": "todatestamp()"
     },
     {
@@ -1566,7 +1584,7 @@
       "source_file": "apps/server/src/llm/audit.js",
       "source_location": "L14",
       "id": "audit_getauditfilepath",
-      "community": 9,
+      "community": 10,
       "norm_label": "getauditfilepath()"
     },
     {
@@ -1575,7 +1593,7 @@
       "source_file": "apps/server/src/llm/audit.js",
       "source_location": "L18",
       "id": "audit_append",
-      "community": 9,
+      "community": 10,
       "norm_label": "append()"
     },
     {
@@ -1584,7 +1602,7 @@
       "source_file": "apps/server/src/llm/providers/openai.js",
       "source_location": "L1",
       "id": "apps_server_src_llm_providers_openai_js",
-      "community": 3,
+      "community": 4,
       "norm_label": "openai.js"
     },
     {
@@ -1593,7 +1611,7 @@
       "source_file": "apps/server/src/llm/providers/openai.js",
       "source_location": "L9",
       "id": "openai_normalizecontent",
-      "community": 3,
+      "community": 4,
       "norm_label": "normalizecontent()"
     },
     {
@@ -1602,7 +1620,7 @@
       "source_file": "apps/server/src/llm/providers/openai.js",
       "source_location": "L39",
       "id": "openai_askopenai",
-      "community": 3,
+      "community": 4,
       "norm_label": "askopenai()"
     },
     {
@@ -1611,7 +1629,7 @@
       "source_file": "apps/server/src/repositories/logging-repository.js",
       "source_location": "L1",
       "id": "apps_server_src_repositories_logging_repository_js",
-      "community": 39,
+      "community": 41,
       "norm_label": "logging-repository.js"
     },
     {
@@ -1620,7 +1638,7 @@
       "source_file": "apps/server/src/repositories/logging-repository.js",
       "source_location": "L3",
       "id": "logging_repository_logfailedloginattempt",
-      "community": 39,
+      "community": 41,
       "norm_label": "logfailedloginattempt()"
     },
     {
@@ -1629,7 +1647,7 @@
       "source_file": "apps/server/src/repositories/chat-repository.js",
       "source_location": "L1",
       "id": "apps_server_src_repositories_chat_repository_js",
-      "community": 40,
+      "community": 42,
       "norm_label": "chat-repository.js"
     },
     {
@@ -1638,7 +1656,7 @@
       "source_file": "apps/server/src/repositories/chat-repository.js",
       "source_location": "L3",
       "id": "chat_repository_logchatmessage",
-      "community": 40,
+      "community": 42,
       "norm_label": "logchatmessage()"
     },
     {
@@ -1647,7 +1665,7 @@
       "source_file": "apps/server/src/map/virus.js",
       "source_location": "L1",
       "id": "apps_server_src_map_virus_js",
-      "community": 0,
+      "community": 2,
       "norm_label": "virus.js"
     },
     {
@@ -1656,7 +1674,7 @@
       "source_file": "apps/server/src/map/virus.js",
       "source_location": "L7",
       "id": "virus_virus",
-      "community": 0,
+      "community": 2,
       "norm_label": "virus"
     },
     {
@@ -1665,7 +1683,7 @@
       "source_file": "apps/server/src/map/virus.js",
       "source_location": "L8",
       "id": "virus_virus_constructor",
-      "community": 0,
+      "community": 2,
       "norm_label": ".constructor()"
     },
     {
@@ -1674,7 +1692,7 @@
       "source_file": "apps/server/src/map/virus.js",
       "source_location": "L21",
       "id": "virus_constructor",
-      "community": 0,
+      "community": 2,
       "norm_label": "constructor()"
     },
     {
@@ -1683,7 +1701,7 @@
       "source_file": "apps/server/src/map/virus.js",
       "source_location": "L26",
       "id": "virus_pushnew",
-      "community": 0,
+      "community": 2,
       "norm_label": "pushnew()"
     },
     {
@@ -1692,7 +1710,7 @@
       "source_file": "apps/server/src/map/virus.js",
       "source_location": "L30",
       "id": "virus_addnew",
-      "community": 0,
+      "community": 2,
       "norm_label": "addnew()"
     },
     {
@@ -1701,7 +1719,7 @@
       "source_file": "apps/server/src/map/virus.js",
       "source_location": "L40",
       "id": "virus_delete",
-      "community": 0,
+      "community": 2,
       "norm_label": "delete()"
     },
     {
@@ -1710,7 +1728,7 @@
       "source_file": "apps/server/src/map/massFood.js",
       "source_location": "L1",
       "id": "apps_server_src_map_massfood_js",
-      "community": 16,
+      "community": 17,
       "norm_label": "massfood.js"
     },
     {
@@ -1719,7 +1737,7 @@
       "source_file": "apps/server/src/map/massFood.js",
       "source_location": "L9",
       "id": "massfood_constructor",
-      "community": 16,
+      "community": 17,
       "norm_label": "constructor()"
     },
     {
@@ -1728,7 +1746,7 @@
       "source_file": "apps/server/src/map/massFood.js",
       "source_location": "L24",
       "id": "massfood_move",
-      "community": 16,
+      "community": 17,
       "norm_label": "move()"
     },
     {
@@ -1737,7 +1755,7 @@
       "source_file": "apps/server/src/map/massFood.js",
       "source_location": "L48",
       "id": "massfood_addnew",
-      "community": 16,
+      "community": 17,
       "norm_label": "addnew()"
     },
     {
@@ -1746,7 +1764,7 @@
       "source_file": "apps/server/src/map/massFood.js",
       "source_location": "L58",
       "id": "massfood_remove",
-      "community": 16,
+      "community": 17,
       "norm_label": "remove()"
     },
     {
@@ -1755,7 +1773,7 @@
       "source_file": "apps/server/src/map/food.js",
       "source_location": "L1",
       "id": "apps_server_src_map_food_js",
-      "community": 0,
+      "community": 2,
       "norm_label": "food.js"
     },
     {
@@ -1764,7 +1782,7 @@
       "source_file": "apps/server/src/map/food.js",
       "source_location": "L7",
       "id": "food_food",
-      "community": 0,
+      "community": 2,
       "norm_label": "food"
     },
     {
@@ -1773,7 +1791,7 @@
       "source_file": "apps/server/src/map/food.js",
       "source_location": "L8",
       "id": "food_food_constructor",
-      "community": 0,
+      "community": 2,
       "norm_label": ".constructor()"
     },
     {
@@ -1782,7 +1800,7 @@
       "source_file": "apps/server/src/map/food.js",
       "source_location": "L19",
       "id": "food_constructor",
-      "community": 0,
+      "community": 2,
       "norm_label": "constructor()"
     },
     {
@@ -1791,7 +1809,7 @@
       "source_file": "apps/server/src/map/food.js",
       "source_location": "L25",
       "id": "food_addnew",
-      "community": 0,
+      "community": 2,
       "norm_label": "addnew()"
     },
     {
@@ -1800,7 +1818,7 @@
       "source_file": "apps/server/src/map/food.js",
       "source_location": "L33",
       "id": "food_removeexcess",
-      "community": 0,
+      "community": 2,
       "norm_label": "removeexcess()"
     },
     {
@@ -1809,7 +1827,7 @@
       "source_file": "apps/server/src/map/food.js",
       "source_location": "L39",
       "id": "food_delete",
-      "community": 0,
+      "community": 2,
       "norm_label": "delete()"
     },
     {
@@ -1818,7 +1836,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L1",
       "id": "apps_server_src_map_player_js",
-      "community": 1,
+      "community": 0,
       "norm_label": "player.js"
     },
     {
@@ -1827,7 +1845,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L18",
       "id": "player_cell",
-      "community": 1,
+      "community": 0,
       "norm_label": "cell"
     },
     {
@@ -1836,7 +1854,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L19",
       "id": "player_cell_constructor",
-      "community": 1,
+      "community": 0,
       "norm_label": ".constructor()"
     },
     {
@@ -1845,7 +1863,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L27",
       "id": "player_cell_setmass",
-      "community": 1,
+      "community": 0,
       "norm_label": ".setmass()"
     },
     {
@@ -1854,7 +1872,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L32",
       "id": "player_cell_addmass",
-      "community": 1,
+      "community": 0,
       "norm_label": ".addmass()"
     },
     {
@@ -1863,7 +1881,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L36",
       "id": "player_cell_recalculateradius",
-      "community": 1,
+      "community": 0,
       "norm_label": ".recalculateradius()"
     },
     {
@@ -1872,7 +1890,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L40",
       "id": "player_cell_tocircle",
-      "community": 1,
+      "community": 0,
       "norm_label": ".tocircle()"
     },
     {
@@ -1881,7 +1899,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L44",
       "id": "player_cell_move",
-      "community": 1,
+      "community": 0,
       "norm_label": ".move()"
     },
     {
@@ -1890,7 +1908,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L79",
       "id": "player_cell_checkwhoatewho",
-      "community": 1,
+      "community": 0,
       "norm_label": ".checkwhoatewho()"
     },
     {
@@ -1899,7 +1917,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L91",
       "id": "player_constructor",
-      "community": 1,
+      "community": 0,
       "norm_label": "constructor()"
     },
     {
@@ -1908,7 +1926,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L108",
       "id": "player_init",
-      "community": 6,
+      "community": 1,
       "norm_label": "init()"
     },
     {
@@ -1917,7 +1935,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L123",
       "id": "player_clientprovideddata",
-      "community": 1,
+      "community": 0,
       "norm_label": "clientprovideddata()"
     },
     {
@@ -1926,7 +1944,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L131",
       "id": "player_setlastheartbeat",
-      "community": 1,
+      "community": 0,
       "norm_label": "setlastheartbeat()"
     },
     {
@@ -1935,7 +1953,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L135",
       "id": "player_setlastsplit",
-      "community": 1,
+      "community": 0,
       "norm_label": "setlastsplit()"
     },
     {
@@ -1944,7 +1962,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L139",
       "id": "player_losemassifneeded",
-      "community": 1,
+      "community": 0,
       "norm_label": "losemassifneeded()"
     },
     {
@@ -1953,7 +1971,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L148",
       "id": "player_changecellmass",
-      "community": 1,
+      "community": 0,
       "norm_label": "changecellmass()"
     },
     {
@@ -1962,7 +1980,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L153",
       "id": "player_removecell",
-      "community": 1,
+      "community": 0,
       "norm_label": "removecell()"
     },
     {
@@ -1971,7 +1989,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L163",
       "id": "player_splitcell",
-      "community": 1,
+      "community": 0,
       "norm_label": "splitcell()"
     },
     {
@@ -1980,7 +1998,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L180",
       "id": "player_virussplit",
-      "community": 1,
+      "community": 0,
       "norm_label": "virussplit()"
     },
     {
@@ -1989,7 +2007,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L188",
       "id": "player_usersplit",
-      "community": 1,
+      "community": 0,
       "norm_label": "usersplit()"
     },
     {
@@ -1998,7 +2016,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L208",
       "id": "player_enumeratecollidingcells",
-      "community": 1,
+      "community": 0,
       "norm_label": "enumeratecollidingcells()"
     },
     {
@@ -2007,7 +2025,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L226",
       "id": "player_mergecollidingcells",
-      "community": 1,
+      "community": 0,
       "norm_label": "mergecollidingcells()"
     },
     {
@@ -2016,7 +2034,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L233",
       "id": "player_pushawaycollidingcells",
-      "community": 1,
+      "community": 0,
       "norm_label": "pushawaycollidingcells()"
     },
     {
@@ -2025,7 +2043,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L251",
       "id": "player_move",
-      "community": 1,
+      "community": 0,
       "norm_label": "move()"
     },
     {
@@ -2034,7 +2052,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L275",
       "id": "player_checkforcollisions",
-      "community": 1,
+      "community": 0,
       "norm_label": "checkforcollisions()"
     },
     {
@@ -2043,7 +2061,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L300",
       "id": "player_pushnew",
-      "community": 0,
+      "community": 8,
       "norm_label": "pushnew()"
     },
     {
@@ -2052,7 +2070,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L304",
       "id": "player_findindexbyid",
-      "community": 1,
+      "community": 0,
       "norm_label": "findindexbyid()"
     },
     {
@@ -2061,7 +2079,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L308",
       "id": "player_findbyid",
-      "community": 1,
+      "community": 0,
       "norm_label": "findbyid()"
     },
     {
@@ -2070,7 +2088,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L313",
       "id": "player_removeplayerbyid",
-      "community": 1,
+      "community": 0,
       "norm_label": "removeplayerbyid()"
     },
     {
@@ -2079,7 +2097,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L320",
       "id": "player_removeplayerbyindex",
-      "community": 1,
+      "community": 0,
       "norm_label": "removeplayerbyindex()"
     },
     {
@@ -2088,7 +2106,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L324",
       "id": "player_shrinkcells",
-      "community": 1,
+      "community": 0,
       "norm_label": "shrinkcells()"
     },
     {
@@ -2097,7 +2115,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L334",
       "id": "player_getcell",
-      "community": 1,
+      "community": 0,
       "norm_label": "getcell()"
     },
     {
@@ -2106,7 +2124,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L338",
       "id": "player_handlecollisions",
-      "community": 1,
+      "community": 0,
       "norm_label": "handlecollisions()"
     },
     {
@@ -2115,7 +2133,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L352",
       "id": "player_gettopplayers",
-      "community": 1,
+      "community": 0,
       "norm_label": "gettopplayers()"
     },
     {
@@ -2124,7 +2142,7 @@
       "source_file": "apps/server/src/map/player.js",
       "source_location": "L364",
       "id": "player_gettotalmass",
-      "community": 0,
+      "community": 2,
       "norm_label": "gettotalmass()"
     },
     {
@@ -2133,7 +2151,7 @@
       "source_file": "apps/server/src/map/map.js",
       "source_location": "L1",
       "id": "apps_server_src_map_map_js",
-      "community": 0,
+      "community": 2,
       "norm_label": "map.js"
     },
     {
@@ -2142,7 +2160,7 @@
       "source_file": "apps/server/src/map/map.js",
       "source_location": "L11",
       "id": "map_constructor",
-      "community": 0,
+      "community": 2,
       "norm_label": "constructor()"
     },
     {
@@ -2151,7 +2169,7 @@
       "source_file": "apps/server/src/map/map.js",
       "source_location": "L18",
       "id": "map_balancemass",
-      "community": 0,
+      "community": 2,
       "norm_label": "balancemass()"
     },
     {
@@ -2160,7 +2178,7 @@
       "source_file": "apps/server/src/map/map.js",
       "source_location": "L39",
       "id": "map_getvisibleworldforplayer",
-      "community": 0,
+      "community": 2,
       "norm_label": "getvisibleworldforplayer()"
     },
     {
@@ -2169,7 +2187,7 @@
       "source_file": "apps/server/src/map/map.js",
       "source_location": "L51",
       "id": "map_enumeratevisibleworld",
-      "community": 0,
+      "community": 2,
       "norm_label": "enumeratevisibleworld()"
     },
     {
@@ -2178,7 +2196,7 @@
       "source_file": "apps/server/src/lib/util.js",
       "source_location": "L1",
       "id": "apps_server_src_lib_util_js",
-      "community": 76,
+      "community": 82,
       "norm_label": "util.js"
     },
     {
@@ -2187,7 +2205,7 @@
       "source_file": "apps/server/src/lib/entityUtils.js",
       "source_location": "L1",
       "id": "apps_server_src_lib_entityutils_js",
-      "community": 28,
+      "community": 30,
       "norm_label": "entityutils.js"
     },
     {
@@ -2196,7 +2214,7 @@
       "source_file": "apps/server/src/lib/entityUtils.js",
       "source_location": "L3",
       "id": "entityutils_getposition",
-      "community": 28,
+      "community": 30,
       "norm_label": "getposition()"
     },
     {
@@ -2205,8 +2223,53 @@
       "source_file": "apps/server/src/lib/entityUtils.js",
       "source_location": "L7",
       "id": "entityutils_isvisibleentity",
-      "community": 28,
+      "community": 30,
       "norm_label": "isvisibleentity()"
+    },
+    {
+      "label": "avatar-paint.js",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L1",
+      "id": "apps_server_src_npc_avatar_paint_js",
+      "community": 21,
+      "norm_label": "avatar-paint.js"
+    },
+    {
+      "label": "escapeAttribute()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L3",
+      "id": "avatar_paint_escapeattribute",
+      "community": 21,
+      "norm_label": "escapeattribute()"
+    },
+    {
+      "label": "createPaintedAvatarSvg()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L11",
+      "id": "avatar_paint_createpaintedavatarsvg",
+      "community": 21,
+      "norm_label": "createpaintedavatarsvg()"
+    },
+    {
+      "label": "createPaintedAvatarDataUrl()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L33",
+      "id": "avatar_paint_createpaintedavatardataurl",
+      "community": 21,
+      "norm_label": "createpaintedavatardataurl()"
+    },
+    {
+      "label": "decodePaintedAvatarSvg()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L38",
+      "id": "avatar_paint_decodepaintedavatarsvg",
+      "community": 21,
+      "norm_label": "decodepaintedavatarsvg()"
     },
     {
       "label": "prompts.js",
@@ -2214,7 +2277,7 @@
       "source_file": "apps/server/src/npc/prompts.js",
       "source_location": "L1",
       "id": "apps_server_src_npc_prompts_js",
-      "community": 10,
+      "community": 5,
       "norm_label": "prompts.js"
     },
     {
@@ -2223,7 +2286,7 @@
       "source_file": "apps/server/src/npc/prompts.js",
       "source_location": "L3",
       "id": "prompts_formatothernpcsummary",
-      "community": 10,
+      "community": 5,
       "norm_label": "formatothernpcsummary()"
     },
     {
@@ -2232,8 +2295,17 @@
       "source_file": "apps/server/src/npc/prompts.js",
       "source_location": "L14",
       "id": "prompts_buildnpcintentprompt",
-      "community": 10,
+      "community": 5,
       "norm_label": "buildnpcintentprompt()"
+    },
+    {
+      "label": "buildNpcUtterPrompt()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/prompts.js",
+      "source_location": "L56",
+      "id": "prompts_buildnpcutterprompt",
+      "community": 5,
+      "norm_label": "buildnpcutterprompt()"
     },
     {
       "label": "personality-loader.js",
@@ -2241,7 +2313,7 @@
       "source_file": "apps/server/src/npc/personality-loader.js",
       "source_location": "L1",
       "id": "apps_server_src_npc_personality_loader_js",
-      "community": 0,
+      "community": 8,
       "norm_label": "personality-loader.js"
     },
     {
@@ -2250,7 +2322,7 @@
       "source_file": "apps/server/src/npc/personality-loader.js",
       "source_location": "L16",
       "id": "personality_loader_formatanchors",
-      "community": 0,
+      "community": 8,
       "norm_label": "formatanchors()"
     },
     {
@@ -2259,7 +2331,7 @@
       "source_file": "apps/server/src/npc/personality-loader.js",
       "source_location": "L30",
       "id": "personality_loader_extractanchorstext",
-      "community": 0,
+      "community": 8,
       "norm_label": "extractanchorstext()"
     },
     {
@@ -2268,7 +2340,7 @@
       "source_file": "apps/server/src/npc/personality-loader.js",
       "source_location": "L39",
       "id": "personality_loader_assertcardshape",
-      "community": 0,
+      "community": 8,
       "norm_label": "assertcardshape()"
     },
     {
@@ -2277,7 +2349,7 @@
       "source_file": "apps/server/src/npc/personality-loader.js",
       "source_location": "L48",
       "id": "personality_loader_resolveskeletonpreviewdataurl",
-      "community": 0,
+      "community": 8,
       "norm_label": "resolveskeletonpreviewdataurl()"
     },
     {
@@ -2286,7 +2358,7 @@
       "source_file": "apps/server/src/npc/personality-loader.js",
       "source_location": "L57",
       "id": "personality_loader_loadpersonalitycard",
-      "community": 0,
+      "community": 8,
       "norm_label": "loadpersonalitycard()"
     },
     {
@@ -2295,7 +2367,7 @@
       "source_file": "apps/server/src/npc/npc.js",
       "source_location": "L1",
       "id": "apps_server_src_npc_npc_js",
-      "community": 0,
+      "community": 8,
       "norm_label": "npc.js"
     },
     {
@@ -2304,7 +2376,7 @@
       "source_file": "apps/server/src/npc/npc.js",
       "source_location": "L5",
       "id": "npc_clamp",
-      "community": 0,
+      "community": 8,
       "norm_label": "clamp()"
     },
     {
@@ -2313,7 +2385,7 @@
       "source_file": "apps/server/src/npc/npc.js",
       "source_location": "L9",
       "id": "npc_hextohue",
-      "community": 0,
+      "community": 8,
       "norm_label": "hextohue()"
     },
     {
@@ -2322,7 +2394,7 @@
       "source_file": "apps/server/src/npc/npc.js",
       "source_location": "L38",
       "id": "npc_normalizeintent",
-      "community": 0,
+      "community": 8,
       "norm_label": "normalizeintent()"
     },
     {
@@ -2331,7 +2403,7 @@
       "source_file": "apps/server/src/npc/npc.js",
       "source_location": "L47",
       "id": "npc_npcstate",
-      "community": 0,
+      "community": 8,
       "norm_label": "npcstate"
     },
     {
@@ -2340,34 +2412,34 @@
       "source_file": "apps/server/src/npc/npc.js",
       "source_location": "L48",
       "id": "npc_npcstate_constructor",
-      "community": 0,
+      "community": 8,
       "norm_label": ".constructor()"
     },
     {
       "label": ".syncFromPlayer()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/npc.js",
-      "source_location": "L79",
+      "source_location": "L80",
       "id": "npc_npcstate_syncfromplayer",
-      "community": 0,
+      "community": 8,
       "norm_label": ".syncfromplayer()"
     },
     {
       "label": ".applyIntent()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/npc.js",
-      "source_location": "L87",
+      "source_location": "L88",
       "id": "npc_npcstate_applyintent",
-      "community": 0,
+      "community": 8,
       "norm_label": ".applyintent()"
     },
     {
       "label": ".move()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/npc.js",
-      "source_location": "L92",
+      "source_location": "L93",
       "id": "npc_npcstate_move",
-      "community": 0,
+      "community": 8,
       "norm_label": ".move()"
     },
     {
@@ -2376,7 +2448,7 @@
       "source_file": "apps/server/src/npc/fallback.js",
       "source_location": "L1",
       "id": "apps_server_src_npc_fallback_js",
-      "community": 10,
+      "community": 5,
       "norm_label": "fallback.js"
     },
     {
@@ -2385,7 +2457,7 @@
       "source_file": "apps/server/src/npc/fallback.js",
       "source_location": "L3",
       "id": "fallback_clamp",
-      "community": 10,
+      "community": 5,
       "norm_label": "clamp()"
     },
     {
@@ -2394,8 +2466,44 @@
       "source_file": "apps/server/src/npc/fallback.js",
       "source_location": "L7",
       "id": "fallback_randomwalkintent",
-      "community": 10,
+      "community": 5,
       "norm_label": "randomwalkintent()"
+    },
+    {
+      "label": "greetings.js",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/greetings.js",
+      "source_location": "L1",
+      "id": "apps_server_src_npc_greetings_js",
+      "community": 5,
+      "norm_label": "greetings.js"
+    },
+    {
+      "label": "stableIndex()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/greetings.js",
+      "source_location": "L7",
+      "id": "greetings_stableindex",
+      "community": 5,
+      "norm_label": "stableindex()"
+    },
+    {
+      "label": "pickGreetingFallback()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/greetings.js",
+      "source_location": "L21",
+      "id": "greetings_pickgreetingfallback",
+      "community": 5,
+      "norm_label": "pickgreetingfallback()"
+    },
+    {
+      "label": "buildContextualFallbackUtterance()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/greetings.js",
+      "source_location": "L39",
+      "id": "greetings_buildcontextualfallbackutterance",
+      "community": 5,
+      "norm_label": "buildcontextualfallbackutterance()"
     },
     {
       "label": "orchestrator.js",
@@ -2403,97 +2511,133 @@
       "source_file": "apps/server/src/npc/orchestrator.js",
       "source_location": "L1",
       "id": "apps_server_src_npc_orchestrator_js",
-      "community": 10,
+      "community": 5,
       "norm_label": "orchestrator.js"
     },
     {
       "label": "getTimeOfDayLabel()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L7",
+      "source_location": "L8",
       "id": "orchestrator_gettimeofdaylabel",
-      "community": 10,
+      "community": 5,
       "norm_label": "gettimeofdaylabel()"
     },
     {
       "label": "parseJsonPayload()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L22",
+      "source_location": "L23",
       "id": "orchestrator_parsejsonpayload",
-      "community": 10,
+      "community": 5,
       "norm_label": "parsejsonpayload()"
     },
     {
       "label": "Orchestrator",
       "file_type": "code",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L33",
+      "source_location": "L34",
       "id": "orchestrator_orchestrator",
-      "community": 10,
+      "community": 5,
       "norm_label": "orchestrator"
     },
     {
       "label": ".constructor()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L34",
+      "source_location": "L35",
       "id": "orchestrator_orchestrator_constructor",
-      "community": 10,
+      "community": 5,
       "norm_label": ".constructor()"
     },
     {
       "label": ".registerNpc()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L48",
+      "source_location": "L51",
       "id": "orchestrator_orchestrator_registernpc",
-      "community": 0,
+      "community": 8,
       "norm_label": ".registernpc()"
     },
     {
       "label": ".pruneCallBudget()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L53",
+      "source_location": "L56",
       "id": "orchestrator_orchestrator_prunecallbudget",
-      "community": 10,
+      "community": 5,
       "norm_label": ".prunecallbudget()"
     },
     {
       "label": ".buildBatchContext()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L57",
+      "source_location": "L60",
       "id": "orchestrator_orchestrator_buildbatchcontext",
-      "community": 10,
+      "community": 5,
       "norm_label": ".buildbatchcontext()"
     },
     {
       "label": ".parseIntents()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L87",
+      "source_location": "L90",
       "id": "orchestrator_orchestrator_parseintents",
-      "community": 10,
+      "community": 5,
       "norm_label": ".parseintents()"
     },
     {
       "label": ".resolveIntent()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L108",
+      "source_location": "L111",
       "id": "orchestrator_orchestrator_resolveintent",
-      "community": 10,
+      "community": 5,
       "norm_label": ".resolveintent()"
+    },
+    {
+      "label": ".buildFallbackIntent()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L128",
+      "id": "orchestrator_orchestrator_buildfallbackintent",
+      "community": 5,
+      "norm_label": ".buildfallbackintent()"
+    },
+    {
+      "label": ".generateUtterance()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L158",
+      "id": "orchestrator_orchestrator_generateutterance",
+      "community": 5,
+      "norm_label": ".generateutterance()"
+    },
+    {
+      "label": ".handleNpcSpeak()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L182",
+      "id": "orchestrator_orchestrator_handlenpcspeak",
+      "community": 5,
+      "norm_label": ".handlenpcspeak()"
+    },
+    {
+      "label": ".handleNpcPaint()",
+      "file_type": "code",
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L198",
+      "id": "orchestrator_orchestrator_handlenpcpaint",
+      "community": 5,
+      "norm_label": ".handlenpcpaint()"
     },
     {
       "label": ".tick()",
       "file_type": "code",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L129",
+      "source_location": "L218",
       "id": "orchestrator_orchestrator_tick",
-      "community": 10,
+      "community": 5,
       "norm_label": ".tick()"
     },
     {
@@ -2646,7 +2790,7 @@
       "source_file": "apps/client/src/player-card-storage.js",
       "source_location": "L1",
       "id": "apps_client_src_player_card_storage_js",
-      "community": 2,
+      "community": 3,
       "norm_label": "player-card-storage.js"
     },
     {
@@ -2655,7 +2799,7 @@
       "source_file": "apps/client/src/player-card-storage.js",
       "source_location": "L6",
       "id": "player_card_storage_getstorage",
-      "community": 2,
+      "community": 3,
       "norm_label": "getstorage()"
     },
     {
@@ -2664,7 +2808,7 @@
       "source_file": "apps/client/src/player-card-storage.js",
       "source_location": "L22",
       "id": "player_card_storage_loadplayercard",
-      "community": 2,
+      "community": 3,
       "norm_label": "loadplayercard()"
     },
     {
@@ -2673,7 +2817,7 @@
       "source_file": "apps/client/src/player-card-storage.js",
       "source_location": "L36",
       "id": "player_card_storage_saveplayercard",
-      "community": 2,
+      "community": 3,
       "norm_label": "saveplayercard()"
     },
     {
@@ -2682,7 +2826,7 @@
       "source_file": "apps/client/src/player-card-storage.js",
       "source_location": "L47",
       "id": "player_card_storage_clearplayercard",
-      "community": 2,
+      "community": 3,
       "norm_label": "clearplayercard()"
     },
     {
@@ -2691,7 +2835,7 @@
       "source_file": "apps/client/src/player-card-storage.js",
       "source_location": "L62",
       "id": "player_card_storage_normalizeplayercardpayload",
-      "community": 2,
+      "community": 3,
       "norm_label": "normalizeplayercardpayload()"
     },
     {
@@ -2700,7 +2844,7 @@
       "source_file": "apps/client/src/materialization-status.js",
       "source_location": "L1",
       "id": "apps_client_src_materialization_status_js",
-      "community": 5,
+      "community": 6,
       "norm_label": "materialization-status.js"
     },
     {
@@ -2709,7 +2853,7 @@
       "source_file": "apps/client/src/materialization-status.js",
       "source_location": "L4",
       "id": "materialization_status_formatmaterializationstatus",
-      "community": 5,
+      "community": 6,
       "norm_label": "formatmaterializationstatus()"
     },
     {
@@ -2718,7 +2862,7 @@
       "source_file": "apps/client/src/player-hydration.js",
       "source_location": "L1",
       "id": "apps_client_src_player_hydration_js",
-      "community": 41,
+      "community": 43,
       "norm_label": "player-hydration.js"
     },
     {
@@ -2727,7 +2871,7 @@
       "source_file": "apps/client/src/player-hydration.js",
       "source_location": "L23",
       "id": "player_hydration_hydrateplayerstate",
-      "community": 41,
+      "community": 43,
       "norm_label": "hydrateplayerstate()"
     },
     {
@@ -2736,7 +2880,7 @@
       "source_file": "apps/client/src/connection-status.js",
       "source_location": "L1",
       "id": "apps_client_src_connection_status_js",
-      "community": 5,
+      "community": 6,
       "norm_label": "connection-status.js"
     },
     {
@@ -2745,7 +2889,7 @@
       "source_file": "apps/client/src/connection-status.js",
       "source_location": "L4",
       "id": "connection_status_formatconnectionstatus",
-      "community": 5,
+      "community": 6,
       "norm_label": "formatconnectionstatus()"
     },
     {
@@ -2754,7 +2898,7 @@
       "source_file": "apps/client/src/socket-emit.js",
       "source_location": "L1",
       "id": "apps_client_src_socket_emit_js",
-      "community": 8,
+      "community": 9,
       "norm_label": "socket-emit.js"
     },
     {
@@ -2763,7 +2907,7 @@
       "source_file": "apps/client/src/socket-emit.js",
       "source_location": "L3",
       "id": "socket_emit_canemit",
-      "community": 8,
+      "community": 9,
       "norm_label": "canemit()"
     },
     {
@@ -2772,7 +2916,7 @@
       "source_file": "apps/client/src/socket-emit.js",
       "source_location": "L7",
       "id": "socket_emit_emitifready",
-      "community": 8,
+      "community": 9,
       "norm_label": "emitifready()"
     },
     {
@@ -2781,7 +2925,7 @@
       "source_file": "apps/client/src/avatar-draft-config.js",
       "source_location": "L1",
       "id": "apps_client_src_avatar_draft_config_js",
-      "community": 77,
+      "community": 83,
       "norm_label": "avatar-draft-config.js"
     },
     {
@@ -2790,7 +2934,7 @@
       "source_file": "apps/client/src/relationship-status.js",
       "source_location": "L1",
       "id": "apps_client_src_relationship_status_js",
-      "community": 5,
+      "community": 6,
       "norm_label": "relationship-status.js"
     },
     {
@@ -2799,7 +2943,7 @@
       "source_file": "apps/client/src/relationship-status.js",
       "source_location": "L4",
       "id": "relationship_status_formatrelationshipstatus",
-      "community": 5,
+      "community": 6,
       "norm_label": "formatrelationshipstatus()"
     },
     {
@@ -2808,7 +2952,7 @@
       "source_file": "apps/client/src/avatar-draft-preview.js",
       "source_location": "L1",
       "id": "apps_client_src_avatar_draft_preview_js",
-      "community": 18,
+      "community": 19,
       "norm_label": "avatar-draft-preview.js"
     },
     {
@@ -2817,7 +2961,7 @@
       "source_file": "apps/client/src/avatar-draft-preview.js",
       "source_location": "L5",
       "id": "avatar_draft_preview_drawrect",
-      "community": 18,
+      "community": 19,
       "norm_label": "drawrect()"
     },
     {
@@ -2826,7 +2970,7 @@
       "source_file": "apps/client/src/avatar-draft-preview.js",
       "source_location": "L33",
       "id": "avatar_draft_preview_drawcircle",
-      "community": 18,
+      "community": 19,
       "norm_label": "drawcircle()"
     },
     {
@@ -2835,7 +2979,7 @@
       "source_file": "apps/client/src/avatar-draft-preview.js",
       "source_location": "L64",
       "id": "avatar_draft_preview_drawline",
-      "community": 18,
+      "community": 19,
       "norm_label": "drawline()"
     },
     {
@@ -2844,7 +2988,7 @@
       "source_file": "apps/client/src/avatar-draft-preview.js",
       "source_location": "L84",
       "id": "avatar_draft_preview_drawshape",
-      "community": 18,
+      "community": 19,
       "norm_label": "drawshape()"
     },
     {
@@ -2853,7 +2997,7 @@
       "source_file": "apps/client/src/avatar-draft-preview.js",
       "source_location": "L102",
       "id": "avatar_draft_preview_createdraftpreviewdataurl",
-      "community": 18,
+      "community": 19,
       "norm_label": "createdraftpreviewdataurl()"
     },
     {
@@ -2943,7 +3087,7 @@
       "source_file": "apps/client/src/avatar-history-store.js",
       "source_location": "L1",
       "id": "apps_client_src_avatar_history_store_js",
-      "community": 19,
+      "community": 20,
       "norm_label": "avatar-history-store.js"
     },
     {
@@ -2952,7 +3096,7 @@
       "source_file": "apps/client/src/avatar-history-store.js",
       "source_location": "L7",
       "id": "avatar_history_store_getstorage",
-      "community": 19,
+      "community": 20,
       "norm_label": "getstorage()"
     },
     {
@@ -2961,7 +3105,7 @@
       "source_file": "apps/client/src/avatar-history-store.js",
       "source_location": "L23",
       "id": "avatar_history_store_loadhistory",
-      "community": 19,
+      "community": 20,
       "norm_label": "loadhistory()"
     },
     {
@@ -2970,7 +3114,7 @@
       "source_file": "apps/client/src/avatar-history-store.js",
       "source_location": "L37",
       "id": "avatar_history_store_savehistory",
-      "community": 19,
+      "community": 20,
       "norm_label": "savehistory()"
     },
     {
@@ -2979,7 +3123,7 @@
       "source_file": "apps/client/src/avatar-history-store.js",
       "source_location": "L47",
       "id": "avatar_history_store_addhistoryentry",
-      "community": 19,
+      "community": 20,
       "norm_label": "addhistoryentry()"
     },
     {
@@ -2988,7 +3132,7 @@
       "source_file": "apps/client/src/avatar-history-store.js",
       "source_location": "L55",
       "id": "avatar_history_store_createhistoryentry",
-      "community": 19,
+      "community": 20,
       "norm_label": "createhistoryentry()"
     },
     {
@@ -2997,7 +3141,7 @@
       "source_file": "apps/client/src/player-card-history.js",
       "source_location": "L1",
       "id": "apps_client_src_player_card_history_js",
-      "community": 2,
+      "community": 3,
       "norm_label": "player-card-history.js"
     },
     {
@@ -3006,7 +3150,7 @@
       "source_file": "apps/client/src/player-card-history.js",
       "source_location": "L3",
       "id": "player_card_history_createhistorystate",
-      "community": 2,
+      "community": 3,
       "norm_label": "createhistorystate()"
     },
     {
@@ -3015,7 +3159,7 @@
       "source_file": "apps/client/src/player-card-history.js",
       "source_location": "L11",
       "id": "player_card_history_pushsnapshot",
-      "community": 2,
+      "community": 3,
       "norm_label": "pushsnapshot()"
     },
     {
@@ -3024,7 +3168,7 @@
       "source_file": "apps/client/src/player-card-history.js",
       "source_location": "L34",
       "id": "player_card_history_undo",
-      "community": 2,
+      "community": 3,
       "norm_label": "undo()"
     },
     {
@@ -3033,7 +3177,7 @@
       "source_file": "apps/client/src/player-card-history.js",
       "source_location": "L53",
       "id": "player_card_history_redo",
-      "community": 2,
+      "community": 3,
       "norm_label": "redo()"
     },
     {
@@ -3042,7 +3186,7 @@
       "source_file": "apps/client/src/body-status.js",
       "source_location": "L1",
       "id": "apps_client_src_body_status_js",
-      "community": 5,
+      "community": 6,
       "norm_label": "body-status.js"
     },
     {
@@ -3051,7 +3195,7 @@
       "source_file": "apps/client/src/body-status.js",
       "source_location": "L13",
       "id": "body_status_formatbodystatus",
-      "community": 5,
+      "community": 6,
       "norm_label": "formatbodystatus()"
     },
     {
@@ -3204,7 +3348,7 @@
       "source_file": "apps/client/src/global.js",
       "source_location": "L1",
       "id": "apps_client_src_global_js",
-      "community": 78,
+      "community": 84,
       "norm_label": "global.js"
     },
     {
@@ -3213,7 +3357,7 @@
       "source_file": "apps/client/src/player-card-draft-store.js",
       "source_location": "L1",
       "id": "apps_client_src_player_card_draft_store_js",
-      "community": 2,
+      "community": 3,
       "norm_label": "player-card-draft-store.js"
     },
     {
@@ -3222,7 +3366,7 @@
       "source_file": "apps/client/src/player-card-draft-store.js",
       "source_location": "L8",
       "id": "player_card_draft_store_getstorage",
-      "community": 2,
+      "community": 3,
       "norm_label": "getstorage()"
     },
     {
@@ -3231,7 +3375,7 @@
       "source_file": "apps/client/src/player-card-draft-store.js",
       "source_location": "L24",
       "id": "player_card_draft_store_createdraftid",
-      "community": 2,
+      "community": 3,
       "norm_label": "createdraftid()"
     },
     {
@@ -3240,7 +3384,7 @@
       "source_file": "apps/client/src/player-card-draft-store.js",
       "source_location": "L29",
       "id": "player_card_draft_store_normalizedraftpayload",
-      "community": 2,
+      "community": 3,
       "norm_label": "normalizedraftpayload()"
     },
     {
@@ -3249,7 +3393,7 @@
       "source_file": "apps/client/src/player-card-draft-store.js",
       "source_location": "L51",
       "id": "player_card_draft_store_loaddrafts",
-      "community": 2,
+      "community": 3,
       "norm_label": "loaddrafts()"
     },
     {
@@ -3258,7 +3402,7 @@
       "source_file": "apps/client/src/player-card-draft-store.js",
       "source_location": "L67",
       "id": "player_card_draft_store_savedraft",
-      "community": 2,
+      "community": 3,
       "norm_label": "savedraft()"
     },
     {
@@ -3321,7 +3465,7 @@
       "source_file": "apps/client/src/player-card-scale.js",
       "source_location": "L1",
       "id": "apps_client_src_player_card_scale_js",
-      "community": 20,
+      "community": 22,
       "norm_label": "player-card-scale.js"
     },
     {
@@ -3330,7 +3474,7 @@
       "source_file": "apps/client/src/player-card-scale.js",
       "source_location": "L7",
       "id": "player_card_scale_clampscale",
-      "community": 20,
+      "community": 22,
       "norm_label": "clampscale()"
     },
     {
@@ -3339,7 +3483,7 @@
       "source_file": "apps/client/src/player-card-scale.js",
       "source_location": "L11",
       "id": "player_card_scale_getnextscale",
-      "community": 20,
+      "community": 22,
       "norm_label": "getnextscale()"
     },
     {
@@ -3348,7 +3492,7 @@
       "source_file": "apps/client/src/player-card-scale.js",
       "source_location": "L24",
       "id": "player_card_scale_canscalein",
-      "community": 20,
+      "community": 22,
       "norm_label": "canscalein()"
     },
     {
@@ -3357,7 +3501,7 @@
       "source_file": "apps/client/src/player-card-scale.js",
       "source_location": "L28",
       "id": "player_card_scale_canscaleout",
-      "community": 20,
+      "community": 22,
       "norm_label": "canscaleout()"
     },
     {
@@ -3366,7 +3510,7 @@
       "source_file": "apps/client/src/player-card-preview.js",
       "source_location": "L1",
       "id": "apps_client_src_player_card_preview_js",
-      "community": 5,
+      "community": 6,
       "norm_label": "player-card-preview.js"
     },
     {
@@ -3375,7 +3519,7 @@
       "source_file": "apps/client/src/player-card-preview.js",
       "source_location": "L4",
       "id": "player_card_preview_formatplayercardpreview",
-      "community": 5,
+      "community": 6,
       "norm_label": "formatplayercardpreview()"
     },
     {
@@ -3384,7 +3528,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L1",
       "id": "apps_client_src_canvas_js",
-      "community": 8,
+      "community": 9,
       "norm_label": "canvas.js"
     },
     {
@@ -3393,7 +3537,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L4",
       "id": "canvas_canvas",
-      "community": 8,
+      "community": 9,
       "norm_label": "canvas"
     },
     {
@@ -3402,7 +3546,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L5",
       "id": "canvas_canvas_constructor",
-      "community": 8,
+      "community": 9,
       "norm_label": ".constructor()"
     },
     {
@@ -3411,7 +3555,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L31",
       "id": "canvas_canvas_directiondown",
-      "community": 8,
+      "community": 9,
       "norm_label": ".directiondown()"
     },
     {
@@ -3420,7 +3564,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L44",
       "id": "canvas_canvas_directionup",
-      "community": 8,
+      "community": 9,
       "norm_label": ".directionup()"
     },
     {
@@ -3429,7 +3573,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L56",
       "id": "canvas_canvas_newdirection",
-      "community": 8,
+      "community": 9,
       "norm_label": ".newdirection()"
     },
     {
@@ -3438,7 +3582,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L80",
       "id": "canvas_canvas_updatetarget",
-      "community": 8,
+      "community": 9,
       "norm_label": ".updatetarget()"
     },
     {
@@ -3447,7 +3591,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L99",
       "id": "canvas_canvas_directional",
-      "community": 8,
+      "community": 9,
       "norm_label": ".directional()"
     },
     {
@@ -3456,7 +3600,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L103",
       "id": "canvas_canvas_horizontal",
-      "community": 8,
+      "community": 9,
       "norm_label": ".horizontal()"
     },
     {
@@ -3465,7 +3609,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L107",
       "id": "canvas_canvas_vertical",
-      "community": 8,
+      "community": 9,
       "norm_label": ".vertical()"
     },
     {
@@ -3474,7 +3618,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L112",
       "id": "canvas_canvas_outofbounds",
-      "community": 8,
+      "community": 9,
       "norm_label": ".outofbounds()"
     },
     {
@@ -3483,7 +3627,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L119",
       "id": "canvas_canvas_gameinput",
-      "community": 8,
+      "community": 9,
       "norm_label": ".gameinput()"
     },
     {
@@ -3492,7 +3636,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L127",
       "id": "canvas_canvas_touchinput",
-      "community": 8,
+      "community": 9,
       "norm_label": ".touchinput()"
     },
     {
@@ -3501,7 +3645,7 @@
       "source_file": "apps/client/src/canvas.js",
       "source_location": "L138",
       "id": "canvas_canvas_keyinput",
-      "community": 8,
+      "community": 9,
       "norm_label": ".keyinput()"
     },
     {
@@ -3510,7 +3654,7 @@
       "source_file": "apps/client/src/avatar-draft-controller.js",
       "source_location": "L1",
       "id": "apps_client_src_avatar_draft_controller_js",
-      "community": 42,
+      "community": 44,
       "norm_label": "avatar-draft-controller.js"
     },
     {
@@ -3519,7 +3663,7 @@
       "source_file": "apps/client/src/avatar-draft-controller.js",
       "source_location": "L10",
       "id": "avatar_draft_controller_createavatardraftcontroller",
-      "community": 42,
+      "community": 44,
       "norm_label": "createavatardraftcontroller()"
     },
     {
@@ -3528,7 +3672,7 @@
       "source_file": "apps/client/src/player-card-editor.js",
       "source_location": "L1",
       "id": "apps_client_src_player_card_editor_js",
-      "community": 2,
+      "community": 3,
       "norm_label": "player-card-editor.js"
     },
     {
@@ -3537,7 +3681,7 @@
       "source_file": "apps/client/src/player-card-editor.js",
       "source_location": "L18",
       "id": "player_card_editor_loadfabric",
-      "community": 2,
+      "community": 3,
       "norm_label": "loadfabric()"
     },
     {
@@ -3546,7 +3690,7 @@
       "source_file": "apps/client/src/player-card-editor.js",
       "source_location": "L43",
       "id": "player_card_editor_createplayercardeditor",
-      "community": 2,
+      "community": 3,
       "norm_label": "createplayercardeditor()"
     },
     {
@@ -3555,7 +3699,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L1",
       "id": "apps_client_src_player_card_layers_js",
-      "community": 2,
+      "community": 3,
       "norm_label": "player-card-layers.js"
     },
     {
@@ -3564,7 +3708,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L5",
       "id": "player_card_layers_clone",
-      "community": 2,
+      "community": 3,
       "norm_label": "clone()"
     },
     {
@@ -3573,7 +3717,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L9",
       "id": "player_card_layers_createemptycanvasjson",
-      "community": 2,
+      "community": 3,
       "norm_label": "createemptycanvasjson()"
     },
     {
@@ -3582,7 +3726,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L16",
       "id": "player_card_layers_createdefaultlayerstate",
-      "community": 2,
+      "community": 3,
       "norm_label": "createdefaultlayerstate()"
     },
     {
@@ -3591,7 +3735,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L24",
       "id": "player_card_layers_createlayerpayload",
-      "community": 2,
+      "community": 3,
       "norm_label": "createlayerpayload()"
     },
     {
@@ -3600,7 +3744,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L37",
       "id": "player_card_layers_createlegacylayerpayload",
-      "community": 2,
+      "community": 3,
       "norm_label": "createlegacylayerpayload()"
     },
     {
@@ -3609,7 +3753,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L45",
       "id": "player_card_layers_mergelayerpayloadtocanvasjson",
-      "community": 2,
+      "community": 3,
       "norm_label": "mergelayerpayloadtocanvasjson()"
     },
     {
@@ -3618,7 +3762,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L58",
       "id": "player_card_layers_splitcanvasjsonbylayer",
-      "community": 2,
+      "community": 3,
       "norm_label": "splitcanvasjsonbylayer()"
     },
     {
@@ -3627,7 +3771,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L69",
       "id": "player_card_layers_serializecanvas",
-      "community": 2,
+      "community": 3,
       "norm_label": "serializecanvas()"
     },
     {
@@ -3636,7 +3780,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L73",
       "id": "player_card_layers_getlayerrenderstate",
-      "community": 2,
+      "community": 3,
       "norm_label": "getlayerrenderstate()"
     },
     {
@@ -3645,7 +3789,7 @@
       "source_file": "apps/client/src/player-card-layers.js",
       "source_location": "L85",
       "id": "player_card_layers_hasanycontent",
-      "community": 2,
+      "community": 3,
       "norm_label": "hasanycontent()"
     },
     {
@@ -3654,7 +3798,7 @@
       "source_file": "apps/client/src/socket-controller.js",
       "source_location": "L1",
       "id": "apps_client_src_socket_controller_js",
-      "community": 43,
+      "community": 45,
       "norm_label": "socket-controller.js"
     },
     {
@@ -3663,7 +3807,7 @@
       "source_file": "apps/client/src/socket-controller.js",
       "source_location": "L5",
       "id": "socket_controller_createsocketcontroller",
-      "community": 43,
+      "community": 45,
       "norm_label": "createsocketcontroller()"
     },
     {
@@ -3672,7 +3816,7 @@
       "source_file": "apps/client/src/i18n.js",
       "source_location": "L1",
       "id": "apps_client_src_i18n_js",
-      "community": 5,
+      "community": 6,
       "norm_label": "i18n.js"
     },
     {
@@ -3681,7 +3825,7 @@
       "source_file": "apps/client/src/i18n.js",
       "source_location": "L209",
       "id": "i18n_getstorage",
-      "community": 5,
+      "community": 6,
       "norm_label": "getstorage()"
     },
     {
@@ -3690,7 +3834,7 @@
       "source_file": "apps/client/src/i18n.js",
       "source_location": "L225",
       "id": "i18n_setlocale",
-      "community": 5,
+      "community": 6,
       "norm_label": "setlocale()"
     },
     {
@@ -3699,7 +3843,7 @@
       "source_file": "apps/client/src/i18n.js",
       "source_location": "L234",
       "id": "i18n_loadlocale",
-      "community": 5,
+      "community": 6,
       "norm_label": "loadlocale()"
     },
     {
@@ -3708,7 +3852,7 @@
       "source_file": "apps/client/src/i18n.js",
       "source_location": "L246",
       "id": "i18n_getlocale",
-      "community": 5,
+      "community": 6,
       "norm_label": "getlocale()"
     },
     {
@@ -3717,7 +3861,7 @@
       "source_file": "apps/client/src/i18n.js",
       "source_location": "L250",
       "id": "i18n_interpolate",
-      "community": 5,
+      "community": 6,
       "norm_label": "interpolate()"
     },
     {
@@ -3726,7 +3870,7 @@
       "source_file": "apps/client/src/i18n.js",
       "source_location": "L256",
       "id": "i18n_t",
-      "community": 5,
+      "community": 6,
       "norm_label": "t()"
     },
     {
@@ -3735,7 +3879,7 @@
       "source_file": "apps/client/src/player-card-canvas-transform.js",
       "source_location": "L1",
       "id": "apps_client_src_player_card_canvas_transform_js",
-      "community": 22,
+      "community": 24,
       "norm_label": "player-card-canvas-transform.js"
     },
     {
@@ -3744,7 +3888,7 @@
       "source_file": "apps/client/src/player-card-canvas-transform.js",
       "source_location": "L3",
       "id": "player_card_canvas_transform_scaleobjectaroundpoint",
-      "community": 22,
+      "community": 24,
       "norm_label": "scaleobjectaroundpoint()"
     },
     {
@@ -3753,7 +3897,7 @@
       "source_file": "apps/client/src/player-card-canvas-transform.js",
       "source_location": "L10",
       "id": "player_card_canvas_transform_translateobject",
-      "community": 22,
+      "community": 24,
       "norm_label": "translateobject()"
     },
     {
@@ -3762,7 +3906,7 @@
       "source_file": "apps/client/src/player-card-canvas-transform.js",
       "source_location": "L15",
       "id": "player_card_canvas_transform_getkeyboardpandelta",
-      "community": 22,
+      "community": 24,
       "norm_label": "getkeyboardpandelta()"
     },
     {
@@ -3771,86 +3915,86 @@
       "source_file": "apps/client/src/app.js",
       "source_location": "L1",
       "id": "apps_client_src_app_js",
-      "community": 5,
+      "community": 2,
       "norm_label": "app.js"
     },
     {
       "label": "enterGame()",
       "file_type": "code",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L37",
+      "source_location": "L41",
       "id": "app_entergame",
-      "community": 5,
+      "community": 2,
       "norm_label": "entergame()"
     },
     {
       "label": "startGame()",
       "file_type": "code",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L55",
+      "source_location": "L59",
       "id": "app_startgame",
-      "community": 5,
+      "community": 2,
       "norm_label": "startgame()"
     },
     {
       "label": "validNick()",
       "file_type": "code",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L65",
+      "source_location": "L69",
       "id": "app_validnick",
-      "community": 5,
+      "community": 2,
       "norm_label": "validnick()"
     },
     {
       "label": "renderStatusPanel()",
       "file_type": "code",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L298",
+      "source_location": "L312",
       "id": "app_renderstatuspanel",
-      "community": 5,
+      "community": 6,
       "norm_label": "renderstatuspanel()"
     },
     {
       "label": "renderPlayerCardPreviews()",
       "file_type": "code",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L321",
+      "source_location": "L335",
       "id": "app_renderplayercardpreviews",
-      "community": 5,
+      "community": 6,
       "norm_label": "renderplayercardpreviews()"
     },
     {
       "label": "applyTranslations()",
       "file_type": "code",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L339",
+      "source_location": "L353",
       "id": "app_applytranslations",
-      "community": 5,
+      "community": 6,
       "norm_label": "applytranslations()"
     },
     {
       "label": "getPosition()",
       "file_type": "code",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L387",
+      "source_location": "L401",
       "id": "app_getposition",
-      "community": 0,
+      "community": 2,
       "norm_label": "getposition()"
     },
     {
       "label": "animloop()",
       "file_type": "code",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L409",
+      "source_location": "L423",
       "id": "app_animloop",
-      "community": 5,
+      "community": 2,
       "norm_label": "animloop()"
     },
     {
       "label": "gameLoop()",
       "file_type": "code",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L414",
+      "source_location": "L428",
       "id": "app_gameloop",
       "community": 7,
       "norm_label": "gameloop()"
@@ -3859,9 +4003,9 @@
       "label": "resize()",
       "file_type": "code",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L472",
+      "source_location": "L489",
       "id": "app_resize",
-      "community": 8,
+      "community": 9,
       "norm_label": "resize()"
     },
     {
@@ -3870,7 +4014,7 @@
       "source_file": "apps/client/src/avatar-skeleton-loader.js",
       "source_location": "L1",
       "id": "apps_client_src_avatar_skeleton_loader_js",
-      "community": 17,
+      "community": 18,
       "norm_label": "avatar-skeleton-loader.js"
     },
     {
@@ -3879,7 +4023,7 @@
       "source_file": "apps/client/src/avatar-skeleton-loader.js",
       "source_location": "L3",
       "id": "avatar_skeleton_loader_getasseturl",
-      "community": 17,
+      "community": 18,
       "norm_label": "getasseturl()"
     },
     {
@@ -3888,7 +4032,7 @@
       "source_file": "apps/client/src/avatar-skeleton-loader.js",
       "source_location": "L20",
       "id": "avatar_skeleton_loader_createskeletonimage",
-      "community": 17,
+      "community": 18,
       "norm_label": "createskeletonimage()"
     },
     {
@@ -3897,7 +4041,7 @@
       "source_file": "apps/client/src/avatar-skeleton-loader.js",
       "source_location": "L37",
       "id": "avatar_skeleton_loader_waitforimage",
-      "community": 17,
+      "community": 18,
       "norm_label": "waitforimage()"
     },
     {
@@ -3906,7 +4050,7 @@
       "source_file": "apps/client/src/avatar-skeleton-loader.js",
       "source_location": "L52",
       "id": "avatar_skeleton_loader_preloadskeletons",
-      "community": 17,
+      "community": 18,
       "norm_label": "preloadskeletons()"
     },
     {
@@ -3915,7 +4059,7 @@
       "source_file": "apps/client/src/avatar-skeleton-loader.js",
       "source_location": "L64",
       "id": "avatar_skeleton_loader_getrandomskeleton",
-      "community": 17,
+      "community": 18,
       "norm_label": "getrandomskeleton()"
     },
     {
@@ -3924,8 +4068,44 @@
       "source_file": "apps/client/src/avatar-skeleton-loader.js",
       "source_location": "L69",
       "id": "avatar_skeleton_loader_getskeletonbykey",
-      "community": 17,
+      "community": 18,
       "norm_label": "getskeletonbykey()"
+    },
+    {
+      "label": "speech-bubble.js",
+      "file_type": "code",
+      "source_file": "apps/client/src/ui/speech-bubble.js",
+      "source_location": "L1",
+      "id": "apps_client_src_ui_speech_bubble_js",
+      "community": 46,
+      "norm_label": "speech-bubble.js"
+    },
+    {
+      "label": "createSpeechBubble()",
+      "file_type": "code",
+      "source_file": "apps/client/src/ui/speech-bubble.js",
+      "source_location": "L3",
+      "id": "speech_bubble_createspeechbubble",
+      "community": 46,
+      "norm_label": "createspeechbubble()"
+    },
+    {
+      "label": "paint-toast.js",
+      "file_type": "code",
+      "source_file": "apps/client/src/ui/paint-toast.js",
+      "source_location": "L1",
+      "id": "apps_client_src_ui_paint_toast_js",
+      "community": 47,
+      "norm_label": "paint-toast.js"
+    },
+    {
+      "label": "createPaintToast()",
+      "file_type": "code",
+      "source_file": "apps/client/src/ui/paint-toast.js",
+      "source_location": "L3",
+      "id": "paint_toast_createpainttoast",
+      "community": 47,
+      "norm_label": "createpainttoast()"
     },
     {
       "label": "AGENTS.md",
@@ -3936,7 +4116,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 29,
+      "community": 31,
       "norm_label": "agents.md",
       "id": "doc_agents"
     },
@@ -3949,7 +4129,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 29,
+      "community": 31,
       "norm_label": "todo.md",
       "id": "doc_todo"
     },
@@ -3962,7 +4142,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 29,
+      "community": 31,
       "norm_label": "readme.md",
       "id": "doc_readme"
     },
@@ -3975,7 +4155,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 14,
       "norm_label": "agar.io clone game ui",
       "id": "agar_io_clone_game_ui"
     },
@@ -3988,7 +4168,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 14,
       "norm_label": "player cell huy",
       "id": "player_huy"
     },
@@ -4001,7 +4181,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 14,
       "norm_label": "player cell dragon",
       "id": "player_dragon"
     },
@@ -4014,7 +4194,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 14,
       "norm_label": "leaderboard panel",
       "id": "leaderboard_panel"
     },
@@ -4027,7 +4207,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 14,
       "norm_label": "two simultaneous game viewports",
       "id": "multiplayer_viewports"
     },
@@ -4040,7 +4220,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 14,
       "norm_label": "colored food pellets",
       "id": "food_pellets"
     },
@@ -4053,7 +4233,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 14,
       "norm_label": "large green virus cells",
       "id": "virus_cells"
     },
@@ -4066,7 +4246,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 14,
       "norm_label": "mobile joystick and targeting controls",
       "id": "mobile_controls"
     },
@@ -4079,7 +4259,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 14,
       "norm_label": "grid-based arena",
       "id": "grid_arena"
     },
@@ -4092,7 +4272,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 25,
       "norm_label": "split icon",
       "id": "asset:bin/client/img/split.png"
     },
@@ -4105,7 +4285,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 25,
       "norm_label": "split",
       "id": "concept:split_control"
     },
@@ -4118,7 +4298,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 25,
       "norm_label": "horizontal separation",
       "id": "concept:horizontal_division"
     },
@@ -4131,7 +4311,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 25,
       "norm_label": "left-right arrows",
       "id": "concept:left_right_direction"
     },
@@ -4144,7 +4324,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 24,
+      "community": 26,
       "norm_label": "feed icon",
       "id": "asset:bin/client/img/feed.png"
     },
@@ -4157,7 +4337,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 24,
+      "community": 26,
       "norm_label": "crosshair/target reticle",
       "id": "concept:crosshair"
     },
@@ -4170,7 +4350,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 24,
+      "community": 26,
       "norm_label": "feed mass",
       "id": "action:feed"
     },
@@ -4183,7 +4363,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 24,
+      "community": 26,
       "norm_label": "feed control",
       "id": "control:feed"
     },
@@ -4196,7 +4376,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 25,
+      "community": 27,
       "norm_label": "split control icon",
       "id": "img:src/client/img/split.png"
     },
@@ -4209,7 +4389,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 25,
+      "community": 27,
       "norm_label": "split",
       "id": "concept:split_action"
     },
@@ -4222,7 +4402,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 25,
+      "community": 27,
       "norm_label": "player input control",
       "id": "concept:player_control"
     },
@@ -4235,7 +4415,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 25,
+      "community": 27,
       "norm_label": "horizontal separation",
       "id": "concept:horizontal_separation"
     },
@@ -4248,7 +4428,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 26,
+      "community": 28,
       "norm_label": "feed control icon",
       "id": "feed_icon_crosshair"
     },
@@ -4261,7 +4441,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 26,
+      "community": 28,
       "norm_label": "targeting reticle",
       "id": "crosshair_targeting"
     },
@@ -4274,7 +4454,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 26,
+      "community": 28,
       "norm_label": "feed action",
       "id": "feed_action"
     },
@@ -4287,7 +4467,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 26,
+      "community": 28,
       "norm_label": "player control input",
       "id": "player_control_input"
     }
@@ -5029,7 +5209,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L63",
+      "source_location": "L76",
       "weight": 1.0,
       "_src": "apps_server_src_server_js",
       "_tgt": "server_generatespawnpoint",
@@ -5041,7 +5221,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L77",
+      "source_location": "L90",
       "weight": 1.0,
       "_src": "apps_server_src_server_js",
       "_tgt": "server_placenpcnearplayer",
@@ -5053,7 +5233,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L108",
+      "source_location": "L121",
       "weight": 1.0,
       "_src": "apps_server_src_server_js",
       "_tgt": "server_bootstrapmochinpc",
@@ -5065,7 +5245,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L137",
+      "source_location": "L150",
       "weight": 1.0,
       "_src": "apps_server_src_server_js",
       "_tgt": "server_addplayer",
@@ -5077,7 +5257,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L297",
+      "source_location": "L310",
       "weight": 1.0,
       "_src": "apps_server_src_server_js",
       "_tgt": "server_addspectator",
@@ -5089,7 +5269,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L142",
+      "source_location": "L155",
       "weight": 1.0,
       "_src": "server_addplayer",
       "_tgt": "server_generatespawnpoint",
@@ -5113,7 +5293,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/server.js",
-      "source_location": "L160",
+      "source_location": "L173",
       "weight": 1.0,
       "_src": "server_addplayer",
       "_tgt": "server_placenpcnearplayer",
@@ -6926,10 +7106,22 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L162",
+      "weight": 1.0,
+      "_src": "wrapper_ask",
+      "_tgt": "orchestrator_orchestrator_generateutterance",
+      "source": "wrapper_ask",
+      "target": "orchestrator_orchestrator_generateutterance"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "apps/server/src/npc/orchestrator.js",
       "source_location": "L155",
       "weight": 1.0,
-      "_src": "orchestrator_orchestrator_tick",
-      "_tgt": "wrapper_ask",
+      "_src": "wrapper_ask",
+      "_tgt": "orchestrator_orchestrator_tick",
       "source": "wrapper_ask",
       "target": "orchestrator_orchestrator_tick"
     },
@@ -7876,8 +8068,8 @@
       "source_file": "apps/server/src/npc/npc.js",
       "source_location": "L64",
       "weight": 1.0,
-      "_src": "npc_npcstate_constructor",
-      "_tgt": "player_init",
+      "_src": "player_init",
+      "_tgt": "npc_npcstate_constructor",
       "source": "player_init",
       "target": "npc_npcstate_constructor"
     },
@@ -8148,6 +8340,78 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "apps_server_src_npc_avatar_paint_js",
+      "_tgt": "avatar_paint_escapeattribute",
+      "source": "apps_server_src_npc_avatar_paint_js",
+      "target": "avatar_paint_escapeattribute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "apps_server_src_npc_avatar_paint_js",
+      "_tgt": "avatar_paint_createpaintedavatarsvg",
+      "source": "apps_server_src_npc_avatar_paint_js",
+      "target": "avatar_paint_createpaintedavatarsvg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_src": "apps_server_src_npc_avatar_paint_js",
+      "_tgt": "avatar_paint_createpaintedavatardataurl",
+      "source": "apps_server_src_npc_avatar_paint_js",
+      "target": "avatar_paint_createpaintedavatardataurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "apps_server_src_npc_avatar_paint_js",
+      "_tgt": "avatar_paint_decodepaintedavatarsvg",
+      "source": "apps_server_src_npc_avatar_paint_js",
+      "target": "avatar_paint_decodepaintedavatarsvg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "avatar_paint_createpaintedavatarsvg",
+      "_tgt": "avatar_paint_escapeattribute",
+      "source": "avatar_paint_escapeattribute",
+      "target": "avatar_paint_createpaintedavatarsvg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/avatar-paint.js",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "avatar_paint_createpaintedavatardataurl",
+      "_tgt": "avatar_paint_createpaintedavatarsvg",
+      "source": "avatar_paint_createpaintedavatarsvg",
+      "target": "avatar_paint_createpaintedavatardataurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/prompts.js",
       "source_location": "L3",
       "weight": 1.0,
@@ -8170,16 +8434,40 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/prompts.js",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_src": "apps_server_src_npc_prompts_js",
+      "_tgt": "prompts_buildnpcutterprompt",
+      "source": "apps_server_src_npc_prompts_js",
+      "target": "prompts_buildnpcutterprompt",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "apps/server/src/npc/orchestrator.js",
       "source_location": "L149",
       "weight": 1.0,
-      "_src": "orchestrator_orchestrator_tick",
-      "_tgt": "prompts_buildnpcintentprompt",
+      "_src": "prompts_buildnpcintentprompt",
+      "_tgt": "orchestrator_orchestrator_tick",
       "source": "prompts_buildnpcintentprompt",
       "target": "orchestrator_orchestrator_tick"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L159",
+      "weight": 1.0,
+      "_src": "prompts_buildnpcutterprompt",
+      "_tgt": "orchestrator_orchestrator_generateutterance",
+      "source": "prompts_buildnpcutterprompt",
+      "target": "orchestrator_orchestrator_generateutterance"
     },
     {
       "relation": "contains",
@@ -8341,7 +8629,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/npc.js",
-      "source_location": "L99",
+      "source_location": "L100",
       "weight": 1.0,
       "_src": "npc_npcstate_move",
       "_tgt": "npc_clamp",
@@ -8353,7 +8641,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/npc.js",
-      "source_location": "L69",
+      "source_location": "L70",
       "weight": 1.0,
       "_src": "npc_npcstate_constructor",
       "_tgt": "npc_hextohue",
@@ -8365,7 +8653,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/npc.js",
-      "source_location": "L88",
+      "source_location": "L89",
       "weight": 1.0,
       "_src": "npc_npcstate_applyintent",
       "_tgt": "npc_normalizeintent",
@@ -8389,7 +8677,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/npc.js",
-      "source_location": "L79",
+      "source_location": "L80",
       "weight": 1.0,
       "_src": "npc_npcstate",
       "_tgt": "npc_npcstate_syncfromplayer",
@@ -8401,7 +8689,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/npc.js",
-      "source_location": "L87",
+      "source_location": "L88",
       "weight": 1.0,
       "_src": "npc_npcstate",
       "_tgt": "npc_npcstate_applyintent",
@@ -8413,7 +8701,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/npc.js",
-      "source_location": "L92",
+      "source_location": "L93",
       "weight": 1.0,
       "_src": "npc_npcstate",
       "_tgt": "npc_npcstate_move",
@@ -8425,7 +8713,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/npc.js",
-      "source_location": "L96",
+      "source_location": "L97",
       "weight": 1.0,
       "_src": "npc_npcstate_move",
       "_tgt": "npc_npcstate_syncfromplayer",
@@ -8476,16 +8764,100 @@
       "source_file": "apps/server/src/npc/orchestrator.js",
       "source_location": "L126",
       "weight": 1.0,
-      "_src": "orchestrator_orchestrator_resolveintent",
-      "_tgt": "fallback_randomwalkintent",
+      "_src": "fallback_randomwalkintent",
+      "_tgt": "orchestrator_orchestrator_resolveintent",
       "source": "fallback_randomwalkintent",
       "target": "orchestrator_orchestrator_resolveintent"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L155",
+      "weight": 1.0,
+      "_src": "fallback_randomwalkintent",
+      "_tgt": "orchestrator_orchestrator_buildfallbackintent",
+      "source": "fallback_randomwalkintent",
+      "target": "orchestrator_orchestrator_buildfallbackintent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/greetings.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "apps_server_src_npc_greetings_js",
+      "_tgt": "greetings_stableindex",
+      "source": "apps_server_src_npc_greetings_js",
+      "target": "greetings_stableindex",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/greetings.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_src": "apps_server_src_npc_greetings_js",
+      "_tgt": "greetings_pickgreetingfallback",
+      "source": "apps_server_src_npc_greetings_js",
+      "target": "greetings_pickgreetingfallback",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/greetings.js",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_src": "apps_server_src_npc_greetings_js",
+      "_tgt": "greetings_buildcontextualfallbackutterance",
+      "source": "apps_server_src_npc_greetings_js",
+      "target": "greetings_buildcontextualfallbackutterance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/greetings.js",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_src": "greetings_pickgreetingfallback",
+      "_tgt": "greetings_stableindex",
+      "source": "greetings_stableindex",
+      "target": "greetings_pickgreetingfallback",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/greetings.js",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_src": "greetings_buildcontextualfallbackutterance",
+      "_tgt": "greetings_pickgreetingfallback",
+      "source": "greetings_pickgreetingfallback",
+      "target": "greetings_buildcontextualfallbackutterance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L179",
+      "weight": 1.0,
+      "_src": "greetings_buildcontextualfallbackutterance",
+      "_tgt": "orchestrator_orchestrator_generateutterance",
+      "source": "greetings_buildcontextualfallbackutterance",
+      "target": "orchestrator_orchestrator_generateutterance"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_src": "apps_server_src_npc_orchestrator_js",
       "_tgt": "orchestrator_gettimeofdaylabel",
@@ -8497,7 +8869,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0,
       "_src": "apps_server_src_npc_orchestrator_js",
       "_tgt": "orchestrator_parsejsonpayload",
@@ -8509,7 +8881,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L33",
+      "source_location": "L34",
       "weight": 1.0,
       "_src": "apps_server_src_npc_orchestrator_js",
       "_tgt": "orchestrator_orchestrator",
@@ -8521,7 +8893,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L88",
+      "source_location": "L91",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator_parseintents",
       "_tgt": "orchestrator_parsejsonpayload",
@@ -8533,7 +8905,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator",
       "_tgt": "orchestrator_orchestrator_constructor",
@@ -8545,7 +8917,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L48",
+      "source_location": "L51",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator",
       "_tgt": "orchestrator_orchestrator_registernpc",
@@ -8557,7 +8929,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L53",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator",
       "_tgt": "orchestrator_orchestrator_prunecallbudget",
@@ -8569,7 +8941,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L57",
+      "source_location": "L60",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator",
       "_tgt": "orchestrator_orchestrator_buildbatchcontext",
@@ -8581,7 +8953,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L87",
+      "source_location": "L90",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator",
       "_tgt": "orchestrator_orchestrator_parseintents",
@@ -8593,7 +8965,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L108",
+      "source_location": "L111",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator",
       "_tgt": "orchestrator_orchestrator_resolveintent",
@@ -8605,7 +8977,55 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L129",
+      "source_location": "L128",
+      "weight": 1.0,
+      "_src": "orchestrator_orchestrator",
+      "_tgt": "orchestrator_orchestrator_buildfallbackintent",
+      "source": "orchestrator_orchestrator",
+      "target": "orchestrator_orchestrator_buildfallbackintent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L158",
+      "weight": 1.0,
+      "_src": "orchestrator_orchestrator",
+      "_tgt": "orchestrator_orchestrator_generateutterance",
+      "source": "orchestrator_orchestrator",
+      "target": "orchestrator_orchestrator_generateutterance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L182",
+      "weight": 1.0,
+      "_src": "orchestrator_orchestrator",
+      "_tgt": "orchestrator_orchestrator_handlenpcspeak",
+      "source": "orchestrator_orchestrator",
+      "target": "orchestrator_orchestrator_handlenpcspeak",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L198",
+      "weight": 1.0,
+      "_src": "orchestrator_orchestrator",
+      "_tgt": "orchestrator_orchestrator_handlenpcpaint",
+      "source": "orchestrator_orchestrator",
+      "target": "orchestrator_orchestrator_handlenpcpaint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L218",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator",
       "_tgt": "orchestrator_orchestrator_tick",
@@ -8617,7 +9037,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L143",
+      "source_location": "L232",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator_tick",
       "_tgt": "orchestrator_orchestrator_prunecallbudget",
@@ -8629,7 +9049,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L148",
+      "source_location": "L237",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator_tick",
       "_tgt": "orchestrator_orchestrator_buildbatchcontext",
@@ -8641,12 +9061,24 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/npc/orchestrator.js",
-      "source_location": "L164",
+      "source_location": "L253",
       "weight": 1.0,
       "_src": "orchestrator_orchestrator_tick",
       "_tgt": "orchestrator_orchestrator_parseintents",
       "source": "orchestrator_orchestrator_parseintents",
       "target": "orchestrator_orchestrator_tick",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/server/src/npc/orchestrator.js",
+      "source_location": "L187",
+      "weight": 1.0,
+      "_src": "orchestrator_orchestrator_handlenpcspeak",
+      "_tgt": "orchestrator_orchestrator_generateutterance",
+      "source": "orchestrator_orchestrator_generateutterance",
+      "target": "orchestrator_orchestrator_handlenpcspeak",
       "confidence_score": 1.0
     },
     {
@@ -11497,7 +11929,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L37",
+      "source_location": "L41",
       "weight": 1.0,
       "_src": "apps_client_src_app_js",
       "_tgt": "app_entergame",
@@ -11509,7 +11941,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L55",
+      "source_location": "L59",
       "weight": 1.0,
       "_src": "apps_client_src_app_js",
       "_tgt": "app_startgame",
@@ -11521,7 +11953,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L65",
+      "source_location": "L69",
       "weight": 1.0,
       "_src": "apps_client_src_app_js",
       "_tgt": "app_validnick",
@@ -11533,7 +11965,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L298",
+      "source_location": "L312",
       "weight": 1.0,
       "_src": "apps_client_src_app_js",
       "_tgt": "app_renderstatuspanel",
@@ -11545,7 +11977,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L321",
+      "source_location": "L335",
       "weight": 1.0,
       "_src": "apps_client_src_app_js",
       "_tgt": "app_renderplayercardpreviews",
@@ -11557,7 +11989,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L339",
+      "source_location": "L353",
       "weight": 1.0,
       "_src": "apps_client_src_app_js",
       "_tgt": "app_applytranslations",
@@ -11569,7 +12001,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L387",
+      "source_location": "L401",
       "weight": 1.0,
       "_src": "apps_client_src_app_js",
       "_tgt": "app_getposition",
@@ -11581,7 +12013,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L409",
+      "source_location": "L423",
       "weight": 1.0,
       "_src": "apps_client_src_app_js",
       "_tgt": "app_animloop",
@@ -11593,7 +12025,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L414",
+      "source_location": "L428",
       "weight": 1.0,
       "_src": "apps_client_src_app_js",
       "_tgt": "app_gameloop",
@@ -11605,7 +12037,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L472",
+      "source_location": "L489",
       "weight": 1.0,
       "_src": "apps_client_src_app_js",
       "_tgt": "app_resize",
@@ -11617,7 +12049,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L52",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "app_entergame",
       "_tgt": "app_animloop",
@@ -11629,7 +12061,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L61",
+      "source_location": "L65",
       "weight": 1.0,
       "_src": "app_startgame",
       "_tgt": "app_entergame",
@@ -11641,7 +12073,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/app.js",
-      "source_location": "L411",
+      "source_location": "L425",
       "weight": 1.0,
       "_src": "app_animloop",
       "_tgt": "app_gameloop",
@@ -11743,6 +12175,30 @@
       "_tgt": "avatar_skeleton_loader_getskeletonbykey",
       "source": "avatar_skeleton_loader_getrandomskeleton",
       "target": "avatar_skeleton_loader_getskeletonbykey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/client/src/ui/speech-bubble.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "apps_client_src_ui_speech_bubble_js",
+      "_tgt": "speech_bubble_createspeechbubble",
+      "source": "apps_client_src_ui_speech_bubble_js",
+      "target": "speech_bubble_createspeechbubble",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/client/src/ui/paint-toast.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "apps_client_src_ui_paint_toast_js",
+      "_tgt": "paint_toast_createpainttoast",
+      "source": "apps_client_src_ui_paint_toast_js",
+      "target": "paint_toast_createpainttoast",
       "confidence_score": 1.0
     },
     {

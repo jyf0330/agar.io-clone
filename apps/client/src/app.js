@@ -12,6 +12,8 @@ var formatPlayerCardPreview = require('./player-card-preview');
 var createPlayerCardEditor = require('./player-card-editor');
 var createAvatarDraftController = require('./avatar-draft-controller');
 var createSocketController = require('./socket-controller');
+var createSpeechBubble = require('./ui/speech-bubble');
+var createPaintToast = require('./ui/paint-toast');
 var i18n = require('./i18n');
 var socketEmit = require('./socket-emit');
 
@@ -20,6 +22,8 @@ var socket;
 var playerCardEditor;
 var avatarDraftController;
 var socketController;
+var speechBubble;
+var paintToast;
 var hideStartMenuOnLoad = true;
 
 var debug = function (args) {
@@ -143,6 +147,14 @@ window.onload = function () {
         enterGame: enterGame
     });
     avatarDraftController.bindControls();
+    speechBubble = createSpeechBubble({
+        document: document,
+        window: window
+    });
+    paintToast = createPaintToast({
+        document: document,
+        window: window
+    });
 
     socketController = createSocketController({
         io: io,
@@ -178,6 +190,8 @@ window.onload = function () {
         renderPlayerCardPreviews: renderPlayerCardPreviews,
         renderStatusPanel: renderStatusPanel,
         resize: resize,
+        speechBubble: speechBubble,
+        paintToast: paintToast,
         setLeaderboard: function (nextLeaderboard) {
             leaderboard = nextLeaderboard;
         },
@@ -462,6 +476,9 @@ function gameLoop() {
             return obj1.mass - obj2.mass;
         });
         render.drawCells(cellsToDraw, playerConfig, global.toggleMassState, borders, graph);
+        if (speechBubble) {
+            speechBubble.render(users, player, global.screen);
+        }
 
         socketEmit.emitIfReady(socket, '0', window.canvas.target); // playerSendTarget "Heartbeat".
     }

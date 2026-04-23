@@ -11,6 +11,9 @@ const chatRepository = require('./repositories/chat-repository');
 const config = require(path.resolve(process.cwd(), 'config'));
 const util = require('./lib/util');
 const mapUtils = require('./map/map');
+const {
+  createPaintedAvatarDataUrl
+} = require('./npc/avatar-paint');
 const NpcState = require('./npc/npc');
 const Orchestrator = require('./npc/orchestrator');
 const {
@@ -37,7 +40,15 @@ const orchestrator = new Orchestrator({
   maxCallsPerSec: 5,
   timeoutMs: 4000,
   mapWidth: config.gameWidth,
-  mapHeight: config.gameHeight
+  mapHeight: config.gameHeight,
+  emitEvent(eventName, payload) {
+    io.emit(eventName, payload);
+  },
+  paintPlayer(targetPlayer, npc) {
+    targetPlayer.npcPaintCount = (targetPlayer.npcPaintCount || 0) + 1;
+    targetPlayer.playerCardPreviewDataUrl = createPaintedAvatarDataUrl(targetPlayer.playerCardPreviewDataUrl, npc.color, targetPlayer.npcPaintCount);
+    return targetPlayer.playerCardPreviewDataUrl;
+  }
 });
 let mochiNpc = null;
 let npcAnchoredToPlayer = false;

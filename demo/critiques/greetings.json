@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "language": "zh-CN",
+    "category": "greeting",
+    "maxLength": 15,
+    "forbiddenWordsSource": "demo/critiques/pool.json"
+  },
+  "entries": [
+    { "id": "g01", "npcId": "common", "category": "greeting", "tags": ["早晨"], "text": "早晨在发亮。" },
+    { "id": "g02", "npcId": "common", "category": "greeting", "tags": ["下午"], "text": "下午的风真轻。" },
+    { "id": "g03", "npcId": "common", "category": "greeting", "tags": ["夜晚"], "text": "夜里颜色更深。" },
+    { "id": "g04", "npcId": "common", "category": "greeting", "tags": ["凌晨"], "text": "这会儿很安静。" },
+    { "id": "g05", "npcId": "common", "category": "greeting", "tags": ["near"], "text": "我看到你了。" },
+    { "id": "g06", "npcId": "common", "category": "greeting", "tags": ["color"], "text": "今天像一条线。" },
+    { "id": "g07", "npcId": "common", "category": "greeting", "tags": ["general"], "text": "花园今天很软。" },
+    { "id": "g08", "npcId": "common", "category": "greeting", "tags": ["general"], "text": "我在看风走路。" },
+    { "id": "g09", "npcId": "common", "category": "greeting", "tags": ["general"], "text": "你刚好走到这儿。" },
+    { "id": "g10", "npcId": "common", "category": "greeting", "tags": ["general"], "text": "这片颜色挺轻。" },
+    { "id": "m01", "npcId": "mochi", "category": "greeting", "tags": ["早晨"], "text": "早晨慢慢亮。" },
+    { "id": "m02", "npcId": "mochi", "category": "greeting", "tags": ["下午"], "text": "下午像粉云。" },
+    { "id": "m03", "npcId": "mochi", "category": "greeting", "tags": ["夜晚"], "text": "夜里颜色更静。" },
+    { "id": "m04", "npcId": "mochi", "category": "greeting", "tags": ["凌晨"], "text": "夜色有点轻。" },
+    { "id": "m05", "npcId": "mochi", "category": "greeting", "tags": ["general"], "text": "今天很轻。" }
+  ]
+}

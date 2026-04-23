@@ -2,7 +2,8 @@
 
 const wrapper = require('../llm/wrapper');
 const {randomWalkIntent} = require('./fallback');
-const {buildNpcIntentPrompt} = require('./prompts');
+const {buildNpcIntentPrompt, buildNpcUtterPrompt} = require('./prompts');
+const {buildContextualFallbackUtterance} = require('./greetings');
 
 function getTimeOfDayLabel(date) {
     const hour = date.getHours();
@@ -39,7 +40,9 @@ class Orchestrator {
             timeoutMs: 4000,
             mapWidth: 5000,
             mapHeight: 5000,
-            ask: wrapper.ask
+            ask: wrapper.ask,
+            emitEvent: null,
+            paintPlayer: null
         }, settings);
         this.npcs = [];
         this.callTimestamps = [];
@@ -110,11 +113,38 @@ class Orchestrator {
             return entry && (entry.npcId === npc.id || entry.id === npc.id || entryIndex === index);
         });
         const normalized = fromList || null;
-        if (normalized && (normalized.intent === 'move_to' || normalized.type === 'move_to' || normalized.intent === 'idle' || normalized.type === 'idle')) {
+        const intentType = normalized ? (normalized.intent || normalized.type) : null;
+        if (normalized && ['move_to', 'idle', 'speak', 'paint'].indexOf(intentType) > -1) {
             return {
-                type: normalized.intent || normalized.type,
+                type: intentType,
                 params: normalized.params || {},
                 reason: normalized.reason || ''
+            };
+        }
+
+        return randomWalkIntent(npc, mapSize);
+    }
+
+    buildFallbackIntent(npc, safeState, mapSize, context) {
+        const humanPlayers = (safeState.players || []).filter((player) => !player.isNpc);
+        const now = Date.now();
+
+        if (humanPlayers.length && now - npc.lastPaintTime > 26000) {
+            return {
+                type: 'paint',
+                params: {
+                    targetId: humanPlayers[0].id,
+                    color: npc.color
+                },
+                reason: 'fallback-paint'
+            };
+        }
+
+        if (now - npc.lastSpeakTime > 18000) {
+            return {
+                type: 'speak',
+                params: {},
+                reason: 'fallback-speak'
             };
         }
 
@@ -122,8 +152,67 @@ class Orchestrator {
             return npc.currentIntent;
         }
 
-        // TODO: Day 4 unlocks speak/paint; Day 3 keeps movement-only behavior for demo stability.
         return randomWalkIntent(npc, mapSize);
+    }
+
+    async generateUtterance(npc, context) {
+        const prompt = buildNpcUtterPrompt(npc, context);
+
+        try {
+            const result = await this.config.ask('npc_utter', {
+                npcId: npc.id,
+                timeOfDay: context.timeOfDay,
+                intentType: context.intentType
+            }, {
+                timeoutMs: Math.min(this.config.timeoutMs, 3000),
+                useCache: false,
+                prompt: prompt
+            });
+
+            if (result && result.ok && result.text && result.text.indexOf('MOCK:') !== 0) {
+                return result.text.slice(0, 15);
+            }
+        } catch (_error) {
+            // Offline or provider issues fall through to greetings fallback.
+        }
+
+        return buildContextualFallbackUtterance(npc, context);
+    }
+
+    handleNpcSpeak(npc, safeState, context) {
+        if (typeof this.config.emitEvent !== 'function') {
+            return Promise.resolve();
+        }
+
+        return this.generateUtterance(npc, context).then((text) => {
+            npc.lastSpeakTime = Date.now();
+            this.config.emitEvent('npc:speak', {
+                npcId: npc.id,
+                npcName: npc.player.name,
+                text: text,
+                duration: 3000
+            });
+        });
+    }
+
+    handleNpcPaint(npc, safeState) {
+        const humanPlayers = (safeState.players || []).filter((player) => !player.isNpc);
+        const targetPlayer = humanPlayers[0];
+
+        if (!targetPlayer || typeof this.config.paintPlayer !== 'function' || typeof this.config.emitEvent !== 'function') {
+            return;
+        }
+
+        npc.lastPaintTime = Date.now();
+        const previewDataUrl = this.config.paintPlayer(targetPlayer, npc);
+
+        this.config.emitEvent('npc:paint', {
+            npcId: npc.id,
+            npcName: npc.player.name,
+            targetId: targetPlayer.id,
+            previewDataUrl: previewDataUrl,
+            message: npc.player.name + ' 在你身上画了一笔'
+        });
     }
 
     async tick(gameState, dt) {
@@ -167,11 +256,41 @@ class Orchestrator {
             parsedIntents = [];
         }
 
-        this.npcs.forEach((npc, index) => {
-            const nextIntent = this.resolveIntent(parsedIntents, npc, index, mapSize);
+        const sideEffects = this.npcs.map((npc, index) => {
+            const context = batchContext[index];
+            const parsedIntent = this.resolveIntent(parsedIntents, npc, index, mapSize);
+            const nextIntent = parsedIntents.length ? parsedIntent : this.buildFallbackIntent(npc, safeState, mapSize, context);
+
+            if (nextIntent.type === 'speak') {
+                return this.handleNpcSpeak(npc, safeState, {
+                    timeOfDay: context.time_of_day,
+                    playerX: context.player.x,
+                    playerY: context.player.y,
+                    npcX: context.npc.x,
+                    npcY: context.npc.y,
+                    intentType: nextIntent.type,
+                    npcColor: npc.color
+                }).then(() => {
+                    const movementIntent = randomWalkIntent(npc, mapSize);
+                    npc.applyIntent(movementIntent);
+                    npc.move(dt, mapSize.width, mapSize.height);
+                });
+            }
+
+            if (nextIntent.type === 'paint') {
+                this.handleNpcPaint(npc, safeState);
+                const movementIntent = randomWalkIntent(npc, mapSize);
+                npc.applyIntent(movementIntent);
+                npc.move(dt, mapSize.width, mapSize.height);
+                return Promise.resolve();
+            }
+
             npc.applyIntent(nextIntent);
             npc.move(dt, mapSize.width, mapSize.height);
+            return Promise.resolve();
         });
+
+        await Promise.all(sideEffects);
 
         safeState.npcs = this.npcs.map((npc) => npc.player);
         return this.npcs.map((npc) => npc.currentIntent);

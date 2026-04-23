@@ -37,15 +37,14 @@ function buildNpcIntentPrompt(npcs, batchContext) {
     return {
         system: [
             '你是游戏里的 NPC，人设如下（必须严格遵循）：',
-            anchorSections,
-            'Day 3 只允许输出 move_to 或 idle；不要输出 speak/paint。'
+            anchorSections
         ].join('\n\n'),
         user: [
             sceneSections,
             '请输出一个 intent（JSON 格式，不要加其它文字）。',
             '只有 1 只 NPC 时，输出单个对象：',
             '{',
-            '  "intent": "move_to" | "idle",',
+            '  "intent": "move_to" | "idle" | "speak" | "paint",',
             '  "params": { "x": 0, "y": 0 },',
             '  "reason": "一句话，不超过 15 字"',
             '}',
@@ -54,6 +53,28 @@ function buildNpcIntentPrompt(npcs, batchContext) {
     };
 }
 
+function buildNpcUtterPrompt(npc, context) {
+    const safeContext = context || {};
+
+    return {
+        system: [
+            '你是游戏里的 NPC，人设如下（必须严格遵循）：',
+            npc.personality.anchorsText || ''
+        ].join('\n\n'),
+        user: [
+            '请根据当前情境说一句中文，长度不超过 15 字。',
+            '当前时间：' + safeContext.timeOfDay,
+            '玩家位置：(' + safeContext.playerX + ', ' + safeContext.playerY + ')',
+            '你的位置：(' + safeContext.npcX + ', ' + safeContext.npcY + ')',
+            '你现在的动作：' + safeContext.intentType,
+            '只输出一句话，不要解释。'
+        ].join('\n'),
+        maxTokens: 60,
+        temperature: 0.7
+    };
+}
+
 module.exports = {
-    buildNpcIntentPrompt: buildNpcIntentPrompt
+    buildNpcIntentPrompt: buildNpcIntentPrompt,
+    buildNpcUtterPrompt: buildNpcUtterPrompt
 };

@@ -115,6 +115,28 @@ function createSocketController(options) {
             options.getChat().addChatLine(data.sender, data.message, false);
         });
 
+        nextSocket.on('npc:speak', function (data) {
+            if (options.speechBubble) {
+                options.speechBubble.show(data.npcId, data.text, data.duration || 3000);
+            }
+            if (options.getChat) {
+                options.getChat().addChatLine(data.npcName || data.npcId, data.text, false);
+            }
+        });
+
+        nextSocket.on('npc:paint', function (data) {
+            var localPlayer = options.getPlayer();
+            if (!localPlayer) {
+                return;
+            }
+
+            localPlayer.playerCardPreviewDataUrl = data.previewDataUrl || localPlayer.playerCardPreviewDataUrl;
+            if (options.paintToast) {
+                options.paintToast.show(data.message || (data.npcName + ' 在你身上画了一笔'), 2000);
+            }
+            options.renderPlayerCardPreviews();
+        });
+
         nextSocket.on('serverTellPlayerMove', function (playerData, userData, foodsList, massList, virusList) {
             if (options.global.playerType === 'player') {
                 hydratePlayerState(options.getPlayer(), playerData);

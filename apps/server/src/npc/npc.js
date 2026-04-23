@@ -54,6 +54,7 @@ class NpcState {
         this.personality = personality;
         this.color = settings.color || personality.color || '#FF6B9D';
         this.lastPaintTime = 0;
+        this.lastSpeakTime = 0;
         this.currentIntent = {
             type: 'idle',
             params: {},
