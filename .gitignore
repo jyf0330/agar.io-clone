@@ -20,3 +20,12 @@ graphify-out/
 
 # Local environment variables
 .env
+.env.local
+.env.*.local
+
+# V3 runtime data (memory / audit / consistency)
+# keep data/demo-longhaul/ under explicit control (see demo/CODING-STANDARDS-v3.md §16)
+data/audit/
+data/consistency/
+data/memory/
+data/demo-rehearsal/

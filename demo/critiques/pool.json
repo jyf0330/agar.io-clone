@@ -1,0 +1,255 @@
+{
+  "version": 1,
+  "meta": {
+    "language": "zh-CN",
+    "tonePolicy": "荒诞但温柔，只描绘图像意象，严禁涉及遗弃/死亡/母亲/父亲/贬低/抛弃/孤独/失败/丑",
+    "forbiddenWords": [
+      "遗弃",
+      "抛弃",
+      "死亡",
+      "死去",
+      "母亲",
+      "妈妈",
+      "父亲",
+      "爸爸",
+      "孤儿",
+      "没人要",
+      "丑",
+      "失败",
+      "难看",
+      "悲惨",
+      "可怜"
+    ],
+    "dominantColorBuckets": {
+      "red":    { "hueRangeDeg": [[345, 360], [0, 15]], "minSaturation": 0.35 },
+      "orange": { "hueRangeDeg": [[15, 45]],             "minSaturation": 0.35 },
+      "yellow": { "hueRangeDeg": [[45, 70]],             "minSaturation": 0.35 },
+      "green":  { "hueRangeDeg": [[70, 170]],            "minSaturation": 0.25 },
+      "blue":   { "hueRangeDeg": [[170, 250]],           "minSaturation": 0.25 },
+      "purple": { "hueRangeDeg": [[250, 300]],           "minSaturation": 0.25 },
+      "pink":   { "hueRangeDeg": [[300, 345]],           "minSaturation": 0.25 },
+      "mixed":  { "note": "多色玩家：任一色占比不足 40%" }
+    },
+    "prerequisiteKeys": {
+      "originalPartsMin":     "剩余原创部位数（未被涂过的原稿层数）≥ 此值",
+      "originalPartsMax":     "剩余原创部位数 ≤ 此值",
+      "paintedOnMin":         "被他人涂笔次数 ≥ 此值",
+      "paintedOnMax":         "被他人涂笔次数 ≤ 此值",
+      "strokesOnOthersMin":   "主动在他人身上涂笔次数 ≥ 此值",
+      "strokesOnOthersMax":   "主动在他人身上涂笔次数 ≤ 此值",
+      "dominantColor":        "玩家主色属于此桶（见 dominantColorBuckets）"
+    }
+  },
+  "entries": [
+    {
+      "id": "c01",
+      "category": "poetic",
+      "prerequisites": { "originalPartsMin": 6 },
+      "text": "像一盏从里面亮起来的灯笼，走哪儿都带着自己的夜晚。"
+    },
+    {
+      "id": "c02",
+      "category": "poetic",
+      "prerequisites": { "originalPartsMin": 6 },
+      "text": "肩膀上停着一只看不见的蝴蝶，它也没急着走。"
+    },
+    {
+      "id": "c03",
+      "category": "poetic",
+      "prerequisites": { "originalPartsMin": 6 },
+      "text": "这副模样安静得像刚下完雨的午后的阳台。"
+    },
+    {
+      "id": "c04",
+      "category": "poetic",
+      "prerequisites": { "originalPartsMin": 5 },
+      "text": "整个人像一张被慢慢摊开的信纸，每一道褶都记得。"
+    },
+    {
+      "id": "c05",
+      "category": "poetic",
+      "prerequisites": { "originalPartsMin": 5 },
+      "text": "一步一步都踩在了自己画的小石桥上。"
+    },
+
+    {
+      "id": "c06",
+      "category": "absurd",
+      "prerequisites": { "paintedOnMin": 5 },
+      "text": "现在的样子像一份被三个人同时改过的菜单，谁也记不清一开始点了什么。"
+    },
+    {
+      "id": "c07",
+      "category": "absurd",
+      "prerequisites": { "paintedOnMin": 5 },
+      "text": "表面上写满了别人的名字，像一本借来借去的笔记本。"
+    },
+    {
+      "id": "c08",
+      "category": "absurd",
+      "prerequisites": { "paintedOnMin": 4 },
+      "text": "上面的痕迹太多了，风吹过的时候还能听到之前每个人走过去的声音。"
+    },
+    {
+      "id": "c09",
+      "category": "absurd",
+      "prerequisites": { "paintedOnMin": 4 },
+      "text": "像一面被各种便利贴贴满的冰箱门，每一张都是一个顺路留下的故事。"
+    },
+    {
+      "id": "c10",
+      "category": "absurd",
+      "prerequisites": { "paintedOnMin": 6 },
+      "text": "看起来像一张被集体签到的饭卡，卡面已经看不出来本来的颜色。"
+    },
+
+    {
+      "id": "c11",
+      "category": "dangerous_warm",
+      "prerequisites": { "dominantColor": "red" },
+      "text": "身上带着一点点灼热，像刚刚拆开的辣椒酱包。"
+    },
+    {
+      "id": "c12",
+      "category": "dangerous_warm",
+      "prerequisites": { "dominantColor": "red" },
+      "text": "整个人像一枚被阳光晒熟了的小西红柿。"
+    },
+    {
+      "id": "c13",
+      "category": "dangerous_warm",
+      "prerequisites": { "dominantColor": "red" },
+      "text": "踩在落日里走路，连影子都是温的。"
+    },
+
+    {
+      "id": "c14",
+      "category": "cool_blue",
+      "prerequisites": { "dominantColor": "blue" },
+      "text": "像一颗刚被清晨河水冲过的玻璃珠。"
+    },
+    {
+      "id": "c15",
+      "category": "cool_blue",
+      "prerequisites": { "dominantColor": "blue" },
+      "text": "身上贴着一小片薄荷味的云。"
+    },
+    {
+      "id": "c16",
+      "category": "cool_blue",
+      "prerequisites": { "dominantColor": "blue" },
+      "text": "像一只躲在冰柜最深处的小企鹅，神色镇定。"
+    },
+
+    {
+      "id": "c17",
+      "category": "gentle_green",
+      "prerequisites": { "dominantColor": "green" },
+      "text": "像一整块长满苔藓的老石头，静悄悄地发光。"
+    },
+    {
+      "id": "c18",
+      "category": "gentle_green",
+      "prerequisites": { "dominantColor": "green" },
+      "text": "身上有一股刚修剪过的草坪味。"
+    },
+    {
+      "id": "c19",
+      "category": "gentle_green",
+      "prerequisites": { "dominantColor": "green" },
+      "text": "像一颗放在窗台上、自己先发芽了的豌豆。"
+    },
+
+    {
+      "id": "c20",
+      "category": "warm_yellow",
+      "prerequisites": { "dominantColor": "yellow" },
+      "text": "像一颗打翻在桌上的太阳。"
+    },
+    {
+      "id": "c21",
+      "category": "warm_yellow",
+      "prerequisites": { "dominantColor": "yellow" },
+      "text": "整个人像一块被正午温过的吐司边。"
+    },
+    {
+      "id": "c22",
+      "category": "warm_yellow",
+      "prerequisites": { "dominantColor": "yellow" },
+      "text": "身上带着小蜂蜜罐碰撞的叮当声。"
+    },
+
+    {
+      "id": "c23",
+      "category": "warm_pink",
+      "prerequisites": { "dominantColor": "pink" },
+      "text": "像一朵正在展开的纸樱花。"
+    },
+    {
+      "id": "c24",
+      "category": "warm_pink",
+      "prerequisites": { "dominantColor": "pink" },
+      "text": "整个人像一颗被轻轻捏了一下的棉花糖。"
+    },
+    {
+      "id": "c25",
+      "category": "warm_pink",
+      "prerequisites": { "dominantColor": "pink" },
+      "text": "脸上像蘸了一点草莓牛奶的杯沿。"
+    },
+
+    {
+      "id": "c26",
+      "category": "surreal",
+      "prerequisites": { "paintedOnMin": 8 },
+      "text": "现在已经不像任何具体的东西了，更像是一场梦刚醒时眼前的第一帧画面。"
+    },
+    {
+      "id": "c27",
+      "category": "surreal",
+      "prerequisites": { "dominantColor": "mixed" },
+      "text": "像一张被小朋友涂完之后又贴到冰箱上的不明飞行物。"
+    },
+
+    {
+      "id": "c28",
+      "category": "triumph",
+      "prerequisites": { "strokesOnOthersMin": 5 },
+      "text": "走过的地方都留下了一点点自己的颜色，像一支走神的画笔。"
+    },
+    {
+      "id": "c29",
+      "category": "triumph",
+      "prerequisites": { "strokesOnOthersMin": 4 },
+      "text": "像一只刚给整个房间点完名的小章子。"
+    },
+
+    {
+      "id": "c30",
+      "category": "minimalist",
+      "prerequisites": { "originalPartsMax": 2 },
+      "text": "非常安静，像一笔没写完的字，就这样挂在那儿也很好看。"
+    },
+
+    { "id": "c31", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：poetic 系（originalPartsMin≥6），建议想一条关于「慢」的意象" },
+    { "id": "c32", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：poetic 系（originalPartsMin≥6），围绕某种「器物内部的安静」" },
+    { "id": "c33", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：absurd 系（paintedOnMin≥5），想一个「被多人集体经手」的日常物件" },
+    { "id": "c34", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：absurd 系（paintedOnMin≥6），走「街道告示牌/电线杆传单」路线" },
+    { "id": "c35", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：dangerous_warm（dominantColor=red）加 1 条，想「火焰之外的红」，比如番茄酱/中秋红包/口红印" },
+    { "id": "c36", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：cool_blue（dominantColor=blue）加 1 条，偏夜晚/深海" },
+    { "id": "c37", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：gentle_green（dominantColor=green）加 1 条，偏苔藓/新茶/未成熟果实" },
+    { "id": "c38", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：warm_yellow（dominantColor=yellow）加 1 条，偏纸张/老灯泡/信封" },
+    { "id": "c39", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：warm_pink（dominantColor=pink）加 1 条，偏蜜桃/晚霞最后一层" },
+    { "id": "c40", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：紫色桶（dominantColor=purple）3 条全靠你了，我没起，建议方向：葡萄/茄子/薰衣草/薯片袋" },
+    { "id": "c41", "category": null, "prerequisites": { "dominantColor": "purple" }, "text": "", "_todo": "同 c40，紫色第 2 条" },
+    { "id": "c42", "category": null, "prerequisites": { "dominantColor": "purple" }, "text": "", "_todo": "同 c40，紫色第 3 条" },
+    { "id": "c43", "category": null, "prerequisites": { "dominantColor": "orange" }, "text": "", "_todo": "由策划补：橙色桶（dominantColor=orange），方向：橘皮/糖葫芦/焦糖/早餐的 toast" },
+    { "id": "c44", "category": null, "prerequisites": { "dominantColor": "orange" }, "text": "", "_todo": "同 c43，橙色第 2 条" },
+    { "id": "c45", "category": null, "prerequisites": { "strokesOnOthersMin": 6 }, "text": "", "_todo": "由策划补：triumph 系更强一点，「非常爱多管闲事」的意象" },
+    { "id": "c46", "category": null, "prerequisites": { "strokesOnOthersMax": 0, "paintedOnMax": 0 }, "text": "", "_todo": "由策划补：整局没涂别人也没被涂，「路过者」意象，比如一位在公园里看报纸的老先生" },
+    { "id": "c47", "category": null, "prerequisites": { "originalPartsMin": 7 }, "text": "", "_todo": "由策划补：极致原创度（全保住了），走「自成一体的小宇宙」意象" },
+    { "id": "c48", "category": null, "prerequisites": { "paintedOnMin": 10 }, "text": "", "_todo": "由策划补：被涂爆了（10+），走「被大家都想摸一下的门把手」意象" },
+    { "id": "c49", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：通用兜底第 1 条，无触发条件；匹配不到任何更特定的条目时才用" },
+    { "id": "c50", "category": null, "prerequisites": {}, "text": "", "_todo": "由策划补：通用兜底第 2 条，和 c49 要明显不同的语气" }
+  ]
+}
