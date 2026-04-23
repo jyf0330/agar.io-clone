@@ -8,23 +8,18 @@ var formatConnectionStatus = require('./connection-status');
 var formatRelationshipStatus = require('./relationship-status');
 var formatBodyStatus = require('./body-status');
 var playerCardStorage = require('./player-card-storage');
-var playerCardDraftStore = require('./player-card-draft-store');
 var formatPlayerCardPreview = require('./player-card-preview');
 var createPlayerCardEditor = require('./player-card-editor');
+var createAvatarDraftController = require('./avatar-draft-controller');
+var createSocketController = require('./socket-controller');
 var i18n = require('./i18n');
-var avatarDraftConfig = require('./avatar-draft-config');
-var avatarHistoryStore = require('./avatar-history-store');
-var avatarDraftCandidates = require('./avatar-draft-candidates');
-var avatarDraftPreview = require('./avatar-draft-preview');
-var playerCardLayers = require('./player-card-layers');
-var hydratePlayerState = require('./player-hydration');
 var socketEmit = require('./socket-emit');
 
 var playerNameInput = document.getElementById('playerNameInput');
 var socket;
 var playerCardEditor;
-var activeDraftSession = null;
-var draftTimerHandle = null;
+var avatarDraftController;
+var socketController;
 var hideStartMenuOnLoad = true;
 
 var debug = function (args) {
@@ -52,22 +47,14 @@ function enterGame(type) {
 
     document.getElementById('startMenuWrapper').style.maxHeight = '0px';
     document.getElementById('gameAreaWrapper').style.opacity = 1;
-    if (!socket || socket.disconnected) {
-        socket = io({ query: "type=" + type });
-        setupSocket(socket);
-    }
+    socket = socketController.connect(type);
     if (!global.animLoopHandle)
         animloop();
-    socket.emit('respawn');
-    window.chat.socket = socket;
-    window.chat.registerFunctions();
-    window.canvas.socket = socket;
-    global.socket = socket;
 }
 
 function startGame(type) {
-    if (type === 'player' && avatarDraftConfig.enableAvatarDraftFeature) {
-        beginAvatarDraftFlow(type);
+    if (avatarDraftController.shouldStartDraft(type)) {
+        avatarDraftController.beginDraftFlow(type);
         return;
     }
 
@@ -138,13 +125,73 @@ window.onload = function () {
         onSave: function (payload) {
             global.playerCard = payload;
             renderPlayerCardPreviews();
-            if (activeDraftSession) {
-                completeAvatarDraft(payload);
+            if (avatarDraftController) {
+                avatarDraftController.handlePlayerCardSaved(payload);
             }
         }
     });
 
-    bindPlayerCardDraftControls();
+    avatarDraftController = createAvatarDraftController({
+        document: document,
+        window: window,
+        i18n: i18n,
+        global: global,
+        playerCardEditor: playerCardEditor,
+        playerCardStorage: playerCardStorage,
+        renderPlayerCardPreviews: renderPlayerCardPreviews,
+        applyTranslations: applyTranslations,
+        enterGame: enterGame
+    });
+    avatarDraftController.bindControls();
+
+    socketController = createSocketController({
+        io: io,
+        document: document,
+        window: window,
+        global: global,
+        render: render,
+        i18n: i18n,
+        graph: graph,
+        canvasElement: c,
+        debug: debug,
+        getChat: function () {
+            return window.chat;
+        },
+        getPlayer: function () {
+            return player;
+        },
+        getCanvasTarget: function () {
+            return window.canvas.target;
+        },
+        getPlayerCardPreviewDataUrl: function () {
+            return global.playerCard ? global.playerCard.previewDataUrl : null;
+        },
+        assignSocket: function (nextSocket) {
+            socket = nextSocket;
+            window.chat.socket = nextSocket;
+            window.canvas.socket = nextSocket;
+            global.socket = nextSocket;
+            if (nextSocket) {
+                window.chat.registerFunctions();
+            }
+        },
+        renderPlayerCardPreviews: renderPlayerCardPreviews,
+        renderStatusPanel: renderStatusPanel,
+        resize: resize,
+        setLeaderboard: function (nextLeaderboard) {
+            leaderboard = nextLeaderboard;
+        },
+        setPlayer: function (nextPlayer) {
+            player = nextPlayer;
+            global.player = nextPlayer;
+        },
+        setWorldState: function (nextWorldState) {
+            users = nextWorldState.users;
+            foods = nextWorldState.foods;
+            fireFood = nextWorldState.fireFood;
+            viruses = nextWorldState.viruses;
+        }
+    });
 
     btnS.onclick = function () {
         enterGame('spectator');
@@ -162,11 +209,7 @@ window.onload = function () {
     };
 
     paintCardButton.onclick = function () {
-        deactivateDraftMode();
-        resetPlayerCardPanelToManualMode();
-        playerCardEditor.open().then(function () {
-            renderPlayerCardDrafts();
-        });
+        avatarDraftController.openManualEditor();
     };
 
     languageToggleButton.onclick = function () {
@@ -174,11 +217,7 @@ window.onload = function () {
         applyTranslations();
         renderPlayerCardPreviews();
         renderStatusPanel();
-        if (activeDraftSession) {
-            renderDraftCandidates();
-            updateDraftButtons();
-            updateDraftTimer();
-        }
+        avatarDraftController.handleLocaleChanged();
     };
 
     var settingsMenu = document.getElementById('settingsButton');
@@ -318,10 +357,8 @@ function applyTranslations() {
     document.getElementById('undoCardButton').textContent = i18n.t('editor.undo');
     document.getElementById('redoCardButton').textContent = i18n.t('editor.redo');
     document.getElementById('clearCardButton').textContent = i18n.t('editor.clear');
-    document.getElementById('saveCardButton').textContent = activeDraftSession ? i18n.t('draft.confirm') : i18n.t('editor.save');
     document.getElementById('exportPngButton').textContent = i18n.t('editor.exportPngButton');
     document.getElementById('exportJsonButton').textContent = i18n.t('editor.exportJsonButton');
-    document.getElementById('closeCardPanelButton').textContent = activeDraftSession ? i18n.t('draft.cancel') : i18n.t('editor.close');
     document.getElementById('zoomOutCardButton').textContent = i18n.t('editor.zoomOut');
     document.getElementById('zoomInCardButton').textContent = i18n.t('editor.zoomIn');
     document.getElementById('toggleAdvancedLayersButton').textContent = i18n.t('editor.advancedLayers');
@@ -330,286 +367,9 @@ function applyTranslations() {
     document.getElementById('saveDraftImageButton').textContent = i18n.t('editor.saveDraft');
     document.getElementById('toggleDraftHistoryButton').textContent = i18n.t('editor.draftHistory');
     document.getElementById('playerCardDraftEmpty').textContent = i18n.t('editor.noDrafts');
-}
-
-function getDraftPanelElements() {
-    return {
-        panel: document.getElementById('avatarDraftPanel'),
-        timer: document.getElementById('avatarDraftTimer'),
-        hint: document.getElementById('avatarDraftHint'),
-        candidates: document.getElementById('avatarDraftCandidates'),
-        rerollButton: document.getElementById('avatarDraftRerollButton'),
-        skipButton: document.getElementById('avatarDraftSkipButton'),
-        saveButton: document.getElementById('saveCardButton'),
-        closeButton: document.getElementById('closeCardPanelButton')
-    };
-}
-
-function resetPlayerCardPanelToManualMode() {
-    var draftUi = getDraftPanelElements();
-    draftUi.panel.classList.remove('active');
-    draftUi.timer.textContent = '';
-    draftUi.hint.textContent = '';
-    draftUi.candidates.innerHTML = '';
-    document.getElementById('playerCardDraftHistory').classList.remove('open');
-    document.getElementById('playerCardDraftManager').classList.remove('hidden');
-    applyTranslations();
-}
-
-function createDraftTimestampLabel(isoString) {
-    var date = new Date(isoString);
-    var month = String(date.getMonth() + 1).padStart(2, '0');
-    var day = String(date.getDate()).padStart(2, '0');
-    var hour = String(date.getHours()).padStart(2, '0');
-    var minute = String(date.getMinutes()).padStart(2, '0');
-    return month + '-' + day + ' ' + hour + ':' + minute;
-}
-
-function renderPlayerCardDrafts() {
-    var drafts = playerCardDraftStore.loadDrafts();
-    var listEl = document.getElementById('playerCardDraftList');
-    var emptyEl = document.getElementById('playerCardDraftEmpty');
-
-    listEl.innerHTML = drafts.map(function (draft) {
-        return [
-            '<button type="button" class="player-card-draft-item" data-draft-id="' + draft.id + '">',
-            '<img class="player-card-draft-item-preview" src="' + draft.previewDataUrl + '" alt="draft preview" />',
-            '<span class="player-card-draft-item-time">' + createDraftTimestampLabel(draft.updatedAt) + '</span>',
-            '</button>'
-        ].join('');
-    }).join('');
-
-    emptyEl.style.display = drafts.length ? 'none' : 'block';
-
-    Array.prototype.forEach.call(listEl.querySelectorAll('[data-draft-id]'), function (button) {
-        button.addEventListener('click', function () {
-            var draft = drafts.find(function (entry) {
-                return entry.id === button.getAttribute('data-draft-id');
-            });
-            if (!draft) {
-                return;
-            }
-            playerCardEditor.loadLayerPayload(draft.layers, draft.activeLayerId, draft.contentScale).then(function () {
-                playerCardEditor.setMessage(i18n.t('editor.draftLoaded'));
-            });
-        });
-    });
-}
-
-function saveCurrentPlayerCardAsDraft() {
-    var payload = playerCardEditor.exportPayload();
-    if (!payload || !playerCardLayers.hasAnyContent(payload.layers)) {
-        playerCardEditor.setMessage(i18n.t('editor.emptyDraft'));
-        return null;
-    }
-
-    var draft = playerCardDraftStore.saveDraft(payload);
-    renderPlayerCardDrafts();
-    playerCardEditor.setMessage(i18n.t('editor.draftSaved'));
-    return draft;
-}
-
-function bindPlayerCardDraftControls() {
-    document.getElementById('newDraftImageButton').addEventListener('click', function () {
-        var hadContent = playerCardEditor.hasContent();
-        if (hadContent) {
-            saveCurrentPlayerCardAsDraft();
-        }
-        playerCardEditor.loadEmptyState().then(function () {
-            playerCardEditor.setMessage(i18n.t(hadContent ? 'editor.newImageFromDraft' : 'editor.newImageBlank'));
-        });
-    });
-
-    document.getElementById('saveDraftImageButton').addEventListener('click', function () {
-        saveCurrentPlayerCardAsDraft();
-    });
-
-    document.getElementById('toggleDraftHistoryButton').addEventListener('click', function () {
-        var historyEl = document.getElementById('playerCardDraftHistory');
-        historyEl.classList.toggle('open');
-        if (historyEl.classList.contains('open')) {
-            renderPlayerCardDrafts();
-        }
-    });
-}
-
-function clearDraftTimer() {
-    if (draftTimerHandle) {
-        window.clearInterval(draftTimerHandle);
-        draftTimerHandle = null;
-    }
-}
-
-function deactivateDraftMode() {
-    activeDraftSession = null;
-    clearDraftTimer();
-    resetPlayerCardPanelToManualMode();
-}
-
-function formatMissingPartLabel(partType) {
-    return i18n.t('parts.' + partType.toUpperCase());
-}
-
-function renderDraftCandidates() {
-    var draftUi = getDraftPanelElements();
-    draftUi.candidates.innerHTML = activeDraftSession.candidates.map(function (candidate) {
-        var isActive = activeDraftSession.selectedCandidateId === candidate.id ? ' active' : '';
-        return [
-            '<button type="button" class="avatar-draft-candidate' + isActive + '" data-candidate-id="' + candidate.id + '">',
-            '<img class="avatar-draft-candidate-preview" src="' + (avatarDraftPreview.createDraftPreviewDataUrl(candidate) || '') + '" alt="' + candidate.previewMeta.title + '" />',
-            '<span class="avatar-draft-candidate-title">' + candidate.previewMeta.title + '</span>',
-            '<span class="avatar-draft-candidate-subtitle">' + (candidate.previewMeta.subtitleKey ? i18n.t(candidate.previewMeta.subtitleKey) : candidate.previewMeta.subtitle) + '</span>',
-            '<span class="avatar-draft-candidate-missing">' + i18n.t('draft.missing', { part: formatMissingPartLabel(candidate.missingPartType) }) + '</span>',
-            '</button>'
-        ].join('');
-    }).join('');
-
-    Array.prototype.forEach.call(draftUi.candidates.querySelectorAll('[data-candidate-id]'), function (button) {
-        button.addEventListener('click', function () {
-            selectDraftCandidate(button.getAttribute('data-candidate-id'));
-        });
-    });
-}
-
-function selectDraftCandidate(candidateId) {
-    var candidate = activeDraftSession.candidates.find(function (entry) {
-        return entry.id === candidateId;
-    });
-    if (!candidate) {
-        return;
-    }
-
-    activeDraftSession.selectedCandidateId = candidateId;
-    renderDraftCandidates();
-    playerCardEditor.loadCanvasJson(candidate.baseShapeData);
-    getDraftPanelElements().hint.textContent = i18n.t('draft.fillHint', { part: formatMissingPartLabel(candidate.missingPartType) });
-}
-
-function updateDraftTimer() {
-    if (!activeDraftSession) {
-        return;
-    }
-
-    var remainingMs = Math.max(0, activeDraftSession.deadlineAt - Date.now());
-    var remainingSeconds = Math.ceil(remainingMs / 1000);
-    getDraftPanelElements().timer.textContent = i18n.t('draft.timeLeft', { seconds: remainingSeconds });
-
-    if (remainingMs <= 0) {
-        clearDraftTimer();
-        playerCardEditor.saveCurrent();
-    }
-}
-
-function buildDraftSession(playerType) {
-    var historyEntries = avatarHistoryStore.loadHistory();
-    var candidates = avatarDraftCandidates.buildDraftCandidates({
-        config: avatarDraftConfig,
-        historyEntries: historyEntries
-    });
-
-    return {
-        playerType: playerType,
-        candidates: candidates,
-        selectedCandidateId: candidates[0] ? candidates[0].id : null,
-        remainingRerolls: avatarDraftConfig.allowRedrawCount,
-        deadlineAt: Date.now() + (avatarDraftConfig.drawTimeLimitSeconds * 1000)
-    };
-}
-
-function rerollDraftCandidates() {
-    if (!activeDraftSession || activeDraftSession.remainingRerolls <= 0) {
-        return;
-    }
-
-    activeDraftSession.remainingRerolls -= 1;
-    activeDraftSession.candidates = avatarDraftCandidates.buildDraftCandidates({
-        config: avatarDraftConfig,
-        historyEntries: avatarHistoryStore.loadHistory()
-    });
-    activeDraftSession.selectedCandidateId = activeDraftSession.candidates[0] ? activeDraftSession.candidates[0].id : null;
-    activeDraftSession.deadlineAt = Date.now() + (avatarDraftConfig.drawTimeLimitSeconds * 1000);
-    renderDraftCandidates();
-    selectDraftCandidate(activeDraftSession.selectedCandidateId);
-    updateDraftButtons();
-}
-
-function updateDraftButtons() {
-    var draftUi = getDraftPanelElements();
-    draftUi.rerollButton.style.display = activeDraftSession ? 'inline-block' : 'none';
-    draftUi.skipButton.style.display = activeDraftSession && avatarDraftConfig.allowSkipForDebug ? 'inline-block' : 'none';
-    draftUi.rerollButton.disabled = !activeDraftSession || activeDraftSession.remainingRerolls <= 0;
-    draftUi.rerollButton.textContent = i18n.t('draft.reroll', { count: activeDraftSession ? activeDraftSession.remainingRerolls : 0 });
-}
-
-function beginAvatarDraftFlow(playerType) {
-    activeDraftSession = buildDraftSession(playerType);
-
-    var draftUi = getDraftPanelElements();
-    draftUi.panel.classList.add('active');
-    document.getElementById('playerCardDraftManager').classList.add('hidden');
-    draftUi.saveButton.textContent = i18n.t('draft.confirm');
-    draftUi.closeButton.textContent = i18n.t('draft.cancel');
-
-    updateDraftButtons();
-    renderDraftCandidates();
-
-    playerCardEditor.open().then(function () {
-        selectDraftCandidate(activeDraftSession.selectedCandidateId);
-    });
-
-    draftUi.rerollButton.onclick = rerollDraftCandidates;
-    draftUi.skipButton.onclick = function () {
-        deactivateDraftMode();
-        playerCardEditor.close();
-        enterGame(playerType);
-    };
-    draftUi.closeButton.onclick = function () {
-        deactivateDraftMode();
-        playerCardEditor.close();
-    };
-
-    clearDraftTimer();
-    updateDraftTimer();
-    draftTimerHandle = window.setInterval(updateDraftTimer, 250);
-}
-
-function completeAvatarDraft(payload) {
-    if (!activeDraftSession) {
-        return;
-    }
-
-    var selectedCandidate = activeDraftSession.candidates.find(function (candidate) {
-        return candidate.id === activeDraftSession.selectedCandidateId;
-    });
-    var finalPayload = Object.assign({}, payload, {
-        templateId: selectedCandidate.templateId,
-        missingPartType: selectedCandidate.missingPartType,
-        sourceType: selectedCandidate.sourceType
-    });
-
-    playerCardStorage.savePlayerCard(finalPayload);
-    avatarHistoryStore.addHistoryEntry(avatarHistoryStore.createHistoryEntry(finalPayload));
-    global.playerCard = finalPayload;
-    renderPlayerCardPreviews();
-
-    var playerType = activeDraftSession.playerType;
-    deactivateDraftMode();
-    playerCardEditor.close();
-    enterGame(playerType);
-}
-
-function findConnectedTargetCardPreview(userData) {
-    if (!player.connectionTargetId || !userData) {
-        return null;
-    }
-
-    for (var i = 0; i < userData.length; i++) {
-        if (userData[i].id === player.connectionTargetId) {
-            return userData[i].playerCardPreviewDataUrl || null;
-        }
-    }
-
-    return null;
+    var draftModeActive = avatarDraftController && avatarDraftController.isActive();
+    document.getElementById('saveCardButton').textContent = draftModeActive ? i18n.t('draft.confirm') : i18n.t('editor.save');
+    document.getElementById('closeCardPanelButton').textContent = draftModeActive ? i18n.t('draft.cancel') : i18n.t('editor.close');
 }
 
 $("#feed").click(function () {
@@ -623,138 +383,6 @@ $("#split").click(function () {
         window.canvas.reenviar = false;
     }
 });
-
-function handleDisconnect() {
-    global.disconnected = true;
-    global.gameStart = false;
-    window.chat.socket = null;
-    window.canvas.socket = null;
-    global.socket = null;
-    socket = null;
-    if (!global.kicked) { // We have a more specific error message 
-        render.drawErrorMessage(i18n.t('system.disconnected'), graph, global.screen);
-    }
-}
-
-function handleConnectError(error) {
-    debug('Connect error: ' + (error && error.message ? error.message : error));
-    if (socket && socket.active === false) {
-        handleDisconnect();
-    }
-}
-
-// socket stuff.
-function setupSocket(socket) {
-    // Handle ping.
-    socket.on('pongcheck', function () {
-        var latency = Date.now() - global.startPingTime;
-        debug('Latency: ' + latency + 'ms');
-        window.chat.addSystemLine(i18n.t('system.ping', { latency: latency }));
-    });
-
-    // Handle error.
-    socket.on('connect_error', handleConnectError);
-    socket.on('disconnect', handleDisconnect);
-
-    // Handle connection.
-    socket.on('welcome', function (playerSettings, gameSizes) {
-        player = playerSettings;
-        player.name = global.playerName;
-        player.screenWidth = global.screen.width;
-        player.screenHeight = global.screen.height;
-        player.target = window.canvas.target;
-        player.playerCardPreviewDataUrl = global.playerCard ? global.playerCard.previewDataUrl : null;
-        global.player = player;
-        window.chat.player = player;
-        socket.emit('gotit', player);
-        global.gameStart = true;
-        window.chat.addSystemLine(i18n.t('system.connected'));
-        window.chat.addSystemLine(i18n.t('system.help'));
-        if (global.mobile) {
-            document.getElementById('gameAreaWrapper').removeChild(document.getElementById('chatbox'));
-        }
-        c.focus();
-        global.game.width = gameSizes.width;
-        global.game.height = gameSizes.height;
-        resize();
-    });
-
-    socket.on('playerDied', (data) => {
-        const player = isUnnamedCell(data.playerEatenName) ? i18n.t('hud.unnamedCell') : data.playerEatenName;
-        //const killer = isUnnamedCell(data.playerWhoAtePlayerName) ? 'An unnamed cell' : data.playerWhoAtePlayerName;
-
-        //window.chat.addSystemLine('{GAME} - <b>' + (player) + '</b> was eaten by <b>' + (killer) + '</b>');
-        window.chat.addSystemLine(i18n.t('system.playerEaten', { name: player }));
-    });
-
-    socket.on('playerDisconnect', (data) => {
-        window.chat.addSystemLine(i18n.t('system.playerDisconnected', {
-            name: isUnnamedCell(data.name) ? i18n.t('hud.unnamedCell') : data.name
-        }));
-    });
-
-    socket.on('playerJoin', (data) => {
-        window.chat.addSystemLine(i18n.t('system.playerJoined', {
-            name: isUnnamedCell(data.name) ? i18n.t('hud.unnamedCell') : data.name
-        }));
-    });
-
-    socket.on('leaderboard', (data) => {
-        leaderboard = data.leaderboard;
-        renderStatusPanel();
-    });
-
-    socket.on('serverMSG', function (data) {
-        window.chat.addSystemLine(data);
-    });
-
-    // Chat.
-    socket.on('serverSendPlayerChat', function (data) {
-        window.chat.addChatLine(data.sender, data.message, false);
-    });
-
-    // Handle movement.
-    socket.on('serverTellPlayerMove', function (playerData, userData, foodsList, massList, virusList) {
-        if (global.playerType == 'player') {
-            hydratePlayerState(player, playerData);
-        }
-        users = userData;
-        global.targetPlayerCardPreviewDataUrl = findConnectedTargetCardPreview(userData);
-        foods = foodsList;
-        viruses = virusList;
-        fireFood = massList;
-        renderStatusPanel();
-        renderPlayerCardPreviews();
-    });
-
-    // Death.
-    socket.on('RIP', function () {
-        global.gameStart = false;
-        render.drawErrorMessage(i18n.t('system.youDied'), graph, global.screen);
-        window.setTimeout(() => {
-            document.getElementById('gameAreaWrapper').style.opacity = 0;
-            document.getElementById('startMenuWrapper').style.maxHeight = '1000px';
-            if (global.animLoopHandle) {
-                window.cancelAnimationFrame(global.animLoopHandle);
-                global.animLoopHandle = undefined;
-            }
-        }, 2500);
-    });
-
-    socket.on('kick', function (reason) {
-        global.gameStart = false;
-        global.kicked = true;
-        if (reason !== '') {
-            render.drawErrorMessage(i18n.t('system.kickedReason', { reason: reason }), graph, global.screen);
-        }
-        else {
-            render.drawErrorMessage(i18n.t('system.kicked'), graph, global.screen);
-        }
-        socket.close();
-    });
-}
-
-const isUnnamedCell = (name) => name.length < 1;
 
 const getPosition = (entity, player, screen) => {
     return {

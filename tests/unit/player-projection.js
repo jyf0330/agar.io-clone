@@ -7,7 +7,8 @@ const mapUtils = require('../../apps/server/src/map/map');
 const {
   createSpectatorSyncData,
   projectPlayerForSync,
-  projectPlayersForSync
+  projectPlayersForSync,
+  projectVisibleWorldForSync
 } = require('../../apps/server/src/player-projection');
 
 describe('player-projection.js', () => {
@@ -32,7 +33,7 @@ describe('player-projection.js', () => {
     expect(projected.cells[0].toCircle).to.equal(undefined);
   });
 
-  it('should let the map reuse the same projection for spectator payloads', () => {
+  it('should project visible world state without coupling map visibility to DTO logic', () => {
     const map = new mapUtils.Map(config);
     const player = new playerUtils.Player('player-1');
     player.init({ x: 250, y: 250 }, config.defaultPlayerMass);
@@ -43,11 +44,15 @@ describe('player-projection.js', () => {
     });
     map.players.pushNew(player);
 
-    const projectedPlayers = map.getProjectedPlayers();
+    let projectedWorld;
+    map.enumerateVisibleWorld((visibleWorld) => {
+      projectedWorld = projectVisibleWorldForSync(visibleWorld);
+    });
+
     const spectatorData = createSpectatorSyncData('spectator-1', config);
 
-    expect(projectPlayersForSync(map.players.data)).to.deep.equal(projectedPlayers);
-    expect(projectedPlayers[0].id).to.equal('player-1');
+    expect(projectPlayersForSync(map.players.data)).to.deep.equal(projectedWorld.visiblePlayers);
+    expect(projectedWorld.playerData.id).to.equal('player-1');
     expect(spectatorData.id).to.equal('spectator-1');
     expect(spectatorData.bodyPartCount).to.equal(0);
   });

@@ -6,7 +6,6 @@ const path = require('path');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const SAT = require('sat');
 const loggingRepositry = require('./repositories/logging-repository');
 const chatRepository = require('./repositories/chat-repository');
 const config = require(path.resolve(process.cwd(), 'config'));
@@ -15,21 +14,22 @@ const mapUtils = require('./map/map');
 const {
   getPosition
 } = require("./lib/entityUtils");
-const body = require('./body');
 const createConnectionService = require('./connection-service');
-const {
-  createSpectatorSyncData
-} = require('./player-projection');
+const createGameLoopService = require('./game-loop-service');
 let map = new mapUtils.Map(config);
 const connectionService = createConnectionService({
   players: map.players
 });
+const gameLoopService = createGameLoopService({
+  config,
+  map,
+  io,
+  connectionService,
+  getSocket: id => sockets[id],
+  getSpectatorIds: () => spectators.slice()
+});
 let sockets = {};
 let spectators = [];
-const INIT_MASS_LOG = util.mathLog(config.defaultPlayerMass, config.slowBase);
-let leaderboard = [];
-let leaderboardChanged = false;
-const Vector = SAT.Vector;
 app.use(express.static(path.join(__dirname, '../client')));
 io.on('connection', function (socket) {
   let type = socket.handshake.query.type;
@@ -89,6 +89,7 @@ const addPlayer = socket => {
     console.log('[INFO] User ' + currentPlayer.name + ' has respawned');
   });
   socket.on('disconnect', () => {
+    delete sockets[socket.id];
     connectionService.clearTimer(currentPlayer.id);
     map.players.removePlayerByID(currentPlayer.id);
     console.log('[INFO] User ' + currentPlayer.name + ' has disconnected');
@@ -189,118 +190,18 @@ const addSpectator = socket => {
       name: ''
     });
   });
+  socket.on('disconnect', function () {
+    delete sockets[socket.id];
+    spectators = spectators.filter(spectatorId => spectatorId !== socket.id);
+  });
   socket.emit("welcome", {}, {
     width: config.gameWidth,
     height: config.gameHeight
   });
 };
-const tickPlayer = currentPlayer => {
-  if (currentPlayer.lastHeartbeat < new Date().getTime() - config.maxHeartbeatInterval) {
-    sockets[currentPlayer.id].emit('kick', 'Last heartbeat received over ' + config.maxHeartbeatInterval + ' ago.');
-    sockets[currentPlayer.id].disconnect();
-  }
-  currentPlayer.move(config.slowBase, config.gameWidth, config.gameHeight, INIT_MASS_LOG);
-  const isEntityInsideCircle = (point, circle) => {
-    return SAT.pointInCircle(new Vector(point.x, point.y), circle);
-  };
-  const canEatMass = (cell, cellCircle, cellIndex, mass) => {
-    if (isEntityInsideCircle(mass, cellCircle)) {
-      if (mass.id === currentPlayer.id && mass.speed > 0 && cellIndex === mass.num) return false;
-      if (cell.mass > mass.mass * 1.1) return true;
-    }
-    return false;
-  };
-  const canEatVirus = (cell, cellCircle, virus) => {
-    return virus.mass < cell.mass && isEntityInsideCircle(virus, cellCircle);
-  };
-  const cellsToSplit = [];
-  for (let cellIndex = 0; cellIndex < currentPlayer.cells.length; cellIndex++) {
-    const currentCell = currentPlayer.cells[cellIndex];
-    const cellCircle = currentCell.toCircle();
-    const eatenFoodIndexes = util.getIndexes(map.food.data, food => isEntityInsideCircle(food, cellCircle));
-    const eatenMassIndexes = util.getIndexes(map.massFood.data, mass => canEatMass(currentCell, cellCircle, cellIndex, mass));
-    const eatenVirusIndexes = util.getIndexes(map.viruses.data, virus => canEatVirus(currentCell, cellCircle, virus));
-    if (eatenVirusIndexes.length > 0) {
-      cellsToSplit.push(cellIndex);
-      map.viruses.delete(eatenVirusIndexes);
-    }
-    let massGained = eatenMassIndexes.reduce((acc, index) => acc + map.massFood.data[index].mass, 0);
-    map.food.delete(eatenFoodIndexes);
-    map.massFood.remove(eatenMassIndexes);
-    massGained += eatenFoodIndexes.length * config.foodMass;
-    currentPlayer.changeCellMass(cellIndex, massGained);
-  }
-  currentPlayer.virusSplit(cellsToSplit, config.limitSplit, config.defaultPlayerMass);
-};
-const tickGame = () => {
-  map.players.data.forEach(tickPlayer);
-  map.massFood.move(config.gameWidth, config.gameHeight);
-  map.players.handleCollisions(function (gotEaten, eater) {
-    const cellGotEaten = map.players.getCell(gotEaten.playerIndex, gotEaten.cellIndex);
-    const eaterPlayer = map.players.data[eater.playerIndex];
-    const massGain = body.getPlayerDevourMassGain(cellGotEaten.mass, eaterPlayer);
-    eaterPlayer.changeCellMass(eater.cellIndex, massGain);
-    const playerDied = map.players.removeCell(gotEaten.playerIndex, gotEaten.cellIndex);
-    if (playerDied) {
-      body.stealRandomCorePart(map.players.data[gotEaten.playerIndex], eaterPlayer);
-      let playerGotEaten = map.players.data[gotEaten.playerIndex];
-      connectionService.clearTimer(playerGotEaten.id);
-      io.emit('playerDied', {
-        name: playerGotEaten.name
-      }); //TODO: on client it is `playerEatenName` instead of `name`
-      sockets[playerGotEaten.id].emit('RIP');
-      map.players.removePlayerByIndex(gotEaten.playerIndex);
-    }
-  });
-};
-const calculateLeaderboard = () => {
-  const topPlayers = map.players.getTopPlayers();
-  if (leaderboard.length !== topPlayers.length) {
-    leaderboard = topPlayers;
-    leaderboardChanged = true;
-  } else {
-    for (let i = 0; i < leaderboard.length; i++) {
-      if (leaderboard[i].id !== topPlayers[i].id) {
-        leaderboard = topPlayers;
-        leaderboardChanged = true;
-        break;
-      }
-    }
-  }
-};
-const gameloop = () => {
-  if (map.players.data.length > 0) {
-    calculateLeaderboard();
-    map.players.shrinkCells(config.massLossRate, config.defaultPlayerMass, config.minMassLoss);
-  }
-  map.balanceMass(config.foodMass, config.gameMass, config.maxFood, config.maxVirus);
-};
-const sendUpdates = () => {
-  spectators.forEach(updateSpectator);
-  map.enumerateWhatPlayersSee(function (playerData, visiblePlayers, visibleFood, visibleMass, visibleViruses) {
-    sockets[playerData.id].emit('serverTellPlayerMove', playerData, visiblePlayers, visibleFood, visibleMass, visibleViruses);
-    if (leaderboardChanged) {
-      sendLeaderboard(sockets[playerData.id]);
-    }
-  });
-  leaderboardChanged = false;
-};
-const sendLeaderboard = socket => {
-  socket.emit('leaderboard', {
-    players: map.players.data.length,
-    leaderboard
-  });
-};
-const updateSpectator = socketID => {
-  let playerData = createSpectatorSyncData(socketID, config);
-  sockets[socketID].emit('serverTellPlayerMove', playerData, map.getProjectedPlayers(), map.food.data, map.massFood.data, map.viruses.data);
-  if (leaderboardChanged) {
-    sendLeaderboard(sockets[socketID]);
-  }
-};
-setInterval(tickGame, 1000 / 60);
-setInterval(gameloop, 1000);
-setInterval(sendUpdates, 1000 / config.networkUpdateFactor);
+setInterval(gameLoopService.tickGame, 1000 / 60);
+setInterval(gameLoopService.gameloop, 1000);
+setInterval(gameLoopService.sendUpdates, 1000 / config.networkUpdateFactor);
 
 // Don't touch, IP configurations.
 var ipaddress = process.env.OPENSHIFT_NODEJS_IP || process.env.IP || config.host;

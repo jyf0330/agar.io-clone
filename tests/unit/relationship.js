@@ -8,6 +8,7 @@ const connection = require('../../apps/server/src/connection');
 const body = require('../../apps/server/src/body');
 const playerUtils = require('../../apps/server/src/map/player');
 const mapUtils = require('../../apps/server/src/map/map');
+const {projectVisibleWorldForSync} = require('../../apps/server/src/player-projection');
 
 describe('relationship.js', () => {
   describe('player defaults', () => {
@@ -103,8 +104,8 @@ describe('relationship.js', () => {
       map.players.pushNew(player);
 
       let result;
-      map.enumerateWhatPlayersSee((playerData) => {
-        result = playerData;
+      map.enumerateVisibleWorld((visibleWorld) => {
+        result = projectVisibleWorldForSync(visibleWorld).playerData;
       });
 
       expect(result.intimacy).to.equal(relationshipConfig.resonatingDelta.intimacy * 2);

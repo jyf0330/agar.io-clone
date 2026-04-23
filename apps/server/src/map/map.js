@@ -1,7 +1,6 @@
 "use strict";
 
 const {isVisibleEntity} = require("../lib/entityUtils");
-const {projectPlayerForSync, projectPlayersForSync} = require('../player-projection');
 
 exports.foodUtils = require('./food');
 exports.virusUtils = require('./virus');
@@ -37,27 +36,21 @@ exports.Map = class {
         }
     }
 
-    enumerateWhatPlayersSee(callback) {
-        for (let currentPlayer of this.players.data) {
-            var visibleFood = this.food.data.filter(entity => isVisibleEntity(entity, currentPlayer, false));
-            var visibleViruses = this.viruses.data.filter(entity => isVisibleEntity(entity, currentPlayer));
-            var visibleMass = this.massFood.data.filter(entity => isVisibleEntity(entity, currentPlayer));
-
-            var visiblePlayers = [];
-            for (let player of this.players.data) {
-                for (let cell of player.cells) {
-                    if (isVisibleEntity(cell, currentPlayer)) {
-                        visiblePlayers.push(projectPlayerForSync(player));
-                        break;
-                    }
-                }
-            }
-
-            callback(projectPlayerForSync(currentPlayer), visiblePlayers, visibleFood, visibleMass, visibleViruses);
-        }
+    getVisibleWorldForPlayer(currentPlayer) {
+        return {
+            player: currentPlayer,
+            visibleFood: this.food.data.filter(entity => isVisibleEntity(entity, currentPlayer, false)),
+            visibleViruses: this.viruses.data.filter(entity => isVisibleEntity(entity, currentPlayer)),
+            visibleMass: this.massFood.data.filter(entity => isVisibleEntity(entity, currentPlayer)),
+            visiblePlayers: this.players.data.filter((player) => {
+                return player.cells.some((cell) => isVisibleEntity(cell, currentPlayer));
+            })
+        };
     }
 
-    getProjectedPlayers() {
-        return projectPlayersForSync(this.players.data);
+    enumerateVisibleWorld(callback) {
+        for (let currentPlayer of this.players.data) {
+            callback(this.getVisibleWorldForPlayer(currentPlayer));
+        }
     }
 }

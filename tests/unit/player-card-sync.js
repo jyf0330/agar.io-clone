@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 const config = require('../../configs/game/config');
 const playerUtils = require('../../apps/server/src/map/player');
 const mapUtils = require('../../apps/server/src/map/map');
+const {projectVisibleWorldForSync} = require('../../apps/server/src/player-projection');
 
 describe('player-card-sync.js', () => {
   it('should expose saved player card previews in player sync payloads', () => {
@@ -19,8 +20,8 @@ describe('player-card-sync.js', () => {
     map.players.pushNew(player);
 
     let result;
-    map.enumerateWhatPlayersSee((playerData, visiblePlayers) => {
-      result = { playerData: playerData, visiblePlayers: visiblePlayers };
+    map.enumerateVisibleWorld((visibleWorld) => {
+      result = projectVisibleWorldForSync(visibleWorld);
     });
 
     expect(result.playerData.playerCardPreviewDataUrl).to.equal('data:image/png;base64,card');

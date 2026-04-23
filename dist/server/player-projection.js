@@ -38,6 +38,15 @@ function projectPlayerForSync(player) {
 function projectPlayersForSync(players) {
   return (players || []).map(projectPlayerForSync);
 }
+function projectVisibleWorldForSync(visibleWorld) {
+  return {
+    playerData: projectPlayerForSync(visibleWorld.player),
+    visiblePlayers: projectPlayersForSync(visibleWorld.visiblePlayers),
+    visibleFood: visibleWorld.visibleFood,
+    visibleMass: visibleWorld.visibleMass,
+    visibleViruses: visibleWorld.visibleViruses
+  };
+}
 function createSpectatorSyncData(socketID, config) {
   return {
     x: config.gameWidth / 2,
@@ -64,5 +73,6 @@ function createSpectatorSyncData(socketID, config) {
 module.exports = {
   projectPlayerForSync,
   projectPlayersForSync,
+  projectVisibleWorldForSync,
   createSpectatorSyncData
 };
