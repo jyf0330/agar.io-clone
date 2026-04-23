@@ -11,6 +11,11 @@ const chatRepository = require('./repositories/chat-repository');
 const config = require(path.resolve(process.cwd(), 'config'));
 const util = require('./lib/util');
 const mapUtils = require('./map/map');
+const NpcState = require('./npc/npc');
+const Orchestrator = require('./npc/orchestrator');
+const {
+  loadPersonalityCard
+} = require('./npc/personality-loader');
 const {
   getPosition
 } = require("./lib/entityUtils");
@@ -28,6 +33,14 @@ const gameLoopService = createGameLoopService({
   getSocket: id => sockets[id],
   getSpectatorIds: () => spectators.slice()
 });
+const orchestrator = new Orchestrator({
+  maxCallsPerSec: 5,
+  timeoutMs: 4000,
+  mapWidth: config.gameWidth,
+  mapHeight: config.gameHeight
+});
+let mochiNpc = null;
+let npcAnchoredToPlayer = false;
 let sockets = {};
 let spectators = [];
 app.use(express.static(path.join(__dirname, '../client')));
@@ -47,8 +60,68 @@ io.on('connection', function (socket) {
 });
 function generateSpawnpoint() {
   let radius = util.massToRadius(config.defaultPlayerMass);
-  return getPosition(config.newPlayerInitialPosition === 'farthest', radius, map.players.data);
+  const humanPlayers = map.players.data.filter(player => !player.isNpc);
+  if (!humanPlayers.length) {
+    return {
+      x: Math.round(config.gameWidth / 2),
+      y: Math.round(config.gameHeight / 2)
+    };
+  }
+  return getPosition(config.newPlayerInitialPosition === 'farthest', radius, humanPlayers);
 }
+function placeNpcNearPlayer(npc, currentPlayer) {
+  if (!npc || !currentPlayer || !npc.player || !npc.player.cells || !npc.player.cells.length) {
+    return;
+  }
+  const spawn = {
+    x: Math.min(config.gameWidth - 120, currentPlayer.x + 220),
+    y: Math.min(config.gameHeight - 120, currentPlayer.y + 140)
+  };
+  npc.player.cells.forEach(cell => {
+    cell.x = spawn.x;
+    cell.y = spawn.y;
+  });
+  npc.player.x = spawn.x;
+  npc.player.y = spawn.y;
+  npc.position = {
+    x: spawn.x,
+    y: spawn.y
+  };
+  npc.applyIntent({
+    type: 'move_to',
+    params: {
+      x: spawn.x + 80,
+      y: spawn.y + 30
+    },
+    reason: '靠近新玩家'
+  });
+  npc.move(0, config.gameWidth, config.gameHeight);
+}
+function bootstrapMochiNpc() {
+  const personality = loadPersonalityCard(path.resolve(process.cwd(), 'demo/npcs/personality-cards/mochi.yaml'));
+  const npc = new NpcState({
+    id: personality.id,
+    personality: personality,
+    spawn: {
+      x: Math.round(config.gameWidth / 2 + 180),
+      y: Math.round(config.gameHeight / 2 + 120)
+    },
+    defaultPlayerMass: config.defaultPlayerMass
+  });
+  npc.applyIntent({
+    type: 'move_to',
+    params: {
+      x: npc.player.x + 60,
+      y: npc.player.y + 20
+    },
+    reason: '初始巡游'
+  });
+  npc.move(0, config.gameWidth, config.gameHeight);
+  orchestrator.registerNpc(npc);
+  map.players.pushNew(npc.player);
+  return npc;
+}
+mochiNpc = bootstrapMochiNpc();
 const addPlayer = socket => {
   var currentPlayer = new mapUtils.playerUtils.Player(socket.id);
   socket.on('gotit', function (clientPlayerData) {
@@ -67,6 +140,10 @@ const addPlayer = socket => {
       clientPlayerData.name = sanitizedName;
       currentPlayer.clientProvidedData(clientPlayerData);
       map.players.pushNew(currentPlayer);
+      if (mochiNpc && !npcAnchoredToPlayer) {
+        placeNpcNearPlayer(mochiNpc, currentPlayer);
+        npcAnchoredToPlayer = true;
+      }
       io.emit('playerJoin', {
         name: currentPlayer.name
       });
@@ -90,6 +167,7 @@ const addPlayer = socket => {
   });
   socket.on('disconnect', () => {
     delete sockets[socket.id];
+    npcAnchoredToPlayer = false;
     connectionService.clearTimer(currentPlayer.id);
     map.players.removePlayerByID(currentPlayer.id);
     console.log('[INFO] User ' + currentPlayer.name + ' has disconnected');
@@ -201,6 +279,15 @@ const addSpectator = socket => {
 };
 setInterval(gameLoopService.tickGame, 1000 / 60);
 setInterval(gameLoopService.gameloop, 1000);
+setInterval(() => {
+  orchestrator.tick({
+    players: map.players.data,
+    mapWidth: config.gameWidth,
+    mapHeight: config.gameHeight
+  }, 1000).catch(error => {
+    console.error('[NPC] orchestrator tick failed', error);
+  });
+}, 1000);
 setInterval(gameLoopService.sendUpdates, 1000 / config.networkUpdateFactor);
 
 // Don't touch, IP configurations.

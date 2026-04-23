@@ -45,7 +45,7 @@ function createGameLoopService(options) {
   }
   function tickPlayer(currentPlayer) {
     const socket = getSocket(currentPlayer.id);
-    if (currentPlayer.lastHeartbeat < new Date().getTime() - config.maxHeartbeatInterval) {
+    if (!currentPlayer.isNpc && currentPlayer.lastHeartbeat < new Date().getTime() - config.maxHeartbeatInterval) {
       if (socket) {
         socket.emit('kick', 'Last heartbeat received over ' + config.maxHeartbeatInterval + ' ago.');
         socket.disconnect();
@@ -95,14 +95,20 @@ function createGameLoopService(options) {
     map.players.handleCollisions(function (gotEaten, eater) {
       const cellGotEaten = map.players.getCell(gotEaten.playerIndex, gotEaten.cellIndex);
       const eaterPlayer = map.players.data[eater.playerIndex];
+      const playerGotEaten = map.players.data[gotEaten.playerIndex];
+      if (!cellGotEaten || !eaterPlayer || !playerGotEaten) {
+        return;
+      }
+      if (playerGotEaten.isNpc || eaterPlayer.isNpc) {
+        return;
+      }
       const massGain = body.getPlayerDevourMassGain(cellGotEaten.mass, eaterPlayer);
       eaterPlayer.changeCellMass(eater.cellIndex, massGain);
       const playerDied = map.players.removeCell(gotEaten.playerIndex, gotEaten.cellIndex);
       if (!playerDied) {
         return;
       }
-      body.stealRandomCorePart(map.players.data[gotEaten.playerIndex], eaterPlayer);
-      const playerGotEaten = map.players.data[gotEaten.playerIndex];
+      body.stealRandomCorePart(playerGotEaten, eaterPlayer);
       const playerSocket = getSocket(playerGotEaten.id);
       connectionService.clearTimer(playerGotEaten.id);
       io.emit('playerDied', {

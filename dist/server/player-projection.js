@@ -31,6 +31,9 @@ function projectPlayerForSync(player) {
     bodyPartCounts: Object.assign({}, player.bodyPartCounts),
     playerCardPreviewDataUrl: player.playerCardPreviewDataUrl,
     hue: player.hue,
+    isNpc: Boolean(player.isNpc),
+    npcId: player.npcId || null,
+    skeletonKey: player.skeletonKey || null,
     id: player.id,
     name: player.name
   };
@@ -66,6 +69,9 @@ function createSpectatorSyncData(socketID, config) {
     bodyPartCounts: {},
     playerCardPreviewDataUrl: null,
     hue: 100,
+    isNpc: false,
+    npcId: null,
+    skeletonKey: null,
     id: socketID,
     name: ''
   };
