@@ -1,8 +1,5 @@
 'use strict';
 
-const path = require('path');
-const connectionConfig = require(path.resolve(process.cwd(), 'configs/game/connection'));
-
 const STATES = Object.freeze({
     IDLE: 'IDLE',
     CHANNELING: 'CHANNELING',
@@ -42,8 +39,8 @@ function isEligibleConnectionTarget(actor, target, range) {
     return distance(actor, target) <= range;
 }
 
-function findConnectionTarget(actor, players, range) {
-    const attemptRange = typeof range === 'number' ? range : connectionConfig.attemptRange;
+function selectTarget(actor, players, range) {
+    const attemptRange = typeof range === 'number' ? range : 0;
     let target = null;
     let bestDistance = Infinity;
 
@@ -62,17 +59,58 @@ function findConnectionTarget(actor, players, range) {
     return target;
 }
 
-function resolveConnectionOutcome(actor, target, range) {
-    const attemptRange = typeof range === 'number' ? range : connectionConfig.attemptRange;
+function createStatePatch(status, targetPlayer) {
+    return {
+        connectionStatus: status,
+        connectionTargetId: targetPlayer ? targetPlayer.id : null,
+        connectionTargetName: targetPlayer ? targetPlayer.name : null
+    };
+}
+
+function planAttempt(actor, players, range) {
+    if (!actor || actor.connectionStatus !== STATES.IDLE) {
+        return {
+            ignored: true,
+            status: null,
+            target: null,
+            actorState: null,
+            targetState: null
+        };
+    }
+
+    const target = selectTarget(actor, players, range);
+    if (!target) {
+        return {
+            ignored: false,
+            status: STATES.BREAK,
+            target: null,
+            actorState: createStatePatch(STATES.BREAK, null),
+            targetState: null
+        };
+    }
+
+    return {
+        ignored: false,
+        status: STATES.CHANNELING,
+        target: target,
+        actorState: createStatePatch(STATES.CHANNELING, target),
+        targetState: createStatePatch(STATES.CHANNELING, actor)
+    };
+}
+
+function resolveOutcome(actor, target, range) {
+    const attemptRange = typeof range === 'number' ? range : 0;
     return distance(actor, target) <= attemptRange ? STATES.RESONATING : STATES.BREAK;
 }
 
 module.exports = {
     STATES,
-    config: connectionConfig,
     createConnectionState,
     applyConnectionState,
     clearConnectionState,
-    findConnectionTarget,
-    resolveConnectionOutcome
+    selectTarget,
+    planAttempt,
+    resolveOutcome,
+    findConnectionTarget: selectTarget,
+    resolveConnectionOutcome: resolveOutcome
 };

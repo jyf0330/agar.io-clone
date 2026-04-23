@@ -1,4 +1,5 @@
 var global = require('./global');
+var socketEmit = require('./socket-emit');
 
 class ChatClient {
     constructor(params) {
@@ -54,11 +55,11 @@ class ChatClient {
         });
 
         this.registerCommand('login', 'Login as an admin.', function (args) {
-            self.socket.emit('pass', args);
+            socketEmit.emitIfReady(self.socket, 'pass', args);
         });
 
         this.registerCommand('kick', 'Kick a player, for admins only.', function (args) {
-            self.socket.emit('kick', args);
+            socketEmit.emitIfReady(self.socket, 'kick', args);
         });
         global.chatClient = this;
     }
@@ -126,8 +127,9 @@ class ChatClient {
 
                 // Allows for regular messages to be sent to the server.
                 } else {
-                    this.socket.emit('playerChat', { sender: this.player.name, message: text });
-                    this.addChatLine(this.player.name, text, true);
+                    if (socketEmit.emitIfReady(this.socket, 'playerChat', { sender: this.player.name, message: text })) {
+                        this.addChatLine(this.player.name, text, true);
+                    }
                 }
 
                 // Resets input.
@@ -158,7 +160,7 @@ class ChatClient {
     checkLatency() {
         // Ping.
         global.startPingTime = Date.now();
-        this.socket.emit('pingcheck');
+        socketEmit.emitIfReady(this.socket, 'pingcheck');
     }
 
     toggleDarkMode() {

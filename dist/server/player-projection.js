@@ -1,0 +1,68 @@
+'use strict';
+
+function projectCellForSync(cell) {
+  return {
+    x: cell.x,
+    y: cell.y,
+    mass: cell.mass,
+    radius: cell.radius,
+    speed: cell.speed
+  };
+}
+function projectBodyPartForSync(part) {
+  return Object.assign({}, part);
+}
+function projectPlayerForSync(player) {
+  return {
+    x: player.x,
+    y: player.y,
+    cells: (player.cells || []).map(projectCellForSync),
+    massTotal: Math.round(player.massTotal),
+    materialization: player.materialization,
+    materializationStage: player.materializationStage,
+    connectionStatus: player.connectionStatus,
+    connectionTargetId: player.connectionTargetId,
+    connectionTargetName: player.connectionTargetName,
+    intimacy: player.intimacy,
+    spike: player.spike,
+    pollution: player.pollution,
+    bodyParts: (player.bodyParts || []).map(projectBodyPartForSync),
+    bodyPartCount: player.bodyPartCount,
+    bodyPartCounts: Object.assign({}, player.bodyPartCounts),
+    playerCardPreviewDataUrl: player.playerCardPreviewDataUrl,
+    hue: player.hue,
+    id: player.id,
+    name: player.name
+  };
+}
+function projectPlayersForSync(players) {
+  return (players || []).map(projectPlayerForSync);
+}
+function createSpectatorSyncData(socketID, config) {
+  return {
+    x: config.gameWidth / 2,
+    y: config.gameHeight / 2,
+    cells: [],
+    massTotal: 0,
+    materialization: null,
+    materializationStage: null,
+    connectionStatus: null,
+    connectionTargetId: null,
+    connectionTargetName: null,
+    intimacy: 0,
+    spike: 0,
+    pollution: 0,
+    bodyParts: [],
+    bodyPartCount: 0,
+    bodyPartCounts: {},
+    playerCardPreviewDataUrl: null,
+    hue: 100,
+    id: socketID,
+    name: ''
+  };
+}
+module.exports = {
+  projectPlayerForSync,
+  projectPlayersForSync,
+  createSpectatorSyncData
+};

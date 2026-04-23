@@ -3,6 +3,7 @@
 <head>
     <!-- Meta Properties -->
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="img/feed.png">
     <title>开放吞噬</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <!-- CSS -->
@@ -12,7 +13,7 @@
     <audio id="spawn_cell" src="audio/spawn.mp3"></audio>
 </head>
 <body>
-    <div id="gameAreaWrapper">
+    <div id="gameAreaWrapper" style="opacity: 1;">
         <div id="status"><span class="title">排行榜</span></div>
         <div id="playerCardHud"></div>
         <div id="targetCardHud"></div>
@@ -26,7 +27,7 @@
         </div>
         <canvas tabindex="1" id="cvs"></canvas>
     </div>
-    <div id="startMenuWrapper">
+    <div id="startMenuWrapper" style="max-height: 0;">
         <div id="startMenu">
             <button id="languageToggleButton" type="button">English</button>
             <p data-i18n="startMenu.title">开放吞噬</p>

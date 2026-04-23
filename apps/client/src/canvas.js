@@ -1,4 +1,5 @@
 var global = require('./global');
+var socketEmit = require('./socket-emit');
 
 class Canvas {
     constructor(params) {
@@ -34,7 +35,7 @@ class Canvas {
     		self.directionLock = true;
     		if (self.newDirection(key, self.directions, true)) {
     			self.updateTarget(self.directions);
-    			self.socket.emit('0', self.target);
+    			socketEmit.emitIfReady(self.socket, '0', self.target);
     		}
     	}
     }
@@ -46,7 +47,7 @@ class Canvas {
     		if (this.newDirection(key, this.directions, false)) {
     			this.updateTarget(this.directions);
     			if (this.directions.length === 0) this.directionLock = false;
-    			this.socket.emit('0', this.target);
+    			socketEmit.emitIfReady(this.socket, '0', this.target);
     		}
     	}
     }
@@ -137,17 +138,20 @@ class Canvas {
     keyInput(event) {
     	var key = event.which || event.keyCode;
     	if (key === global.KEY_FIREFOOD && this.parent.reenviar) {
-            this.parent.socket.emit('1');
-            this.parent.reenviar = false;
+            if (socketEmit.emitIfReady(this.parent.socket, '1')) {
+                this.parent.reenviar = false;
+            }
         }
         else if (key === global.KEY_SPLIT && this.parent.reenviar) {
             document.getElementById('split_cell').play();
-            this.parent.socket.emit('2');
-            this.parent.reenviar = false;
+            if (socketEmit.emitIfReady(this.parent.socket, '2')) {
+                this.parent.reenviar = false;
+            }
         }
         else if (key === global.KEY_CONNECT && this.parent.reenviar) {
-            this.parent.socket.emit('3');
-            this.parent.reenviar = false;
+            if (socketEmit.emitIfReady(this.parent.socket, '3')) {
+                this.parent.reenviar = false;
+            }
         }
         else if (key === global.KEY_CHAT) {
             document.getElementById('chatInput').focus();

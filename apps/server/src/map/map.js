@@ -1,6 +1,7 @@
 "use strict";
 
 const {isVisibleEntity} = require("../lib/entityUtils");
+const {projectPlayerForSync, projectPlayersForSync} = require('../player-projection');
 
 exports.foodUtils = require('./food');
 exports.virusUtils = require('./virus');
@@ -42,41 +43,21 @@ exports.Map = class {
             var visibleViruses = this.viruses.data.filter(entity => isVisibleEntity(entity, currentPlayer));
             var visibleMass = this.massFood.data.filter(entity => isVisibleEntity(entity, currentPlayer));
 
-            const extractData = (player) => {
-                return {
-                    x: player.x,
-                    y: player.y,
-                    cells: player.cells,
-                    massTotal: Math.round(player.massTotal),
-                    materialization: player.materialization,
-                    materializationStage: player.materializationStage,
-                    connectionStatus: player.connectionStatus,
-                    connectionTargetId: player.connectionTargetId,
-                    connectionTargetName: player.connectionTargetName,
-                    intimacy: player.intimacy,
-                    spike: player.spike,
-                    pollution: player.pollution,
-                    bodyParts: player.bodyParts,
-                    bodyPartCount: player.bodyPartCount,
-                    bodyPartCounts: player.bodyPartCounts,
-                    playerCardPreviewDataUrl: player.playerCardPreviewDataUrl,
-                    hue: player.hue,
-                    id: player.id,
-                    name: player.name
-                };
-            }
-
             var visiblePlayers = [];
             for (let player of this.players.data) {
                 for (let cell of player.cells) {
                     if (isVisibleEntity(cell, currentPlayer)) {
-                        visiblePlayers.push(extractData(player));
+                        visiblePlayers.push(projectPlayerForSync(player));
                         break;
                     }
                 }
             }
 
-            callback(extractData(currentPlayer), visiblePlayers, visibleFood, visibleMass, visibleViruses);
+            callback(projectPlayerForSync(currentPlayer), visiblePlayers, visibleFood, visibleMass, visibleViruses);
         }
+    }
+
+    getProjectedPlayers() {
+        return projectPlayersForSync(this.players.data);
     }
 }

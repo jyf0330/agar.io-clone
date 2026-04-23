@@ -282,6 +282,10 @@ exports.PlayerManager = class {
   findIndexByID(id) {
     return util.findIndex(this.data, id);
   }
+  findByID(id) {
+    const index = this.findIndexByID(id);
+    return index > -1 ? this.data[index] : null;
+  }
   removePlayerByID(id) {
     let index = this.findIndexByID(id);
     if (index > -1) {

@@ -8,18 +8,20 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const SAT = require('sat');
 
-const gameLogic = require('./game-logic');
 const loggingRepositry = require('./repositories/logging-repository');
 const chatRepository = require('./repositories/chat-repository');
 const config = require(path.resolve(process.cwd(), 'config'));
 const util = require('./lib/util');
 const mapUtils = require('./map/map');
 const {getPosition} = require("./lib/entityUtils");
-const connection = require('./connection');
-const relationship = require('./relationship');
 const body = require('./body');
+const createConnectionService = require('./connection-service');
+const {createSpectatorSyncData} = require('./player-projection');
 
 let map = new mapUtils.Map(config);
+const connectionService = createConnectionService({
+    players: map.players
+});
 
 let sockets = {};
 let spectators = [];
@@ -27,7 +29,6 @@ const INIT_MASS_LOG = util.mathLog(config.defaultPlayerMass, config.slowBase);
 
 let leaderboard = [];
 let leaderboardChanged = false;
-let connectionTimers = {};
 
 const Vector = SAT.Vector;
 
@@ -51,74 +52,6 @@ io.on('connection', function (socket) {
 function generateSpawnpoint() {
     let radius = util.massToRadius(config.defaultPlayerMass);
     return getPosition(config.newPlayerInitialPosition === 'farthest', radius, map.players.data)
-}
-
-function clearConnectionTimer(playerId) {
-    if (connectionTimers[playerId]) {
-        clearTimeout(connectionTimers[playerId]);
-        delete connectionTimers[playerId];
-    }
-}
-
-function scheduleConnectionReset(player, delayMs) {
-    clearConnectionTimer(player.id);
-    connectionTimers[player.id] = setTimeout(() => {
-        connection.clearConnectionState(player);
-        delete connectionTimers[player.id];
-    }, delayMs);
-}
-
-function setConnectionPairState(sourcePlayer, targetPlayer, status) {
-    connection.applyConnectionState(sourcePlayer, {
-        connectionStatus: status,
-        connectionTargetId: targetPlayer ? targetPlayer.id : null,
-        connectionTargetName: targetPlayer ? targetPlayer.name : null
-    });
-}
-
-function attemptConnection(currentPlayer) {
-    if (currentPlayer.connectionStatus !== connection.STATES.IDLE) {
-        return;
-    }
-
-    const attemptRange = body.getConnectionRange(connection.config.attemptRange, currentPlayer);
-    const targetPlayer = connection.findConnectionTarget(currentPlayer, map.players.data, attemptRange);
-    if (!targetPlayer) {
-        connection.applyConnectionState(currentPlayer, {
-            connectionStatus: connection.STATES.BREAK
-        });
-        scheduleConnectionReset(currentPlayer, connection.config.breakDurationMs);
-        return;
-    }
-
-    setConnectionPairState(currentPlayer, targetPlayer, connection.STATES.CHANNELING);
-    setConnectionPairState(targetPlayer, currentPlayer, connection.STATES.CHANNELING);
-
-    scheduleConnectionReset(currentPlayer, connection.config.channelDurationMs + connection.config.resonanceDurationMs);
-    scheduleConnectionReset(targetPlayer, connection.config.channelDurationMs + connection.config.resonanceDurationMs);
-
-    setTimeout(() => {
-        if (!map.players.data.includes(currentPlayer) || !map.players.data.includes(targetPlayer)) {
-            return;
-        }
-
-        if (currentPlayer.connectionTargetId !== targetPlayer.id || targetPlayer.connectionTargetId !== currentPlayer.id) {
-            return;
-        }
-
-        const outcome = connection.resolveConnectionOutcome(currentPlayer, targetPlayer, attemptRange);
-        setConnectionPairState(currentPlayer, targetPlayer, outcome);
-        setConnectionPairState(targetPlayer, currentPlayer, outcome);
-        relationship.applyConnectionOutcome(currentPlayer, targetPlayer, outcome);
-
-        if (outcome === connection.STATES.BREAK) {
-            scheduleConnectionReset(currentPlayer, connection.config.breakDurationMs);
-            scheduleConnectionReset(targetPlayer, connection.config.breakDurationMs);
-        } else {
-            scheduleConnectionReset(currentPlayer, connection.config.resonanceDurationMs);
-            scheduleConnectionReset(targetPlayer, connection.config.resonanceDurationMs);
-        }
-    }, connection.config.channelDurationMs);
 }
 
 const addPlayer = (socket) => {
@@ -168,7 +101,7 @@ const addPlayer = (socket) => {
     });
 
     socket.on('disconnect', () => {
-        clearConnectionTimer(currentPlayer.id);
+        connectionService.clearTimer(currentPlayer.id);
         map.players.removePlayerByID(currentPlayer.id);
         console.log('[INFO] User ' + currentPlayer.name + ' has disconnected');
         socket.broadcast.emit('playerDisconnect', { name: currentPlayer.name });
@@ -271,7 +204,7 @@ const addPlayer = (socket) => {
     });
 
     socket.on('3', () => {
-        attemptConnection(currentPlayer);
+        connectionService.attemptConnection(currentPlayer);
     });
 }
 
@@ -358,6 +291,7 @@ const tickGame = () => {
                 eaterPlayer
             );
             let playerGotEaten = map.players.data[gotEaten.playerIndex];
+            connectionService.clearTimer(playerGotEaten.id);
             io.emit('playerDied', { name: playerGotEaten.name }); //TODO: on client it is `playerEatenName` instead of `name`
             sockets[playerGotEaten.id].emit('RIP');
             map.players.removePlayerByIndex(gotEaten.playerIndex);
@@ -411,16 +345,8 @@ const sendLeaderboard = (socket) => {
     });
 }
 const updateSpectator = (socketID) => {
-    let playerData = {
-        x: config.gameWidth / 2,
-        y: config.gameHeight / 2,
-        cells: [],
-        massTotal: 0,
-        hue: 100,
-        id: socketID,
-        name: ''
-    };
-    sockets[socketID].emit('serverTellPlayerMove', playerData, map.players.data, map.food.data, map.massFood.data, map.viruses.data);
+    let playerData = createSpectatorSyncData(socketID, config);
+    sockets[socketID].emit('serverTellPlayerMove', playerData, map.getProjectedPlayers(), map.food.data, map.massFood.data, map.viruses.data);
     if (leaderboardChanged) {
         sendLeaderboard(sockets[socketID]);
     }

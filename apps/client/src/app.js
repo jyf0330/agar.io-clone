@@ -17,12 +17,15 @@ var avatarHistoryStore = require('./avatar-history-store');
 var avatarDraftCandidates = require('./avatar-draft-candidates');
 var avatarDraftPreview = require('./avatar-draft-preview');
 var playerCardLayers = require('./player-card-layers');
+var hydratePlayerState = require('./player-hydration');
+var socketEmit = require('./socket-emit');
 
 var playerNameInput = document.getElementById('playerNameInput');
 var socket;
 var playerCardEditor;
 var activeDraftSession = null;
 var draftTimerHandle = null;
+var hideStartMenuOnLoad = true;
 
 var debug = function (args) {
     if (console && console.log) {
@@ -41,13 +44,15 @@ function enterGame(type) {
     global.playerType = type;
     global.playerCard = playerCardStorage.loadPlayerCard();
     global.targetPlayerCardPreviewDataUrl = null;
+    global.disconnected = false;
+    global.kicked = false;
 
     global.screen.width = window.innerWidth;
     global.screen.height = window.innerHeight;
 
     document.getElementById('startMenuWrapper').style.maxHeight = '0px';
     document.getElementById('gameAreaWrapper').style.opacity = 1;
-    if (!socket) {
+    if (!socket || socket.disconnected) {
         socket = io({ query: "type=" + type });
         setupSocket(socket);
     }
@@ -199,6 +204,10 @@ window.onload = function () {
             }
         }
     });
+
+    if (hideStartMenuOnLoad) {
+        enterGame('player');
+    }
 };
 
 // TODO: Break out into GameControls.
@@ -604,19 +613,33 @@ function findConnectedTargetCardPreview(userData) {
 }
 
 $("#feed").click(function () {
-    socket.emit('1');
-    window.canvas.reenviar = false;
+    if (socketEmit.emitIfReady(socket, '1')) {
+        window.canvas.reenviar = false;
+    }
 });
 
 $("#split").click(function () {
-    socket.emit('2');
-    window.canvas.reenviar = false;
+    if (socketEmit.emitIfReady(socket, '2')) {
+        window.canvas.reenviar = false;
+    }
 });
 
 function handleDisconnect() {
-    socket.close();
+    global.disconnected = true;
+    global.gameStart = false;
+    window.chat.socket = null;
+    window.canvas.socket = null;
+    global.socket = null;
+    socket = null;
     if (!global.kicked) { // We have a more specific error message 
         render.drawErrorMessage(i18n.t('system.disconnected'), graph, global.screen);
+    }
+}
+
+function handleConnectError(error) {
+    debug('Connect error: ' + (error && error.message ? error.message : error));
+    if (socket && socket.active === false) {
+        handleDisconnect();
     }
 }
 
@@ -630,7 +653,7 @@ function setupSocket(socket) {
     });
 
     // Handle error.
-    socket.on('connect_error', handleDisconnect);
+    socket.on('connect_error', handleConnectError);
     socket.on('disconnect', handleDisconnect);
 
     // Handle connection.
@@ -693,23 +716,7 @@ function setupSocket(socket) {
     // Handle movement.
     socket.on('serverTellPlayerMove', function (playerData, userData, foodsList, massList, virusList) {
         if (global.playerType == 'player') {
-            player.x = playerData.x;
-            player.y = playerData.y;
-            player.hue = playerData.hue;
-            player.massTotal = playerData.massTotal;
-            player.materialization = playerData.materialization;
-            player.materializationStage = playerData.materializationStage;
-            player.connectionStatus = playerData.connectionStatus;
-            player.connectionTargetId = playerData.connectionTargetId;
-            player.connectionTargetName = playerData.connectionTargetName;
-            player.intimacy = playerData.intimacy;
-            player.spike = playerData.spike;
-            player.pollution = playerData.pollution;
-            player.bodyParts = playerData.bodyParts;
-            player.bodyPartCount = playerData.bodyPartCount;
-            player.bodyPartCounts = playerData.bodyPartCounts;
-            player.playerCardPreviewDataUrl = playerData.playerCardPreviewDataUrl;
-            player.cells = playerData.cells;
+            hydratePlayerState(player, playerData);
         }
         users = userData;
         global.targetPlayerCardPreviewDataUrl = findConnectedTargetCardPreview(userData);
@@ -828,7 +835,7 @@ function gameLoop() {
         });
         render.drawCells(cellsToDraw, playerConfig, global.toggleMassState, borders, graph);
 
-        socket.emit('0', window.canvas.target); // playerSendTarget "Heartbeat".
+        socketEmit.emitIfReady(socket, '0', window.canvas.target); // playerSendTarget "Heartbeat".
     }
 }
 
@@ -845,5 +852,8 @@ function resize() {
         player.y = global.game.height / 2;
     }
 
-    socket.emit('windowResized', { screenWidth: global.screen.width, screenHeight: global.screen.height });
+    socketEmit.emitIfReady(socket, 'windowResized', {
+        screenWidth: global.screen.width,
+        screenHeight: global.screen.height
+    });
 }

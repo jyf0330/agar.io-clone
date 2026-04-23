@@ -38,6 +38,13 @@ exports.VirusManager = class {
     }
 
     delete(virusCollision) {
-        this.data.splice(virusCollision, 1);
+        if (typeof virusCollision === 'number') {
+            this.data.splice(virusCollision, 1);
+            return;
+        }
+
+        if (Array.isArray(virusCollision) && virusCollision.length > 0) {
+            this.data = util.removeIndexes(this.data, virusCollision);
+        }
     }
 };

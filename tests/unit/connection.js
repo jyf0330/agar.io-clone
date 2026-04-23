@@ -19,7 +19,7 @@ describe('connection.js', () => {
     });
   });
 
-  describe('findConnectionTarget', () => {
+  describe('selectTarget', () => {
     it('should pick the nearest eligible player within range', () => {
       const actor = {
         id: 'actor',
@@ -42,7 +42,7 @@ describe('connection.js', () => {
         connectionStatus: connection.STATES.IDLE
       };
 
-      const target = connection.findConnectionTarget(actor, [near, far], connectionConfig.attemptRange);
+      const target = connection.selectTarget(actor, [near, far], connectionConfig.attemptRange);
 
       expect(target.id).to.equal('near');
     });
@@ -69,7 +69,7 @@ describe('connection.js', () => {
         connectionStatus: connection.STATES.IDLE
       };
 
-      const target = connection.findConnectionTarget(actor, [busy, far], connectionConfig.attemptRange);
+      const target = connection.selectTarget(actor, [busy, far], connectionConfig.attemptRange);
 
       expect(target).to.equal(null);
     });
@@ -92,7 +92,7 @@ describe('connection.js', () => {
         connectionStatus: connection.STATES.IDLE
       };
 
-      const resolved = connection.findConnectionTarget(
+      const resolved = connection.selectTarget(
         actor,
         [target],
         body.getConnectionRange(connectionConfig.attemptRange, actor)
@@ -102,19 +102,65 @@ describe('connection.js', () => {
     });
   });
 
-  describe('resolveConnectionOutcome', () => {
+  describe('planAttempt', () => {
+    it('should create a break plan when no eligible target exists', () => {
+      const actor = {
+        id: 'actor',
+        x: 0,
+        y: 0,
+        connectionStatus: connection.STATES.IDLE
+      };
+
+      const plan = connection.planAttempt(actor, [], connectionConfig.attemptRange);
+
+      expect(plan.ignored).to.equal(false);
+      expect(plan.status).to.equal(connection.STATES.BREAK);
+      expect(plan.target).to.equal(null);
+      expect(plan.actorState.connectionStatus).to.equal(connection.STATES.BREAK);
+      expect(plan.actorState.connectionTargetId).to.equal(null);
+    });
+
+    it('should create channeling state patches for both players', () => {
+      const actor = {
+        id: 'actor',
+        x: 0,
+        y: 0,
+        name: 'actor',
+        connectionStatus: connection.STATES.IDLE
+      };
+      const target = {
+        id: 'target',
+        x: 100,
+        y: 0,
+        name: 'target',
+        connectionStatus: connection.STATES.IDLE
+      };
+
+      const plan = connection.planAttempt(actor, [target], connectionConfig.attemptRange);
+
+      expect(plan.ignored).to.equal(false);
+      expect(plan.status).to.equal(connection.STATES.CHANNELING);
+      expect(plan.target.id).to.equal('target');
+      expect(plan.actorState.connectionStatus).to.equal(connection.STATES.CHANNELING);
+      expect(plan.actorState.connectionTargetId).to.equal('target');
+      expect(plan.targetState.connectionStatus).to.equal(connection.STATES.CHANNELING);
+      expect(plan.targetState.connectionTargetId).to.equal('actor');
+    });
+  });
+
+  describe('resolveOutcome', () => {
     it('should return resonance when players stay in range', () => {
       const actor = { x: 0, y: 0 };
       const target = { x: 60, y: 0 };
 
-      expect(connection.resolveConnectionOutcome(actor, target, connectionConfig.attemptRange)).to.equal(connection.STATES.RESONATING);
+      expect(connection.resolveOutcome(actor, target, connectionConfig.attemptRange)).to.equal(connection.STATES.RESONATING);
     });
 
     it('should return break when players leave range', () => {
       const actor = { x: 0, y: 0 };
       const target = { x: connectionConfig.attemptRange + 20, y: 0 };
 
-      expect(connection.resolveConnectionOutcome(actor, target, connectionConfig.attemptRange)).to.equal(connection.STATES.BREAK);
+      expect(connection.resolveOutcome(actor, target, connectionConfig.attemptRange)).to.equal(connection.STATES.BREAK);
     });
   });
 });
