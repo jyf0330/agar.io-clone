@@ -4,10 +4,11 @@
   "description": "A simple Agar.io clone",
   "main": "dist/server/server.js",
   "scripts": {
-    "build": "pushd \"%INIT_CWD%\" && node .\\node_modules\\gulp\\bin\\gulp.js build && popd",
-    "start": "pushd \"%INIT_CWD%\" && node .\\node_modules\\gulp\\bin\\gulp.js run && popd",
-    "watch": "pushd \"%INIT_CWD%\" && node .\\node_modules\\gulp\\bin\\gulp.js watch && popd",
-    "test": "pushd \"%INIT_CWD%\" && node .\\node_modules\\gulp\\bin\\gulp.js test && popd"
+    "build": "node ./node_modules/gulp/bin/gulp.js build",
+    "start": "node ./node_modules/gulp/bin/gulp.js run",
+    "watch": "node ./node_modules/gulp/bin/gulp.js watch",
+    "dev": "node ./node_modules/gulp/bin/gulp.js watch",
+    "test": "node ./node_modules/gulp/bin/gulp.js test"
   },
   "repository": {
     "type": "git",
