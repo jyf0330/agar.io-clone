@@ -3,7 +3,8 @@ module.exports = (isProduction) => ({
     mode: isProduction ? 'production' : 'development',
     output: {
         library: "app",
-        filename: "app.js"
+        filename: "app.js",
+        assetModuleFilename: "assets/[name][ext]"
     },
     devtool: false,
     module: {
@@ -12,21 +13,27 @@ module.exports = (isProduction) => ({
 });
 
 function getRules(isProduction) {
+    const rules = [
+        {
+            test: /\.(png|jpe?g|gif|svg)$/i,
+            type: 'asset/resource'
+        }
+    ];
+
     if (isProduction) {
-        return [
-            {
-                test: /\.(?:js|mjs|cjs)$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            ['@babel/preset-env', { targets: "defaults" }]
-                        ]
-                    }
+        rules.unshift({
+            test: /\.(?:js|mjs|cjs)$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    presets: [
+                        ['@babel/preset-env', { targets: "defaults" }]
+                    ]
                 }
             }
-        ]
+        });
     }
-    return [];
+
+    return rules;
 }

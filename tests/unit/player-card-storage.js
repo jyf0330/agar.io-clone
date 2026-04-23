@@ -24,7 +24,8 @@ describe('player-card-storage.js', () => {
     const memoryStorage = createMemoryStorage();
     const payload = {
       previewDataUrl: 'data:image/png;base64,abc',
-      canvasJson: { version: '1.0.0', objects: [] }
+      canvasJson: { version: '1.0.0', objects: [] },
+      skeletonKey: 'b'
     };
 
     storage.savePlayerCard(payload, memoryStorage);
@@ -33,6 +34,7 @@ describe('player-card-storage.js', () => {
 
     expect(loaded.previewDataUrl).to.equal(payload.previewDataUrl);
     expect(loaded.canvasJson).to.deep.equal(payload.canvasJson);
+    expect(loaded.skeletonKey).to.equal('b');
     expect(loaded.activeLayerId).to.equal('base');
     expect(loaded.layers.base.canvasJson).to.deep.equal(payload.canvasJson);
   });
@@ -73,6 +75,7 @@ describe('player-card-storage.js', () => {
       previewDataUrl: 'data:image/png;base64,abc',
       canvasJson: { version: '6.7.1', objects: [] },
       activeLayerId: 'eyes',
+      skeletonKey: 'd',
       layers: layers.createLayerPayload({
         eyes: {
           canvasJson: { version: '6.7.1', objects: [{ type: 'Circle', layerId: 'eyes' }] }
@@ -84,6 +87,7 @@ describe('player-card-storage.js', () => {
     const loaded = storage.loadPlayerCard(memoryStorage);
 
     expect(loaded.activeLayerId).to.equal('eyes');
+    expect(loaded.skeletonKey).to.equal('d');
     expect(loaded.layers.eyes.canvasJson.objects).to.have.length(1);
   });
 });

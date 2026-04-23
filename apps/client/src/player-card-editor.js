@@ -5,6 +5,7 @@ var playerCardHistory = require('./player-card-history');
 var playerCardScale = require('./player-card-scale');
 var playerCardCanvasTransform = require('./player-card-canvas-transform');
 var playerCardLayers = require('./player-card-layers');
+var avatarSkeletonLoader = require('./avatar-skeleton-loader');
 var i18n = require('./i18n');
 
 var FABRIC_SCRIPT_URL = 'https://cdn.jsdelivr.net/npm/fabric@6.7.1/dist/index.min.js';
@@ -52,7 +53,9 @@ function createPlayerCardEditor(options) {
         panDirty: false,
         panOrigin: null,
         activeLayerId: 'base',
-        layerPayload: playerCardLayers.createLayerPayload()
+        layerPayload: playerCardLayers.createLayerPayload(),
+        skeletonImage: null,
+        skeletonKey: null
     };
 
     function setPanelMessage(message) {
@@ -202,21 +205,86 @@ function createPlayerCardEditor(options) {
     function loadSavedState() {
         var savedCard = playerCardStorage.loadPlayerCard();
         if (!savedCard || !savedCard.canvasJson) {
-            return loadLayerPayload(playerCardLayers.createLayerPayload(), 'base', 1);
+            return loadLayerPayload(playerCardLayers.createLayerPayload(), 'base', 1, state.skeletonKey);
         }
 
-        return loadLayerPayload(savedCard.layers || playerCardLayers.createLegacyLayerPayload(savedCard.canvasJson), savedCard.activeLayerId || 'base', savedCard.contentScale || 1);
+        return loadLayerPayload(
+            savedCard.layers || playerCardLayers.createLegacyLayerPayload(savedCard.canvasJson),
+            savedCard.activeLayerId || 'base',
+            savedCard.contentScale || 1,
+            savedCard.skeletonKey || state.skeletonKey
+        );
     }
 
     function loadCanvasJson(canvasJson, contentScale) {
-        return loadLayerPayload(playerCardLayers.createLegacyLayerPayload(canvasJson), 'base', contentScale);
+        return loadLayerPayload(playerCardLayers.createLegacyLayerPayload(canvasJson), 'base', contentScale, state.skeletonKey);
     }
 
-    function loadLayerPayload(layerPayload, activeLayerId, contentScale) {
+    function resolveSkeletonImage(skeletonKey) {
+        var image = skeletonKey ? avatarSkeletonLoader.getSkeletonByKey(skeletonKey) : avatarSkeletonLoader.getRandomSkeleton();
+
+        if (!image) {
+            image = avatarSkeletonLoader.getRandomSkeleton();
+        }
+
+        state.skeletonImage = image || null;
+        state.skeletonKey = image && image.skeletonKey ? image.skeletonKey : null;
+        return state.skeletonImage;
+    }
+
+    function createSkeletonBackground(image) {
+        var width = image.naturalWidth || CANVAS_SIZE;
+        var height = image.naturalHeight || CANVAS_SIZE;
+        var skeletonBackground = new state.fabric.Image(image, {
+            left: 0,
+            top: 0,
+            originX: 'left',
+            originY: 'top',
+            selectable: false,
+            evented: false,
+            objectCaching: false
+        });
+
+        skeletonBackground.scaleX = CANVAS_SIZE / width;
+        skeletonBackground.scaleY = CANVAS_SIZE / height;
+        return skeletonBackground;
+    }
+
+    function applySkeletonImage(skeletonImage) {
+        if (!state.canvas) {
+            return Promise.resolve();
+        }
+
+        if (!skeletonImage) {
+            state.canvas.backgroundImage = null;
+            state.canvas.requestRenderAll();
+            return Promise.resolve();
+        }
+
+        return new Promise(function (resolve) {
+            function assignBackground() {
+                state.canvas.backgroundImage = createSkeletonBackground(skeletonImage);
+                state.canvas.requestRenderAll();
+                resolve();
+            }
+
+            if (skeletonImage.complete || typeof skeletonImage.addEventListener !== 'function') {
+                assignBackground();
+                return;
+            }
+
+            skeletonImage.addEventListener('load', assignBackground, { once: true });
+            skeletonImage.addEventListener('error', resolve, { once: true });
+        });
+    }
+
+    function loadLayerPayload(layerPayload, activeLayerId, contentScale, skeletonKey) {
         state.loading = true;
         state.layerPayload = playerCardLayers.createLayerPayload(layerPayload);
         state.activeLayerId = activeLayerId || 'base';
         return state.canvas.loadFromJSON(playerCardLayers.mergeLayerPayloadToCanvasJson(state.layerPayload)).then(function () {
+            return applySkeletonImage(resolveSkeletonImage(skeletonKey));
+        }).then(function () {
             state.canvas.backgroundColor = '#ffffff';
             state.contentScale = contentScale || 1;
             applyLayerLocks();
@@ -325,7 +393,7 @@ function createPlayerCardEditor(options) {
             state.layerPayload.base.visible = true;
             state.layerPayload.base.locked = false;
             state.activeLayerId = 'base';
-            return loadLayerPayload(state.layerPayload, 'base', state.contentScale);
+            return loadLayerPayload(state.layerPayload, 'base', state.contentScale, state.skeletonKey);
         }).then(function () {
             setTool('draw');
             updateBrush();
@@ -547,6 +615,7 @@ function createPlayerCardEditor(options) {
             canvasJson: playerCardLayers.mergeLayerPayloadToCanvasJson(exportLayerPayload()),
             contentScale: state.contentScale,
             activeLayerId: state.activeLayerId,
+            skeletonKey: state.skeletonKey,
             layers: exportLayerPayload()
         };
     }
