@@ -2,22 +2,30 @@
 
 const expect = require('chai').expect;
 const fs = require('fs');
+const http = require('http');
 const os = require('os');
 const path = require('path');
 
 function clearModule(modulePath) {
-    delete require.cache[require.resolve(modulePath)];
+    try {
+        delete require.cache[require.resolve(modulePath)];
+    } catch (_error) {
+        // Some tests run before optional provider files exist.
+    }
 }
 
-function loadWrapperFixture(tmpDir) {
-    process.env.LLM_PROVIDER = 'mock';
-    process.env.LLM_TIMEOUT_MS = '5000';
-    process.env.LLM_CACHE_DB_PATH = path.join(tmpDir, 'llm-cache.sqlite3');
-    process.env.LLM_CACHE_FALLBACK_PATH = path.join(tmpDir, 'llm-cache.json');
-    process.env.LLM_AUDIT_DIR = path.join(tmpDir, 'audit');
+function loadWrapperFixture(tmpDir, envOverrides) {
+    Object.assign(process.env, {
+        LLM_PROVIDER: 'mock',
+        LLM_TIMEOUT_MS: '5000',
+        LLM_CACHE_DB_PATH: path.join(tmpDir, 'llm-cache.sqlite3'),
+        LLM_CACHE_FALLBACK_PATH: path.join(tmpDir, 'llm-cache.json'),
+        LLM_AUDIT_DIR: path.join(tmpDir, 'audit')
+    }, envOverrides || {});
 
     clearModule('../../apps/server/src/llm/cache');
     clearModule('../../apps/server/src/llm/audit');
+    clearModule('../../apps/server/src/llm/providers/openai');
     clearModule('../../apps/server/src/llm/wrapper');
 
     return {
@@ -27,22 +35,64 @@ function loadWrapperFixture(tmpDir) {
     };
 }
 
+function createOpenAiMockServer(responseFactory) {
+    const requests = [];
+    const server = http.createServer((request, response) => {
+        if (request.method !== 'POST' || request.url !== '/v1/chat/completions') {
+            response.writeHead(404);
+            response.end('not found');
+            return;
+        }
+
+        const chunks = [];
+        request.on('data', (chunk) => chunks.push(chunk));
+        request.on('end', () => {
+            const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+            requests.push(body);
+
+            response.writeHead(200, { 'content-type': 'application/json' });
+            response.end(JSON.stringify(responseFactory(body, requests.length)));
+        });
+    });
+
+    return new Promise((resolve) => {
+        server.listen(0, '127.0.0.1', () => {
+            const address = server.address();
+            resolve({
+                close() {
+                    return new Promise((done) => server.close(done));
+                },
+                requests: requests,
+                url: 'http://127.0.0.1:' + address.port + '/v1'
+            });
+        });
+    });
+}
+
 describe('llm wrapper', () => {
     let tmpDir;
     let fixture;
+    let openAiServer;
 
     beforeEach(() => {
         tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agar-llm-wrapper-'));
         fixture = loadWrapperFixture(tmpDir);
     });
 
-    afterEach(() => {
+    afterEach(async () => {
         fixture.cache.reset();
         delete process.env.LLM_PROVIDER;
         delete process.env.LLM_TIMEOUT_MS;
         delete process.env.LLM_CACHE_DB_PATH;
         delete process.env.LLM_CACHE_FALLBACK_PATH;
         delete process.env.LLM_AUDIT_DIR;
+        delete process.env.OPENAI_API_KEY;
+        delete process.env.OPENAI_BASE_URL;
+        delete process.env.LLM_MODEL;
+        if (openAiServer) {
+            await openAiServer.close();
+            openAiServer = null;
+        }
         fs.rmSync(tmpDir, { recursive: true, force: true });
     });
 
@@ -137,5 +187,125 @@ describe('llm wrapper', () => {
             expect(result.source).to.equal('llm');
             expect(result.text).to.equal('响应:concurrent-' + index);
         });
+    });
+
+    it('should return live OpenAI provider responses successfully', async () => {
+        openAiServer = await createOpenAiMockServer(() => ({
+            id: 'chatcmpl-test',
+            object: 'chat.completion',
+            created: 1710000000,
+            model: 'gpt-4o-mini',
+            choices: [
+                {
+                    index: 0,
+                    message: {
+                        role: 'assistant',
+                        content: '花园里有一点蓝色回声'
+                    },
+                    finish_reason: 'stop'
+                }
+            ],
+            usage: {
+                prompt_tokens: 21,
+                completion_tokens: 9,
+                total_tokens: 30
+            }
+        }));
+        fixture = loadWrapperFixture(tmpDir, {
+            LLM_PROVIDER: 'openai',
+            OPENAI_API_KEY: 'test-key',
+            OPENAI_BASE_URL: openAiServer.url,
+            LLM_MODEL: 'gpt-4o-mini'
+        });
+
+        const result = await fixture.wrapper.ask('hello', { mood: 'calm' }, {
+            useCache: false
+        });
+
+        expect(result.ok).to.equal(true);
+        expect(result.source).to.equal('llm');
+        expect(result.text).to.equal('花园里有一点蓝色回声');
+        expect(result.tokenIn).to.equal(21);
+        expect(result.tokenOut).to.equal(9);
+        expect(openAiServer.requests).to.have.length(1);
+        expect(openAiServer.requests[0].model).to.equal('gpt-4o-mini');
+    });
+
+    it('should reject forbidden words from live OpenAI responses without retrying', async () => {
+        openAiServer = await createOpenAiMockServer(() => ({
+            id: 'chatcmpl-test',
+            object: 'chat.completion',
+            created: 1710000000,
+            model: 'gpt-4o-mini',
+            choices: [
+                {
+                    index: 0,
+                    message: {
+                        role: 'assistant',
+                        content: '这像被遗弃的云'
+                    },
+                    finish_reason: 'stop'
+                }
+            ],
+            usage: {
+                prompt_tokens: 20,
+                completion_tokens: 8,
+                total_tokens: 28
+            }
+        }));
+        fixture = loadWrapperFixture(tmpDir, {
+            LLM_PROVIDER: 'openai',
+            OPENAI_API_KEY: 'test-key',
+            OPENAI_BASE_URL: openAiServer.url,
+            LLM_MODEL: 'gpt-4o-mini'
+        });
+
+        const result = await fixture.wrapper.ask('hello', { mood: 'unsafe' }, {
+            useCache: false
+        });
+
+        expect(result.ok).to.equal(false);
+        expect(result.source).to.equal('fallback');
+        expect(result.text).to.equal('');
+        expect(openAiServer.requests).to.have.length(1);
+    });
+
+    it('should reject overlong live OpenAI responses without retrying', async () => {
+        openAiServer = await createOpenAiMockServer(() => ({
+            id: 'chatcmpl-test',
+            object: 'chat.completion',
+            created: 1710000000,
+            model: 'gpt-4o-mini',
+            choices: [
+                {
+                    index: 0,
+                    message: {
+                        role: 'assistant',
+                        content: '很长'.repeat(120)
+                    },
+                    finish_reason: 'stop'
+                }
+            ],
+            usage: {
+                prompt_tokens: 24,
+                completion_tokens: 120,
+                total_tokens: 144
+            }
+        }));
+        fixture = loadWrapperFixture(tmpDir, {
+            LLM_PROVIDER: 'openai',
+            OPENAI_API_KEY: 'test-key',
+            OPENAI_BASE_URL: openAiServer.url,
+            LLM_MODEL: 'gpt-4o-mini'
+        });
+
+        const result = await fixture.wrapper.ask('hello', { mood: 'verbose' }, {
+            useCache: false
+        });
+
+        expect(result.ok).to.equal(false);
+        expect(result.source).to.equal('fallback');
+        expect(result.text).to.equal('');
+        expect(openAiServer.requests).to.have.length(1);
     });
 });

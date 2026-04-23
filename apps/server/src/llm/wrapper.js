@@ -4,8 +4,12 @@ const path = require('path');
 
 const audit = require('./audit');
 const cache = require('./cache');
+const askOpenAI = require('./providers/openai');
 
 const forbiddenWords = require(path.resolve(process.cwd(), 'demo/critiques/pool.json')).meta.forbiddenWords || [];
+const DEFAULT_MAX_INPUT_TOKENS = parseInt(process.env.LLM_MAX_IN_TOKENS || '2000', 10);
+const DEFAULT_MAX_OUTPUT_TOKENS = parseInt(process.env.LLM_MAX_OUT_TOKENS || '200', 10);
+const DEFAULT_SYSTEM_PROMPT = 'You help drive a small multiplayer art game. Reply with one concise plain-text line.';
 const RETRY_DELAYS_MS = [0, 200, 500, 1200];
 
 function createAbortError(timeoutMs) {
@@ -59,8 +63,53 @@ function getProvider(options) {
         return createMockProvider;
     }
 
+    if (provider === 'openai') {
+        return function openAiProvider(promptId, params, providerOptions) {
+            return askOpenAI(buildPromptRequest(promptId, params, providerOptions));
+        };
+    }
+
     return function unsupportedProvider() {
         return Promise.reject(new Error('Unsupported LLM provider: ' + provider));
+    };
+}
+
+function approximateTokenCount(text) {
+    if (!text) {
+        return 0;
+    }
+
+    return Math.ceil(String(text).length / 3.5);
+}
+
+function buildPromptRequest(promptId, params, options) {
+    const prompt = options.prompt || {};
+    const serializedParams = JSON.stringify(params || {}, null, 2);
+
+    return {
+        system: typeof prompt.system === 'string'
+            ? prompt.system
+            : (typeof options.system === 'string' ? options.system : DEFAULT_SYSTEM_PROMPT),
+        user: typeof prompt.user === 'string'
+            ? prompt.user
+            : (typeof options.user === 'string'
+                ? options.user
+                : [
+                    'promptId: ' + promptId,
+                    'params:',
+                    serializedParams,
+                    'Reply with one concise plain-text response that fits this prompt.'
+                ].join('\n')),
+        maxTokens: typeof prompt.maxTokens === 'number'
+            ? prompt.maxTokens
+            : (typeof options.maxTokens === 'number' ? options.maxTokens : DEFAULT_MAX_OUTPUT_TOKENS),
+        temperature: typeof prompt.temperature === 'number'
+            ? prompt.temperature
+            : (typeof options.temperature === 'number' ? options.temperature : 0.7),
+        signal: options.signal,
+        model: options.model || process.env.LLM_MODEL,
+        apiKey: options.apiKey,
+        baseURL: options.baseURL || process.env.OPENAI_BASE_URL
     };
 }
 
@@ -133,6 +182,18 @@ async function ask(promptId, params, opts) {
     }
 
     const provider = getProvider(options);
+    const promptRequest = buildPromptRequest(promptId, safeParams, options);
+    const estimatedInputTokens = approximateTokenCount(promptRequest.system + '\n' + promptRequest.user);
+    if (estimatedInputTokens > DEFAULT_MAX_INPUT_TOKENS) {
+        const budgetResult = buildResult({
+            promptId: promptId,
+            elapsedMs: Date.now() - startedAt,
+            reason: 'input_budget'
+        });
+        audit.append(createAuditEntry(promptId, safeParams, budgetResult));
+        return budgetResult;
+    }
+
     let lastError = null;
 
     for (let attemptIndex = 0; attemptIndex < RETRY_DELAYS_MS.length; attemptIndex += 1) {
@@ -142,7 +203,8 @@ async function ask(promptId, params, opts) {
 
         try {
             const providerResponse = await withTimeout((signal) => provider(promptId, safeParams, Object.assign({}, options, {
-                signal: signal
+                signal: signal,
+                prompt: promptRequest
             })), options.timeoutMs);
             const text = providerResponse && typeof providerResponse.text === 'string' ? providerResponse.text : '';
             const result = buildResult({
@@ -190,5 +252,6 @@ async function ask(promptId, params, opts) {
 
 module.exports = {
     ask: ask,
-    acceptResponse: acceptResponse
+    acceptResponse: acceptResponse,
+    buildPromptRequest: buildPromptRequest
 };

@@ -57,6 +57,7 @@
     "jshint": "^2.13.6",
     "mocha": "^10.2.0",
     "nodemon": "^3.0.1",
+    "openai": "^6.34.0",
     "sat": "^0.9.0",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
@@ -67,6 +68,7 @@
   },
   "devDependencies": {
     "@types/sat": "^0.0.32",
+    "nock": "^14.0.13",
     "plugin-error": "^2.0.1"
   }
 }

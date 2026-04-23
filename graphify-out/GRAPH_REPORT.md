@@ -1,12 +1,12 @@
 # Graph Report - agar.io-clone-master  (2026-04-24)
 
 ## Corpus Check
-- 96 files · ~83,892 words
+- 97 files · ~87,447 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 416 nodes · 587 edges · 26 communities detected
-- Extraction: 83% EXTRACTED · 17% INFERRED · 0% AMBIGUOUS · INFERRED: 100 edges (avg confidence: 0.8)
+- 422 nodes · 597 edges · 25 communities detected
+- Extraction: 83% EXTRACTED · 17% INFERRED · 0% AMBIGUOUS · INFERRED: 101 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -35,13 +35,12 @@
 - [[_COMMUNITY_Community 23|Community 23]]
 - [[_COMMUNITY_Community 24|Community 24]]
 - [[_COMMUNITY_Community 25|Community 25]]
-- [[_COMMUNITY_Community 27|Community 27]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `ChatClient` - 15 edges
-2. `Canvas` - 13 edges
-3. `addPlayer()` - 12 edges
-4. `ask()` - 11 edges
+2. `ask()` - 13 edges
+3. `Canvas` - 13 edges
+4. `addPlayer()` - 12 edges
 5. `emitIfReady()` - 11 edges
 6. `createLayerPayload()` - 10 edges
 7. `t()` - 10 edges
@@ -69,28 +68,28 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.11
-Nodes (21): Cell, changeCellMass(), checkForCollisions(), clientProvidedData(), constructor(), enumerateCollidingCells(), findByID(), findIndexByID() (+13 more)
+Cohesion: 0.08
+Nodes (26): createPlayer(), applyMaterializationState(), createMaterializationState(), resolveMaterializationStage(), Cell, changeCellMass(), checkForCollisions(), clientProvidedData() (+18 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.13
 Nodes (23): createDraftId(), getStorage(), loadDrafts(), normalizeDraftPayload(), saveDraft(), createPlayerCardEditor(), createHistoryState(), redo() (+15 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.14
-Nodes (25): applyBodyState(), countBodyParts(), createBodyBonuses(), createBodyPart(), createBodyState(), createDefaultBodyParts(), getBreakSpikeBonus(), getConnectionRange() (+17 more)
+Cohesion: 0.12
+Nodes (24): createCacheKey(), ensureDatabase(), get(), loadDatabaseLibrary(), loadFileCache(), persistFileCacheEntry(), reset(), resolveCachePath() (+16 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.1
-Nodes (16): getPosition(), addNew(), Food, removeExcess(), balanceMass(), enumerateVisibleWorld(), getVisibleWorldForPlayer(), getTotalMass() (+8 more)
+Cohesion: 0.09
+Nodes (17): getPosition(), validNick(), addNew(), Food, removeExcess(), balanceMass(), enumerateVisibleWorld(), getVisibleWorldForPlayer() (+9 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.14
-Nodes (20): createCacheKey(), ensureDatabase(), get(), loadDatabaseLibrary(), loadFileCache(), persistFileCacheEntry(), reset(), resolveCachePath() (+12 more)
+Cohesion: 0.17
+Nodes (23): applyBodyState(), countBodyParts(), createBodyBonuses(), createBodyPart(), createBodyState(), createDefaultBodyParts(), getBreakSpikeBonus(), getConnectionRange() (+15 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.12
-Nodes (17): animloop(), applyTranslations(), enterGame(), renderPlayerCardPreviews(), renderStatusPanel(), startGame(), validNick(), formatBodyStatus() (+9 more)
+Cohesion: 0.13
+Nodes (16): animloop(), applyTranslations(), enterGame(), renderPlayerCardPreviews(), renderStatusPanel(), startGame(), formatBodyStatus(), formatConnectionStatus() (+8 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.17
@@ -149,8 +148,8 @@ Cohesion: 0.5
 Nodes (2): clampScale(), getNextScale()
 
 ### Community 20 - "Community 20"
-Cohesion: 0.83
-Nodes (3): applyMaterializationState(), createMaterializationState(), resolveMaterializationStage()
+Cohesion: 0.67
+Nodes (2): clearModule(), loadWrapperFixture()
 
 ### Community 22 - "Community 22"
 Cohesion: 0.83
@@ -168,10 +167,6 @@ Nodes (4): horizontal separation, player input control, split, split control ico
 Cohesion: 0.67
 Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Input
 
-### Community 27 - "Community 27"
-Cohesion: 1.0
-Nodes (2): clearModule(), loadWrapperFixture()
-
 ## Knowledge Gaps
 - **6 isolated node(s):** `在地图内随机挑一个目标点，留一点边距避免贴墙。`, `朝目标移动最多 max_step，达到/超过则贴上。`, `Grid-based arena`, `crosshair/target reticle`, `feed control` (+1 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -183,23 +178,23 @@ Nodes (2): clearModule(), loadWrapperFixture()
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 19`** (5 nodes): `player-card-scale.js`, `canScaleIn()`, `canScaleOut()`, `clampScale()`, `getNextScale()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (3 nodes): `clearModule()`, `loadWrapperFixture()`, `llm-wrapper.js`
+- **Thin community `Community 20`** (4 nodes): `clearModule()`, `createOpenAiMockServer()`, `loadWrapperFixture()`, `llm-wrapper.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `addPlayer()` connect `Community 3` to `Community 0`, `Community 2`, `Community 5`?**
+- **Why does `addPlayer()` connect `Community 3` to `Community 0`?**
   _High betweenness centrality (0.192) - this node is a cross-community bridge._
 - **Why does `loadPlayerCard()` connect `Community 1` to `Community 5`?**
-  _High betweenness centrality (0.175) - this node is a cross-community bridge._
-- **Are the 10 inferred relationships involving `addPlayer()` (e.g. with `init()` and `findIndexByID()`) actually correct?**
-  _`addPlayer()` has 10 INFERRED edges - model-reasoned connections that need verification._
+  _High betweenness centrality (0.180) - this node is a cross-community bridge._
 - **Are the 4 inferred relationships involving `ask()` (e.g. with `createCacheKey()` and `get()`) actually correct?**
   _`ask()` has 4 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 10 inferred relationships involving `addPlayer()` (e.g. with `init()` and `findIndexByID()`) actually correct?**
+  _`addPlayer()` has 10 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 9 inferred relationships involving `emitIfReady()` (e.g. with `.registerFunctions()` and `.sendChat()`) actually correct?**
   _`emitIfReady()` has 9 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `在地图内随机挑一个目标点，留一点边距避免贴墙。`, `朝目标移动最多 max_step，达到/超过则贴上。`, `Grid-based arena` to the rest of the system?**
   _6 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.11 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
