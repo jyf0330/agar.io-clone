@@ -2,7 +2,7 @@
 
 const wrapper = require('../llm/wrapper');
 const {randomWalkIntent} = require('./fallback');
-const {buildNpcIntentPrompt, buildNpcUtterPrompt} = require('./prompts');
+const {buildNpcIntentPrompt, buildNpcUtterPrompt, buildNpcReplyPrompt} = require('./prompts');
 const {buildContextualFallbackUtterance} = require('./greetings');
 
 function getTimeOfDayLabel(date) {
@@ -40,6 +40,48 @@ function estimatePromptTokens(prompt) {
     return Math.ceil(payload.length / 3.5);
 }
 
+function getChatFallbackReply(npcId) {
+    if (npcId === 'doudou') {
+        return '欸?';
+    }
+    if (npcId === 'wugui') {
+        return '……';
+    }
+
+    return '嗯……';
+}
+
+function isFollowPlayerMessage(message) {
+    return /走过来|过来|来这边|靠近我/.test(String(message || ''));
+}
+
+function getMockChatReply(npcId, latestChat) {
+    const message = String(latestChat && latestChat.message ? latestChat.message : '');
+    if (/颜色/.test(message)) {
+        if (npcId === 'doudou') {
+            return '今天彩一点!!';
+        }
+        if (npcId === 'wugui') {
+            return '看心情，稳一点。';
+        }
+
+        return '蓝绿比较轻。';
+    }
+
+    if (isFollowPlayerMessage(message)) {
+        if (npcId === 'doudou') {
+            return '好呀，我来了!!';
+        }
+        if (npcId === 'wugui') {
+            return '我会靠近一些。';
+        }
+
+        return '我慢慢过去。';
+    }
+
+    return getChatFallbackReply(npcId);
+}
+
 class Orchestrator {
     constructor(config) {
         const settings = config || {};
@@ -58,6 +100,8 @@ class Orchestrator {
         }, settings);
         this.npcs = [];
         this.callTimestamps = [];
+        this.lastHandledChatTs = 0;
+        this.pendingChatIntents = {};
     }
 
     registerNpc(npc) {
@@ -169,6 +213,28 @@ class Orchestrator {
             return Object.assign({
                 npcId: key
             }, parsed[key]);
+        });
+    }
+
+    parseReplies(text) {
+        const parsed = parseJsonPayload(text);
+        if (!parsed) {
+            return [];
+        }
+
+        if (Array.isArray(parsed)) {
+            return parsed;
+        }
+
+        if (Array.isArray(parsed.replies)) {
+            return parsed.replies;
+        }
+
+        return Object.keys(parsed).map((key) => {
+            return {
+                npcId: key,
+                text: parsed[key]
+            };
         });
     }
 
@@ -363,6 +429,105 @@ class Orchestrator {
         return buildContextualFallbackUtterance(npc, context);
     }
 
+    async generateChatReplies(latestChat, safeState) {
+        const prompt = buildNpcReplyPrompt(this.npcs, safeState.recentChats || [], latestChat);
+        const fallbackReplies = this.npcs.reduce((replyMap, npc) => {
+            replyMap[npc.id] = getChatFallbackReply(npc.id);
+            return replyMap;
+        }, {});
+        const mockReplies = this.npcs.reduce((replyMap, npc) => {
+            replyMap[npc.id] = getMockChatReply(npc.id, latestChat);
+            return replyMap;
+        }, {});
+        const now = Date.now();
+
+        if (estimatePromptTokens(prompt) > this.config.maxPromptTokens || !this.consumeCallBudget(now)) {
+            return fallbackReplies;
+        }
+
+        try {
+            const result = await this.config.ask('npc_reply_to_player', {
+                latestChat: latestChat,
+                recentChats: (safeState.recentChats || []).slice(-5).map((entry) => ({
+                    playerName: entry.playerName,
+                    message: entry.message,
+                    ts: entry.ts
+                }))
+            }, {
+                timeoutMs: Math.min(this.config.timeoutMs, 3500),
+                useCache: false,
+                prompt: prompt
+            });
+
+            if (!result || !result.ok || !result.text) {
+                return fallbackReplies;
+            }
+            if (result.text.indexOf('MOCK:') === 0) {
+                return mockReplies;
+            }
+
+            const parsedReplies = this.parseReplies(result.text);
+            const replyMap = Object.assign({}, fallbackReplies);
+            parsedReplies.forEach((entry, index) => {
+                const matchedNpc = this.npcs.find((npc) => entry && (entry.npcId === npc.id || entry.id === npc.id))
+                    || this.npcs[index];
+                const text = entry && typeof entry.text === 'string' ? entry.text.trim() : '';
+                if (matchedNpc && text) {
+                    replyMap[matchedNpc.id] = text === '不回复' ? fallbackReplies[matchedNpc.id] : text.slice(0, 15);
+                }
+            });
+
+            return replyMap;
+        } catch (_error) {
+            return fallbackReplies;
+        }
+    }
+
+    queueFollowPlayerIntent(npc, safeState) {
+        const anchorPlayer = this.getAnchorPlayer(safeState);
+        if (!npc || !anchorPlayer) {
+            return;
+        }
+
+        this.pendingChatIntents[npc.id] = {
+            type: 'move_to',
+            params: {
+                x: anchorPlayer.x + 40,
+                y: anchorPlayer.y + 20
+            },
+            reason: '响应玩家聊天'
+        };
+    }
+
+    async handleRecentChats(safeState) {
+        const recentChats = Array.isArray(safeState.recentChats) ? safeState.recentChats : [];
+        const nextChats = recentChats.filter((entry) => entry && entry.ts > this.lastHandledChatTs);
+        if (!nextChats.length) {
+            return;
+        }
+
+        const latestChat = nextChats.sort((left, right) => left.ts - right.ts).pop();
+        const replies = await this.generateChatReplies(latestChat, safeState);
+
+        if (typeof this.config.emitEvent === 'function') {
+            this.npcs.forEach((npc) => {
+                this.config.emitEvent('npc:speak', {
+                    npcId: npc.id,
+                    npcName: npc.player.name,
+                    text: replies[npc.id] || getChatFallbackReply(npc.id),
+                    duration: 3000
+                });
+            });
+        }
+
+        if (isFollowPlayerMessage(latestChat.message)) {
+            const preferredNpc = this.npcs.find((npc) => npc.id === 'doudou') || this.npcs[0];
+            this.queueFollowPlayerIntent(preferredNpc, safeState);
+        }
+
+        this.lastHandledChatTs = latestChat.ts;
+    }
+
     handleNpcSpeak(npc, safeState, context) {
         if (typeof this.config.emitEvent !== 'function') {
             return Promise.resolve();
@@ -411,6 +576,7 @@ class Orchestrator {
         }
 
         this.npcs.forEach((npc) => npc.move(dt, mapSize.width, mapSize.height));
+        await this.handleRecentChats(safeState);
 
         const batchContext = this.buildBatchContext(this.npcs, safeState);
         const prompt = buildNpcIntentPrompt(this.npcs, batchContext);
@@ -437,8 +603,12 @@ class Orchestrator {
 
         const sideEffects = this.npcs.map((npc, index) => {
             const context = batchContext[index];
+            const pendingChatIntent = this.pendingChatIntents[npc.id] || null;
+            if (pendingChatIntent) {
+                delete this.pendingChatIntents[npc.id];
+            }
             const parsedIntent = this.resolveIntent(parsedIntents, npc, index, mapSize, safeState);
-            const nextIntent = parsedIntent || this.buildFallbackIntent(npc, safeState, mapSize, context);
+            const nextIntent = pendingChatIntent || parsedIntent || this.buildFallbackIntent(npc, safeState, mapSize, context);
 
             if (nextIntent.type === 'speak') {
                 return this.handleNpcSpeak(npc, safeState, {

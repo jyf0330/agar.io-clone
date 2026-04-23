@@ -14,6 +14,7 @@ var createAvatarDraftController = require('./avatar-draft-controller');
 var createSocketController = require('./socket-controller');
 var createSpeechBubble = require('./ui/speech-bubble');
 var createPaintToast = require('./ui/paint-toast');
+var createChatInput = require('./ui/chat-input');
 var i18n = require('./i18n');
 var socketEmit = require('./socket-emit');
 
@@ -24,6 +25,7 @@ var avatarDraftController;
 var socketController;
 var speechBubble;
 var paintToast;
+var chatInput;
 var hideStartMenuOnLoad = true;
 
 var debug = function (args) {
@@ -51,6 +53,9 @@ function enterGame(type) {
 
     document.getElementById('startMenuWrapper').style.maxHeight = '0px';
     document.getElementById('gameAreaWrapper').style.opacity = 1;
+    if (chatInput) {
+        chatInput.show();
+    }
     socket = socketController.connect(type);
     if (!global.animLoopHandle)
         animloop();
@@ -155,6 +160,13 @@ window.onload = function () {
         document: document,
         window: window
     });
+    chatInput = createChatInput({
+        document: document
+    });
+    chatInput.hide();
+    chatInput.setSendHandler(function (text) {
+        return window.chat.sendChatText(text);
+    });
 
     socketController = createSocketController({
         io: io,
@@ -192,6 +204,7 @@ window.onload = function () {
         resize: resize,
         speechBubble: speechBubble,
         paintToast: paintToast,
+        chatInput: chatInput,
         setLeaderboard: function (nextLeaderboard) {
             leaderboard = nextLeaderboard;
         },

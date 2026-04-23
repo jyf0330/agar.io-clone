@@ -23,6 +23,17 @@ function formatOtherNpcSummary(context, currentNpcId) {
     }).join(' ');
 }
 
+function formatRecentChats(recentChats) {
+    const rows = Array.isArray(recentChats) ? recentChats.slice(-5) : [];
+    if (!rows.length) {
+        return '最近没有玩家聊天。';
+    }
+
+    return rows.map((entry) => {
+        return (entry.playerName || '玩家') + '：' + (entry.message || '');
+    }).join('\n');
+}
+
 function buildNpcIntentPrompt(npcs, batchContext) {
     const npcList = Array.isArray(npcs) ? npcs : [npcs];
     const contexts = Array.isArray(batchContext) ? batchContext : [batchContext];
@@ -93,7 +104,45 @@ function buildNpcUtterPrompt(npc, context) {
     };
 }
 
+function buildNpcReplyPrompt(npcs, recentChats, playerMessage) {
+    const npcList = Array.isArray(npcs) ? npcs : [npcs];
+    const latestMessage = playerMessage || {};
+    const anchorSections = npcList.map((npc) => {
+        return [
+            'NPC: ' + npc.player.name + ' (' + npc.id + ')',
+            formatBehaviorSummary(npc),
+            npc.personality.anchorsText || ''
+        ].join('\n');
+    }).join('\n\n');
+
+    return {
+        system: [
+            '你要分别扮演 3 个 NPC 回复玩家。',
+            '必须严格遵循下面的人设锚点，不要串味：',
+            anchorSections
+        ].join('\n\n'),
+        user: [
+            '最近聊天记录：',
+            formatRecentChats(recentChats),
+            '玩家最新一句：' + (latestMessage.message || ''),
+            '请输出 JSON 数组，不要加解释。',
+            '格式：',
+            '[',
+            '  {"npcId":"mochi","text":"不超过 15 字"},',
+            '  {"npcId":"doudou","text":"不超过 15 字"},',
+            '  {"npcId":"wugui","text":"不超过 15 字"}',
+            ']',
+            '如果某个 NPC 不想回应，也要保留该项并把 text 设为 "不回复"。',
+            '如果玩家在问颜色，mochi 偏冷色，doudou 可以顽皮乱答，wugui 稳重回答。',
+            '如果玩家在喊你过来，至少 1 只 NPC 的语气里要体现愿意靠近。'
+        ].join('\n'),
+        maxTokens: 120,
+        temperature: 0.65
+    };
+}
+
 module.exports = {
     buildNpcIntentPrompt: buildNpcIntentPrompt,
-    buildNpcUtterPrompt: buildNpcUtterPrompt
+    buildNpcUtterPrompt: buildNpcUtterPrompt,
+    buildNpcReplyPrompt: buildNpcReplyPrompt
 };

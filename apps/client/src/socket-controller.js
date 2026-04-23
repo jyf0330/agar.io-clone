@@ -39,6 +39,9 @@ function createSocketController(options) {
     function handleDisconnect() {
         options.global.disconnected = true;
         options.global.gameStart = false;
+        if (options.chatInput) {
+            options.chatInput.hide();
+        }
         assignSocket(null);
         if (!options.global.kicked) {
             options.render.drawErrorMessage(options.i18n.t('system.disconnected'), options.graph, options.global.screen);
@@ -81,6 +84,9 @@ function createSocketController(options) {
             options.canvasElement.focus();
             options.global.game.width = gameSizes.width;
             options.global.game.height = gameSizes.height;
+            if (options.chatInput) {
+                options.chatInput.show();
+            }
             options.resize();
         });
 
@@ -154,6 +160,9 @@ function createSocketController(options) {
 
         nextSocket.on('RIP', function () {
             options.global.gameStart = false;
+            if (options.chatInput) {
+                options.chatInput.hide();
+            }
             options.render.drawErrorMessage(options.i18n.t('system.youDied'), options.graph, options.global.screen);
             options.window.setTimeout(function () {
                 options.document.getElementById('gameAreaWrapper').style.opacity = 0;
@@ -168,6 +177,9 @@ function createSocketController(options) {
         nextSocket.on('kick', function (reason) {
             options.global.gameStart = false;
             options.global.kicked = true;
+            if (options.chatInput) {
+                options.chatInput.hide();
+            }
             if (reason !== '') {
                 options.render.drawErrorMessage(options.i18n.t('system.kickedReason', {reason: reason}), options.graph, options.global.screen);
             } else {

@@ -113,30 +113,36 @@ class ChatClient {
         key = key.which || key.keyCode;
 
         if (key === global.KEY_ENTER) {
-            var text = input.value.replace(/(<([^>]+)>)/ig,'');
-            if (text !== '') {
-
-                // Chat command.
-                if (text.indexOf('-') === 0) {
-                    var args = text.substring(1).split(' ');
-                    if (commands[args[0]]) {
-                        commands[args[0]].callback(args.slice(1));
-                    } else {
-                        this.addSystemLine('Unrecognized Command: ' + text + ', type -help for more info.');
-                    }
-
-                // Allows for regular messages to be sent to the server.
-                } else {
-                    if (socketEmit.emitIfReady(this.socket, 'playerChat', { sender: this.player.name, message: text })) {
-                        this.addChatLine(this.player.name, text, true);
-                    }
-                }
-
-                // Resets input.
+            if (this.sendChatText(input.value)) {
                 input.value = '';
                 this.canvas.cv.focus();
             }
         }
+    }
+
+    sendChatText(rawText) {
+        var commands = this.commands;
+        var text = String(rawText || '').replace(/(<([^>]+)>)/ig, '');
+        if (text === '') {
+            return false;
+        }
+
+        if (text.indexOf('-') === 0) {
+            var args = text.substring(1).split(' ');
+            if (commands[args[0]]) {
+                commands[args[0]].callback(args.slice(1));
+            } else {
+                this.addSystemLine('Unrecognized Command: ' + text + ', type -help for more info.');
+            }
+            return true;
+        }
+
+        if (socketEmit.emitIfReady(this.socket, 'player:chat', { sender: this.player.name, message: text })) {
+            this.addChatLine(this.player.name, text, true);
+            return true;
+        }
+
+        return false;
     }
 
     // Allows for addition of commands.

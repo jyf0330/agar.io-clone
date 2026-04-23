@@ -281,4 +281,141 @@ describe('npc orchestrator', () => {
         expect(wuguiPaintTimes.length).to.be.greaterThan(0);
         expect(wuguiPaintTimes.every((elapsedMs) => elapsedMs >= 60000)).to.equal(true);
     });
+
+    it('should broadcast reply lines for a fresh player chat message', async () => {
+        const baseNow = 1700001000000;
+        const originalNow = Date.now;
+        const events = [];
+        const humanPlayer = createHumanPlayer();
+        const mochi = createNpc('mochi', {spawn: {x: 100, y: 120}});
+        const doudou = createNpc('doudou', {spawn: {x: 160, y: 180}});
+        const wugui = createNpc('wugui', {spawn: {x: 220, y: 240}});
+        const orchestrator = new Orchestrator({
+            ask(promptId) {
+                if (promptId === 'npc_reply_to_player') {
+                    return Promise.resolve({
+                        ok: true,
+                        text: JSON.stringify([
+                            {npcId: 'mochi', text: '我喜欢蓝绿。'},
+                            {npcId: 'doudou', text: '我今天都喜欢!!'},
+                            {npcId: 'wugui', text: '看心情，不必急。'}
+                        ]),
+                        source: 'llm'
+                    });
+                }
+
+                return Promise.resolve({
+                    ok: true,
+                    text: '[]',
+                    source: 'llm'
+                });
+            },
+            mapWidth: 500,
+            mapHeight: 400,
+            maxCallsPerSec: 5,
+            emitEvent(name, payload) {
+                events.push({name: name, payload: payload});
+            },
+            paintPlayer() {
+                return 'data:image/png;base64,AA==';
+            },
+            sessionStartedAt: baseNow,
+            roundDurationMs: 90000
+        });
+
+        Date.now = () => baseNow;
+        mochi.spawnedAt = baseNow;
+        doudou.spawnedAt = baseNow;
+        wugui.spawnedAt = baseNow;
+
+        orchestrator.registerNpc(mochi);
+        orchestrator.registerNpc(doudou);
+        orchestrator.registerNpc(wugui);
+
+        try {
+            Date.now = () => baseNow + 2000;
+            await orchestrator.tick({
+                players: [humanPlayer, mochi.player, doudou.player, wugui.player],
+                recentChats: [{
+                    ts: baseNow + 1000,
+                    playerId: humanPlayer.id,
+                    playerName: humanPlayer.name,
+                    message: '你喜欢什么颜色'
+                }],
+                matchStartedAt: baseNow,
+                roundDurationMs: 90000
+            }, 1000);
+        } finally {
+            Date.now = originalNow;
+        }
+
+        expect(events.filter((event) => event.name === 'npc:speak').length).to.equal(3);
+        expect(events.some((event) => event.payload.npcId === 'mochi' && event.payload.text === '我喜欢蓝绿。')).to.equal(true);
+        expect(orchestrator.lastHandledChatTs).to.equal(baseNow + 1000);
+    });
+
+    it('should move doudou toward the player when asked to come over', async () => {
+        const baseNow = 1700002000000;
+        const originalNow = Date.now;
+        const events = [];
+        const humanPlayer = createHumanPlayer();
+        const mochi = createNpc('mochi', {spawn: {x: 100, y: 120}});
+        const doudou = createNpc('doudou', {spawn: {x: 160, y: 180}});
+        const wugui = createNpc('wugui', {spawn: {x: 220, y: 240}});
+        const orchestrator = new Orchestrator({
+            ask(promptId) {
+                if (promptId === 'npc_reply_to_player') {
+                    return Promise.reject(new Error('offline'));
+                }
+
+                return Promise.resolve({
+                    ok: true,
+                    text: '[]',
+                    source: 'llm'
+                });
+            },
+            mapWidth: 500,
+            mapHeight: 400,
+            maxCallsPerSec: 5,
+            emitEvent(name, payload) {
+                events.push({name: name, payload: payload});
+            },
+            paintPlayer() {
+                return 'data:image/png;base64,AA==';
+            },
+            sessionStartedAt: baseNow,
+            roundDurationMs: 90000
+        });
+
+        Date.now = () => baseNow;
+        mochi.spawnedAt = baseNow;
+        doudou.spawnedAt = baseNow;
+        wugui.spawnedAt = baseNow;
+
+        orchestrator.registerNpc(mochi);
+        orchestrator.registerNpc(doudou);
+        orchestrator.registerNpc(wugui);
+
+        try {
+            Date.now = () => baseNow + 3000;
+            await orchestrator.tick({
+                players: [humanPlayer, mochi.player, doudou.player, wugui.player],
+                recentChats: [{
+                    ts: baseNow + 2000,
+                    playerId: humanPlayer.id,
+                    playerName: humanPlayer.name,
+                    message: '你能走过来吗'
+                }],
+                matchStartedAt: baseNow,
+                roundDurationMs: 90000
+            }, 1000);
+        } finally {
+            Date.now = originalNow;
+        }
+
+        expect(events.filter((event) => event.name === 'npc:speak').length).to.equal(3);
+        expect(doudou.currentIntent.type).to.equal('move_to');
+        expect(doudou.currentIntent.params.x).to.be.closeTo(humanPlayer.x, 80);
+        expect(doudou.currentIntent.params.y).to.be.closeTo(humanPlayer.y, 80);
+    });
 });

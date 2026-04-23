@@ -58,6 +58,10 @@ const roundClock = {
     startedAt: Date.now(),
     durationMs: 90000
 };
+const chatState = {
+    recentChats: [],
+    lastPlayerAction: 'idle'
+};
 
 let sockets = {};
 let spectators = [];
@@ -169,6 +173,23 @@ function bootstrapDefaultNpcs() {
 
 npcRoster = bootstrapDefaultNpcs();
 
+function rememberRecentChat(currentPlayer, message) {
+    const entry = {
+        ts: Date.now(),
+        playerId: currentPlayer.id,
+        playerName: currentPlayer.name,
+        message: String(message || '').slice(0, 35)
+    };
+
+    chatState.recentChats.push(entry);
+    if (chatState.recentChats.length > 10) {
+        chatState.recentChats = chatState.recentChats.slice(-10);
+    }
+    chatState.lastPlayerAction = 'chat:' + entry.message.slice(0, 20);
+
+    return entry;
+}
+
 const addPlayer = (socket) => {
     var currentPlayer = new mapUtils.playerUtils.Player(socket.id);
 
@@ -230,14 +251,20 @@ const addPlayer = (socket) => {
         socket.broadcast.emit('playerDisconnect', { name: currentPlayer.name });
     });
 
-    socket.on('playerChat', (data) => {
-        var _sender = data.sender.replace(/(<([^>]+)>)/ig, '');
-        var _message = data.message.replace(/(<([^>]+)>)/ig, '');
+    function handlePlayerChat(data) {
+        const safeData = data || {};
+        var _sender = String(safeData.sender || currentPlayer.name || '').replace(/(<([^>]+)>)/ig, '');
+        var _message = String(safeData.message || '').replace(/(<([^>]+)>)/ig, '');
+
+        if (_message === '') {
+            return;
+        }
 
         if (config.logChat === 1) {
             console.log('[CHAT] [' + (new Date()).getHours() + ':' + (new Date()).getMinutes() + '] ' + _sender + ': ' + _message);
         }
 
+        rememberRecentChat(currentPlayer, _message);
         socket.broadcast.emit('serverSendPlayerChat', {
             sender: currentPlayer.name,
             message: _message.substring(0, 35)
@@ -245,7 +272,10 @@ const addPlayer = (socket) => {
 
         chatRepository.logChatMessage(_sender, _message, currentPlayer.ipAddress)
             .catch((err) => console.error("Error when attempting to log chat message", err));
-    });
+    }
+
+    socket.on('playerChat', handlePlayerChat);
+    socket.on('player:chat', handlePlayerChat);
 
     socket.on('pass', async (data) => {
         const password = data[0];
@@ -357,7 +387,9 @@ setInterval(() => {
         mapWidth: config.gameWidth,
         mapHeight: config.gameHeight,
         matchStartedAt: roundClock.startedAt,
-        roundDurationMs: roundClock.durationMs
+        roundDurationMs: roundClock.durationMs,
+        recentChats: chatState.recentChats,
+        lastPlayerAction: chatState.lastPlayerAction
     }, 1000).catch((error) => {
         console.error('[NPC] orchestrator tick failed', error);
     });
