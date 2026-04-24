@@ -7,6 +7,11 @@ const QUICK_PET_QUESTIONS = [
     '我现在该打还是跑？',
     '你记得上一局吗？'
 ];
+const QUICK_PET_SWITCHES = [
+    {label: 'Mochi', command: 'pet mochi'},
+    {label: 'Doudou', command: 'pet doudou'},
+    {label: 'Wugui', command: 'pet wugui'}
+];
 
 function createChatInput(options) {
     const settings = options || {};
@@ -23,6 +28,7 @@ function createChatInput(options) {
         let historyLabel;
         let composer;
         let quickBar;
+        let switchBar;
 
         if (root) {
             return root;
@@ -59,6 +65,22 @@ function createChatInput(options) {
             quickBar.appendChild(button);
         });
 
+        switchBar = document.createElement('div');
+        switchBar.className = 'npc-chat-switchbar';
+        QUICK_PET_SWITCHES.forEach((pet) => {
+            const button = document.createElement('button');
+            button.className = 'npc-chat-switch';
+            button.type = 'button';
+            button.textContent = pet.label;
+            button.addEventListener('click', () => {
+                if (typeof sendHandler === 'function' && sendHandler(pet.command) === false) {
+                    return;
+                }
+                addLocalMessage(pet.command);
+            });
+            switchBar.appendChild(button);
+        });
+
         composer = document.createElement('div');
         composer.className = 'npc-chat-composer';
 
@@ -74,6 +96,7 @@ function createChatInput(options) {
         composer.appendChild(input);
         root.appendChild(history);
         root.appendChild(quickBar);
+        root.appendChild(switchBar);
         root.appendChild(composer);
 
         wrapper = document.getElementById('gameAreaWrapper') || document.body;

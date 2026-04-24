@@ -7306,7 +7306,7 @@
       "label": "createChatInput()",
       "file_type": "code",
       "source_file": "apps/client/src/ui/chat-input.js",
-      "source_location": "L11",
+      "source_location": "L16",
       "id": "chat_input_createchatinput",
       "community": 56,
       "norm_label": "createchatinput()"
@@ -23917,7 +23917,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/client/src/ui/chat-input.js",
-      "source_location": "L11",
+      "source_location": "L16",
       "weight": 1.0,
       "_src": "apps_client_src_ui_chat_input_js",
       "_tgt": "chat_input_createchatinput",
