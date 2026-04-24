@@ -23,6 +23,9 @@ function normalizeActivePet(pet, ownerPlayerId) {
     personality: safePet.personality || '谨慎型',
     ownerPlayerId: ownerPlayerId || safePet.ownerPlayerId || null,
     active: true,
+    x: typeof safePet.x === 'number' ? safePet.x : null,
+    y: typeof safePet.y === 'number' ? safePet.y : null,
+    radius: typeof safePet.radius === 'number' ? safePet.radius : 18,
     memoryKey: [ownerPlayerId || safePet.ownerPlayerId || 'player', petId].join(':')
   };
 }

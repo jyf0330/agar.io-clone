@@ -99,6 +99,26 @@ const drawGhost = (position, ghost, graph) => {
     graph.restore();
 };
 
+const drawPet = (position, pet, graph) => {
+    const radius = pet.radius || 18;
+
+    graph.save();
+    graph.beginPath();
+    graph.arc(position.x, position.y, radius, 0, FULL_ANGLE);
+    graph.closePath();
+    graph.fillStyle = 'rgba(255, 245, 180, 0.9)';
+    graph.strokeStyle = '#6b5b20';
+    graph.lineWidth = 2;
+    graph.fill();
+    graph.stroke();
+    graph.textAlign = 'center';
+    graph.textBaseline = 'middle';
+    graph.font = 'bold 10px sans-serif';
+    graph.fillStyle = '#3d3312';
+    graph.fillText(pet.name || pet.petId || 'pet', position.x, position.y - radius - 8);
+    graph.restore();
+};
+
 const valueInRange = (min, max, value) => Math.min(max, Math.max(min, value))
 
 const circlePoint = (origo, radius, theta) => ({
@@ -286,6 +306,7 @@ module.exports = {
     drawFireFood,
     drawPartLoot,
     drawGhost,
+    drawPet,
     drawCells,
     drawErrorMessage,
     drawGrid,

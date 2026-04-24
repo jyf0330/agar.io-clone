@@ -506,6 +506,10 @@ function gameLoop() {
             let position = getPosition(ghost, player, global.screen);
             render.drawGhost(position, ghost, graph);
         });
+        if (player.activePet && player.activePet.active && typeof player.activePet.x === 'number' && typeof player.activePet.y === 'number') {
+            let petPosition = getPosition(player.activePet, player, global.screen);
+            render.drawPet(petPosition, player.activePet, graph);
+        }
 
 
         let borders = { // Position of the borders on the screen

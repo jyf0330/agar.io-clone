@@ -8,6 +8,34 @@ const mapUtils = require('../../apps/server/src/map/map');
 const playerUtils = require('../../apps/server/src/map/player');
 
 describe('game-loop-service.js', () => {
+  it('should keep the active pet following the player without creating a combat body', () => {
+    const map = new mapUtils.Map(config);
+    const player = new playerUtils.Player('player-1');
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'collector',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    service.tickPlayer(player);
+
+    expect(player.activePet.active).to.equal(true);
+    expect(player.activePet.x).to.be.a('number');
+    expect(player.activePet.y).to.be.a('number');
+    expect(player.activePet.radius).to.equal(18);
+  });
+
   it('should equip part loot when a player touches it', () => {
     const map = new mapUtils.Map(config);
     const player = new playerUtils.Player('player-1');

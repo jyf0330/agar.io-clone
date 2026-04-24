@@ -60,6 +60,10 @@ function createGameLoopService(options) {
       return;
     }
     currentPlayer.move(config.slowBase, config.gameWidth, config.gameHeight, initMassLog);
+    if (!currentPlayer.isNpc && currentPlayer.activePet) {
+      currentPlayer.activePet.x = Math.max(0, Math.min(config.gameWidth, currentPlayer.x - 54));
+      currentPlayer.activePet.y = Math.max(0, Math.min(config.gameHeight, currentPlayer.y + 42));
+    }
     const isEntityInsideCircle = (point, circle) => {
       return SAT.pointInCircle(new Vector(point.x, point.y), circle);
     };
