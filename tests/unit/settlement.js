@@ -36,7 +36,7 @@ describe('settlement summary', () => {
       sourceType: 'ghost_echo',
       originPlayerId: 'player-old',
       originPlayerName: 'Old Player',
-      acquired: 'picked from map',
+      acquired: 'ghost echo pickup',
       removed: false
     });
     expect(summary.bodyParts[0].stats).to.deep.equal(['pickupRange +10']);
@@ -52,6 +52,40 @@ describe('settlement summary', () => {
       y: 130
     });
     expect(summary.petClosingLine).to.contain('Thread Hand');
+  });
+
+  it('should label npc reward parts as task rewards in the body source list', () => {
+    const part = body.appendPartHistory(body.createBodyPart('HAND', 1, {
+      partId: 'task-hand-1',
+      displayName: 'Task Hand',
+      sourceType: 'npc_reward',
+      originPlayerId: 'npc-mochi',
+      originPlayerName: 'Mochi'
+    }), 'picked', {
+      playerId: 'player-a',
+      x: 200,
+      y: 210,
+      sourceType: 'npc_reward'
+    });
+    const summary = settlement.buildSettlementSummary({
+      player: {
+        id: 'player-a',
+        name: 'Alice',
+        bodyParts: [part]
+      },
+      endedReason: 'round_end',
+      historyWritten: true
+    });
+
+    expect(summary.bodyParts[0]).to.include({
+      sourceType: 'npc_reward',
+      acquired: 'npc task reward',
+      originPlayerName: 'Mochi'
+    });
+    expect(summary.keyEvents[0]).to.include({
+      eventType: 'picked',
+      sourceType: 'npc_reward'
+    });
   });
 
   it('should only recognize explicit demo settlement requests', () => {

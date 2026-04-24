@@ -30,6 +30,12 @@ function getAcquiredLabel(part) {
         return 'stolen from ' + (event.playerName || event.fromPlayerId || 'unknown');
     }
     if (event.eventType === 'picked') {
+        if (part.sourceType === 'npc_reward') {
+            return 'npc task reward';
+        }
+        if (part.sourceType === 'ghost_echo') {
+            return 'ghost echo pickup';
+        }
         return 'picked from map';
     }
     if (event.eventType === 'equipped') {
