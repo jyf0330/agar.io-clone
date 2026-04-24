@@ -1,0 +1,91 @@
+{
+  "scenario": "online",
+  "script": "week1-playthrough-online.js",
+  "url": "http://127.0.0.1:35100",
+  "durationMs": 90000,
+  "outputPath": "/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/videos/week1/online.mp4",
+  "session": "w1-online",
+  "startedAt": "2026-04-23T19:29:29.290Z",
+  "audit": {
+    "dir": "data/audit/week1/online"
+  },
+  "server": {
+    "managed": true,
+    "command": "PORT=35100 HOST=127.0.0.1 IP=127.0.0.1 LLM_PROVIDER=mock LLM_AUDIT_DIR=data/audit/week1/online node dist/server/server.js",
+    "logs": [
+      "[stderr] [WARN] sqlite3 unavailable, database logging is disabled.",
+      "[stderr] [WARN] dlopen(/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node, 0x0001): tried: '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' (code signature in <DFB61DC4-0D6B-3B10-BE39-1944935AB942> '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/System/Volumes/Preboot/Cryptexes/OS/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' (no such file), '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' (code signature in <DFB61DC4-0D6B-3B10-BE39-1944935AB942> '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs)",
+      "[stdout] [DEBUG] Listening on 127.0.0.1:35100",
+      "[stdout] [DEBUG] Adding 1000 food",
+      "[stdout] User has connected:  player",
+      "[stdout] [INFO] User null has respawned",
+      "[stdout] [INFO] Player  connecting!",
+      "[stdout] [INFO] Player  connected!",
+      "[stdout] Total players: 4",
+      "[stdout] [DEBUG] Adding 3 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] User has connected:  spectator",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 4 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 4 food"
+    ]
+  },
+  "video": {
+    "requestedPath": "/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/videos/week1/online.mp4",
+    "kind": "webm-bytes-with-mp4-name",
+    "reason": "playwright-cli wrote WebM bytes under an .mp4 name; kept original capture and mirrored a .webm copy",
+    "detectedFormat": "WebM",
+    "rawCapturePath": "/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/videos/week1/online.playwright.webm"
+  },
+  "auditWindow": {
+    "startedTsMs": 1776972571102,
+    "finishedTsMs": 1776972665776
+  },
+  "onlineChecks": {
+    "hudPreview": [
+      "排行榜",
+      "1. Wugui",
+      "2. Mochi",
+      "3. Doudou",
+      "4. 未命名单元",
+      "实体化"
+    ],
+    "observedNpcIds": [
+      "doudou",
+      "mochi",
+      "wugui"
+    ],
+    "movingNpcIds": [
+      "wugui",
+      "mochi",
+      "doudou"
+    ],
+    "movementByNpc": {
+      "wugui": 3309.7537235655345,
+      "mochi": 3085.8310369021433,
+      "doudou": 2012.7859840018818
+    },
+    "speakCounts": {
+      "doudou": 10,
+      "wugui": 6,
+      "mochi": 4
+    }
+  },
+  "finishedAt": "2026-04-23T19:31:05.988Z",
+  "observedDurationMs": 94674
+}

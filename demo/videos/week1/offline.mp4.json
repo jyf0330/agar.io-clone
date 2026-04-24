@@ -1,0 +1,77 @@
+{
+  "scenario": "offline",
+  "script": "week1-playthrough-offline.js",
+  "url": "http://127.0.0.1:35101",
+  "durationMs": 90000,
+  "outputPath": "/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/videos/week1/offline.mp4",
+  "session": "w1-offline",
+  "startedAt": "2026-04-23T19:32:50.272Z",
+  "audit": {
+    "dir": "data/audit/week1/offline"
+  },
+  "server": {
+    "managed": true,
+    "command": "PORT=35101 HOST=127.0.0.1 IP=127.0.0.1 LLM_PROVIDER=openai OPENAI_API_KEY=week1-offline-demo OPENAI_BASE_URL=http://127.0.0.1:9/v1 LLM_TIMEOUT_MS=50 LLM_AUDIT_DIR=data/audit/week1/offline node dist/server/server.js",
+    "logs": [
+      "[stderr] [WARN] sqlite3 unavailable, database logging is disabled.",
+      "[stderr] [WARN] dlopen(/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node, 0x0001): tried: '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' (code signature in <DFB61DC4-0D6B-3B10-BE39-1944935AB942> '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/System/Volumes/Preboot/Cryptexes/OS/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' (no such file), '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' (code signature in <DFB61DC4-0D6B-3B10-BE39-1944935AB942> '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs)",
+      "[stdout] [DEBUG] Listening on 127.0.0.1:35101",
+      "[stdout] [DEBUG] Adding 1000 food",
+      "[stdout] User has connected:  player",
+      "[stdout] [INFO] User null has respawned",
+      "[stdout] [INFO] Player  connecting!",
+      "[stdout] [INFO] Player  connected!",
+      "[stdout] Total players: 4",
+      "[stdout] [DEBUG] Adding 3 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 3 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food"
+    ]
+  },
+  "video": {
+    "requestedPath": "/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/videos/week1/offline.mp4",
+    "kind": "webm-bytes-with-mp4-name",
+    "reason": "playwright-cli wrote WebM bytes under an .mp4 name; kept original capture and mirrored a .webm copy",
+    "detectedFormat": "WebM",
+    "rawCapturePath": "/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/videos/week1/offline.playwright.webm"
+  },
+  "auditWindow": {
+    "startedTsMs": 1776972772030,
+    "finishedTsMs": 1776972868063
+  },
+  "offlineChecks": {
+    "serverForcedOfflineLlm": true,
+    "gameDidNotCrash": true,
+    "fallbackSpeakExpected": true,
+    "uniqueCanvasSignatures": 2,
+    "fallbackChatLines": 11
+  },
+  "finishedAt": "2026-04-23T19:34:28.247Z",
+  "observedDurationMs": 96033
+}

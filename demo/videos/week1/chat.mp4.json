@@ -1,0 +1,79 @@
+{
+  "scenario": "chat",
+  "script": "week1-playthrough-chat.js",
+  "url": "http://127.0.0.1:35102",
+  "durationMs": 90000,
+  "outputPath": "/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/videos/week1/chat.mp4",
+  "session": "w1-chat",
+  "startedAt": "2026-04-23T19:31:06.143Z",
+  "audit": {
+    "dir": "data/audit/week1/chat"
+  },
+  "server": {
+    "managed": true,
+    "command": "PORT=35102 HOST=127.0.0.1 IP=127.0.0.1 LLM_PROVIDER=mock LLM_AUDIT_DIR=data/audit/week1/chat node dist/server/server.js",
+    "logs": [
+      "[stderr] [WARN] sqlite3 unavailable, database logging is disabled.",
+      "[stderr] [WARN] dlopen(/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node, 0x0001): tried: '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' (code signature in <DFB61DC4-0D6B-3B10-BE39-1944935AB942> '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/System/Volumes/Preboot/Cryptexes/OS/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' (no such file), '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' (code signature in <DFB61DC4-0D6B-3B10-BE39-1944935AB942> '/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/node_modules/sqlite3/build/Release/node_sqlite3.node' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs)",
+      "[stdout] [DEBUG] Listening on 127.0.0.1:35102",
+      "[stdout] [DEBUG] Adding 1000 food",
+      "[stdout] User has connected:  player",
+      "[stdout] [INFO] User null has respawned",
+      "[stdout] [INFO] Player  connecting!",
+      "[stdout] [INFO] Player  connected!",
+      "[stdout] Total players: 4",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 3 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 2 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 3 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 3 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food",
+      "[stdout] [DEBUG] Adding 1 food"
+    ]
+  },
+  "video": {
+    "requestedPath": "/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/videos/week1/chat.mp4",
+    "kind": "webm-bytes-with-mp4-name",
+    "reason": "playwright-cli wrote WebM bytes under an .mp4 name; kept original capture and mirrored a .webm copy",
+    "detectedFormat": "WebM",
+    "rawCapturePath": "/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/videos/week1/chat.playwright.webm"
+  },
+  "auditWindow": {
+    "startedTsMs": 1776972667881,
+    "finishedTsMs": 1776972769943
+  },
+  "chatChecks": {
+    "sentMessages": [
+      {
+        "at": 10000,
+        "text": "你喜欢什么颜色"
+      },
+      {
+        "at": 25000,
+        "text": "你能走过来吗"
+      },
+      {
+        "at": 40000,
+        "text": "今天天气真好"
+      }
+    ],
+    "localHistoryCount": 3,
+    "npcLineCount": 11
+  },
+  "finishedAt": "2026-04-23T19:32:50.140Z",
+  "observedDurationMs": 102062
+}
