@@ -81,6 +81,16 @@ class GhostRecorder {
             part: body.cloneBodyPart(part)
         }, payload || {}), now);
     }
+
+    recordCombatEvent(player, eventType, target, position, now, payload) {
+        const eventPosition = position || {};
+        this.recordEvent(player, eventType, Object.assign({
+            x: eventPosition.x,
+            y: eventPosition.y,
+            targetPlayerId: target && target.id ? target.id : '',
+            targetPlayerName: target && target.name ? target.name : ''
+        }, payload || {}), now);
+    }
 }
 
 module.exports = GhostRecorder;

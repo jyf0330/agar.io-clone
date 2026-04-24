@@ -3,6 +3,7 @@
 const expect = require('chai').expect;
 const config = require('../../configs/game/config');
 const createGameLoopService = require('../../apps/server/src/game-loop-service');
+const body = require('../../apps/server/src/body');
 const mapUtils = require('../../apps/server/src/map/map');
 const playerUtils = require('../../apps/server/src/map/player');
 
@@ -94,5 +95,87 @@ describe('game-loop-service.js', () => {
     expect(recorded[0].partType).to.equal('HAND');
     expect(recorded[0].x).to.equal(100);
     expect(recorded[0].y).to.equal(100);
+  });
+
+  it('should record combat and stolen part events when a player is fully eaten', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const eater = new playerUtils.Player('eater');
+    const victim = new playerUtils.Player('victim');
+    const recordedPartEvents = [];
+    const recordedCombatEvents = [];
+
+    eater.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    eater.clientProvidedData({
+      name: 'Eater',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    eater.cells[0].setMass(200);
+    eater.massTotal = 200;
+
+    victim.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    victim.clientProvidedData({
+      name: 'Victim',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    body.applyBodyState(victim, {
+      bodyParts: [
+        body.createBodyPart('HAND', 1, {
+          originPlayerId: 'victim',
+          currentOwnerId: 'victim'
+        })
+      ]
+    });
+
+    map.players.pushNew(eater);
+    map.players.pushNew(victim);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      ghostRecorder: {
+        recordPartEvent(playerArg, eventType, partArg) {
+          recordedPartEvents.push({
+            playerId: playerArg.id,
+            eventType,
+            partType: partArg.partType,
+            sourceType: partArg.sourceType
+          });
+        },
+        recordCombatEvent(playerArg, eventType, targetArg) {
+          recordedCombatEvents.push({
+            playerId: playerArg.id,
+            eventType,
+            targetId: targetArg.id
+          });
+        }
+      },
+      getSocket(id) {
+        if (id !== 'victim') {
+          return null;
+        }
+
+        return {
+          emit() {},
+          disconnect() {}
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    service.tickGame();
+
+    expect(recordedCombatEvents.map((entry) => entry.eventType)).to.deep.equal(['kill', 'swallowed']);
+    expect(recordedPartEvents.map((entry) => entry.eventType)).to.deep.equal(['part_stolen', 'part_equipped']);
+    expect(recordedPartEvents[0].partType).to.equal('HAND');
+    expect(recordedPartEvents[0].sourceType).to.equal('kill_loot');
+    expect(map.players.findByID('victim')).to.equal(null);
   });
 });

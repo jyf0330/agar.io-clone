@@ -147,7 +147,28 @@ function createGameLoopService(options) {
       if (!playerDied) {
         return;
       }
-      body.stealRandomCorePart(playerGotEaten, eaterPlayer);
+      const stolenPart = body.stealRandomCorePart(playerGotEaten, eaterPlayer);
+      if (ghostRecorder) {
+        const now = Date.now();
+        const position = {
+          x: eaterPlayer.x,
+          y: eaterPlayer.y
+        };
+        if (typeof ghostRecorder.recordCombatEvent === 'function') {
+          ghostRecorder.recordCombatEvent(eaterPlayer, 'kill', playerGotEaten, position, now);
+          ghostRecorder.recordCombatEvent(playerGotEaten, 'swallowed', eaterPlayer, position, now);
+        }
+        if (stolenPart && typeof ghostRecorder.recordPartEvent === 'function') {
+          ghostRecorder.recordPartEvent(eaterPlayer, 'part_stolen', stolenPart, position, now, {
+            fromPlayerId: playerGotEaten.id,
+            fromPlayerName: playerGotEaten.name
+          });
+          ghostRecorder.recordPartEvent(eaterPlayer, 'part_equipped', stolenPart, position, now, {
+            fromPlayerId: playerGotEaten.id,
+            fromPlayerName: playerGotEaten.name
+          });
+        }
+      }
       const playerSocket = getSocket(playerGotEaten.id);
       connectionService.clearTimer(playerGotEaten.id);
       io.emit('playerDied', {
