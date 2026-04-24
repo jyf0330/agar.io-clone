@@ -246,6 +246,35 @@ if (npcFeaturesEnabled) {
     npcRoster = bootstrapDefaultNpcs();
 }
 
+function buildActivePetSnapshot(npc, ownerPlayerId) {
+    if (!npc || !npc.player) {
+        return {
+            petId: 'mochi',
+            npcId: 'mochi',
+            name: '麻薯',
+            personality: '谨慎型',
+            ownerPlayerId: ownerPlayerId
+        };
+    }
+
+    return {
+        petId: npc.id,
+        npcId: npc.id,
+        name: npc.player.name,
+        personality: npc.personality && npc.personality.archetype ? npc.personality.archetype : '谨慎型',
+        ownerPlayerId: ownerPlayerId
+    };
+}
+
+function ensureActivePetForPlayer(player) {
+    if (!player || player.isNpc || typeof player.setActivePet !== 'function') {
+        return;
+    }
+
+    const activeNpc = npcRoster.find((npc) => player.activePet && player.activePet.petId === npc.id) || npcRoster[0];
+    player.setActivePet(buildActivePetSnapshot(activeNpc, player.id));
+}
+
 function rememberRecentChat(currentPlayer, message) {
     const entry = {
         ts: Date.now(),
@@ -318,6 +347,7 @@ function speakPreviousExpectations(currentPlayer) {
 function refreshNpcRelationshipsForPlayers() {
     const humanPlayers = map.players.data.filter((player) => !player.isNpc);
     humanPlayers.forEach((player) => {
+        ensureActivePetForPlayer(player);
         player.npcRelationships = npcRoster.map((npc) => {
             let relationshipValue = npc.personality
                 && npc.personality.relationship_schema
@@ -395,6 +425,7 @@ const addPlayer = (socket) => {
             clientPlayerData.name = sanitizedName;
 
             currentPlayer.clientProvidedData(clientPlayerData);
+            ensureActivePetForPlayer(currentPlayer);
             ghostRecorder.recordPlayerSession(currentPlayer, Date.now());
             map.players.pushNew(currentPlayer);
             if (npcRoster.length && !npcsAnchoredToPlayer) {

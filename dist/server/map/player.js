@@ -13,6 +13,19 @@ const SPEED_DECREMENT = 0.5;
 const MIN_DISTANCE = 50;
 const PUSHING_AWAY_SPEED = 1.1;
 const MERGE_TIMER = 15;
+function normalizeActivePet(pet, ownerPlayerId) {
+  const safePet = pet || {};
+  const petId = safePet.petId || safePet.npcId || 'mochi';
+  return {
+    petId: petId,
+    npcId: safePet.npcId || petId,
+    name: safePet.name || '麻薯',
+    personality: safePet.personality || '谨慎型',
+    ownerPlayerId: ownerPlayerId || safePet.ownerPlayerId || null,
+    active: true,
+    memoryKey: [ownerPlayerId || safePet.ownerPlayerId || 'player', petId].join(':')
+  };
+}
 class Cell {
   constructor(x, y, mass, speed) {
     this.x = x;
@@ -85,6 +98,7 @@ exports.Player = class {
     this.playerCardPreviewDataUrl = null;
     this.consentToRecord = true;
     this.isReplayAllowed = true;
+    this.activePet = normalizeActivePet(null, id);
     this.screenWidth = null;
     this.screenHeight = null;
     this.timeToMerge = null;
@@ -122,6 +136,10 @@ exports.Player = class {
       bodySignature: this.bodySignature
     });
     this.setLastHeartbeat();
+  }
+  setActivePet(pet) {
+    this.activePet = normalizeActivePet(pet, this.id);
+    return this.activePet;
   }
   setLastHeartbeat() {
     this.lastHeartbeat = Date.now();

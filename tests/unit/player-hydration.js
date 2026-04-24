@@ -24,6 +24,7 @@ describe('player-hydration.js', () => {
       bodyParts: [{ type: 'HEAD' }],
       bodyPartCount: 1,
       bodyPartCounts: { HEAD: 1 },
+      activePet: {petId: 'mochi', memoryKey: 'player-1:mochi'},
       npcRelationships: [{npcId: 'mochi', relationshipValue: 7}],
       playerCardPreviewDataUrl: 'data:image/png;base64,card',
       ghostDebug: {enabled: true, activeGhostCount: 1},
@@ -36,6 +37,7 @@ describe('player-hydration.js', () => {
     expect(player.x).to.equal(10);
     expect(player.connectionTargetId).to.equal('target-1');
     expect(player.bodyPartCounts.HEAD).to.equal(1);
+    expect(player.activePet.memoryKey).to.equal('player-1:mochi');
     expect(player.npcRelationships[0].relationshipValue).to.equal(7);
     expect(player.ghostDebug.activeGhostCount).to.equal(1);
     expect(player.cells[0].mass).to.equal(3);

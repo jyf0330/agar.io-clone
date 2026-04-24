@@ -27,6 +27,9 @@ function projectPartLootForSync(loot) {
 function projectGhostForSync(ghost) {
   return Object.assign({}, ghost);
 }
+function projectActivePetForSync(activePet) {
+  return activePet ? Object.assign({}, activePet) : null;
+}
 function projectPlayerForSync(player) {
   return {
     x: player.x,
@@ -46,6 +49,7 @@ function projectPlayerForSync(player) {
     bodyPartCounts: Object.assign({}, player.bodyPartCounts),
     equipmentSlots: projectEquipmentSlotsForSync(player.equipmentSlots),
     bodySignature: player.bodySignature ? Object.assign({}, player.bodySignature) : null,
+    activePet: projectActivePetForSync(player.activePet),
     npcRelationships: (player.npcRelationships || []).map(entry => Object.assign({}, entry)),
     playerCardPreviewDataUrl: player.playerCardPreviewDataUrl,
     hue: player.hue,
@@ -89,6 +93,7 @@ function createSpectatorSyncData(socketID, config) {
     bodyPartCounts: {},
     equipmentSlots: {},
     bodySignature: null,
+    activePet: null,
     npcRelationships: [],
     playerCardPreviewDataUrl: null,
     hue: 100,
@@ -104,6 +109,7 @@ module.exports = {
   projectPlayersForSync,
   projectVisibleWorldForSync,
   projectPartLootForSync,
+  projectActivePetForSync,
   projectEquipmentSlotsForSync,
   projectGhostForSync,
   createSpectatorSyncData
