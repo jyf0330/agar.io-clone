@@ -88,7 +88,7 @@ function grantNpcTaskReward(options) {
 }
 
 function isTaskRewardRequest(message) {
-    return /任务|奖励|部位|找东西|找手/.test(String(message || ''));
+    return /任务|奖励|找东西|找手|交差|交付/.test(String(message || ''));
 }
 
 module.exports = {

@@ -59,4 +59,12 @@ describe('npc task rewards', () => {
     });
     expect(events[1].eventId).to.contain(':rewarded_part:');
   });
+
+  it('should not treat pet part questions as npc task reward requests', () => {
+    expect(rewards.isTaskRewardRequest('任务')).to.equal(true);
+    expect(rewards.isTaskRewardRequest('奖励')).to.equal(true);
+    expect(rewards.isTaskRewardRequest('找手')).to.equal(true);
+    expect(rewards.isTaskRewardRequest('附近有什么部位？')).to.equal(false);
+    expect(rewards.isTaskRewardRequest('这件部位要不要换？')).to.equal(false);
+  });
 });
