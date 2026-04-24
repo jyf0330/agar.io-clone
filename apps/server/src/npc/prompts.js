@@ -141,8 +141,47 @@ function buildNpcReplyPrompt(npcs, recentChats, playerMessage) {
     };
 }
 
+function formatSessionEvents(events) {
+    const rows = Array.isArray(events) ? events.slice(0, 50) : [];
+    if (!rows.length) {
+        return '本局没有可用事件。';
+    }
+
+    return rows.map((event) => {
+        const payload = event.payload || {};
+        const text = payload.text || payload.message || payload.reason || payload.type || '';
+        return [
+            '[' + (event.kind || 'event') + ']',
+            '玩家=' + (event.playerId || 'unknown'),
+            'NPC=' + (event.npcId || 'unknown'),
+            text ? '内容=' + String(text).slice(0, 40) : ''
+        ].filter(Boolean).join(' ');
+    }).join('\n');
+}
+
+function buildSummarizeSessionPrompt(npc, events) {
+    return {
+        system: [
+            '你是游戏局末记忆摘要器。',
+            '必须从指定 NPC 的视角总结玩家本局互动。',
+            '人设锚点：',
+            npc && npc.personality ? npc.personality.anchorsText || '' : ''
+        ].join('\n\n'),
+        user: [
+            '请输出一条中文摘要，最多 80 字。',
+            '固定格式：{关系变化}, {玩家主色}, {3条具体事件}, {一句感受}',
+            '不要编造事件，不要输出 JSON。',
+            '本局事件：',
+            formatSessionEvents(events)
+        ].join('\n'),
+        maxTokens: 120,
+        temperature: 0.45
+    };
+}
+
 module.exports = {
     buildNpcIntentPrompt: buildNpcIntentPrompt,
     buildNpcUtterPrompt: buildNpcUtterPrompt,
-    buildNpcReplyPrompt: buildNpcReplyPrompt
+    buildNpcReplyPrompt: buildNpcReplyPrompt,
+    buildSummarizeSessionPrompt: buildSummarizeSessionPrompt
 };

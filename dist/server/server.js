@@ -15,6 +15,9 @@ const {
   createPaintedAvatarDataUrl
 } = require('./npc/avatar-paint');
 const memoryStore = require('./memory/store');
+const {
+  summarizeSession
+} = require('./memory/session-summarizer');
 const NpcState = require('./npc/npc');
 const Orchestrator = require('./npc/orchestrator');
 const {
@@ -67,6 +70,10 @@ const roundClock = {
 const chatState = {
   recentChats: [],
   lastPlayerAction: 'idle'
+};
+const roundMemorySummary = {
+  started: false,
+  done: false
 };
 let sockets = {};
 let spectators = [];
@@ -205,6 +212,29 @@ function rememberRecentChat(currentPlayer, message) {
     console.warn('[NPC] player chat memory write failed', error.message);
   }
   return entry;
+}
+async function finalizeRoundMemoryIfNeeded() {
+  const elapsedMs = Date.now() - roundClock.startedAt;
+  if (roundMemorySummary.done || roundMemorySummary.started || elapsedMs < roundClock.durationMs) {
+    return;
+  }
+  const humanPlayer = map.players.data.find(player => !player.isNpc);
+  if (!humanPlayer) {
+    return;
+  }
+  roundMemorySummary.started = true;
+  try {
+    const summaries = await summarizeSession({
+      npcs: npcRoster,
+      playerId: humanPlayer.id,
+      sessionId: memorySessionId
+    });
+    roundMemorySummary.done = true;
+    console.log('[NPC] wrote ' + summaries.length + ' session memory summaries');
+  } catch (error) {
+    roundMemorySummary.started = false;
+    console.error('[NPC] session memory summary failed', error);
+  }
 }
 const addPlayer = socket => {
   var currentPlayer = new mapUtils.playerUtils.Player(socket.id);
@@ -384,6 +414,11 @@ setInterval(() => {
     lastPlayerAction: chatState.lastPlayerAction
   }, 1000).catch(error => {
     console.error('[NPC] orchestrator tick failed', error);
+  });
+}, 1000);
+setInterval(() => {
+  finalizeRoundMemoryIfNeeded().catch(error => {
+    console.error('[NPC] session memory finalizer failed', error);
   });
 }, 1000);
 setInterval(gameLoopService.sendUpdates, 1000 / config.networkUpdateFactor);
