@@ -18,6 +18,7 @@ function createGameLoopService(options) {
     const connectionService = options.connectionService;
     const ghostManager = options.ghostManager;
     const ghostRecorder = options.ghostRecorder;
+    const memoryStore = options.memoryStore;
     const getRoundClock = options.getRoundClock || function () {
         return {startedAt: Date.now()};
     };
@@ -119,6 +120,34 @@ function createGameLoopService(options) {
         }
 
         const partPickups = map.partLoot.collectForPlayer(currentPlayer);
+        if (memoryStore && currentPlayer.activePet) {
+            partPickups.forEach((pickup) => {
+                const now = Date.now();
+                const petId = currentPlayer.activePet.petId || currentPlayer.activePet.npcId || 'pet';
+                try {
+                    memoryStore.recordEvent({
+                        eventId: ['l1', ghostRecorder && ghostRecorder.sessionId ? ghostRecorder.sessionId : 'session', currentPlayer.id, petId, 'player_picked_with_me', now].join(':'),
+                        kind: 'player_picked_with_me',
+                        eventType: 'player_picked_with_me',
+                        playerId: currentPlayer.id,
+                        npcId: petId,
+                        sessionId: ghostRecorder && ghostRecorder.sessionId ? ghostRecorder.sessionId : null,
+                        mapId: config.mapId || 'fixed-arena',
+                        x: pickup.loot.x,
+                        y: pickup.loot.y,
+                        payload: {
+                            partId: pickup.equippedPart.partId,
+                            partType: pickup.equippedPart.partType,
+                            sourceType: pickup.equippedPart.sourceType
+                        },
+                        ts: now,
+                        createdAt: now
+                    });
+                } catch (error) {
+                    console.warn('[NPC] pickup memory write failed', error.message);
+                }
+            });
+        }
         if (ghostRecorder) {
             partPickups.forEach((pickup) => {
                 const now = Date.now();

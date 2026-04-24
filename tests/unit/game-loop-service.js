@@ -77,6 +77,7 @@ describe('game-loop-service.js', () => {
     }));
     const player = new playerUtils.Player('player-1');
     const recorded = [];
+    const memoryEvents = [];
     player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
     player.clientProvidedData({
       name: 'collector',
@@ -96,6 +97,7 @@ describe('game-loop-service.js', () => {
       io: { emit() {} },
       connectionService: { clearTimer() {} },
       ghostRecorder: {
+        sessionId: 'session-pickup',
         recordItem() {},
         recordPartEvent(playerArg, eventType, partArg, positionArg) {
           recorded.push({
@@ -105,6 +107,11 @@ describe('game-loop-service.js', () => {
             x: positionArg.x,
             y: positionArg.y
           });
+        }
+      },
+      memoryStore: {
+        recordEvent(event) {
+          memoryEvents.push(event);
         }
       },
       getSocket() { return null; },
@@ -123,6 +130,18 @@ describe('game-loop-service.js', () => {
     expect(recorded[0].partType).to.equal('HAND');
     expect(recorded[0].x).to.equal(100);
     expect(recorded[0].y).to.equal(100);
+    expect(memoryEvents).to.have.length(1);
+    expect(memoryEvents[0]).to.include({
+      kind: 'player_picked_with_me',
+      eventType: 'player_picked_with_me',
+      playerId: 'player-1',
+      npcId: 'mochi',
+      sessionId: 'session-pickup',
+      mapId: 'fixed-arena',
+      x: 100,
+      y: 100
+    });
+    expect(memoryEvents[0].payload.partType).to.equal('HAND');
   });
 
   it('should record combat and stolen part events when a player is fully eaten', () => {

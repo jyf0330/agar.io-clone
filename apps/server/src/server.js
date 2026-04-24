@@ -94,6 +94,7 @@ const gameLoopService = createGameLoopService({
     connectionService,
     ghostManager,
     ghostRecorder,
+    memoryStore,
     getRoundClock: () => roundClock,
     getSocket: (id) => sockets[id],
     getSpectatorIds: () => spectators.slice()
