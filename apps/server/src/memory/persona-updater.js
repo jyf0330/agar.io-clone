@@ -42,6 +42,20 @@ function shouldUpdateFromSummaryCount(count) {
     return count >= 5 && count % 5 === 0;
 }
 
+function collectEvidenceEventIds(summaries) {
+    const seen = {};
+    return (Array.isArray(summaries) ? summaries : []).reduce((ids, summary) => {
+        const referencedIds = Array.isArray(summary.referencedL1EventIds) ? summary.referencedL1EventIds : [];
+        referencedIds.forEach((eventId) => {
+            if (eventId && !seen[eventId]) {
+                seen[eventId] = true;
+                ids.push(eventId);
+            }
+        });
+        return ids;
+    }, []).slice(0, 50);
+}
+
 async function updateNpcPersona(options) {
     const settings = options || {};
     const npc = settings.npc || {};
@@ -63,6 +77,7 @@ async function updateNpcPersona(options) {
     }
 
     const recentSummaries = summaries.slice(0, 5);
+    const evidenceEventIds = collectEvidenceEventIds(recentSummaries);
     const currentImpression = memoryStore.getPersonaImpression(playerId, npc.id);
     const fallbackRelationship = clampRelationshipValue(
         (currentImpression && currentImpression.relationshipValue ? currentImpression.relationshipValue : 0)
@@ -96,6 +111,7 @@ async function updateNpcPersona(options) {
         playerId: playerId,
         npcId: npc.id,
         impression: nextImpression.impression,
+        evidenceEventIds: evidenceEventIds,
         relationshipValue: nextImpression.relationshipValue,
         updatedTs: settings.ts || Date.now()
     });
@@ -105,6 +121,7 @@ async function updateNpcPersona(options) {
         npcId: npc.id,
         summaryCount: summaries.length,
         impression: nextImpression.impression,
+        evidenceEventIds: evidenceEventIds,
         relationshipValue: nextImpression.relationshipValue
     };
 }
@@ -125,6 +142,7 @@ async function updatePersonaImpressions(options) {
 
 module.exports = {
     clampRelationshipValue: clampRelationshipValue,
+    collectEvidenceEventIds: collectEvidenceEventIds,
     parsePersonaResponse: parsePersonaResponse,
     shouldUpdateFromSummaryCount: shouldUpdateFromSummaryCount,
     updateNpcPersona: updateNpcPersona,

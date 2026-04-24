@@ -174,6 +174,7 @@ CREATE TABLE IF NOT EXISTS persona_impressions (
   player_id TEXT,
   npc_id TEXT,
   impression TEXT,
+  evidence_event_ids TEXT,
   relationship_value INTEGER,
   updated_ts INTEGER,
   UNIQUE(player_id, npc_id)
@@ -222,6 +223,12 @@ function executeSql(query, params, options) {
         '            raise',
         '    try:',
         '        conn.execute("ALTER TABLE session_summaries ADD COLUMN referenced_l1_event_ids TEXT DEFAULT \'[]\'")',
+        '        conn.commit()',
+        '    except sqlite3.OperationalError as error:',
+        '        if "duplicate column name" not in str(error):',
+        '            raise',
+        '    try:',
+        '        conn.execute("ALTER TABLE persona_impressions ADD COLUMN evidence_event_ids TEXT DEFAULT \'[]\'")',
         '        conn.commit()',
         '    except sqlite3.OperationalError as error:',
         '        if "duplicate column name" not in str(error):',
@@ -307,6 +314,7 @@ function toCamelImpression(row) {
         playerId: row.player_id,
         npcId: row.npc_id,
         impression: row.impression,
+        evidenceEventIds: row.evidence_event_ids ? JSON.parse(row.evidence_event_ids) : [],
         relationshipValue: row.relationship_value,
         updatedTs: row.updated_ts
     };
@@ -899,10 +907,11 @@ function upsertPersonaImpression(impression) {
     const result = executeSql(
         [
             'INSERT INTO persona_impressions(',
-            'player_id, npc_id, impression, relationship_value, updated_ts',
-            ') VALUES (?, ?, ?, ?, ?)',
+            'player_id, npc_id, impression, evidence_event_ids, relationship_value, updated_ts',
+            ') VALUES (?, ?, ?, ?, ?, ?)',
             'ON CONFLICT(player_id, npc_id) DO UPDATE SET',
             'impression = excluded.impression,',
+            'evidence_event_ids = excluded.evidence_event_ids,',
             'relationship_value = excluded.relationship_value,',
             'updated_ts = excluded.updated_ts'
         ].join(' '),
@@ -910,6 +919,7 @@ function upsertPersonaImpression(impression) {
             safeImpression.playerId || null,
             safeImpression.npcId || null,
             safeImpression.impression || '',
+            JSON.stringify(Array.isArray(safeImpression.evidenceEventIds) ? safeImpression.evidenceEventIds : []),
             typeof safeImpression.relationshipValue === 'number' ? safeImpression.relationshipValue : 0,
             typeof safeImpression.updatedTs === 'number' ? safeImpression.updatedTs : Date.now()
         ]

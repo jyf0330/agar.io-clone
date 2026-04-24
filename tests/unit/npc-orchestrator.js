@@ -158,7 +158,8 @@ describe('npc orchestrator', () => {
                 },
                 getPersonaImpression() {
                     return {
-                        impression: '玩家喜欢蓝绿色，会温和地靠近。'
+                        impression: '玩家喜欢蓝绿色，会温和地靠近。',
+                        evidenceEventIds: ['l1-blue', 'l1-greeting']
                     };
                 }
             },
@@ -193,6 +194,7 @@ describe('npc orchestrator', () => {
         }, 1000);
 
         expect(capturedPrompt.system).to.contain('玩家喜欢蓝绿色');
+        expect(capturedPrompt.system).to.contain('l1-blue');
         expect(capturedPrompt.system).to.contain('第一局玩家画了蓝色');
         expect(capturedPrompt.system).to.contain('第三局玩家靠近麻薯');
         expect(capturedPrompt.system).to.not.contain('第四局不应该进入 prompt');

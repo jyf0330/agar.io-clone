@@ -40,6 +40,9 @@ function formatMemoryBlock(memory) {
     const impression = safeMemory.impression && safeMemory.impression.impression
         ? safeMemory.impression.impression
         : '暂无长期画像。';
+    const evidenceIds = safeMemory.impression && Array.isArray(safeMemory.impression.evidenceEventIds)
+        ? safeMemory.impression.evidenceEventIds.slice(0, 8)
+        : [];
     const summaryText = summaries.length
         ? summaries.map((summary, index) => {
             const expectation = summary.expectation ? ' 明天期望：' + String(summary.expectation).slice(0, 40) : '';
@@ -49,6 +52,7 @@ function formatMemoryBlock(memory) {
 
     return [
         '长期画像：' + String(impression).slice(0, 150),
+        '长期画像证据事件：' + (evidenceIds.length ? evidenceIds.join(', ') : '暂无。'),
         '最近 3 局摘要：',
         summaryText
     ].join('\n');

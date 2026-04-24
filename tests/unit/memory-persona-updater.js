@@ -25,15 +25,18 @@ function createNpc(id, name) {
     };
 }
 
-function seedSummaries(npcId, playerId, count) {
+function seedSummaries(npcId, playerId, count, startIndex) {
+    const firstIndex = startIndex || 1;
     for (let index = 1; index <= count; index += 1) {
+        const summaryIndex = firstIndex + index - 1;
         store.addSessionSummary({
             playerId: playerId,
             npcId: npcId,
-            sessionId: 'session-' + index,
-            summary: '第' + index + '局，玩家给了' + npcId + '一次温和互动。',
+            sessionId: 'session-' + summaryIndex,
+            summary: '第' + summaryIndex + '局，玩家给了' + npcId + '一次温和互动。',
+            referencedL1EventIds: ['l1-' + npcId + '-' + playerId + '-' + summaryIndex],
             relationshipDelta: 1,
-            ts: index
+            ts: summaryIndex
         });
     }
 }
@@ -80,9 +83,16 @@ describe('memory persona updater', () => {
         let impression = store.getPersonaImpression('player-b', npc.id);
         expect(calls).to.equal(1);
         expect(impression.impression).to.contain('亮色');
+        expect(impression.evidenceEventIds).to.deep.equal([
+            'l1-doudou-player-b-5',
+            'l1-doudou-player-b-4',
+            'l1-doudou-player-b-3',
+            'l1-doudou-player-b-2',
+            'l1-doudou-player-b-1'
+        ]);
         expect(impression.relationshipValue).to.equal(7);
 
-        seedSummaries(npc.id, 'player-b', 5);
+        seedSummaries(npc.id, 'player-b', 5, 6);
         await updater.updateNpcPersona({
             npc: npc,
             playerId: 'player-b',
@@ -102,6 +112,7 @@ describe('memory persona updater', () => {
         expect(calls).to.equal(2);
         expect(impression.relationshipValue).to.equal(13);
         expect(impression.impression).to.contain('连续多局');
+        expect(impression.evidenceEventIds).to.include('l1-doudou-player-b-10');
     });
 
     it('should write a deterministic fallback impression offline', async () => {
@@ -121,6 +132,7 @@ describe('memory persona updater', () => {
         const impression = store.getPersonaImpression('player-c', npc.id);
         expect(result.skipped).to.equal(false);
         expect(impression.impression).to.contain('乌龟');
+        expect(result.evidenceEventIds).to.include('l1-wugui-player-c-5');
         expect(impression.relationshipValue).to.equal(5);
     });
 });

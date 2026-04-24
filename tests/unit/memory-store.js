@@ -370,6 +370,7 @@ describe('memory store', function () {
             playerId: 'player-a',
             npcId: 'doudou',
             impression: '喜欢聊天，偏爱亮色。',
+            evidenceEventIds: ['l1-a', 'l1-b'],
             relationshipValue: 5,
             updatedTs: 789
         });
@@ -385,5 +386,6 @@ describe('memory store', function () {
             relationshipValue: 5,
             updatedTs: 789
         });
+        expect(store.getPersonaImpression('player-a', 'doudou').evidenceEventIds).to.deep.equal(['l1-a', 'l1-b']);
     });
 });
