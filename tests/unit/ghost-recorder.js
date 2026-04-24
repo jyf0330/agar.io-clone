@@ -73,4 +73,33 @@ describe('ghost recorder', () => {
     expect(events[0].payload.chat).to.not.contain('https://example.com');
     expect(events[0].payload.chat).to.not.contain('死亡');
   });
+
+  it('should skip replay recording for players who declined consent', () => {
+    const events = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      memoryStore: {
+        recordEvent(event) {
+          events.push(event);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Private Huy',
+      x: 120,
+      y: 130,
+      consentToRecord: false,
+      isReplayAllowed: false
+    };
+
+    recorder.recordPlayers([player], 1200);
+    recorder.recordChat(player, 'do not replay me', 1220);
+    recorder.recordItem(player, { type: 'HAND' }, { x: 140, y: 150 }, 1240);
+    recorder.recordPartEvent(player, 'part_pickup', { type: 'HAND' }, { x: 150, y: 160 }, 1260);
+    recorder.recordCombatEvent(player, 'kill', { id: 'target-1', name: 'Target' }, { x: 170, y: 180 }, 1280);
+
+    expect(events).to.deep.equal([]);
+  });
 });

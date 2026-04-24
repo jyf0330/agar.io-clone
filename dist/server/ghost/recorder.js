@@ -39,8 +39,11 @@ class GhostRecorder {
   getElapsed(now) {
     return Math.max(0, now - this.startedAt);
   }
+  canRecordPlayer(player) {
+    return player && player.consentToRecord !== false && player.isReplayAllowed !== false;
+  }
   recordEvent(player, kind, payload, now) {
-    if (!this.memoryStore || typeof this.memoryStore.recordEvent !== 'function' || !player) {
+    if (!this.memoryStore || typeof this.memoryStore.recordEvent !== 'function' || !this.canRecordPlayer(player)) {
       return;
     }
     this.memoryStore.recordEvent({
@@ -59,7 +62,7 @@ class GhostRecorder {
   }
   recordPlayers(players, now) {
     (players || []).forEach(player => {
-      if (!player || player.isNpc) {
+      if (!this.canRecordPlayer(player) || player.isNpc) {
         return;
       }
       const lastTraceAt = this.lastTraceAtByPlayer[player.id] || 0;
