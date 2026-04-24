@@ -72,6 +72,7 @@ function createSocketController(options) {
             nextPlayer.screenHeight = options.global.screen.height;
             nextPlayer.target = options.getCanvasTarget();
             nextPlayer.playerCardPreviewDataUrl = options.getPlayerCardPreviewDataUrl();
+            nextPlayer.bodySignature = options.global.bodySignature || null;
             options.setPlayer(nextPlayer);
             options.getChat().player = nextPlayer;
             nextSocket.emit('gotit', nextPlayer);

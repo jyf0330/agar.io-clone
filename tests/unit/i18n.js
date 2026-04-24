@@ -48,4 +48,14 @@ describe('i18n.js', () => {
     i18n.setLocale('en');
     expect(i18n.t('editor.advancedLayers')).to.equal('Advanced Layers');
   });
+
+  it('should expose labels for the V5 signature drawing panel', () => {
+    i18n.setLocale('zh-CN');
+    expect(i18n.t('signature.submit')).to.equal('提交签名');
+    expect(i18n.t('signature.tier.echo')).to.equal('强回声');
+
+    i18n.setLocale('en');
+    expect(i18n.t('signature.submit')).to.equal('Submit Signature');
+    expect(i18n.t('signature.tier.echo')).to.equal('Strong echo');
+  });
 });

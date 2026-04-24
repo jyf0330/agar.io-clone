@@ -113,6 +113,7 @@ exports.Player = class {
     this.screenWidth = playerData.screenWidth;
     this.screenHeight = playerData.screenHeight;
     this.playerCardPreviewDataUrl = playerData.playerCardPreviewDataUrl || null;
+    this.bodySignature = playerData.bodySignature || null;
     this.setLastHeartbeat();
   }
   setLastHeartbeat() {

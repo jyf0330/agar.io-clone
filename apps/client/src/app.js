@@ -15,6 +15,8 @@ var createSocketController = require('./socket-controller');
 var createSpeechBubble = require('./ui/speech-bubble');
 var createPaintToast = require('./ui/paint-toast');
 var createChatInput = require('./ui/chat-input');
+var createBodySignatureController = require('./body-signature-controller');
+var bodySignatureStorage = require('./body-signature-storage');
 var i18n = require('./i18n');
 var socketEmit = require('./socket-emit');
 
@@ -26,7 +28,9 @@ var socketController;
 var speechBubble;
 var paintToast;
 var chatInput;
-var hideStartMenuOnLoad = true;
+var bodySignatureController;
+var hideStartMenuOnLoad = false;
+var npcFeaturesEnabled = window.location.search.indexOf('npc=1') !== -1 || window.V3_NPC_ENABLED === true;
 
 var debug = function (args) {
     if (console && console.log) {
@@ -44,6 +48,7 @@ function enterGame(type) {
     global.playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0, 25);
     global.playerType = type;
     global.playerCard = playerCardStorage.loadPlayerCard();
+    global.bodySignature = bodySignatureStorage.loadBodySignature();
     global.targetPlayerCardPreviewDataUrl = null;
     global.disconnected = false;
     global.kicked = false;
@@ -53,7 +58,7 @@ function enterGame(type) {
 
     document.getElementById('startMenuWrapper').style.maxHeight = '0px';
     document.getElementById('gameAreaWrapper').style.opacity = 1;
-    if (chatInput) {
+    if (chatInput && npcFeaturesEnabled) {
         chatInput.show();
     }
     socket = socketController.connect(type);
@@ -62,6 +67,14 @@ function enterGame(type) {
 }
 
 function startGame(type) {
+    if (bodySignatureController && bodySignatureController.shouldOpen(type)) {
+        bodySignatureController.open(type, function (payload) {
+            global.bodySignature = payload;
+            startGame(type);
+        });
+        return;
+    }
+
     if (avatarDraftController.shouldStartDraft(type)) {
         avatarDraftController.beginDraftFlow(type);
         return;
@@ -140,6 +153,18 @@ window.onload = function () {
         }
     });
 
+    bodySignatureController = createBodySignatureController({
+        document: document,
+        i18n: i18n,
+        panelEl: document.getElementById('bodySignaturePanel'),
+        canvasEl: document.getElementById('bodySignatureCanvas'),
+        refsEl: document.getElementById('bodySignatureRefs'),
+        clearButton: document.getElementById('bodySignatureClearButton'),
+        submitButton: document.getElementById('bodySignatureSubmitButton'),
+        skipButton: document.getElementById('bodySignatureSkipButton'),
+        messageEl: document.getElementById('bodySignatureMessage')
+    });
+
     avatarDraftController = createAvatarDraftController({
         document: document,
         window: window,
@@ -204,7 +229,7 @@ window.onload = function () {
         resize: resize,
         speechBubble: speechBubble,
         paintToast: paintToast,
-        chatInput: chatInput,
+        chatInput: npcFeaturesEnabled ? chatInput : null,
         setLeaderboard: function (nextLeaderboard) {
             leaderboard = nextLeaderboard;
         },
@@ -397,6 +422,12 @@ function applyTranslations() {
     var draftModeActive = avatarDraftController && avatarDraftController.isActive();
     document.getElementById('saveCardButton').textContent = draftModeActive ? i18n.t('draft.confirm') : i18n.t('editor.save');
     document.getElementById('closeCardPanelButton').textContent = draftModeActive ? i18n.t('draft.cancel') : i18n.t('editor.close');
+    document.getElementById('bodySignatureTitle').textContent = i18n.t('signature.title');
+    document.getElementById('bodySignatureSubtitle').textContent = i18n.t('signature.subtitle');
+    document.getElementById('bodySignatureMissingLabel').textContent = i18n.t('signature.missingPart');
+    document.getElementById('bodySignatureClearButton').textContent = i18n.t('signature.clear');
+    document.getElementById('bodySignatureSubmitButton').textContent = i18n.t('signature.submit');
+    document.getElementById('bodySignatureSkipButton').textContent = i18n.t('signature.skip');
 }
 
 $("#feed").click(function () {

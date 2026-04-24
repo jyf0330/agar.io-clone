@@ -27,7 +27,7 @@
         </div>
         <canvas tabindex="1" id="cvs"></canvas>
     </div>
-    <div id="startMenuWrapper" style="max-height: 0;">
+    <div id="startMenuWrapper" style="max-height: 1000px;">
         <div id="startMenu">
             <button id="languageToggleButton" type="button">English</button>
             <p data-i18n="startMenu.title">开放吞噬</p>
@@ -60,6 +60,25 @@
                     <li data-i18n="startMenu.instructions.mass">角色质量由吃下的食物数量决定。</li>
                     <li data-i18n="startMenu.instructions.goal">目标：尽可能长大并吞噬其他玩家。</li>
                 </ul>
+            </div>
+        </div>
+        <div id="bodySignaturePanel">
+            <div class="body-signature-panel-inner">
+                <div class="body-signature-copy">
+                    <span id="bodySignatureMissingLabel" class="body-signature-kicker">缺失部位：手</span>
+                    <h3 id="bodySignatureTitle">画下你的手部签名</h3>
+                    <p id="bodySignatureSubtitle">参考任意一个回声，用一笔或多笔画出你想装上的手。</p>
+                </div>
+                <div id="bodySignatureRefs" class="body-signature-refs"></div>
+                <div class="body-signature-canvas-shell">
+                    <canvas id="bodySignatureCanvas" width="280" height="280"></canvas>
+                </div>
+                <div id="bodySignatureMessage" class="body-signature-message">画完后提交，系统会给出相似度档位。</div>
+                <div class="body-signature-actions">
+                    <button id="bodySignatureClearButton" type="button">清空</button>
+                    <button id="bodySignatureSubmitButton" type="button">提交签名</button>
+                    <button id="bodySignatureSkipButton" type="button">跳过</button>
+                </div>
             </div>
         </div>
         <div id="playerCardPanel">

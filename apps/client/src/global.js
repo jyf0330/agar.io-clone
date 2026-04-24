@@ -28,6 +28,7 @@ module.exports = {
     startPingTime: 0,
     toggleMassState: 0,
     playerCard: null,
+    bodySignature: null,
     targetPlayerCardPreviewDataUrl: null,
     backgroundColor: '#f2fbff',
     lineColor: '#000000',

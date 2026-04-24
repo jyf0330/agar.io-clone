@@ -39,6 +39,7 @@ const {
 const createConnectionService = require('./connection-service');
 const createGameLoopService = require('./game-loop-service');
 const memorySessionId = process.env.MEMORY_SESSION_ID || 'session-' + Date.now();
+const npcFeaturesEnabled = process.env.V3_NPC_ENABLED === '1';
 let map = new mapUtils.Map(config);
 const connectionService = createConnectionService({
   players: map.players
@@ -194,7 +195,12 @@ function bootstrapNpc(cardId, index) {
 function bootstrapDefaultNpcs() {
   return ['mochi', 'doudou', 'wugui'].map((cardId, index) => bootstrapNpc(cardId, index));
 }
-npcRoster = bootstrapDefaultNpcs();
+
+// V3 NPC/memory work is preserved, but V5 is now drawing-board-first.
+// Set V3_NPC_ENABLED=1 to re-enable the old milestone NPC loop.
+if (npcFeaturesEnabled) {
+  npcRoster = bootstrapDefaultNpcs();
+}
 function rememberRecentChat(currentPlayer, message) {
   const entry = {
     ts: Date.now(),
@@ -373,7 +379,9 @@ const addPlayer = socket => {
     if (config.logChat === 1) {
       console.log('[CHAT] [' + new Date().getHours() + ':' + new Date().getMinutes() + '] ' + _sender + ': ' + _message);
     }
-    rememberRecentChat(currentPlayer, _message);
+    if (npcFeaturesEnabled) {
+      rememberRecentChat(currentPlayer, _message);
+    }
     socket.broadcast.emit('serverSendPlayerChat', {
       sender: currentPlayer.name,
       message: _message.substring(0, 35)
@@ -474,26 +482,28 @@ const addSpectator = socket => {
 };
 setInterval(gameLoopService.tickGame, 1000 / 60);
 setInterval(gameLoopService.gameloop, 1000);
-setInterval(() => {
-  orchestrator.tick({
-    players: map.players.data,
-    mapWidth: config.gameWidth,
-    mapHeight: config.gameHeight,
-    matchStartedAt: roundClock.startedAt,
-    roundDurationMs: roundClock.durationMs,
-    sessionId: memorySessionId,
-    recentChats: chatState.recentChats,
-    lastPlayerAction: chatState.lastPlayerAction
-  }, 1000).catch(error => {
-    console.error('[NPC] orchestrator tick failed', error);
-  });
-}, 1000);
-setInterval(() => {
-  finalizeRoundMemoryIfNeeded().catch(error => {
-    console.error('[NPC] session memory finalizer failed', error);
-  });
-}, 1000);
-setInterval(refreshNpcRelationshipsForPlayers, 1000);
+if (npcFeaturesEnabled) {
+  setInterval(() => {
+    orchestrator.tick({
+      players: map.players.data,
+      mapWidth: config.gameWidth,
+      mapHeight: config.gameHeight,
+      matchStartedAt: roundClock.startedAt,
+      roundDurationMs: roundClock.durationMs,
+      sessionId: memorySessionId,
+      recentChats: chatState.recentChats,
+      lastPlayerAction: chatState.lastPlayerAction
+    }, 1000).catch(error => {
+      console.error('[NPC] orchestrator tick failed', error);
+    });
+  }, 1000);
+  setInterval(() => {
+    finalizeRoundMemoryIfNeeded().catch(error => {
+      console.error('[NPC] session memory finalizer failed', error);
+    });
+  }, 1000);
+  setInterval(refreshNpcRelationshipsForPlayers, 1000);
+}
 setInterval(gameLoopService.sendUpdates, 1000 / config.networkUpdateFactor);
 
 // Don't touch, IP configurations.

@@ -19,6 +19,7 @@
 
 <!-- 每条一行。新条目放在上方，老条目往下沉。 -->
 
+- 2026-04-24: 玩法定稿代号 **V5**（历史回响）—— 见 [demo/PLAN-v5-historical-echo.md](demo/PLAN-v5-historical-echo.md)；与下方冻结的 V4 提案无关
 - YYYY-MM-DD: {示例} 想给 NPC 加语音合成 —— 语音对赛道 2 加分点不大，21 天内做不完
 
 ---
