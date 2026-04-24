@@ -160,6 +160,21 @@ class GhostManager {
             .sort((left, right) => left.t - right.t);
     }
 
+    loadPartPickupEvents(event) {
+        if (!this.memoryStore || typeof this.memoryStore.listPartEvents !== 'function') {
+            return [];
+        }
+
+        return this.memoryStore.listPartEvents({
+            sessionId: event.sessionId,
+            playerId: event.ghostId,
+            eventType: 'part_pickup',
+            limit: 500
+        })
+            .filter((partEvent) => partEvent.payload && partEvent.payload.part && typeof partEvent.t === 'number')
+            .sort((left, right) => left.t - right.t);
+    }
+
     activateTrace(event, now) {
         const key = event.sessionId + ':' + event.ghostId;
         this.activeGhosts[key] = {
@@ -175,6 +190,8 @@ class GhostManager {
             anchorT: event.t,
             tracePoints: this.loadTracePoints(event),
             chatRecords: this.loadChatRecords(event),
+            partPickupEvents: this.loadPartPickupEvents(event),
+            spawnedPartEventIds: {},
             radius: 34,
             isGhost: true
         };
@@ -229,6 +246,57 @@ class GhostManager {
         });
     }
 
+    getPartEventPosition(map, ghost, partEvent) {
+        const width = map && map.config && map.config.gameWidth;
+        const height = map && map.config && map.config.gameHeight;
+        const x = partEvent.x;
+        const y = partEvent.y;
+        const isInsideX = typeof width !== 'number' || (x >= 0 && x <= width);
+        const isInsideY = typeof height !== 'number' || (y >= 0 && y <= height);
+
+        if (typeof x === 'number' && typeof y === 'number' && isInsideX && isInsideY) {
+            return {x: x, y: y};
+        }
+
+        return {x: ghost.x, y: ghost.y};
+    }
+
+    spawnGhostPartPickup(map, ghost, partEvent) {
+        if (!map || !map.partLoot || !partEvent || !partEvent.payload || !partEvent.payload.part) {
+            return;
+        }
+
+        const eventKey = partEvent.eventId || partEvent.id || [partEvent.sessionId, partEvent.playerId, partEvent.t].join(':');
+        if (ghost.spawnedPartEventIds[eventKey]) {
+            return;
+        }
+
+        const position = this.getPartEventPosition(map, ghost, partEvent);
+        map.partLoot.addPart(Object.assign({}, partEvent.payload.part, {
+            source: 'ghost-echo',
+            sourceType: 'ghost_echo',
+            sourceEventId: partEvent.eventId || eventKey,
+            ghostSessionId: ghost.sessionId,
+            ghostPlayerId: ghost.ghostId,
+            ghostEventId: partEvent.eventId || eventKey,
+            originalPartType: partEvent.payload.part.partType || partEvent.payload.part.type,
+            originalCoordinate: {x: partEvent.x, y: partEvent.y}
+        }), position, 'ghost-echo');
+        ghost.spawnedPartEventIds[eventKey] = true;
+    }
+
+    updateGhostPartPickups(map, now) {
+        Object.keys(this.activeGhosts).forEach((key) => {
+            const ghost = this.activeGhosts[key];
+            const replayT = ghost.anchorT + Math.max(0, now - ghost.activatedAt);
+            (ghost.partPickupEvents || []).forEach((partEvent) => {
+                if (partEvent.t <= replayT) {
+                    this.spawnGhostPartPickup(map, ghost, partEvent);
+                }
+            });
+        });
+    }
+
     tick(state) {
         const safeState = state || {};
         const map = safeState.map;
@@ -240,6 +308,7 @@ class GhostManager {
         this.pruneGhosts(now);
         this.updateGhostPositions(now);
         this.updateGhostChats(now);
+        this.updateGhostPartPickups(map, now);
         this.getEvents().forEach((event) => {
             if (
                 !this.isInTimeWindow(event, elapsedMs)

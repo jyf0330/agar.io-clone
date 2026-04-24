@@ -322,4 +322,91 @@ describe('ghost manager', () => {
 
     expect(map.ghosts[0].chat).to.equal('');
   });
+
+  it('should spawn ghost echo parts from historical pickup events at absolute coordinates', () => {
+    const startedAt = 1000;
+    const map = new mapUtils.Map(config);
+    const player = new playerUtils.Player('player-1');
+    player.init({ x: 300, y: 300 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'viewer',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+
+    const manager = new GhostManager({
+      triggerRadius: 100,
+      timeWindowMs: 250,
+      memoryStore: {
+        listGhostAnchors() {
+          return [{
+            anchorId: 'anchor-1',
+            sourceSessionId: 'old-session',
+            sourcePlayerId: 'old-player',
+            t: 1000,
+            x: 305,
+            y: 300,
+            eventType: 'part_pickup',
+            priority: 50
+          }];
+        },
+        listPlayerTraces() {
+          return [
+            {sessionId: 'old-session', playerId: 'old-player', t: 1000, x: 305, y: 300},
+            {sessionId: 'old-session', playerId: 'old-player', t: 1200, x: 345, y: 320}
+          ];
+        },
+        listPartEvents() {
+          return [{
+            eventId: 'part-event-1',
+            sessionId: 'old-session',
+            playerId: 'old-player',
+            eventType: 'part_pickup',
+            t: 1100,
+            x: 450,
+            y: 460,
+            payload: {
+              part: {
+                type: 'HAND',
+                templateId: 'hand-open'
+              }
+            }
+          }];
+        },
+        listEvents() {
+          return [];
+        }
+      }
+    });
+
+    manager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1000
+    });
+
+    expect(map.partLoot.data).to.have.length(0);
+
+    manager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1100
+    });
+    manager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1200
+    });
+
+    expect(map.partLoot.data).to.have.length(1);
+    expect(map.partLoot.data[0].x).to.equal(450);
+    expect(map.partLoot.data[0].y).to.equal(460);
+    expect(map.partLoot.data[0].part.sourceType).to.equal('ghost_echo');
+    expect(map.partLoot.data[0].part.ghostSessionId).to.equal('old-session');
+    expect(map.partLoot.data[0].part.ghostEventId).to.equal('part-event-1');
+  });
 });
