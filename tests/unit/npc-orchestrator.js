@@ -570,6 +570,104 @@ describe('npc orchestrator', () => {
         expect(orchestrator.lastHandledChatTs).to.equal(baseNow + 1000);
     });
 
+    it('should record part suggestion facts when the active pet recommends a nearby part', async () => {
+        const baseNow = 1700001800000;
+        const originalNow = Date.now;
+        const events = [];
+        const memoryEvents = [];
+        const humanPlayer = createHumanPlayer();
+        const mochi = createNpc('mochi', {spawn: {x: 100, y: 120}});
+        humanPlayer.setActivePet({
+            petId: 'mochi',
+            name: 'Mochi',
+            personality: '谨慎型'
+        });
+        const orchestrator = new Orchestrator({
+            ask(promptId) {
+                if (promptId === 'pet_question_reply') {
+                    return Promise.resolve({
+                        ok: true,
+                        text: 'pickupRange+10，可换。',
+                        source: 'llm'
+                    });
+                }
+
+                return Promise.resolve({
+                    ok: true,
+                    text: '[]',
+                    source: 'llm'
+                });
+            },
+            memoryStore: {
+                listSessionSummaries() {
+                    return [];
+                },
+                getPersonaImpression() {
+                    return null;
+                }
+            },
+            recordEvent(event) {
+                memoryEvents.push(event);
+            },
+            mapWidth: 500,
+            mapHeight: 400,
+            maxCallsPerSec: 5,
+            emitEvent(name, payload) {
+                events.push({name: name, payload: payload});
+            },
+            sessionStartedAt: baseNow,
+            roundDurationMs: 90000
+        });
+
+        Date.now = () => baseNow;
+        mochi.spawnedAt = baseNow;
+        orchestrator.registerNpc(mochi);
+
+        try {
+            Date.now = () => baseNow + 2000;
+            await orchestrator.tick({
+                players: [humanPlayer, mochi.player],
+                partLoot: [{
+                    x: humanPlayer.x + 80,
+                    y: humanPlayer.y + 40,
+                    part: {
+                        partType: 'HAND',
+                        displayName: 'Echo Hand',
+                        stats: {pickupRange: 10},
+                        sourceType: 'ghost_echo'
+                    }
+                }],
+                recentChats: [{
+                    ts: baseNow + 1000,
+                    playerId: humanPlayer.id,
+                    playerName: humanPlayer.name,
+                    message: '这件部位要不要换？'
+                }],
+                matchStartedAt: baseNow,
+                roundDurationMs: 90000
+            }, 1000);
+        } finally {
+            Date.now = originalNow;
+        }
+
+        expect(events).to.have.length(1);
+        expect(events[0].payload.npcId).to.equal('mochi');
+        const suggestion = memoryEvents.find((event) => event.kind === 'pet_suggested_part');
+        expect(suggestion).to.include({
+            eventType: 'pet_suggested_part',
+            playerId: humanPlayer.id,
+            npcId: 'mochi',
+            mapId: 'fixed-arena',
+            x: humanPlayer.x,
+            y: humanPlayer.y
+        });
+        expect(suggestion.payload.suggestedPart).to.include({
+            partType: 'HAND',
+            displayName: 'Echo Hand',
+            sourceType: 'ghost_echo'
+        });
+    });
+
     it('should move doudou toward the player when asked to come over', async () => {
         const baseNow = 1700002000000;
         const originalNow = Date.now;
