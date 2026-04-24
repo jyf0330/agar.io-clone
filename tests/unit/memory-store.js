@@ -35,6 +35,7 @@ describe('memory store', function () {
 
         expect(tables).to.include('sessions');
         expect(tables).to.include('player_traces');
+        expect(tables).to.include('chat_records');
         expect(tables).to.include('events');
         expect(tables).to.include('session_summaries');
         expect(tables).to.include('persona_impressions');
@@ -103,6 +104,40 @@ describe('memory store', function () {
             mass: 10,
             alive: true,
             ts: 1200
+        });
+    });
+
+    it('should record and query V5 chat records by session and player', function () {
+        const store = loadStore(path.join(tmpDir, 'memory.db'));
+
+        store.recordChatRecord({
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            playerName: 'Archivist',
+            t: 220,
+            x: 140,
+            y: 150,
+            text: '这里有回声',
+            replayAllowed: true,
+            ts: 1220
+        });
+
+        const chats = store.listChatRecords({
+            sessionId: 'session-1',
+            playerId: 'player-a'
+        });
+
+        expect(chats).to.deep.include({
+            id: chats[0].id,
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            playerName: 'Archivist',
+            t: 220,
+            x: 140,
+            y: 150,
+            text: '这里有回声',
+            replayAllowed: true,
+            ts: 1220
         });
     });
 

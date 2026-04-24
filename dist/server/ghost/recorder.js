@@ -117,11 +117,29 @@ class GhostRecorder {
     });
   }
   recordChat(player, message, now) {
+    const sanitized = sanitizeReplayChat(message).substring(0, 140);
     this.recordEvent(player, 'ghost_chat', {
       x: player.x,
       y: player.y,
-      chat: sanitizeReplayChat(message).substring(0, 140)
+      chat: sanitized
     }, now);
+    this.recordChatRecord(player, sanitized, now);
+  }
+  recordChatRecord(player, text, now) {
+    if (!this.memoryStore || typeof this.memoryStore.recordChatRecord !== 'function' || !this.canRecordPlayer(player)) {
+      return;
+    }
+    this.memoryStore.recordChatRecord({
+      sessionId: this.sessionId,
+      playerId: player.id,
+      playerName: player.name || '',
+      t: this.getElapsed(now || Date.now()),
+      x: player.x,
+      y: player.y,
+      text: text,
+      replayAllowed: true,
+      ts: now || Date.now()
+    });
   }
   recordItem(player, part, position, now) {
     this.recordEvent(player, 'ghost_item', {

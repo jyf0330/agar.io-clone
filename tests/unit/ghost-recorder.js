@@ -173,4 +173,39 @@ describe('ghost recorder', () => {
       ts: 1200
     });
   });
+
+  it('should mirror recorded chat into typed chat records', () => {
+    const chats = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      memoryStore: {
+        recordEvent() {},
+        recordChatRecord(chat) {
+          chats.push(chat);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      x: 120,
+      y: 130,
+      consentToRecord: true
+    };
+
+    recorder.recordChat(player, 'hello from now', 1220);
+
+    expect(chats[0]).to.deep.include({
+      sessionId: 'session-now',
+      playerId: 'player-1',
+      playerName: 'Live Huy',
+      t: 220,
+      x: 120,
+      y: 130,
+      text: 'hello from now',
+      replayAllowed: true,
+      ts: 1220
+    });
+  });
 });

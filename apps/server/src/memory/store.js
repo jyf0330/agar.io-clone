@@ -44,6 +44,24 @@ CREATE INDEX IF NOT EXISTS idx_player_traces_session_player_t
 CREATE INDEX IF NOT EXISTS idx_player_traces_position
   ON player_traces(session_id, x, y);
 
+CREATE TABLE IF NOT EXISTS chat_records (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_id TEXT,
+  player_id TEXT,
+  player_name TEXT,
+  t INTEGER,
+  x REAL,
+  y REAL,
+  text TEXT,
+  replay_allowed INTEGER,
+  ts INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_chat_records_session_player_t
+  ON chat_records(session_id, player_id, t);
+CREATE INDEX IF NOT EXISTS idx_chat_records_position
+  ON chat_records(session_id, x, y);
+
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   player_id TEXT,
@@ -217,6 +235,21 @@ function toCamelTrace(row) {
     };
 }
 
+function toCamelChatRecord(row) {
+    return {
+        id: row.id,
+        sessionId: row.session_id,
+        playerId: row.player_id,
+        playerName: row.player_name || '',
+        t: row.t,
+        x: row.x,
+        y: row.y,
+        text: row.text || '',
+        replayAllowed: row.replay_allowed === 1,
+        ts: row.ts
+    };
+}
+
 function buildWhere(filters, mapping) {
     const clauses = [];
     const params = [];
@@ -372,6 +405,47 @@ function listPlayerTraces(filters) {
     return result.rows.map(toCamelTrace);
 }
 
+function recordChatRecord(chat) {
+    const safeChat = chat || {};
+    const result = executeSql(
+        [
+            'INSERT INTO chat_records(',
+            'session_id, player_id, player_name, t, x, y, text, replay_allowed, ts',
+            ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ].join(' '),
+        [
+            safeChat.sessionId || null,
+            safeChat.playerId || null,
+            safeChat.playerName || '',
+            typeof safeChat.t === 'number' ? safeChat.t : 0,
+            typeof safeChat.x === 'number' ? safeChat.x : null,
+            typeof safeChat.y === 'number' ? safeChat.y : null,
+            safeChat.text || '',
+            safeChat.replayAllowed === false ? 0 : 1,
+            typeof safeChat.ts === 'number' ? safeChat.ts : Date.now()
+        ]
+    );
+
+    return {
+        id: result.lastID
+    };
+}
+
+function listChatRecords(filters) {
+    const where = buildWhere(filters || {}, {
+        playerId: 'player_id',
+        sessionId: 'session_id'
+    });
+    const limit = normalizeLimit(filters && filters.limit, 500);
+    const result = executeSql(
+        'SELECT * FROM chat_records' + where.sql + ' ORDER BY t ASC, id ASC LIMIT ?',
+        where.params.concat(limit),
+        {mode: 'all'}
+    );
+
+    return result.rows.map(toCamelChatRecord);
+}
+
 function listEvents(filters) {
     const where = buildWhere(filters || {}, {
         playerId: 'player_id',
@@ -476,6 +550,8 @@ module.exports = {
     listSessions: listSessions,
     recordPlayerTrace: recordPlayerTrace,
     listPlayerTraces: listPlayerTraces,
+    recordChatRecord: recordChatRecord,
+    listChatRecords: listChatRecords,
     recordEvent: recordEvent,
     listEvents: listEvents,
     addSessionSummary: addSessionSummary,
