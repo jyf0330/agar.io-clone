@@ -161,6 +161,7 @@ CREATE TABLE IF NOT EXISTS session_summaries (
   session_id TEXT,
   summary TEXT,
   expectation TEXT,
+  referenced_l1_event_ids TEXT,
   relationship_delta INTEGER,
   ts INTEGER
 );
@@ -215,6 +216,12 @@ function executeSql(query, params, options) {
         '    conn.executescript(payload["schemaSql"])',
         '    try:',
         '        conn.execute("ALTER TABLE session_summaries ADD COLUMN expectation TEXT DEFAULT \'\'")',
+        '        conn.commit()',
+        '    except sqlite3.OperationalError as error:',
+        '        if "duplicate column name" not in str(error):',
+        '            raise',
+        '    try:',
+        '        conn.execute("ALTER TABLE session_summaries ADD COLUMN referenced_l1_event_ids TEXT DEFAULT \'[]\'")',
         '        conn.commit()',
         '    except sqlite3.OperationalError as error:',
         '        if "duplicate column name" not in str(error):',
@@ -284,6 +291,7 @@ function toCamelSummary(row) {
         sessionId: row.session_id,
         summary: row.summary,
         expectation: row.expectation || '',
+        referencedL1EventIds: row.referenced_l1_event_ids ? JSON.parse(row.referenced_l1_event_ids) : [],
         relationshipDelta: row.relationship_delta,
         ts: row.ts
     };
@@ -850,8 +858,8 @@ function addSessionSummary(summary) {
     const result = executeSql(
         [
             'INSERT INTO session_summaries(',
-            'player_id, npc_id, session_id, summary, expectation, relationship_delta, ts',
-            ') VALUES (?, ?, ?, ?, ?, ?, ?)'
+            'player_id, npc_id, session_id, summary, expectation, referenced_l1_event_ids, relationship_delta, ts',
+            ') VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
         ].join(' '),
         [
             safeSummary.playerId || null,
@@ -859,6 +867,7 @@ function addSessionSummary(summary) {
             safeSummary.sessionId || null,
             safeSummary.summary || '',
             safeSummary.expectation || '',
+            JSON.stringify(Array.isArray(safeSummary.referencedL1EventIds) ? safeSummary.referencedL1EventIds : []),
             typeof safeSummary.relationshipDelta === 'number' ? safeSummary.relationshipDelta : 0,
             typeof safeSummary.ts === 'number' ? safeSummary.ts : Date.now()
         ]

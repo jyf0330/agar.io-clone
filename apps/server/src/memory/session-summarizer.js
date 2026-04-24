@@ -105,6 +105,12 @@ function buildTomorrowExpectation(npc, events) {
     return candidates[index].text;
 }
 
+function collectReferencedL1EventIds(events) {
+    return (Array.isArray(events) ? events : []).map((event) => {
+        return event.eventId || (event.id ? String(event.id) : '');
+    }).filter(Boolean).slice(0, 50);
+}
+
 async function summarizeNpcSession(options) {
     const settings = options || {};
     const npc = settings.npc || {};
@@ -151,6 +157,7 @@ async function summarizeNpcSession(options) {
         sessionId: sessionId,
         summary: summary,
         expectation: expectation,
+        referencedL1EventIds: collectReferencedL1EventIds(events),
         relationshipDelta: estimateRelationshipDelta(events, npc, previousSummary),
         ts: settings.ts || Date.now()
     });
@@ -179,6 +186,7 @@ async function summarizeSession(options) {
 module.exports = {
     buildFallbackSummary: buildFallbackSummary,
     buildTomorrowExpectation: buildTomorrowExpectation,
+    collectReferencedL1EventIds: collectReferencedL1EventIds,
     estimateRelationshipDelta: estimateRelationshipDelta,
     summarizeNpcSession: summarizeNpcSession,
     summarizeSession: summarizeSession

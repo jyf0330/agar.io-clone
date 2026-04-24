@@ -36,6 +36,7 @@ describe('memory session summarizer', () => {
 
         npcs.forEach((npc) => {
             store.recordEvent({
+                eventId: 'l1-' + npc.id + '-reply',
                 playerId: 'player-a',
                 npcId: npc.id,
                 sessionId: sessionId,
@@ -72,6 +73,8 @@ describe('memory session summarizer', () => {
         expect(summaries.map((summary) => summary.npcId).sort()).to.deep.equal(['doudou', 'mochi', 'wugui']);
         expect(summaries.every((summary) => summary.summary.length <= 80)).to.equal(true);
         expect(summaries.every((summary) => summary.expectation.length > 0)).to.equal(true);
+        expect(summaries.every((summary) => summary.referencedL1EventIds.length === 1)).to.equal(true);
+        expect(summaries.find((summary) => summary.npcId === 'mochi').referencedL1EventIds).to.deep.equal(['l1-mochi-reply']);
     });
 
     it('should write fallback summaries when the llm is offline', async () => {
@@ -79,6 +82,7 @@ describe('memory session summarizer', () => {
         const npc = createNpc('mochi', '麻薯');
 
         store.recordEvent({
+            eventId: 'l1-fallback-move',
             playerId: 'player-b',
             npcId: npc.id,
             sessionId: sessionId,
@@ -110,6 +114,7 @@ describe('memory session summarizer', () => {
         expect(summaries[0].summary).to.not.equal('');
         expect(summaries[0].summary).to.contain('麻薯');
         expect(summaries[0].expectation).to.not.equal('');
+        expect(summaries[0].referencedL1EventIds).to.deep.equal(['l1-fallback-move']);
     });
 
     it('should lower relationship when a flower expectation is missed', async () => {
