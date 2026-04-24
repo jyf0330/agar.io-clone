@@ -41,6 +41,16 @@ describe('settlement summary', () => {
     });
     expect(summary.bodyParts[0].stats).to.deep.equal(['pickupRange +10']);
     expect(summary.historyWritten).to.equal(true);
+    expect(summary.keyEvents).to.have.length(1);
+    expect(summary.keyEvents[0]).to.include({
+      eventType: 'picked',
+      partId: 'hand-1',
+      partType: 'HAND',
+      displayName: 'Thread Hand',
+      sourceType: 'ghost_echo',
+      x: 120,
+      y: 130
+    });
   });
 
   it('should only recognize explicit demo settlement requests', () => {

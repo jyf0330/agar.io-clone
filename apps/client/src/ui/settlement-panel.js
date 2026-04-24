@@ -23,6 +23,19 @@ function formatPartLine(part) {
     ].join(' | ');
 }
 
+function formatKeyEventLine(event) {
+    const safeEvent = event || {};
+    const coordinates = typeof safeEvent.x === 'number' && typeof safeEvent.y === 'number'
+        ? ' @ ' + Math.round(safeEvent.x) + ',' + Math.round(safeEvent.y)
+        : '';
+
+    return [
+        safeEvent.eventType || 'unknown',
+        safeEvent.displayName || safeEvent.partType || 'Unknown Part',
+        safeEvent.sourceType || 'unknown'
+    ].join(' | ') + coordinates;
+}
+
 function createSettlementPanel(options) {
     const settings = options || {};
     const document = settings.document;
@@ -43,6 +56,7 @@ function createSettlementPanel(options) {
         const data = summary || {};
         const panel = ensureRoot();
         const bodyParts = Array.isArray(data.bodyParts) ? data.bodyParts : [];
+        const keyEvents = Array.isArray(data.keyEvents) ? data.keyEvents : [];
 
         while (panel.firstChild) {
             panel.removeChild(panel.firstChild);
@@ -53,6 +67,12 @@ function createSettlementPanel(options) {
         panel.appendChild(createText(document, 'div', 'settlement-meta', data.historyWritten ? 'This run entered the history library.' : 'This run was not written to history.'));
         if (data.petClosingLine) {
             panel.appendChild(createText(document, 'div', 'settlement-pet-line', data.petClosingLine));
+        }
+        if (keyEvents.length) {
+            panel.appendChild(createText(document, 'div', 'settlement-subtitle', 'Key Events'));
+            keyEvents.forEach((event) => {
+                panel.appendChild(createText(document, 'div', 'settlement-event', formatKeyEventLine(event)));
+            });
         }
 
         if (!bodyParts.length) {
@@ -68,9 +88,11 @@ function createSettlementPanel(options) {
 
     return {
         show: show,
+        formatKeyEventLine: formatKeyEventLine,
         formatPartLine: formatPartLine
     };
 }
 
 module.exports = createSettlementPanel;
+module.exports.formatKeyEventLine = formatKeyEventLine;
 module.exports.formatPartLine = formatPartLine;

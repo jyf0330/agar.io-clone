@@ -40,6 +40,13 @@ describe('settlement-panel.js', () => {
     panel.show({
       endedReason: 'swallowed',
       historyWritten: true,
+      keyEvents: [{
+        eventType: 'picked',
+        displayName: 'Thread Hand',
+        sourceType: 'ghost_echo',
+        x: 120,
+        y: 130
+      }],
       bodyParts: [{
         partType: 'HAND',
         displayName: 'Thread Hand',
@@ -52,6 +59,8 @@ describe('settlement-panel.js', () => {
 
     expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('Body Sources');
     expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('Thread Hand');
+    expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('Key Events');
+    expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('picked | Thread Hand | ghost_echo @ 120,130');
     expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('entered the history library');
   });
 });

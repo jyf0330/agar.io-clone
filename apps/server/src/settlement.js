@@ -58,16 +58,51 @@ function summarizePart(part) {
     };
 }
 
+function summarizeHistoryEvent(part, event) {
+    const safePart = part || {};
+    const safeEvent = event || {};
+
+    return {
+        eventType: safeEvent.eventType || 'unknown',
+        eventId: safeEvent.eventId || '',
+        partId: safePart.partId || safePart.id || '',
+        partType: safePart.partType || safePart.type || 'UNKNOWN',
+        displayName: safePart.displayName || safePart.label || safePart.templateId || 'Unknown Part',
+        playerId: safeEvent.playerId || '',
+        playerName: safeEvent.playerName || '',
+        fromPlayerId: safeEvent.fromPlayerId || '',
+        toPlayerId: safeEvent.toPlayerId || '',
+        sourceType: safeEvent.sourceType || safePart.sourceType || safePart.source || 'unknown',
+        x: typeof safeEvent.x === 'number' ? safeEvent.x : null,
+        y: typeof safeEvent.y === 'number' ? safeEvent.y : null,
+        at: safeEvent.at || null
+    };
+}
+
+function summarizeKeyEvents(parts) {
+    return (parts || []).reduce((events, part) => {
+        const chain = Array.isArray(part && part.historyChain) ? part.historyChain : [];
+        chain.forEach((entry) => {
+            if (entry && entry.eventType && entry.eventType !== 'created') {
+                events.push(summarizeHistoryEvent(part, entry));
+            }
+        });
+        return events;
+    }, []).slice(-8);
+}
+
 function buildSettlementSummary(options) {
     const settings = options || {};
     const player = settings.player || {};
+    const bodyParts = player.bodyParts || [];
 
     return {
         playerId: player.id || '',
         playerName: player.name || '',
         endedReason: settings.endedReason || 'round_end',
         winnerName: settings.winnerName || '',
-        bodyParts: (player.bodyParts || []).map(summarizePart),
+        bodyParts: bodyParts.map(summarizePart),
+        keyEvents: Array.isArray(settings.keyEvents) ? settings.keyEvents : summarizeKeyEvents(bodyParts),
         historyWritten: Boolean(settings.historyWritten),
         recordingConsent: settings.recordingConsent !== false,
         petClosingLine: settings.petClosingLine || ''
@@ -81,5 +116,6 @@ function isDemoSettlementRequest(message) {
 module.exports = {
     buildSettlementSummary: buildSettlementSummary,
     isDemoSettlementRequest: isDemoSettlementRequest,
+    summarizeKeyEvents: summarizeKeyEvents,
     summarizePart: summarizePart
 };
