@@ -136,4 +136,41 @@ describe('ghost recorder', () => {
       isReplayAllowed: true
     });
   });
+
+  it('should mirror recorded movement into typed player trace rows', () => {
+    const traces = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      memoryStore: {
+        recordEvent() {},
+        recordPlayerTrace(trace) {
+          traces.push(trace);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      x: 120,
+      y: 130,
+      massTotal: 42,
+      cells: [{radius: 24}],
+      consentToRecord: true
+    };
+
+    recorder.recordPlayers([player], 1200);
+
+    expect(traces[0]).to.deep.include({
+      sessionId: 'session-now',
+      playerId: 'player-1',
+      t: 200,
+      x: 120,
+      y: 130,
+      size: 24,
+      mass: 42,
+      alive: true,
+      ts: 1200
+    });
+  });
 });

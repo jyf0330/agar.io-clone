@@ -72,12 +72,31 @@ class GhostRecorder {
         return;
       }
       this.lastTraceAtByPlayer[player.id] = now;
-      this.recordEvent(player, 'ghost_trace', {
+      const tracePayload = {
         x: player.x,
         y: player.y,
         hue: player.hue,
         bodyParts: (player.bodyParts || []).map(part => body.cloneBodyPart(part))
-      }, now);
+      };
+      this.recordEvent(player, 'ghost_trace', tracePayload, now);
+      this.recordPlayerTrace(player, tracePayload, now);
+    });
+  }
+  recordPlayerTrace(player, tracePayload, now) {
+    if (!this.memoryStore || typeof this.memoryStore.recordPlayerTrace !== 'function' || !this.canRecordPlayer(player)) {
+      return;
+    }
+    const cells = player.cells || [];
+    this.memoryStore.recordPlayerTrace({
+      sessionId: this.sessionId,
+      playerId: player.id,
+      t: this.getElapsed(now || Date.now()),
+      x: tracePayload.x,
+      y: tracePayload.y,
+      size: cells[0] && typeof cells[0].radius === 'number' ? cells[0].radius : null,
+      mass: typeof player.massTotal === 'number' ? player.massTotal : null,
+      alive: cells.length > 0,
+      ts: now || Date.now()
     });
   }
   recordPlayerSession(player, now) {

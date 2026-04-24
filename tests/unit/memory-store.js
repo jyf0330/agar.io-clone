@@ -34,6 +34,7 @@ describe('memory store', function () {
         const tables = store.listTables();
 
         expect(tables).to.include('sessions');
+        expect(tables).to.include('player_traces');
         expect(tables).to.include('events');
         expect(tables).to.include('session_summaries');
         expect(tables).to.include('persona_impressions');
@@ -68,6 +69,40 @@ describe('memory store', function () {
             endedAt: 2000,
             isSeed: true,
             isReplayAllowed: false
+        });
+    });
+
+    it('should record and query V5 player trace points by session and player', function () {
+        const store = loadStore(path.join(tmpDir, 'memory.db'));
+
+        store.recordPlayerTrace({
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            t: 200,
+            x: 120,
+            y: 130,
+            size: 24,
+            mass: 10,
+            alive: true,
+            ts: 1200
+        });
+
+        const traces = store.listPlayerTraces({
+            sessionId: 'session-1',
+            playerId: 'player-a'
+        });
+
+        expect(traces).to.deep.include({
+            id: traces[0].id,
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            t: 200,
+            x: 120,
+            y: 130,
+            size: 24,
+            mass: 10,
+            alive: true,
+            ts: 1200
         });
     });
 

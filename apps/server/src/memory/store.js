@@ -26,6 +26,24 @@ CREATE INDEX IF NOT EXISTS idx_sessions_map_started
 CREATE INDEX IF NOT EXISTS idx_sessions_player_started
   ON sessions(player_id, started_at);
 
+CREATE TABLE IF NOT EXISTS player_traces (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_id TEXT,
+  player_id TEXT,
+  t INTEGER,
+  x REAL,
+  y REAL,
+  size REAL,
+  mass REAL,
+  alive INTEGER,
+  ts INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_player_traces_session_player_t
+  ON player_traces(session_id, player_id, t);
+CREATE INDEX IF NOT EXISTS idx_player_traces_position
+  ON player_traces(session_id, x, y);
+
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   player_id TEXT,
@@ -184,6 +202,21 @@ function toCamelSession(row) {
     };
 }
 
+function toCamelTrace(row) {
+    return {
+        id: row.id,
+        sessionId: row.session_id,
+        playerId: row.player_id,
+        t: row.t,
+        x: row.x,
+        y: row.y,
+        size: row.size,
+        mass: row.mass,
+        alive: row.alive === 1,
+        ts: row.ts
+    };
+}
+
 function buildWhere(filters, mapping) {
     const clauses = [];
     const params = [];
@@ -298,6 +331,47 @@ function listSessions(filters) {
     return result.rows.map(toCamelSession);
 }
 
+function recordPlayerTrace(trace) {
+    const safeTrace = trace || {};
+    const result = executeSql(
+        [
+            'INSERT INTO player_traces(',
+            'session_id, player_id, t, x, y, size, mass, alive, ts',
+            ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ].join(' '),
+        [
+            safeTrace.sessionId || null,
+            safeTrace.playerId || null,
+            typeof safeTrace.t === 'number' ? safeTrace.t : 0,
+            typeof safeTrace.x === 'number' ? safeTrace.x : null,
+            typeof safeTrace.y === 'number' ? safeTrace.y : null,
+            typeof safeTrace.size === 'number' ? safeTrace.size : null,
+            typeof safeTrace.mass === 'number' ? safeTrace.mass : null,
+            safeTrace.alive === false ? 0 : 1,
+            typeof safeTrace.ts === 'number' ? safeTrace.ts : Date.now()
+        ]
+    );
+
+    return {
+        id: result.lastID
+    };
+}
+
+function listPlayerTraces(filters) {
+    const where = buildWhere(filters || {}, {
+        playerId: 'player_id',
+        sessionId: 'session_id'
+    });
+    const limit = normalizeLimit(filters && filters.limit, 1000);
+    const result = executeSql(
+        'SELECT * FROM player_traces' + where.sql + ' ORDER BY t ASC, id ASC LIMIT ?',
+        where.params.concat(limit),
+        {mode: 'all'}
+    );
+
+    return result.rows.map(toCamelTrace);
+}
+
 function listEvents(filters) {
     const where = buildWhere(filters || {}, {
         playerId: 'player_id',
@@ -400,6 +474,8 @@ module.exports = {
     recordSession: recordSession,
     endSession: endSession,
     listSessions: listSessions,
+    recordPlayerTrace: recordPlayerTrace,
+    listPlayerTraces: listPlayerTraces,
     recordEvent: recordEvent,
     listEvents: listEvents,
     addSessionSummary: addSessionSummary,
