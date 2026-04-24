@@ -19,6 +19,7 @@ module.exports = {
     },
     gameWidth: 5000,
     gameHeight: 5000,
+    mapId: 'fixed-arena',
     adminPass: "DEFAULT",
     gameMass: 20000,
     maxFood: 1000,

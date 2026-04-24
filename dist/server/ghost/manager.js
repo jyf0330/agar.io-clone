@@ -12,7 +12,8 @@ function normalizeEvent(event) {
     t: typeof event.t === 'number' ? event.t : typeof payload.t === 'number' ? payload.t : 0,
     x: typeof event.x === 'number' ? event.x : payload.x,
     y: typeof event.y === 'number' ? event.y : payload.y,
-    name: event.name || payload.name || 'Echo'
+    name: event.name || payload.name || 'Echo',
+    mapId: event.mapId || payload.mapId || null
   });
 }
 function normalizeAnchor(anchor) {
@@ -25,9 +26,13 @@ function normalizeAnchor(anchor) {
     x: anchor.x,
     y: anchor.y,
     name: anchor.name || '历史回响',
+    mapId: anchor.mapId || null,
     anchorEventType: anchor.eventType || 'anchor',
     priority: anchor.priority || 0
   };
+}
+function eventMatchesMap(event, mapId) {
+  return !mapId || !event.mapId || event.mapId === mapId;
 }
 function interpolateTrace(points, t) {
   if (!points || !points.length) {
@@ -64,19 +69,25 @@ class GhostManager {
     this.anchorCooldownMs = typeof settings.anchorCooldownMs === 'number' ? settings.anchorCooldownMs : 60000;
     this.chatBubbleDurationMs = typeof settings.chatBubbleDurationMs === 'number' ? settings.chatBubbleDurationMs : 4000;
     this.debug = settings.debug === true;
+    this.mapId = settings.mapId || null;
     this.seedEvents = (settings.seedEvents || []).map(normalizeEvent);
     this.memoryStore = settings.memoryStore || null;
     this.spawnedItemIds = {};
     this.activeGhosts = {};
     this.anchorTriggeredAt = {};
   }
-  getEvents() {
-    if (!this.memoryStore) {
-      return this.seedEvents;
-    }
-    const anchors = typeof this.memoryStore.listGhostAnchors === 'function' ? this.memoryStore.listGhostAnchors({
+  getEvents(mapId) {
+    const currentMapId = mapId || this.mapId;
+    const anchorFilters = {
       limit: 1000
-    }).map(normalizeAnchor) : [];
+    };
+    if (currentMapId) {
+      anchorFilters.mapId = currentMapId;
+    }
+    if (!this.memoryStore) {
+      return this.seedEvents.filter(event => eventMatchesMap(event, currentMapId));
+    }
+    const anchors = typeof this.memoryStore.listGhostAnchors === 'function' ? this.memoryStore.listGhostAnchors(anchorFilters).map(normalizeAnchor).filter(event => eventMatchesMap(event, currentMapId)) : [];
     const recorded = typeof this.memoryStore.listEvents === 'function' ? [].concat(this.memoryStore.listEvents({
       kind: 'ghost_trace',
       limit: 1000
@@ -91,8 +102,8 @@ class GhostManager {
       kind: event.kind.replace('ghost_', ''),
       sessionId: event.sessionId,
       playerId: event.playerId
-    }))) : [];
-    return this.seedEvents.concat(anchors).concat(recorded);
+    }))).filter(event => eventMatchesMap(event, currentMapId)) : [];
+    return this.seedEvents.filter(event => eventMatchesMap(event, currentMapId)).concat(anchors).concat(recorded);
   }
   isNearAnyPlayer(event, players) {
     return (players || []).some(player => {
@@ -327,7 +338,8 @@ class GhostManager {
     const now = safeState.now || Date.now();
     const startedAt = safeState.matchStartedAt || now;
     const elapsedMs = Math.max(0, now - startedAt);
-    const events = this.getEvents();
+    const mapId = safeState.mapId || map && map.config && map.config.mapId || this.mapId;
+    const events = this.getEvents(mapId);
     this.updateGhostPositions(now);
     this.updateGhostChats(now);
     this.updateGhostPartPickups(map, now);

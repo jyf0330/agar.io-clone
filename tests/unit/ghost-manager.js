@@ -188,6 +188,70 @@ describe('ghost manager', () => {
     expect(map.ghosts[0].x).to.equal(305);
   });
 
+  it('should only trigger persisted anchors for the current map id', () => {
+    const startedAt = 1000;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      mapId: 'fixed-arena'
+    }));
+    const player = new playerUtils.Player('player-1');
+    player.init({ x: 300, y: 300 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'viewer',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+
+    let requestedMapId = null;
+    const manager = new GhostManager({
+      triggerRadius: 100,
+      timeWindowMs: 250,
+      memoryStore: {
+        listGhostAnchors(filters) {
+          requestedMapId = filters.mapId;
+          return [
+            {
+              anchorId: 'other-anchor',
+              sourceSessionId: 'other-session',
+              sourcePlayerId: 'other-player',
+              mapId: 'other-map',
+              t: 1000,
+              x: 305,
+              y: 300,
+              eventType: 'part_pickup',
+              priority: 50
+            },
+            {
+              anchorId: 'fixed-anchor',
+              sourceSessionId: 'old-session',
+              sourcePlayerId: 'old-player',
+              mapId: 'fixed-arena',
+              t: 1000,
+              x: 306,
+              y: 300,
+              eventType: 'part_pickup',
+              priority: 50
+            }
+          ];
+        },
+        listEvents() {
+          return [];
+        }
+      }
+    });
+
+    manager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1000
+    });
+
+    expect(requestedMapId).to.equal('fixed-arena');
+    expect(map.ghosts).to.have.length(1);
+    expect(map.ghosts[0].sessionId).to.equal('old-session');
+  });
+
   it('should replay persisted single-player trace points after an anchor activates', () => {
     const startedAt = 1000;
     const map = new mapUtils.Map(config);
