@@ -10,6 +10,7 @@ exports.playerUtils = require('./player');
 
 exports.Map = class {
     constructor(config) {
+        this.config = config || {};
         this.food = new exports.foodUtils.FoodManager(config.foodMass, config.foodUniformDisposition);
         this.viruses = new exports.virusUtils.VirusManager(config.virus);
         this.massFood = new exports.massFoodUtils.MassFoodManager();
@@ -36,6 +37,13 @@ exports.Map = class {
         const virusesToAdd = maxVirus - this.viruses.data.length;
         if (virusesToAdd > 0) {
             this.viruses.addNew(virusesToAdd);
+        }
+
+        if (this.config.partLoot) {
+            this.partLoot.balanceWorldParts(Object.assign({
+                gameWidth: this.config.gameWidth,
+                gameHeight: this.config.gameHeight
+            }, this.config.partLoot));
         }
     }
 

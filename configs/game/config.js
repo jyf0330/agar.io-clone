@@ -23,6 +23,37 @@ module.exports = {
     gameMass: 20000,
     maxFood: 1000,
     maxVirus: 50,
+    partLoot: {
+        enabled: true,
+        maxWorldParts: 8,
+        spawnBatch: 1,
+        templates: [
+            {
+                type: 'HAND',
+                templateId: 'hand-open',
+                displayName: 'Map Hand',
+                stats: {
+                    pickupRange: 10
+                }
+            },
+            {
+                type: 'FOOT',
+                templateId: 'foot-default',
+                displayName: 'Map Foot',
+                stats: {
+                    moveSpeed: 10
+                }
+            },
+            {
+                type: 'HEAD',
+                templateId: 'head-default',
+                displayName: 'Map Head',
+                stats: {
+                    echoDetectRange: 10
+                }
+            }
+        ]
+    },
     slowBase: 4.5,
     logChat: 0,
     networkUpdateFactor: 40,

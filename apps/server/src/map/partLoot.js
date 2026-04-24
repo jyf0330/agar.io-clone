@@ -41,6 +41,36 @@ class PartLootManager {
         }));
     }
 
+    balanceWorldParts(options) {
+        const settings = options || {};
+        const templates = Array.isArray(settings.templates) && settings.templates.length
+            ? settings.templates
+            : [{type: 'HAND', templateId: 'hand-open'}];
+        const maxWorldParts = typeof settings.maxWorldParts === 'number' ? settings.maxWorldParts : 0;
+        const spawnBatch = typeof settings.spawnBatch === 'number' ? settings.spawnBatch : 1;
+        const random = typeof settings.random === 'function' ? settings.random : Math.random;
+        const gameWidth = typeof settings.gameWidth === 'number' ? settings.gameWidth : 5000;
+        const gameHeight = typeof settings.gameHeight === 'number' ? settings.gameHeight : 5000;
+        const spawnCount = Math.min(spawnBatch, Math.max(0, maxWorldParts - this.data.length));
+
+        if (!settings.enabled || spawnCount <= 0) {
+            return [];
+        }
+
+        const spawned = [];
+        for (let index = 0; index < spawnCount; index++) {
+            const template = templates[Math.min(templates.length - 1, Math.floor(random() * templates.length))];
+            spawned.push(this.addPart(Object.assign({}, template, {
+                sourceType: 'map_pickup'
+            }), {
+                x: Math.round(random() * gameWidth),
+                y: Math.round(random() * gameHeight)
+            }, 'map-pickup'));
+        }
+
+        return spawned;
+    }
+
     addPart(part, position, source) {
         const normalizedPart = this.normalizePart(part, source);
         const loot = {

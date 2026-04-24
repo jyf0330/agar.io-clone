@@ -80,4 +80,51 @@ describe('partLoot.js', () => {
     expect(historyTypes).to.include('picked');
     expect(historyTypes).to.include('equipped');
   });
+
+  it('should naturally spawn configured map pickup parts up to the world cap', () => {
+    const manager = new PartLootManager();
+
+    manager.balanceWorldParts({
+      enabled: true,
+      maxWorldParts: 2,
+      spawnBatch: 2,
+      gameWidth: 500,
+      gameHeight: 400,
+      random: () => 0.5,
+      templates: [
+        {
+          type: 'HAND',
+          templateId: 'hand-open',
+          displayName: 'Open Hand',
+          stats: {
+            pickupRange: 10
+          }
+        }
+      ]
+    });
+
+    expect(manager.data).to.have.length(2);
+    expect(manager.data[0].source).to.equal('map-pickup');
+    expect(manager.data[0].x).to.equal(250);
+    expect(manager.data[0].y).to.equal(200);
+    expect(manager.data[0].part.sourceType).to.equal('map_pickup');
+    expect(manager.data[0].part.stats.pickupRange).to.equal(10);
+
+    manager.balanceWorldParts({
+      enabled: true,
+      maxWorldParts: 2,
+      spawnBatch: 2,
+      gameWidth: 500,
+      gameHeight: 400,
+      random: () => 0.1,
+      templates: [
+        {
+          type: 'FOOT',
+          templateId: 'foot-default'
+        }
+      ]
+    });
+
+    expect(manager.data).to.have.length(2);
+  });
 });
