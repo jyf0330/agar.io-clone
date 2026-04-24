@@ -57,6 +57,10 @@ describe('player-projection.js', () => {
       screenHeight: 600
     });
     map.players.pushNew(player);
+    map.partLoot.addPart({
+      type: 'HAND',
+      templateId: 'hand-thread'
+    }, { x: 260, y: 260 });
 
     let projectedWorld;
     map.enumerateVisibleWorld((visibleWorld) => {
@@ -67,6 +71,7 @@ describe('player-projection.js', () => {
 
     expect(projectPlayersForSync(map.players.data)).to.deep.equal(projectedWorld.visiblePlayers);
     expect(projectedWorld.playerData.id).to.equal('player-1');
+    expect(projectedWorld.visiblePartLoot[0].part.templateId).to.equal('hand-thread');
     expect(spectatorData.id).to.equal('spectator-1');
     expect(spectatorData.bodyPartCount).to.equal(0);
   });

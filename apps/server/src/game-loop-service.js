@@ -108,6 +108,7 @@ function createGameLoopService(options) {
             currentPlayer.changeCellMass(cellIndex, massGained);
         }
 
+        map.partLoot.collectForPlayer(currentPlayer);
         currentPlayer.virusSplit(cellsToSplit, config.limitSplit, config.defaultPlayerMass);
     }
 
@@ -173,7 +174,8 @@ function createGameLoopService(options) {
             projectPlayersForSync(map.players.data),
             map.food.data,
             map.massFood.data,
-            map.viruses.data
+            map.viruses.data,
+            map.partLoot.data
         );
 
         if (leaderboardChanged) {
@@ -196,7 +198,8 @@ function createGameLoopService(options) {
                 syncPayload.visiblePlayers,
                 syncPayload.visibleFood,
                 syncPayload.visibleMass,
-                syncPayload.visibleViruses
+                syncPayload.visibleViruses,
+                syncPayload.visiblePartLoot
             );
 
             if (leaderboardChanged) {

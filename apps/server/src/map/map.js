@@ -5,6 +5,7 @@ const {isVisibleEntity} = require("../lib/entityUtils");
 exports.foodUtils = require('./food');
 exports.virusUtils = require('./virus');
 exports.massFoodUtils = require('./massFood');
+exports.partLootUtils = require('./partLoot');
 exports.playerUtils = require('./player');
 
 exports.Map = class {
@@ -12,6 +13,7 @@ exports.Map = class {
         this.food = new exports.foodUtils.FoodManager(config.foodMass, config.foodUniformDisposition);
         this.viruses = new exports.virusUtils.VirusManager(config.virus);
         this.massFood = new exports.massFoodUtils.MassFoodManager();
+        this.partLoot = new exports.partLootUtils.PartLootManager();
         this.players = new exports.playerUtils.PlayerManager();
     }
 
@@ -42,6 +44,7 @@ exports.Map = class {
             visibleFood: this.food.data.filter(entity => isVisibleEntity(entity, currentPlayer, false)),
             visibleViruses: this.viruses.data.filter(entity => isVisibleEntity(entity, currentPlayer)),
             visibleMass: this.massFood.data.filter(entity => isVisibleEntity(entity, currentPlayer)),
+            visiblePartLoot: this.partLoot.data.filter(entity => isVisibleEntity(entity, currentPlayer)),
             visiblePlayers: this.players.data.filter((player) => {
                 return player.cells.some((cell) => isVisibleEntity(cell, currentPlayer));
             })

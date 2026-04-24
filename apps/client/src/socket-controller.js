@@ -144,7 +144,7 @@ function createSocketController(options) {
             options.renderPlayerCardPreviews();
         });
 
-        nextSocket.on('serverTellPlayerMove', function (playerData, userData, foodsList, massList, virusList) {
+        nextSocket.on('serverTellPlayerMove', function (playerData, userData, foodsList, massList, virusList, partLootList) {
             if (options.global.playerType === 'player') {
                 hydratePlayerState(options.getPlayer(), playerData);
             }
@@ -152,7 +152,8 @@ function createSocketController(options) {
                 users: userData,
                 foods: foodsList,
                 fireFood: massList,
-                viruses: virusList
+                viruses: virusList,
+                partLoot: partLootList || []
             });
             options.global.targetPlayerCardPreviewDataUrl = findConnectedTargetCardPreview(userData);
             options.renderStatusPanel();

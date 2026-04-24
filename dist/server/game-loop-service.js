@@ -87,6 +87,7 @@ function createGameLoopService(options) {
       massGained += eatenFoodIndexes.length * config.foodMass;
       currentPlayer.changeCellMass(cellIndex, massGained);
     }
+    map.partLoot.collectForPlayer(currentPlayer);
     currentPlayer.virusSplit(cellsToSplit, config.limitSplit, config.defaultPlayerMass);
   }
   function tickGame() {
@@ -132,7 +133,7 @@ function createGameLoopService(options) {
     if (!socket) {
       return;
     }
-    socket.emit('serverTellPlayerMove', createSpectatorSyncData(socketId, config), projectPlayersForSync(map.players.data), map.food.data, map.massFood.data, map.viruses.data);
+    socket.emit('serverTellPlayerMove', createSpectatorSyncData(socketId, config), projectPlayersForSync(map.players.data), map.food.data, map.massFood.data, map.viruses.data, map.partLoot.data);
     if (leaderboardChanged) {
       sendLeaderboard(socket);
     }
@@ -145,7 +146,7 @@ function createGameLoopService(options) {
       if (!socket) {
         return;
       }
-      socket.emit('serverTellPlayerMove', syncPayload.playerData, syncPayload.visiblePlayers, syncPayload.visibleFood, syncPayload.visibleMass, syncPayload.visibleViruses);
+      socket.emit('serverTellPlayerMove', syncPayload.playerData, syncPayload.visiblePlayers, syncPayload.visibleFood, syncPayload.visibleMass, syncPayload.visibleViruses, syncPayload.visiblePartLoot);
       if (leaderboardChanged) {
         sendLeaderboard(socket);
       }

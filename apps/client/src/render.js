@@ -42,6 +42,33 @@ const drawFireFood = (position, mass, playerConfig, graph) => {
     drawRoundObject(position, mass.radius - 1, graph);
 };
 
+const drawPartLoot = (position, loot, graph) => {
+    const radius = loot.radius || 28;
+    const label = loot.part && loot.part.type ? loot.part.type : 'PART';
+
+    graph.save();
+    graph.beginPath();
+    graph.moveTo(position.x, position.y - radius);
+    graph.lineTo(position.x + radius, position.y);
+    graph.lineTo(position.x, position.y + radius);
+    graph.lineTo(position.x - radius, position.y);
+    graph.closePath();
+    graph.fillStyle = 'rgba(255, 217, 102, 0.88)';
+    graph.strokeStyle = '#5b3a00';
+    graph.lineWidth = 3;
+    graph.fill();
+    graph.stroke();
+    graph.textAlign = 'center';
+    graph.textBaseline = 'middle';
+    graph.font = 'bold 11px sans-serif';
+    graph.fillStyle = '#2f2200';
+    graph.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+    graph.lineWidth = 2;
+    graph.strokeText(label, position.x, position.y);
+    graph.fillText(label, position.x, position.y);
+    graph.restore();
+};
+
 const valueInRange = (min, max, value) => Math.min(max, Math.max(min, value))
 
 const circlePoint = (origo, radius, theta) => ({
@@ -227,6 +254,7 @@ module.exports = {
     drawFood,
     drawVirus,
     drawFireFood,
+    drawPartLoot,
     drawCells,
     drawErrorMessage,
     drawGrid,

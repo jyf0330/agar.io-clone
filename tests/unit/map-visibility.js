@@ -27,11 +27,16 @@ describe('map visibility', () => {
 
     map.players.pushNew(viewer);
     map.players.pushNew(target);
+    map.partLoot.addPart({
+      type: 'HAND',
+      templateId: 'hand-open'
+    }, { x: 210, y: 210 });
 
     const visibleWorld = map.getVisibleWorldForPlayer(viewer);
 
     expect(visibleWorld.player).to.equal(viewer);
     expect(visibleWorld.visiblePlayers[1]).to.equal(target);
     expect(visibleWorld.visiblePlayers[1].cells[0].toCircle).to.be.a('function');
+    expect(visibleWorld.visiblePartLoot[0].part.templateId).to.equal('hand-open');
   });
 });
