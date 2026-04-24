@@ -65,6 +65,11 @@ function createSettlementPanel(options) {
         panel.appendChild(createText(document, 'div', 'settlement-title', 'Body Sources'));
         panel.appendChild(createText(document, 'div', 'settlement-meta', 'Result: ' + (data.endedReason || 'round_end')));
         panel.appendChild(createText(document, 'div', 'settlement-meta', data.historyWritten ? 'This run entered the history library.' : 'This run was not written to history.'));
+        if (data.historyWritten) {
+            panel.appendChild(createText(document, 'div', 'settlement-meta', 'You may become a future historical echo.'));
+        } else if (data.recordingConsent === false) {
+            panel.appendChild(createText(document, 'div', 'settlement-meta', 'Recording was declined before this run.'));
+        }
         if (data.petClosingLine) {
             panel.appendChild(createText(document, 'div', 'settlement-pet-line', data.petClosingLine));
         }

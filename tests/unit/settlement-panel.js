@@ -62,5 +62,6 @@ describe('settlement-panel.js', () => {
     expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('Key Events');
     expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('picked | Thread Hand | ghost_echo @ 120,130');
     expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('entered the history library');
+    expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('future historical echo');
   });
 });
