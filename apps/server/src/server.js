@@ -30,6 +30,7 @@ const {loadPersonalityCard} = require('./npc/personality-loader');
 const {getPosition} = require("./lib/entityUtils");
 const createConnectionService = require('./connection-service');
 const createGameLoopService = require('./game-loop-service');
+const settlement = require('./settlement');
 const GhostManager = require('./ghost/manager');
 const GhostRecorder = require('./ghost/recorder');
 const memorySessionId = process.env.MEMORY_SESSION_ID || 'session-' + Date.now();
@@ -514,6 +515,20 @@ const addPlayer = (socket) => {
 
         if (config.logChat === 1) {
             console.log('[CHAT] [' + (new Date()).getHours() + ':' + (new Date()).getMinutes() + '] ' + _sender + ': ' + _message);
+        }
+
+        if (config.demo && config.demo.enabled && settlement.isDemoSettlementRequest(_message)) {
+            socket.emit('settlement', settlement.buildSettlementSummary({
+                player: currentPlayer,
+                endedReason: 'demo_quick_end',
+                recordingConsent: currentPlayer.consentToRecord !== false,
+                historyWritten: currentPlayer.isReplayAllowed !== false,
+                petClosingLine: '演示结算已触发。'
+            }));
+            socket.emit('RIP');
+            connectionService.clearTimer(currentPlayer.id);
+            map.players.removePlayerByID(currentPlayer.id);
+            return;
         }
 
         const nextPetId = parsePetSwitchMessage(_message);

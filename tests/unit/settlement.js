@@ -42,4 +42,11 @@ describe('settlement summary', () => {
     expect(summary.bodyParts[0].stats).to.deep.equal(['pickupRange +10']);
     expect(summary.historyWritten).to.equal(true);
   });
+
+  it('should only recognize explicit demo settlement requests', () => {
+    expect(settlement.isDemoSettlementRequest('demo settle')).to.equal(true);
+    expect(settlement.isDemoSettlementRequest('demo结算')).to.equal(true);
+    expect(settlement.isDemoSettlementRequest('快速结算')).to.equal(true);
+    expect(settlement.isDemoSettlementRequest('结算一下')).to.equal(false);
+  });
 });

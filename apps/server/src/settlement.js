@@ -74,7 +74,12 @@ function buildSettlementSummary(options) {
     };
 }
 
+function isDemoSettlementRequest(message) {
+    return /^(?:demo\s*settle|demo\s*结算|快速结算)$/i.test(String(message || '').trim());
+}
+
 module.exports = {
     buildSettlementSummary: buildSettlementSummary,
+    isDemoSettlementRequest: isDemoSettlementRequest,
     summarizePart: summarizePart
 };
