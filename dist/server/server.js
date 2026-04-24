@@ -30,6 +30,7 @@ const {
 } = require('./memory/persona-updater');
 const NpcState = require('./npc/npc');
 const Orchestrator = require('./npc/orchestrator');
+const taskRewards = require('./npc/task-rewards');
 const {
   loadPersonalityCard
 } = require('./npc/personality-loader');
@@ -417,6 +418,23 @@ const addPlayer = socket => {
     }
     if (npcFeaturesEnabled) {
       rememberRecentChat(currentPlayer, _message);
+      if (npcRoster.length && taskRewards.isTaskRewardRequest(_message)) {
+        const activeNpc = npcRoster[0];
+        const reward = taskRewards.grantNpcTaskReward({
+          map,
+          player: currentPlayer,
+          npc: activeNpc,
+          memoryStore,
+          sessionId: memorySessionId
+        });
+        io.emit('npc:speak', {
+          npcId: activeNpc.id,
+          npcName: activeNpc.player.name,
+          text: '我把一个部位标在你脚边了。',
+          duration: 3500
+        });
+        ghostRecorder.recordItem(currentPlayer, reward.part, reward.loot, Date.now());
+      }
     }
     ghostRecorder.recordChat(currentPlayer, _message, Date.now());
     socket.broadcast.emit('serverSendPlayerChat', {
