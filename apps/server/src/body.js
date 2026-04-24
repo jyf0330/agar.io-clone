@@ -12,6 +12,15 @@ const TYPES = Object.freeze({
     SPIKE: 'SPIKE'
 });
 
+const EQUIPMENT_SLOT_KEYS = Object.freeze([
+    'head',
+    'torso',
+    'leftHand',
+    'rightHand',
+    'leftLeg',
+    'rightLeg'
+]);
+
 function getPartDefinition(type) {
     const definition = bodyConfig.partDefinitions[type];
     if (!definition) {
@@ -77,6 +86,50 @@ function appendPartHistory(part, eventType, data) {
     return nextPart;
 }
 
+function resolveEquipmentSlot(type, ordinal, overrides) {
+    const source = overrides || {};
+    if (source.slotId || source.equipmentSlot) {
+        return source.slotId || source.equipmentSlot;
+    }
+
+    if (type === TYPES.HEAD) {
+        return 'head';
+    }
+    if (type === TYPES.HAND) {
+        return ordinal > 1 ? 'leftHand' : 'rightHand';
+    }
+    if (type === TYPES.FOOT) {
+        return ordinal > 1 ? 'leftLeg' : 'rightLeg';
+    }
+    if (type === TYPES.MOUTH || type === TYPES.HEART) {
+        return 'torso';
+    }
+
+    return null;
+}
+
+function createEmptyEquipmentSlots() {
+    return EQUIPMENT_SLOT_KEYS.reduce((slots, key) => {
+        slots[key] = null;
+        return slots;
+    }, {});
+}
+
+function createEquipmentSlots(parts) {
+    const slots = createEmptyEquipmentSlots();
+
+    (parts || []).forEach((part) => {
+        const slotId = part && (part.slotId || part.equipmentSlot);
+        if (!Object.prototype.hasOwnProperty.call(slots, slotId) || slots[slotId]) {
+            return;
+        }
+
+        slots[slotId] = cloneBodyPart(part);
+    });
+
+    return slots;
+}
+
 function createBodyPart(type, ordinal, overrides) {
     const source = overrides || {};
     const normalizedType = getPartType(type) || getPartType(source);
@@ -84,6 +137,7 @@ function createBodyPart(type, ordinal, overrides) {
     const index = typeof ordinal === 'number' ? ordinal : 1;
     const partId = source.partId || source.id || normalizedType.toLowerCase() + '-' + index;
     const sourceType = source.sourceType || inferSourceType(source.source);
+    const slotId = resolveEquipmentSlot(normalizedType, index, source);
     const historyChain = source.historyChain
         ? cloneHistoryChain(source.historyChain)
         : [createHistoryEntry('created', {
@@ -102,6 +156,8 @@ function createBodyPart(type, ordinal, overrides) {
         displayName: definition.label,
         mount: definition.mount,
         isCore: definition.isCore,
+        slotId: slotId,
+        equipmentSlot: slotId,
         templateId: source.templateId || null,
         stats: cloneShallowObject(source.stats),
         appearanceRef: source.appearanceRef || source.templateId || null,
@@ -119,6 +175,8 @@ function createBodyPart(type, ordinal, overrides) {
         partId: partId,
         type: normalizedType,
         partType: normalizedType,
+        slotId: slotId,
+        equipmentSlot: slotId,
         displayName: source.displayName || source.label || definition.label,
         stats: cloneShallowObject(source.stats),
         historyChain: historyChain
@@ -235,6 +293,7 @@ function createBodyState(parts, signature) {
         bodyParts: normalizedParts,
         bodyPartCount: normalizedParts.length,
         bodyPartCounts: countBodyParts(normalizedParts),
+        equipmentSlots: createEquipmentSlots(normalizedParts),
         bodyBonuses: createBodyBonuses(normalizedParts)
     };
 }
@@ -416,8 +475,10 @@ function stealRandomCorePart(loser, eater, randomFn) {
 
 module.exports = {
     TYPES,
+    EQUIPMENT_SLOT_KEYS,
     config: bodyConfig,
     appendPartHistory,
+    createEquipmentSlots,
     createBodyPart,
     cloneBodyPart,
     createSignaturePart,

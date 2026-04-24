@@ -23,6 +23,12 @@ describe('body.js', () => {
       expect(player.bodyPartCounts.MOUTH).to.equal(1);
       expect(player.bodyPartCounts.HEART).to.equal(1);
       expect(player.bodyPartCounts.SPIKE).to.equal(0);
+      expect(player.equipmentSlots.head.partType).to.equal('HEAD');
+      expect(player.equipmentSlots.rightHand.partType).to.equal('HAND');
+      expect(player.equipmentSlots.rightLeg.partType).to.equal('FOOT');
+      expect(player.equipmentSlots.torso.partType).to.equal('MOUTH');
+      expect(player.equipmentSlots.leftHand).to.equal(null);
+      expect(player.equipmentSlots.leftLeg).to.equal(null);
     });
 
     it('should convert a V5 body signature into the starter hand slot', () => {
@@ -83,6 +89,20 @@ describe('body.js', () => {
       expect(part.sourceEventId).to.equal('event-created-hand');
       expect(part.historyChain).to.have.length(1);
       expect(part.historyChain[0].eventType).to.equal('created');
+    });
+
+    it('should assign repeat hand and foot parts to the left side slots', () => {
+      const bodyState = body.createBodyState([
+        body.createBodyPart('HAND', 1),
+        body.createBodyPart('HAND', 2),
+        body.createBodyPart('FOOT', 1),
+        body.createBodyPart('FOOT', 2)
+      ]);
+
+      expect(bodyState.equipmentSlots.rightHand.partId).to.equal('hand-1');
+      expect(bodyState.equipmentSlots.leftHand.partId).to.equal('hand-2');
+      expect(bodyState.equipmentSlots.rightLeg.partId).to.equal('foot-1');
+      expect(bodyState.equipmentSlots.leftLeg.partId).to.equal('foot-2');
     });
   });
 
@@ -347,8 +367,11 @@ describe('body.js', () => {
       expect(result.playerData.bodyPartCount).to.equal(bodyConfig.defaultLoadout.length);
       expect(result.playerData.bodyPartCounts.HEART).to.equal(1);
       expect(result.playerData.bodyParts[0].type).to.equal('HEAD');
+      expect(result.playerData.equipmentSlots.head.partType).to.equal('HEAD');
+      expect(result.playerData.equipmentSlots.rightHand.partType).to.equal('HAND');
       expect(result.visiblePlayers[0].bodyPartCount).to.equal(bodyConfig.defaultLoadout.length);
       expect(result.visiblePlayers[0].bodyPartCounts.SPIKE).to.equal(0);
+      expect(result.visiblePlayers[0].equipmentSlots.rightLeg.partType).to.equal('FOOT');
     });
   });
 });

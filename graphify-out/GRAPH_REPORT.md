@@ -1,11 +1,11 @@
 # Graph Report - agar.io-clone-master  (2026-04-25)
 
 ## Corpus Check
-- 140 files · ~241,000 words
+- 140 files · ~241,825 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 711 nodes · 1120 edges · 31 communities detected
+- 715 nodes · 1128 edges · 31 communities detected
 - Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 179 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -52,7 +52,7 @@
 7. `Canvas` - 13 edges
 8. `main()` - 12 edges
 9. `emitIfReady()` - 12 edges
-10. `append()` - 11 edges
+10. `createBodyPart()` - 11 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `normalize()` --calls--> `constructor()`  [INFERRED]
@@ -90,8 +90,8 @@ Cohesion: 0.08
 Nodes (24): adjustForBoundaries(), constructor(), move(), Cell, changeCellMass(), checkForCollisions(), clientProvidedData(), constructor() (+16 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.14
-Nodes (34): appendPartHistory(), applyBodyState(), applySignatureToParts(), cloneBodyPart(), cloneHistoryChain(), cloneShallowObject(), countBodyParts(), createBodyBonuses() (+26 more)
+Cohesion: 0.13
+Nodes (37): appendPartHistory(), applyBodyState(), applySignatureToParts(), cloneBodyPart(), cloneHistoryChain(), cloneShallowObject(), countBodyParts(), createBodyBonuses() (+29 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.12
@@ -146,12 +146,12 @@ Cohesion: 0.27
 Nodes (7): buildCandidateFromTemplate(), buildDraftCandidates(), clone(), randomPick(), removeMissingPart(), getDefaultTemplateById(), getDefaultTemplates()
 
 ### Community 18 - "Community 18"
-Cohesion: 0.44
-Nodes (9): analyzeCanvas(), canvasToGrid(), clamp(), compareGrids(), createEmptyGrid(), createReferenceGrid(), getTier(), gridCoverage() (+1 more)
+Cohesion: 0.29
+Nodes (6): projectBodyPartForSync(), projectEquipmentSlotsForSync(), projectPartLootForSync(), projectPlayerForSync(), projectPlayersForSync(), projectVisibleWorldForSync()
 
 ### Community 19 - "Community 19"
-Cohesion: 0.31
-Nodes (5): projectBodyPartForSync(), projectPartLootForSync(), projectPlayerForSync(), projectPlayersForSync(), projectVisibleWorldForSync()
+Cohesion: 0.44
+Nodes (9): analyzeCanvas(), canvasToGrid(), clamp(), compareGrids(), createEmptyGrid(), createReferenceGrid(), getTier(), gridCoverage() (+1 more)
 
 ### Community 20 - "Community 20"
 Cohesion: 0.39
@@ -211,9 +211,9 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `addPlayer()` connect `Community 6` to `Community 3`, `Community 12`, `Community 15`?**
   _High betweenness centrality (0.157) - this node is a cross-community bridge._
 - **Why does `ask()` connect `Community 13` to `Community 0`, `Community 1`, `Community 2`?**
-  _High betweenness centrality (0.132) - this node is a cross-community bridge._
+  _High betweenness centrality (0.131) - this node is a cross-community bridge._
 - **Why does `emit()` connect `Community 6` to `Community 10`, `Community 5`?**
-  _High betweenness centrality (0.103) - this node is a cross-community bridge._
+  _High betweenness centrality (0.102) - this node is a cross-community bridge._
 - **Are the 9 inferred relationships involving `ask()` (e.g. with `createCacheKey()` and `get()`) actually correct?**
   _`ask()` has 9 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 3 inferred relationships involving `runScenario()` (e.g. with `main()` and `main()`) actually correct?**
