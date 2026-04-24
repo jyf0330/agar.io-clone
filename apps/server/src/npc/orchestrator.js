@@ -96,6 +96,7 @@ class Orchestrator {
             maxPromptTokens: 2000,
             ask: wrapper.ask,
             emitEvent: null,
+            recordEvent: null,
             paintPlayer: null
         }, settings);
         this.npcs = [];
@@ -153,6 +154,32 @@ class Orchestrator {
     getAnchorPlayer(gameState) {
         const players = gameState && Array.isArray(gameState.players) ? gameState.players : [];
         return players.find((player) => !player.isNpc) || null;
+    }
+
+    getSessionId(gameState) {
+        return (gameState && gameState.sessionId) || this.config.sessionId || String(this.config.sessionStartedAt || 'session');
+    }
+
+    recordNpcEvent(kind, npc, gameState, payload, playerId) {
+        if (typeof this.config.recordEvent !== 'function') {
+            return;
+        }
+
+        const anchorPlayer = this.getAnchorPlayer(gameState);
+        try {
+            this.config.recordEvent({
+                kind: kind,
+                npcId: npc && npc.id ? npc.id : '',
+                playerId: playerId || (anchorPlayer && anchorPlayer.id) || '',
+                sessionId: this.getSessionId(gameState),
+                payload: Object.assign({
+                    npcName: npc && npc.player ? npc.player.name : ''
+                }, payload || {}),
+                ts: Date.now()
+            });
+        } catch (error) {
+            console.warn('[NPC] memory event write failed', error.message);
+        }
     }
 
     buildBatchContext(npcs, gameState) {
@@ -511,12 +538,22 @@ class Orchestrator {
 
         if (typeof this.config.emitEvent === 'function') {
             this.npcs.forEach((npc) => {
+                const text = replies[npc.id] || getChatFallbackReply(npc.id);
                 this.config.emitEvent('npc:speak', {
                     npcId: npc.id,
                     npcName: npc.player.name,
-                    text: replies[npc.id] || getChatFallbackReply(npc.id),
+                    text: text,
                     duration: 3000
                 });
+                this.recordNpcEvent('npc_chat_reply', npc, safeState, {
+                    text: text,
+                    latestChat: {
+                        playerId: latestChat.playerId,
+                        playerName: latestChat.playerName,
+                        message: latestChat.message,
+                        ts: latestChat.ts
+                    }
+                }, latestChat.playerId);
             });
         }
 
@@ -541,6 +578,10 @@ class Orchestrator {
                 text: text,
                 duration: 3000
             });
+            this.recordNpcEvent('npc_speak', npc, safeState, {
+                text: text,
+                context: context
+            });
         });
     }
 
@@ -562,6 +603,11 @@ class Orchestrator {
             previewDataUrl: previewDataUrl,
             message: npc.player.name + ' 在你身上画了一笔'
         });
+        this.recordNpcEvent('npc_paint', npc, safeState, {
+            targetId: targetPlayer.id,
+            color: npc.color,
+            message: npc.player.name + ' 在你身上画了一笔'
+        }, targetPlayer.id);
     }
 
     async tick(gameState, dt) {
@@ -609,6 +655,12 @@ class Orchestrator {
             }
             const parsedIntent = this.resolveIntent(parsedIntents, npc, index, mapSize, safeState);
             const nextIntent = pendingChatIntent || parsedIntent || this.buildFallbackIntent(npc, safeState, mapSize, context);
+            this.recordNpcEvent('npc_intent', npc, safeState, {
+                type: nextIntent.type,
+                params: nextIntent.params || {},
+                reason: nextIntent.reason || '',
+                source: pendingChatIntent ? 'chat' : parsedIntent ? 'llm' : 'fallback'
+            });
 
             if (nextIntent.type === 'speak') {
                 return this.handleNpcSpeak(npc, safeState, {

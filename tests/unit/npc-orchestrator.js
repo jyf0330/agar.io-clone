@@ -148,6 +148,7 @@ describe('npc orchestrator', () => {
         const baseNow = 1700000000000;
         const originalNow = Date.now;
         const events = [];
+        const memoryEvents = [];
         const npcA = createNpc('mochi', {spawn: {x: 100, y: 120}});
         const npcB = createNpc('doudou', {spawn: {x: 140, y: 160}});
         const npcC = createNpc('wugui', {spawn: {x: 180, y: 200}});
@@ -185,6 +186,9 @@ describe('npc orchestrator', () => {
             emitEvent(name, payload) {
                 events.push({name: name, payload: payload});
             },
+            recordEvent(event) {
+                memoryEvents.push(event);
+            },
             paintPlayer() {
                 return 'data:image/png;base64,AA==';
             },
@@ -217,6 +221,10 @@ describe('npc orchestrator', () => {
         expect(npcA.currentIntent.params.x).to.equal(240);
         expect(events.some((event) => event.name === 'npc:speak' && event.payload.npcId === 'doudou')).to.equal(true);
         expect(events.some((event) => event.name === 'npc:paint' && event.payload.npcId === 'wugui')).to.equal(true);
+        expect(memoryEvents.some((event) => event.kind === 'npc_intent' && event.npcId === 'mochi' && event.payload.source === 'llm')).to.equal(true);
+        expect(memoryEvents.some((event) => event.kind === 'npc_speak' && event.npcId === 'doudou')).to.equal(true);
+        expect(memoryEvents.some((event) => event.kind === 'npc_paint' && event.npcId === 'wugui')).to.equal(true);
+        expect(memoryEvents.every((event) => event.sessionId === String(baseNow))).to.equal(true);
     });
 
     it('should keep doudou chattier than wugui and mochi during fallback ticks', async () => {

@@ -13,12 +13,14 @@ const config = require(path.resolve(process.cwd(), 'config'));
 const util = require('./lib/util');
 const mapUtils = require('./map/map');
 const {createPaintedAvatarDataUrl} = require('./npc/avatar-paint');
+const memoryStore = require('./memory/store');
 const NpcState = require('./npc/npc');
 const Orchestrator = require('./npc/orchestrator');
 const {loadPersonalityCard} = require('./npc/personality-loader');
 const {getPosition} = require("./lib/entityUtils");
 const createConnectionService = require('./connection-service');
 const createGameLoopService = require('./game-loop-service');
+const memorySessionId = process.env.MEMORY_SESSION_ID || 'session-' + Date.now();
 
 let map = new mapUtils.Map(config);
 const connectionService = createConnectionService({
@@ -37,10 +39,14 @@ const orchestrator = new Orchestrator({
     timeoutMs: 4000,
     mapWidth: config.gameWidth,
     mapHeight: config.gameHeight,
+    sessionId: memorySessionId,
     sessionStartedAt: Date.now(),
     roundDurationMs: 90000,
     emitEvent(eventName, payload) {
         io.emit(eventName, payload);
+    },
+    recordEvent(event) {
+        memoryStore.recordEvent(event);
     },
     paintPlayer(targetPlayer, npc) {
         targetPlayer.npcPaintCount = (targetPlayer.npcPaintCount || 0) + 1;
@@ -186,6 +192,22 @@ function rememberRecentChat(currentPlayer, message) {
         chatState.recentChats = chatState.recentChats.slice(-10);
     }
     chatState.lastPlayerAction = 'chat:' + entry.message.slice(0, 20);
+
+    try {
+        memoryStore.recordEvent({
+            kind: 'player_chat',
+            playerId: entry.playerId,
+            npcId: '',
+            sessionId: memorySessionId,
+            payload: {
+                playerName: entry.playerName,
+                message: entry.message
+            },
+            ts: entry.ts
+        });
+    } catch (error) {
+        console.warn('[NPC] player chat memory write failed', error.message);
+    }
 
     return entry;
 }
@@ -388,6 +410,7 @@ setInterval(() => {
         mapHeight: config.gameHeight,
         matchStartedAt: roundClock.startedAt,
         roundDurationMs: roundClock.durationMs,
+        sessionId: memorySessionId,
         recentChats: chatState.recentChats,
         lastPlayerAction: chatState.lastPlayerAction
     }, 1000).catch((error) => {
