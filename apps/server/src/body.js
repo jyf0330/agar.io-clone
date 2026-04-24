@@ -2,6 +2,7 @@
 
 const path = require('path');
 const bodyConfig = require(path.resolve(process.cwd(), 'configs/game/body'));
+const materialization = require('./materialization');
 
 const TYPES = Object.freeze({
     HEAD: 'HEAD',
@@ -361,8 +362,12 @@ function applyBodyState(target, overrides) {
     const signature = overrides && Object.prototype.hasOwnProperty.call(overrides, 'bodySignature')
         ? overrides.bodySignature
         : target.bodySignature;
+    const bodyState = createBodyState(sourceParts, signature);
+    const materializationState = materialization.createMaterializationState(
+        materialization.resolveMaterializationFromBodyParts(bodyState.bodyParts)
+    );
 
-    return Object.assign(target, defaultState, overrides || {}, createBodyState(sourceParts, signature));
+    return Object.assign(target, defaultState, overrides || {}, bodyState, materializationState);
 }
 
 function getStealableParts(target) {

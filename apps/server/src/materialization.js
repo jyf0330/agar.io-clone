@@ -35,6 +35,15 @@ function createMaterializationState(materialization = DEFAULT_MATERIALIZATION) {
     };
 }
 
+function resolveMaterializationFromBodyParts(parts) {
+    const count = Array.isArray(parts) ? parts.filter(Boolean).length : 0;
+    const valuePerPart = typeof materializationConfig.valuePerBodyPart === 'number'
+        ? materializationConfig.valuePerBodyPart
+        : 0;
+
+    return Math.max(0, Math.min(100, count * valuePerPart));
+}
+
 function applyMaterializationState(target, materialization = DEFAULT_MATERIALIZATION) {
     return Object.assign(target, createMaterializationState(materialization));
 }
@@ -43,6 +52,7 @@ module.exports = {
     STAGES,
     DEFAULT_MATERIALIZATION,
     resolveMaterializationStage,
+    resolveMaterializationFromBodyParts,
     createMaterializationState,
     applyMaterializationState
 };

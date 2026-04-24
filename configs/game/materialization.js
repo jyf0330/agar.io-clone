@@ -1,5 +1,6 @@
 module.exports = {
     defaultMaterialization: 0,
+    valuePerBodyPart: 15,
     stageThresholds: {
         HOLLOW: {
             min: 0,
