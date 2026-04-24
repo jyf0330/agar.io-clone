@@ -668,6 +668,102 @@ describe('npc orchestrator', () => {
         });
     });
 
+    it('should record rejected pet suggestions when the player declines a recent part suggestion', async () => {
+        const baseNow = 1700001900000;
+        const originalNow = Date.now;
+        const events = [];
+        const memoryEvents = [];
+        const humanPlayer = createHumanPlayer();
+        const mochi = createNpc('mochi', {spawn: {x: 100, y: 120}});
+        const priorSuggestion = {
+            eventId: 'l1:session:player-human:mochi:pet_suggested_part:1',
+            kind: 'pet_suggested_part',
+            eventType: 'pet_suggested_part',
+            playerId: humanPlayer.id,
+            npcId: 'mochi',
+            ts: baseNow - 5000,
+            payload: {
+                suggestedPart: {
+                    partType: 'HAND',
+                    displayName: 'Echo Hand'
+                }
+            }
+        };
+        humanPlayer.setActivePet({
+            petId: 'mochi',
+            name: 'Mochi',
+            personality: '谨慎型'
+        });
+        const orchestrator = new Orchestrator({
+            ask() {
+                return Promise.resolve({
+                    ok: true,
+                    text: '[]',
+                    source: 'llm'
+                });
+            },
+            memoryStore: {
+                listEvents(filters) {
+                    if (filters.eventType === 'pet_suggested_part') {
+                        return [priorSuggestion];
+                    }
+                    return [];
+                },
+                listSessionSummaries() {
+                    return [];
+                },
+                getPersonaImpression() {
+                    return null;
+                }
+            },
+            recordEvent(event) {
+                memoryEvents.push(event);
+            },
+            mapWidth: 500,
+            mapHeight: 400,
+            maxCallsPerSec: 5,
+            emitEvent(name, payload) {
+                events.push({name: name, payload: payload});
+            },
+            sessionStartedAt: baseNow,
+            roundDurationMs: 90000
+        });
+
+        Date.now = () => baseNow;
+        mochi.spawnedAt = baseNow;
+        orchestrator.registerNpc(mochi);
+
+        try {
+            Date.now = () => baseNow + 2000;
+            await orchestrator.tick({
+                players: [humanPlayer, mochi.player],
+                recentChats: [{
+                    ts: baseNow + 1000,
+                    playerId: humanPlayer.id,
+                    playerName: humanPlayer.name,
+                    message: '不换'
+                }],
+                matchStartedAt: baseNow,
+                roundDurationMs: 90000
+            }, 1000);
+        } finally {
+            Date.now = originalNow;
+        }
+
+        expect(events.some((event) => event.name === 'npc:speak' && event.payload.npcId === 'mochi')).to.equal(true);
+        const rejected = memoryEvents.find((event) => event.kind === 'player_rejected_pet_suggestion');
+        expect(rejected).to.include({
+            eventType: 'player_rejected_pet_suggestion',
+            playerId: humanPlayer.id,
+            npcId: 'mochi',
+            mapId: 'fixed-arena',
+            x: humanPlayer.x,
+            y: humanPlayer.y
+        });
+        expect(rejected.payload.suggestionEventId).to.equal(priorSuggestion.eventId);
+        expect(rejected.payload.suggestedPart.displayName).to.equal('Echo Hand');
+    });
+
     it('should move doudou toward the player when asked to come over', async () => {
         const baseNow = 1700002000000;
         const originalNow = Date.now;

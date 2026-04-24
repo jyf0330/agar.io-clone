@@ -5,6 +5,8 @@ const {randomWalkIntent} = require('./fallback');
 const {buildNpcIntentPrompt, buildNpcUtterPrompt, buildNpcReplyPrompt, buildPetQuestionPrompt} = require('./prompts');
 const {buildContextualFallbackUtterance} = require('./greetings');
 
+const PET_SUGGESTION_RESPONSE_WINDOW_MS = 30000;
+
 function getTimeOfDayLabel(date) {
     const hour = date.getHours();
     if (hour < 6) {
@@ -57,6 +59,10 @@ function isFollowPlayerMessage(message) {
 
 function isPetQuestionMessage(message) {
     return /哪里有回声|附近有什么部位|这件部位要不要换|我现在该打还是跑|你记得上一局吗/.test(String(message || ''));
+}
+
+function isPetSuggestionRejectionMessage(message) {
+    return /^(?:不换|先不换|拒绝|算了|不要|不用换|别换)[。！？!?.\s]*$/.test(String(message || '').trim());
 }
 
 function distance(left, right) {
@@ -780,6 +786,61 @@ class Orchestrator {
         }
     }
 
+    findRecentPetSuggestion(npc, latestChat, safeState) {
+        const memoryStore = this.config.memoryStore;
+        const anchorPlayer = this.getAnchorPlayer(safeState);
+        if (!memoryStore || typeof memoryStore.listEvents !== 'function' || !npc || !anchorPlayer) {
+            return null;
+        }
+
+        try {
+            const events = memoryStore.listEvents({
+                eventType: 'pet_suggested_part',
+                playerId: latestChat.playerId || anchorPlayer.id,
+                npcId: npc.id,
+                sessionId: this.getSessionId(safeState),
+                limit: 10
+            }) || [];
+            const now = Date.now();
+            for (let index = events.length - 1; index >= 0; index--) {
+                const event = events[index];
+                const eventTime = typeof event.ts === 'number' ? event.ts : Number(event.ts || 0);
+                if (!eventTime || now - eventTime <= PET_SUGGESTION_RESPONSE_WINDOW_MS) {
+                    return event;
+                }
+            }
+        } catch (error) {
+            console.warn('[NPC] pet suggestion recall failed', error.message);
+        }
+
+        return null;
+    }
+
+    handlePetSuggestionRejection(latestChat, safeState) {
+        const npc = this.getActivePetNpc(safeState);
+        const suggestion = this.findRecentPetSuggestion(npc, latestChat, safeState);
+        if (!npc || !suggestion) {
+            return false;
+        }
+
+        if (typeof this.config.emitEvent === 'function') {
+            this.config.emitEvent('npc:speak', {
+                npcId: npc.id,
+                npcName: npc.player.name,
+                text: '那先不换。',
+                duration: 2500
+            });
+        }
+
+        const suggestionPayload = suggestion.payload || {};
+        this.recordNpcEvent('player_rejected_pet_suggestion', npc, safeState, {
+            message: latestChat.message,
+            suggestionEventId: suggestion.eventId || '',
+            suggestedPart: suggestionPayload.suggestedPart || null
+        }, latestChat.playerId);
+        return true;
+    }
+
     queueFollowPlayerIntent(npc, safeState) {
         const anchorPlayer = this.getAnchorPlayer(safeState);
         if (!npc || !anchorPlayer) {
@@ -804,6 +865,11 @@ class Orchestrator {
         }
 
         const latestChat = nextChats.sort((left, right) => left.ts - right.ts).pop();
+        if (isPetSuggestionRejectionMessage(latestChat.message) && this.handlePetSuggestionRejection(latestChat, safeState)) {
+            this.lastHandledChatTs = latestChat.ts;
+            return;
+        }
+
         if (isPetQuestionMessage(latestChat.message) && await this.handlePetQuestion(latestChat, safeState)) {
             this.lastHandledChatTs = latestChat.ts;
             return;
