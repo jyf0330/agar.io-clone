@@ -17,19 +17,27 @@ function recordReward(memoryStore, payload) {
   if (!memoryStore || typeof memoryStore.recordEvent !== 'function') {
     return;
   }
+  const now = Date.now();
   memoryStore.recordEvent({
+    eventId: ['l1', payload.sessionId || 'session', payload.player.id, payload.npcId || 'npc', 'npc_task_completed', now].join(':'),
     playerId: payload.player.id,
     npcId: payload.npcId,
     sessionId: payload.sessionId,
-    kind: 'npc_task_reward',
+    mapId: payload.mapId || 'fixed-arena',
+    x: payload.position.x,
+    y: payload.position.y,
+    kind: 'npc_task_completed',
+    eventType: 'npc_task_completed',
     payload: {
       taskId: payload.taskId,
       npcName: payload.npcName,
-      part: payload.part,
-      x: payload.position.x,
-      y: payload.position.y
+      rewardedPartId: payload.part.partId,
+      rewardedPartType: payload.part.partType,
+      sourceType: payload.part.sourceType,
+      part: payload.part
     },
-    ts: Date.now()
+    ts: now,
+    createdAt: now
   });
 }
 function grantNpcTaskReward(options) {
@@ -54,6 +62,7 @@ function grantNpcTaskReward(options) {
     npcId: npcId,
     npcName: npc.player && npc.player.name ? npc.player.name : npcId,
     sessionId: settings.sessionId || '',
+    mapId: settings.mapId || 'fixed-arena',
     taskId: taskId,
     part: part,
     position: position

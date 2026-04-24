@@ -561,7 +561,8 @@ const addPlayer = socket => {
           player: currentPlayer,
           npc: activeNpc,
           memoryStore,
-          sessionId: memorySessionId
+          sessionId: memorySessionId,
+          mapId: config.mapId || 'fixed-arena'
         });
         io.emit('npc:speak', {
           npcId: activeNpc.id,
@@ -570,6 +571,10 @@ const addPlayer = socket => {
           duration: 3500
         });
         ghostRecorder.recordItem(currentPlayer, reward.part, reward.loot, Date.now());
+        ghostRecorder.recordPartEvent(currentPlayer, 'npc_reward_part', reward.part, reward.loot, Date.now(), {
+          taskId: 'find-echo-hand',
+          npcId: activeNpc.id
+        });
       }
     }
     ghostRecorder.recordChat(currentPlayer, _message, Date.now());
