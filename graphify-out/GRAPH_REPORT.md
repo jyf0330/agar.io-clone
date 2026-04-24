@@ -1,11 +1,11 @@
 # Graph Report - agar.io-clone-master  (2026-04-25)
 
 ## Corpus Check
-- 146 files · ~256,103 words
+- 146 files · ~256,571 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 795 nodes · 1309 edges · 34 communities detected
+- 796 nodes · 1310 edges · 34 communities detected
 - Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 206 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -89,12 +89,12 @@ Cohesion: 0.07
 Nodes (29): getPosition(), addNew(), clamp(), createBehaviorProfile(), hexToHue(), normalizeIntent(), normalizeNpcKey(), NpcState (+21 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.09
-Nodes (13): animloop(), applyTranslations(), enterGame(), gameLoop(), resize(), startGame(), validNick(), Canvas (+5 more)
-
-### Community 4 - "Community 4"
 Cohesion: 0.11
 Nodes (11): clamp(), randomWalkIntent(), buildContextualFallbackUtterance(), pickGreetingFallback(), stableIndex(), estimatePromptTokens(), getChatFallbackReply(), getMockChatReply() (+3 more)
+
+### Community 4 - "Community 4"
+Cohesion: 0.1
+Nodes (10): animloop(), applyTranslations(), enterGame(), resize(), startGame(), validNick(), Canvas, ChatClient (+2 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.08
@@ -105,12 +105,12 @@ Cohesion: 0.12
 Nodes (35): append(), getAuditFilePath(), resolveAuditDir(), toDateStamp(), createCacheKey(), ensureDatabase(), get(), loadDatabaseLibrary() (+27 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.12
-Nodes (25): reset(), createDraftId(), getStorage(), loadDrafts(), normalizeDraftPayload(), saveDraft(), createPlayerCardEditor(), createHistoryState() (+17 more)
+Cohesion: 0.09
+Nodes (23): reset(), build_bot_json(), clamp(), generate_frames(), main(), parse_args(), pick_random_target(), 在地图内随机挑一个目标点，留一点边距避免贴墙。 (+15 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.09
-Nodes (21): build_bot_json(), clamp(), generate_frames(), main(), parse_args(), pick_random_target(), 在地图内随机挑一个目标点，留一点边距避免贴墙。, 朝目标移动最多 max_step，达到/超过则贴上。 (+13 more)
+Cohesion: 0.13
+Nodes (23): createDraftId(), getStorage(), loadDrafts(), normalizeDraftPayload(), saveDraft(), createPlayerCardEditor(), createHistoryState(), redo() (+15 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.11
@@ -137,12 +137,12 @@ Cohesion: 0.14
 Nodes (18): buildNpcIntentPrompt(), buildNpcReplyPrompt(), buildNpcUtterPrompt(), buildSummarizeSessionPrompt(), buildUpdatePersonaImpressionPrompt(), formatMemoryBlock(), formatRecentChats(), formatSessionEvents() (+10 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.24
-Nodes (2): GhostRecorder, sanitizeReplayChat()
+Cohesion: 0.15
+Nodes (17): gameLoop(), getAvatarInnerRadius(), shouldUseAvatarRuntimeRender(), cellTouchingBorders(), circlePoint(), drawAvatarCell(), drawBorder(), drawCells() (+9 more)
 
 ### Community 16 - "Community 16"
-Cohesion: 0.18
-Nodes (14): getAvatarInnerRadius(), shouldUseAvatarRuntimeRender(), cellTouchingBorders(), circlePoint(), drawAvatarCell(), drawCells(), drawCellWithLines(), drawFireFood() (+6 more)
+Cohesion: 0.24
+Nodes (2): GhostRecorder, sanitizeReplayChat()
 
 ### Community 17 - "Community 17"
 Cohesion: 0.27
@@ -181,16 +181,16 @@ Cohesion: 0.6
 Nodes (4): addHistoryEntry(), getStorage(), loadHistory(), saveHistory()
 
 ### Community 26 - "Community 26"
-Cohesion: 0.5
-Nodes (3): createController(), createFakeSocket(), createSocketController()
-
-### Community 27 - "Community 27"
 Cohesion: 0.6
 Nodes (3): createPaintedAvatarDataUrl(), createPaintedAvatarSvg(), escapeAttribute()
 
-### Community 28 - "Community 28"
+### Community 27 - "Community 27"
 Cohesion: 0.5
 Nodes (2): clampScale(), getNextScale()
+
+### Community 28 - "Community 28"
+Cohesion: 0.5
+Nodes (3): createController(), createFakeSocket(), createSocketController()
 
 ### Community 29 - "Community 29"
 Cohesion: 0.67
@@ -215,11 +215,11 @@ Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Inp
 ## Knowledge Gaps
 - **6 isolated node(s):** `在地图内随机挑一个目标点，留一点边距避免贴墙。`, `朝目标移动最多 max_step，达到/超过则贴上。`, `Grid-based arena`, `crosshair/target reticle`, `feed control` (+1 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 9`** (29 nodes): `manager.js`, `distance()`, `eventMatchesMap()`, `GhostManager`, `.activateTrace()`, `.canActivateTrace()`, `.constructor()`, `.getActiveGhostCount()`, `.getDebugState()`, `.getEventKey()`, `.getEvents()`, `.getPartEventPosition()`, `.isAnchorCoolingDown()`, `.isInTimeWindow()`, `.isNearAnyPlayer()`, `.loadChatRecords()`, `.loadPartPickupEvents()`, `.loadTracePoints()`, `.markAnchorTriggered()`, `.pruneGhosts()`, `.spawnGhostPartPickup()`, `.tick()`, `.touchGhostsWithNearbyPlayers()`, `.updateGhostChats()`, `.updateGhostPartPickups()`, `.updateGhostPositions()`, `interpolateTrace()`, `normalizeAnchor()`, `normalizeEvent()`
+- **Thin community `Community 9`** (28 nodes): `manager.js`, `distance()`, `eventMatchesMap()`, `GhostManager`, `.activateTrace()`, `.canActivateTrace()`, `.constructor()`, `.getActiveGhostCount()`, `.getDebugState()`, `.getEventKey()`, `.getPartEventPosition()`, `.isAnchorCoolingDown()`, `.isInTimeWindow()`, `.isNearAnyPlayer()`, `.loadChatRecords()`, `.loadPartPickupEvents()`, `.loadTracePoints()`, `.markAnchorTriggered()`, `.pruneGhosts()`, `.spawnGhostPartPickup()`, `.tick()`, `.touchGhostsWithNearbyPlayers()`, `.updateGhostChats()`, `.updateGhostPartPickups()`, `.updateGhostPositions()`, `interpolateTrace()`, `normalizeAnchor()`, `normalizeEvent()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 15`** (20 nodes): `recorder.js`, `escapeRegExp()`, `GhostRecorder`, `.canRecordPlayer()`, `.constructor()`, `.getElapsed()`, `.recordChat()`, `.recordChatRecord()`, `.recordCombatEvent()`, `.recordEvent()`, `.recordGhostAnchor()`, `.recordItem()`, `.recordItemEvent()`, `.recordPartEvent()`, `.recordPartLifecycleEvent()`, `.recordPlayers()`, `.recordPlayerTrace()`, `.recordTypedCombatEvent()`, `loadForbiddenWords()`, `sanitizeReplayChat()`
+- **Thin community `Community 16`** (20 nodes): `recorder.js`, `escapeRegExp()`, `GhostRecorder`, `.canRecordPlayer()`, `.constructor()`, `.getElapsed()`, `.recordChat()`, `.recordChatRecord()`, `.recordCombatEvent()`, `.recordEvent()`, `.recordGhostAnchor()`, `.recordItem()`, `.recordItemEvent()`, `.recordPartEvent()`, `.recordPartLifecycleEvent()`, `.recordPlayers()`, `.recordPlayerTrace()`, `.recordTypedCombatEvent()`, `loadForbiddenWords()`, `sanitizeReplayChat()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (5 nodes): `player-card-scale.js`, `canScaleIn()`, `canScaleOut()`, `clampScale()`, `getNextScale()`
+- **Thin community `Community 27`** (5 nodes): `player-card-scale.js`, `canScaleIn()`, `canScaleOut()`, `clampScale()`, `getNextScale()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 29`** (4 nodes): `clearModule()`, `createOpenAiMockServer()`, `loadWrapperFixture()`, `llm-wrapper.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -227,11 +227,11 @@ Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Inp
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `addPlayer()` connect `Community 2` to `Community 1`, `Community 3`, `Community 5`?**
+- **Why does `addPlayer()` connect `Community 2` to `Community 1`, `Community 4`, `Community 5`?**
   _High betweenness centrality (0.172) - this node is a cross-community bridge._
-- **Why does `ask()` connect `Community 12` to `Community 0`, `Community 4`, `Community 6`, `Community 14`?**
+- **Why does `ask()` connect `Community 12` to `Community 0`, `Community 3`, `Community 6`, `Community 14`?**
   _High betweenness centrality (0.135) - this node is a cross-community bridge._
-- **Why does `emit()` connect `Community 2` to `Community 3`?**
+- **Why does `emit()` connect `Community 2` to `Community 4`?**
   _High betweenness centrality (0.098) - this node is a cross-community bridge._
 - **Are the 9 inferred relationships involving `ask()` (e.g. with `createCacheKey()` and `get()`) actually correct?**
   _`ask()` has 9 INFERRED edges - model-reasoned connections that need verification._

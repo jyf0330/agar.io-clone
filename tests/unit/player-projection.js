@@ -54,6 +54,28 @@ describe('player-projection.js', () => {
     expect(projected.cells[0].toCircle).to.equal(undefined);
   });
 
+  it('should project a switched active pet with a player pet memory key', () => {
+    const player = new playerUtils.Player('player-1');
+    player.init({ x: 200, y: 200 }, config.defaultPlayerMass);
+    player.setActivePet({
+      petId: 'doudou',
+      npcId: 'doudou',
+      name: 'Doudou',
+      personality: '调皮捣蛋'
+    });
+
+    const projected = projectPlayerForSync(player);
+
+    expect(projected.activePet).to.include({
+      petId: 'doudou',
+      npcId: 'doudou',
+      name: 'Doudou',
+      ownerPlayerId: 'player-1',
+      active: true
+    });
+    expect(projected.activePet.memoryKey).to.equal('player-1:doudou');
+  });
+
   it('should project visible world state without coupling map visibility to DTO logic', () => {
     const map = new mapUtils.Map(config);
     const player = new playerUtils.Player('player-1');

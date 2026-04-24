@@ -133,6 +133,34 @@ const roundMemorySummary = {
   started: false,
   done: false
 };
+const PET_CATALOG = {
+  mochi: {
+    petId: 'mochi',
+    npcId: 'mochi',
+    name: 'Mochi',
+    personality: '安静诗意'
+  },
+  doudou: {
+    petId: 'doudou',
+    npcId: 'doudou',
+    name: 'Doudou',
+    personality: '调皮捣蛋'
+  },
+  wugui: {
+    petId: 'wugui',
+    npcId: 'wugui',
+    name: 'Wugui',
+    personality: '老成稳重'
+  }
+};
+const PET_ALIASES = {
+  mochi: 'mochi',
+  '麻薯': 'mochi',
+  doudou: 'doudou',
+  '豆豆': 'doudou',
+  wugui: 'wugui',
+  '乌龟': 'wugui'
+};
 let sockets = {};
 let spectators = [];
 app.use(express.static(path.join(__dirname, '../client')));
@@ -247,15 +275,12 @@ function bootstrapDefaultNpcs() {
 if (npcFeaturesEnabled) {
   npcRoster = bootstrapDefaultNpcs();
 }
-function buildActivePetSnapshot(npc, ownerPlayerId) {
+function buildActivePetSnapshot(npc, ownerPlayerId, fallbackPetId) {
   if (!npc || !npc.player) {
-    return {
-      petId: 'mochi',
-      npcId: 'mochi',
-      name: '麻薯',
-      personality: '谨慎型',
+    const fallback = PET_CATALOG[fallbackPetId] || PET_CATALOG.mochi;
+    return Object.assign({}, fallback, {
       ownerPlayerId: ownerPlayerId
-    };
+    });
   }
   return {
     petId: npc.id,
@@ -264,6 +289,13 @@ function buildActivePetSnapshot(npc, ownerPlayerId) {
     personality: npc.personality && npc.personality.archetype ? npc.personality.archetype : '谨慎型',
     ownerPlayerId: ownerPlayerId
   };
+}
+function parsePetSwitchMessage(message) {
+  const match = String(message || '').trim().match(/^(?:换宠|切换宠物|pet)\s*[:：]?\s*([a-zA-Z]+|[\u4e00-\u9fa5]+)/i);
+  if (!match) {
+    return null;
+  }
+  return PET_ALIASES[String(match[1]).toLowerCase()] || PET_ALIASES[match[1]] || null;
 }
 function ensureActivePetForPlayer(player) {
   if (!player || player.isNpc || typeof player.setActivePet !== 'function') {
@@ -455,6 +487,36 @@ const addPlayer = socket => {
     }
     if (config.logChat === 1) {
       console.log('[CHAT] [' + new Date().getHours() + ':' + new Date().getMinutes() + '] ' + _sender + ': ' + _message);
+    }
+    const nextPetId = parsePetSwitchMessage(_message);
+    if (nextPetId) {
+      const oldPet = currentPlayer.activePet || null;
+      const nextNpc = npcRoster.find(npc => npc.id === nextPetId);
+      currentPlayer.setActivePet(buildActivePetSnapshot(nextNpc, currentPlayer.id, nextPetId));
+      try {
+        memoryStore.recordEvent({
+          kind: 'pet_switched',
+          playerId: currentPlayer.id,
+          npcId: currentPlayer.activePet.petId,
+          sessionId: memorySessionId,
+          payload: {
+            oldPetId: oldPet && oldPet.petId ? oldPet.petId : null,
+            newPetId: currentPlayer.activePet.petId,
+            memoryKey: currentPlayer.activePet.memoryKey
+          },
+          ts: Date.now()
+        });
+      } catch (error) {
+        console.warn('[NPC] pet switch memory write failed', error.message);
+      }
+      socket.emit('npc:speak', {
+        npcId: currentPlayer.activePet.petId,
+        npcName: currentPlayer.activePet.name,
+        text: '现在我跟着你。',
+        duration: 2500
+      });
+      ghostRecorder.recordChat(currentPlayer, _message, Date.now());
+      return;
     }
     if (npcFeaturesEnabled) {
       rememberRecentChat(currentPlayer, _message);
