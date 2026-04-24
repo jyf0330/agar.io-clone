@@ -537,17 +537,24 @@ const addPlayer = (socket) => {
             const nextNpc = npcRoster.find((npc) => npc.id === nextPetId);
             currentPlayer.setActivePet(buildActivePetSnapshot(nextNpc, currentPlayer.id, nextPetId));
             try {
+                const now = Date.now();
                 memoryStore.recordEvent({
+                    eventId: ['l1', memorySessionId, currentPlayer.id, currentPlayer.activePet.petId, 'pet_switched', now].join(':'),
                     kind: 'pet_switched',
+                    eventType: 'pet_switched',
                     playerId: currentPlayer.id,
                     npcId: currentPlayer.activePet.petId,
                     sessionId: memorySessionId,
+                    mapId: config.mapId || 'fixed-arena',
+                    x: currentPlayer.x,
+                    y: currentPlayer.y,
                     payload: {
                         oldPetId: oldPet && oldPet.petId ? oldPet.petId : null,
                         newPetId: currentPlayer.activePet.petId,
                         memoryKey: currentPlayer.activePet.memoryKey
                     },
-                    ts: Date.now()
+                    ts: now,
+                    createdAt: now
                 });
             } catch (error) {
                 console.warn('[NPC] pet switch memory write failed', error.message);
