@@ -181,9 +181,17 @@ function getMockChatReply(npcId, latestChat) {
 function hasMemoryEvidence(memory) {
     const safeMemory = memory || {};
     return Boolean(
-        (Array.isArray(safeMemory.summaries) && safeMemory.summaries.length)
-        || (safeMemory.impression && safeMemory.impression.impression)
+        (Array.isArray(safeMemory.summaries) && safeMemory.summaries.some(hasSummaryEvidence))
+        || hasPersonaEvidence(safeMemory.impression)
     );
+}
+
+function hasSummaryEvidence(summary) {
+    return Boolean(summary && Array.isArray(summary.referencedL1EventIds) && summary.referencedL1EventIds.length);
+}
+
+function hasPersonaEvidence(impression) {
+    return Boolean(impression && impression.impression && Array.isArray(impression.evidenceEventIds) && impression.evidenceEventIds.length);
 }
 
 function buildPetQuestionFallbackReply(question, petContext, memory, anchorPlayer) {
@@ -323,13 +331,16 @@ class Orchestrator {
         }
 
         try {
+            const summaries = memoryStore.listSessionSummaries({
+                playerId: anchorPlayer.id,
+                npcId: npc.id,
+                limit: 3
+            }) || [];
+            const impression = memoryStore.getPersonaImpression(anchorPlayer.id, npc.id);
+
             return {
-                summaries: memoryStore.listSessionSummaries({
-                    playerId: anchorPlayer.id,
-                    npcId: npc.id,
-                    limit: 3
-                }),
-                impression: memoryStore.getPersonaImpression(anchorPlayer.id, npc.id)
+                summaries: summaries.filter(hasSummaryEvidence),
+                impression: hasPersonaEvidence(impression) ? impression : null
             };
         } catch (error) {
             console.warn('[NPC] memory recall failed', error.message);
@@ -733,6 +744,11 @@ class Orchestrator {
         const fallback = buildPetQuestionFallbackReply(latestChat.message, petContext, memory, anchorPlayer);
         const prompt = buildPetQuestionPrompt(npc, latestChat, petContext, memory);
         const now = Date.now();
+        const message = String(latestChat && latestChat.message ? latestChat.message : '');
+
+        if (/你记得上一局吗/.test(message) && !hasMemoryEvidence(memory)) {
+            return fallback;
+        }
 
         if (estimatePromptTokens(prompt) > this.config.maxPromptTokens || !this.consumeCallBudget(now)) {
             return fallback;

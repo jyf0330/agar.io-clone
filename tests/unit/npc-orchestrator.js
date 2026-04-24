@@ -150,10 +150,10 @@ describe('npc orchestrator', () => {
                 listSessionSummaries(filters) {
                     expect(filters.limit).to.equal(3);
                     return [
-                        {summary: '第一局玩家画了蓝色'},
-                        {summary: '第二局玩家回来问候'},
-                        {summary: '第三局玩家靠近麻薯'},
-                        {summary: '第四局不应该进入 prompt'}
+                        {summary: '第一局玩家画了蓝色', referencedL1EventIds: ['l1-blue']},
+                        {summary: '第二局玩家回来问候', referencedL1EventIds: ['l1-greeting']},
+                        {summary: '第三局玩家靠近麻薯', referencedL1EventIds: ['l1-approach']},
+                        {summary: '第四局不应该进入 prompt', referencedL1EventIds: ['l1-extra']}
                     ];
                 },
                 getPersonaImpression() {
@@ -490,10 +490,10 @@ describe('npc orchestrator', () => {
             },
             memoryStore: {
                 listSessionSummaries() {
-                    return [{summary: '上局一起捡了手。'}];
+                    return [{summary: '上局一起捡了手。', referencedL1EventIds: ['l1-hand']}];
                 },
                 getPersonaImpression() {
-                    return {impression: '玩家爱追回声。'};
+                    return {impression: '玩家爱追回声。', evidenceEventIds: ['l1-echo']};
                 }
             },
             recordEvent(event) {
@@ -585,6 +585,83 @@ describe('npc orchestrator', () => {
         expect(echoMemory.eventId).to.contain(':guided_to_echo:');
         expect(echoMemory.payload.targetEcho.eventType).to.equal('part_pickup');
         expect(orchestrator.lastHandledChatTs).to.equal(baseNow + 1000);
+    });
+
+    it('should not let pets claim return memory without L1 evidence', async () => {
+        const baseNow = 1700001700000;
+        const originalNow = Date.now;
+        const events = [];
+        const memoryEvents = [];
+        const humanPlayer = createHumanPlayer();
+        const mochi = createNpc('mochi', {spawn: {x: 100, y: 120}});
+        let petQuestionCalled = false;
+        humanPlayer.setActivePet({
+            petId: 'mochi',
+            name: 'Mochi',
+            personality: '谨慎型'
+        });
+        const orchestrator = new Orchestrator({
+            ask(promptId) {
+                if (promptId === 'pet_question_reply') {
+                    petQuestionCalled = true;
+                    return Promise.resolve({
+                        ok: true,
+                        text: '我记得你上局抢了手。',
+                        source: 'llm'
+                    });
+                }
+
+                return Promise.resolve({
+                    ok: true,
+                    text: '[]',
+                    source: 'llm'
+                });
+            },
+            memoryStore: {
+                listSessionSummaries() {
+                    return [{summary: '玩家自称上局来过。'}];
+                },
+                getPersonaImpression() {
+                    return {impression: '玩家可能喜欢回声。'};
+                }
+            },
+            recordEvent(event) {
+                memoryEvents.push(event);
+            },
+            mapWidth: 500,
+            mapHeight: 400,
+            maxCallsPerSec: 5,
+            emitEvent(name, payload) {
+                events.push({name: name, payload: payload});
+            },
+            sessionStartedAt: baseNow,
+            roundDurationMs: 90000
+        });
+
+        Date.now = () => baseNow;
+        mochi.spawnedAt = baseNow;
+        orchestrator.registerNpc(mochi);
+
+        try {
+            Date.now = () => baseNow + 2000;
+            await orchestrator.tick({
+                players: [humanPlayer, mochi.player],
+                recentChats: [{
+                    ts: baseNow + 1000,
+                    playerId: humanPlayer.id,
+                    playerName: humanPlayer.name,
+                    message: '你记得上一局吗？'
+                }],
+                matchStartedAt: baseNow,
+                roundDurationMs: 90000
+            }, 1000);
+        } finally {
+            Date.now = originalNow;
+        }
+
+        expect(petQuestionCalled).to.equal(false);
+        expect(events[0].payload.text).to.equal('还没有共同记忆。');
+        expect(memoryEvents[0].payload.answer).to.equal('还没有共同记忆。');
     });
 
     it('should record part suggestion facts when the active pet recommends a nearby part', async () => {
