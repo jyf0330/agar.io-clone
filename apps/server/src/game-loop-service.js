@@ -225,10 +225,12 @@ function createGameLoopService(options) {
         if (!socket) {
             return;
         }
+        const spectatorData = createSpectatorSyncData(socketId, config);
+        spectatorData.ghostDebug = map.ghostDebug || null;
 
         socket.emit(
             'serverTellPlayerMove',
-            createSpectatorSyncData(socketId, config),
+            spectatorData,
             projectPlayersForSync(map.players.data),
             map.food.data,
             map.massFood.data,
@@ -246,6 +248,7 @@ function createGameLoopService(options) {
         getSpectatorIds().forEach(updateSpectator);
         map.enumerateVisibleWorld(function (visibleWorld) {
             const syncPayload = projectVisibleWorldForSync(visibleWorld);
+            syncPayload.playerData.ghostDebug = map.ghostDebug || null;
             const socket = getSocket(syncPayload.playerData.id);
             if (!socket) {
                 return;

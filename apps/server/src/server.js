@@ -49,6 +49,7 @@ const ghostManager = new GhostManager({
     maxActiveGhosts: config.ghostEcho && config.ghostEcho.maxActiveGhosts,
     anchorCooldownMs: config.ghostEcho && config.ghostEcho.anchorCooldownMs,
     followTimeoutMs: config.ghostEcho && config.ghostEcho.followTimeoutMs,
+    debug: Boolean((config.ghostEcho && config.ghostEcho.debug) || process.env.GHOST_DEBUG === '1'),
     seedEvents: [
         {
             id: 'seed-trace-hand',

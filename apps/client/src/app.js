@@ -7,6 +7,7 @@ var formatMaterializationStatus = require('./materialization-status');
 var formatConnectionStatus = require('./connection-status');
 var formatRelationshipStatus = require('./relationship-status');
 var formatBodyStatus = require('./body-status');
+var formatGhostDebugStatus = require('./ghost-debug-status');
 var playerCardStorage = require('./player-card-storage');
 var formatPlayerCardPreview = require('./player-card-preview');
 var createPlayerCardEditor = require('./player-card-editor');
@@ -374,6 +375,7 @@ function renderStatusPanel() {
     status += formatConnectionStatus(player);
     status += formatRelationshipStatus(player);
     status += formatBodyStatus(player);
+    status += formatGhostDebugStatus(player);
     document.getElementById('status').innerHTML = status;
 }
 

@@ -489,4 +489,50 @@ describe('ghost manager', () => {
 
     expect(map.ghosts).to.have.length(0);
   });
+
+  it('should expose debug anchors and active clip counts when enabled', () => {
+    const startedAt = 1000;
+    const map = new mapUtils.Map(config);
+    const player = new playerUtils.Player('player-1');
+    player.init({ x: 300, y: 300 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'viewer',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+
+    const manager = new GhostManager({
+      debug: true,
+      triggerRadius: 100,
+      timeWindowMs: 250,
+      seedEvents: [{
+        id: 'trace-1',
+        sessionId: 'old-session',
+        ghostId: 'old-player',
+        kind: 'trace',
+        t: 1000,
+        x: 305,
+        y: 300,
+        name: 'Past One'
+      }]
+    });
+
+    manager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1000
+    });
+
+    expect(map.ghostDebug.enabled).to.equal(true);
+    expect(map.ghostDebug.activeGhostCount).to.equal(1);
+    expect(map.ghostDebug.anchors).to.have.length(1);
+    expect(map.ghostDebug.anchors[0].inTimeWindow).to.equal(true);
+    expect(map.ghostDebug.clips[0]).to.include({
+      id: 'old-session:old-player',
+      clipStartT: 1000,
+      clipEndT: 1000
+    });
+  });
 });

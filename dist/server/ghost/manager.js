@@ -63,6 +63,7 @@ class GhostManager {
     this.maxActiveGhosts = typeof settings.maxActiveGhosts === 'number' ? settings.maxActiveGhosts : 3;
     this.anchorCooldownMs = typeof settings.anchorCooldownMs === 'number' ? settings.anchorCooldownMs : 60000;
     this.chatBubbleDurationMs = typeof settings.chatBubbleDurationMs === 'number' ? settings.chatBubbleDurationMs : 4000;
+    this.debug = settings.debug === true;
     this.seedEvents = (settings.seedEvents || []).map(normalizeEvent);
     this.memoryStore = settings.memoryStore || null;
     this.spawnedItemIds = {};
@@ -285,6 +286,40 @@ class GhostManager {
       });
     });
   }
+  getDebugState(events, elapsedMs) {
+    return {
+      enabled: this.debug,
+      elapsedMs: elapsedMs,
+      timeWindowMs: this.triggerWindowMs,
+      triggerRadius: this.triggerRadius,
+      activeRadius: this.activeRadius,
+      activeGhostCount: this.getActiveGhostCount(),
+      maxActiveGhosts: this.maxActiveGhosts,
+      anchors: (events || []).filter(event => event.kind === 'trace').map(event => {
+        return {
+          id: this.getEventKey(event),
+          sessionId: event.sessionId,
+          playerId: event.ghostId,
+          t: event.t,
+          x: event.x,
+          y: event.y,
+          eventType: event.anchorEventType || event.kind,
+          inTimeWindow: this.isInTimeWindow(event, elapsedMs)
+        };
+      }),
+      clips: Object.keys(this.activeGhosts).map(key => {
+        const ghost = this.activeGhosts[key];
+        const tracePoints = ghost.tracePoints || [];
+        return {
+          id: ghost.id,
+          sessionId: ghost.sessionId,
+          playerId: ghost.ghostId,
+          clipStartT: tracePoints.length ? tracePoints[0].t : ghost.anchorT,
+          clipEndT: tracePoints.length ? tracePoints[tracePoints.length - 1].t : ghost.anchorT
+        };
+      })
+    };
+  }
   tick(state) {
     const safeState = state || {};
     const map = safeState.map;
@@ -292,12 +327,13 @@ class GhostManager {
     const now = safeState.now || Date.now();
     const startedAt = safeState.matchStartedAt || now;
     const elapsedMs = Math.max(0, now - startedAt);
+    const events = this.getEvents();
     this.updateGhostPositions(now);
     this.updateGhostChats(now);
     this.updateGhostPartPickups(map, now);
     this.touchGhostsWithNearbyPlayers(players, now);
     this.pruneGhosts(now);
-    this.getEvents().forEach(event => {
+    events.forEach(event => {
       if (!this.isInTimeWindow(event, elapsedMs) || !this.isNearAnyPlayer(event, players) || this.isAnchorCoolingDown(event, now)) {
         return;
       }
@@ -315,6 +351,7 @@ class GhostManager {
       }
     });
     if (map) {
+      map.ghostDebug = this.getDebugState(events, elapsedMs);
       map.ghosts = Object.keys(this.activeGhosts).map(key => this.activeGhosts[key]);
     }
   }

@@ -192,7 +192,9 @@ function createGameLoopService(options) {
     if (!socket) {
       return;
     }
-    socket.emit('serverTellPlayerMove', createSpectatorSyncData(socketId, config), projectPlayersForSync(map.players.data), map.food.data, map.massFood.data, map.viruses.data, map.partLoot.data, map.ghosts);
+    const spectatorData = createSpectatorSyncData(socketId, config);
+    spectatorData.ghostDebug = map.ghostDebug || null;
+    socket.emit('serverTellPlayerMove', spectatorData, projectPlayersForSync(map.players.data), map.food.data, map.massFood.data, map.viruses.data, map.partLoot.data, map.ghosts);
     if (leaderboardChanged) {
       sendLeaderboard(socket);
     }
@@ -201,6 +203,7 @@ function createGameLoopService(options) {
     getSpectatorIds().forEach(updateSpectator);
     map.enumerateVisibleWorld(function (visibleWorld) {
       const syncPayload = projectVisibleWorldForSync(visibleWorld);
+      syncPayload.playerData.ghostDebug = map.ghostDebug || null;
       const socket = getSocket(syncPayload.playerData.id);
       if (!socket) {
         return;

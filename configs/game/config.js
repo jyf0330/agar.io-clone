@@ -59,7 +59,8 @@ module.exports = {
         triggerRadius: 800,
         maxActiveGhosts: 3,
         anchorCooldownMs: 60000,
-        followTimeoutMs: 30000
+        followTimeoutMs: 30000,
+        debug: false
     },
     slowBase: 4.5,
     logChat: 0,
