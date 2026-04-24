@@ -91,10 +91,32 @@ function summarizeKeyEvents(parts) {
     }, []).slice(-8);
 }
 
+function buildPetClosingLine(keyEvents) {
+    const events = Array.isArray(keyEvents) ? keyEvents : [];
+    if (!events.length) {
+        return '';
+    }
+
+    const event = events[events.length - 1];
+    const name = event.displayName || event.partType || 'Unknown Part';
+    if (event.eventType === 'picked') {
+        return '这局你真的捡到了 ' + name + '。';
+    }
+    if (event.eventType === 'stolen') {
+        return '这局你真的抢到了 ' + name + '。';
+    }
+    if (event.eventType === 'replaced' || event.eventType === 'dropped') {
+        return '这局 ' + name + ' 发生过换装流转。';
+    }
+
+    return '这局 ' + name + ' 留下了真实记录。';
+}
+
 function buildSettlementSummary(options) {
     const settings = options || {};
     const player = settings.player || {};
     const bodyParts = player.bodyParts || [];
+    const keyEvents = Array.isArray(settings.keyEvents) ? settings.keyEvents : summarizeKeyEvents(bodyParts);
 
     return {
         playerId: player.id || '',
@@ -102,10 +124,10 @@ function buildSettlementSummary(options) {
         endedReason: settings.endedReason || 'round_end',
         winnerName: settings.winnerName || '',
         bodyParts: bodyParts.map(summarizePart),
-        keyEvents: Array.isArray(settings.keyEvents) ? settings.keyEvents : summarizeKeyEvents(bodyParts),
+        keyEvents: keyEvents,
         historyWritten: Boolean(settings.historyWritten),
         recordingConsent: settings.recordingConsent !== false,
-        petClosingLine: settings.petClosingLine || ''
+        petClosingLine: settings.petClosingLine || buildPetClosingLine(keyEvents)
     };
 }
 
@@ -114,6 +136,7 @@ function isDemoSettlementRequest(message) {
 }
 
 module.exports = {
+    buildPetClosingLine: buildPetClosingLine,
     buildSettlementSummary: buildSettlementSummary,
     isDemoSettlementRequest: isDemoSettlementRequest,
     summarizeKeyEvents: summarizeKeyEvents,

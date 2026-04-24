@@ -524,8 +524,7 @@ const addPlayer = (socket) => {
                 player: currentPlayer,
                 endedReason: 'demo_quick_end',
                 recordingConsent: currentPlayer.consentToRecord !== false,
-                historyWritten: currentPlayer.isReplayAllowed !== false,
-                petClosingLine: '演示结算已触发。'
+                historyWritten: currentPlayer.isReplayAllowed !== false
             }));
             socket.emit('RIP');
             connectionService.clearTimer(currentPlayer.id);

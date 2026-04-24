@@ -51,6 +51,7 @@ describe('settlement summary', () => {
       x: 120,
       y: 130
     });
+    expect(summary.petClosingLine).to.contain('Thread Hand');
   });
 
   it('should only recognize explicit demo settlement requests', () => {
