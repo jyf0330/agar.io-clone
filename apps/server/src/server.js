@@ -24,6 +24,7 @@ const {summarizeSession} = require('./memory/session-summarizer');
 const {updatePersonaImpressions} = require('./memory/persona-updater');
 const NpcState = require('./npc/npc');
 const Orchestrator = require('./npc/orchestrator');
+const activePet = require('./npc/active-pet');
 const taskRewards = require('./npc/task-rewards');
 const returnMemory = require('./npc/return-memory');
 const {loadPersonalityCard} = require('./npc/personality-loader');
@@ -294,7 +295,7 @@ function ensureActivePetForPlayer(player) {
         return;
     }
 
-    const activeNpc = npcRoster.find((npc) => player.activePet && player.activePet.petId === npc.id) || npcRoster[0];
+    const activeNpc = activePet.getActiveNpc(npcRoster, player);
     player.setActivePet(buildActivePetSnapshot(activeNpc, player.id));
 }
 
@@ -332,7 +333,7 @@ function rememberRecentChat(currentPlayer, message) {
 }
 
 function speakPreviousExpectations(currentPlayer) {
-    const activeNpc = npcRoster.find((npc) => currentPlayer.activePet && currentPlayer.activePet.petId === npc.id);
+    const activeNpc = activePet.getActiveNpc(npcRoster, currentPlayer, {fallbackToFirst: false});
     if (!activeNpc) {
         return;
     }
@@ -573,7 +574,7 @@ const addPlayer = (socket) => {
         if (npcFeaturesEnabled) {
             rememberRecentChat(currentPlayer, _message);
             if (npcRoster.length && taskRewards.isTaskRewardRequest(_message)) {
-                const activeNpc = npcRoster[0];
+                const activeNpc = activePet.getActiveNpc(npcRoster, currentPlayer);
                 const reward = taskRewards.grantNpcTaskReward({
                     map,
                     player: currentPlayer,
