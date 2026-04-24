@@ -1,4 +1,6 @@
-module.exports = {
+const demoModeEnabled = process.env.V5_DEMO_MODE === '1';
+
+const config = {
     host: "0.0.0.0",
     port: 3000,
     logpath: "logger.php",
@@ -63,6 +65,11 @@ module.exports = {
         followTimeoutMs: 30000,
         debug: false
     },
+    demo: {
+        enabled: demoModeEnabled,
+        roundDurationMs: demoModeEnabled ? 120000 : 90000,
+        showNearbyEchoHint: demoModeEnabled
+    },
     slowBase: 4.5,
     logChat: 0,
     networkUpdateFactor: 40,
@@ -75,3 +82,16 @@ module.exports = {
         fileName: "db.sqlite3",
     }
 };
+
+if (demoModeEnabled) {
+    config.partLoot.maxWorldParts = 14;
+    config.partLoot.spawnBatch = 3;
+    config.ghostEcho.timeWindowMs = 60000;
+    config.ghostEcho.triggerRadius = 1200;
+    config.ghostEcho.maxActiveGhosts = 5;
+    config.ghostEcho.anchorCooldownMs = 15000;
+    config.ghostEcho.followTimeoutMs = 45000;
+    config.ghostEcho.debug = true;
+}
+
+module.exports = config;

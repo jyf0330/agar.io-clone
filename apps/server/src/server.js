@@ -37,7 +37,7 @@ const npcFeaturesEnabled = process.env.V3_NPC_ENABLED === '1';
 let map = new mapUtils.Map(config);
 const roundClock = {
     startedAt: Date.now(),
-    durationMs: 90000
+    durationMs: config.demo && config.demo.roundDurationMs ? config.demo.roundDurationMs : 90000
 };
 const connectionService = createConnectionService({
     players: map.players
@@ -104,7 +104,7 @@ const orchestrator = new Orchestrator({
     mapId: config.mapId || 'fixed-arena',
     sessionId: memorySessionId,
     sessionStartedAt: Date.now(),
-    roundDurationMs: 90000,
+    roundDurationMs: roundClock.durationMs,
     emitEvent(eventName, payload) {
         io.emit(eventName, payload);
     },
