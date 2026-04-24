@@ -17,6 +17,7 @@ var createSocketController = require('./socket-controller');
 var createSpeechBubble = require('./ui/speech-bubble');
 var createPaintToast = require('./ui/paint-toast');
 var createChatInput = require('./ui/chat-input');
+var createSettlementPanel = require('./ui/settlement-panel');
 var createBodySignatureController = require('./body-signature-controller');
 var bodySignatureStorage = require('./body-signature-storage');
 var i18n = require('./i18n');
@@ -31,6 +32,7 @@ var socketController;
 var speechBubble;
 var paintToast;
 var chatInput;
+var settlementPanel;
 var bodySignatureController;
 var hideStartMenuOnLoad = false;
 var npcFeaturesEnabled = window.location.search.indexOf('npc=1') !== -1 || window.V3_NPC_ENABLED === true;
@@ -193,6 +195,9 @@ window.onload = function () {
     chatInput = createChatInput({
         document: document
     });
+    settlementPanel = createSettlementPanel({
+        document: document
+    });
     chatInput.hide();
     chatInput.setSendHandler(function (text) {
         return window.chat.sendChatText(text);
@@ -235,6 +240,7 @@ window.onload = function () {
         speechBubble: speechBubble,
         paintToast: paintToast,
         chatInput: npcFeaturesEnabled ? chatInput : null,
+        settlementPanel: settlementPanel,
         setLeaderboard: function (nextLeaderboard) {
             leaderboard = nextLeaderboard;
         },

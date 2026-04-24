@@ -135,6 +135,7 @@ describe('game-loop-service.js', () => {
     const victim = new playerUtils.Player('victim');
     const recordedPartEvents = [];
     const recordedCombatEvents = [];
+    const socketEvents = [];
 
     eater.init({ x: 100, y: 100 }, config.defaultPlayerMass);
     eater.clientProvidedData({
@@ -191,7 +192,9 @@ describe('game-loop-service.js', () => {
         }
 
         return {
-          emit() {},
+          emit(name, payload) {
+            socketEvents.push({name, payload});
+          },
           disconnect() {}
         };
       },
@@ -204,6 +207,9 @@ describe('game-loop-service.js', () => {
     expect(recordedPartEvents.map((entry) => entry.eventType)).to.deep.equal(['part_stolen', 'part_equipped']);
     expect(recordedPartEvents[0].partType).to.equal('HAND');
     expect(recordedPartEvents[0].sourceType).to.equal('kill_loot');
+    expect(socketEvents.map((event) => event.name)).to.deep.equal(['settlement', 'RIP']);
+    expect(socketEvents[0].payload.endedReason).to.equal('swallowed');
+    expect(socketEvents[0].payload.historyWritten).to.equal(true);
     expect(map.players.findByID('victim')).to.equal(null);
   });
 });

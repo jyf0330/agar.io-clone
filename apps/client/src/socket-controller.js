@@ -146,6 +146,12 @@ function createSocketController(options) {
             options.renderPlayerCardPreviews();
         });
 
+        nextSocket.on('settlement', function (data) {
+            if (options.settlementPanel) {
+                options.settlementPanel.show(data);
+            }
+        });
+
         nextSocket.on('serverTellPlayerMove', function (playerData, userData, foodsList, massList, virusList, partLootList, ghostList) {
             if (options.global.playerType === 'player') {
                 hydratePlayerState(options.getPlayer(), playerData);

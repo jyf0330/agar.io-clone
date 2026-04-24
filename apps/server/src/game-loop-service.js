@@ -3,6 +3,7 @@
 const SAT = require('sat');
 
 const body = require('./body');
+const settlement = require('./settlement');
 const util = require('./lib/util');
 const {
     createSpectatorSyncData,
@@ -209,6 +210,13 @@ function createGameLoopService(options) {
             connectionService.clearTimer(playerGotEaten.id);
             io.emit('playerDied', {name: playerGotEaten.name});
             if (playerSocket) {
+                playerSocket.emit('settlement', settlement.buildSettlementSummary({
+                    player: playerGotEaten,
+                    endedReason: 'swallowed',
+                    winnerName: eaterPlayer.name || eaterPlayer.id,
+                    recordingConsent: playerGotEaten.consentToRecord !== false,
+                    historyWritten: playerGotEaten.isReplayAllowed !== false
+                }));
                 playerSocket.emit('RIP');
             }
             map.players.removePlayerByIndex(gotEaten.playerIndex);
