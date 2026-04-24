@@ -1,12 +1,12 @@
 # Graph Report - agar.io-clone-master  (2026-04-25)
 
 ## Corpus Check
-- 140 files · ~241,825 words
+- 140 files · ~242,283 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 715 nodes · 1128 edges · 31 communities detected
-- Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 179 edges (avg confidence: 0.8)
+- 717 nodes · 1133 edges · 31 communities detected
+- Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 180 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -51,8 +51,8 @@
 6. `get()` - 13 edges
 7. `Canvas` - 13 edges
 8. `main()` - 12 edges
-9. `emitIfReady()` - 12 edges
-10. `createBodyPart()` - 11 edges
+9. `createBodyPart()` - 12 edges
+10. `emitIfReady()` - 12 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `normalize()` --calls--> `constructor()`  [INFERRED]
@@ -74,32 +74,32 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.11
-Nodes (11): clamp(), randomWalkIntent(), buildContextualFallbackUtterance(), pickGreetingFallback(), stableIndex(), estimatePromptTokens(), getChatFallbackReply(), getMockChatReply() (+3 more)
+Cohesion: 0.08
+Nodes (20): clamp(), randomWalkIntent(), buildContextualFallbackUtterance(), pickGreetingFallback(), stableIndex(), estimatePromptTokens(), getChatFallbackReply(), getMockChatReply() (+12 more)
 
 ### Community 1 - "Community 1"
+Cohesion: 0.07
+Nodes (33): createPlayer(), applyMaterializationState(), createMaterializationState(), resolveMaterializationStage(), createHumanPlayer(), createNpc(), createPersonality(), Cell (+25 more)
+
+### Community 2 - "Community 2"
 Cohesion: 0.12
 Nodes (35): append(), getAuditFilePath(), resolveAuditDir(), toDateStamp(), createCacheKey(), ensureDatabase(), get(), loadDatabaseLibrary() (+27 more)
 
-### Community 2 - "Community 2"
+### Community 3 - "Community 3"
 Cohesion: 0.1
 Nodes (30): seedSummaries(), buildFallbackImpression(), clampRelationshipValue(), parsePersonaResponse(), shouldUpdateFromSummaryCount(), updateNpcPersona(), updatePersonaImpressions(), buildFallbackSummary() (+22 more)
-
-### Community 3 - "Community 3"
-Cohesion: 0.08
-Nodes (24): adjustForBoundaries(), constructor(), move(), Cell, changeCellMass(), checkForCollisions(), clientProvidedData(), constructor() (+16 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.13
 Nodes (37): appendPartHistory(), applyBodyState(), applySignatureToParts(), cloneBodyPart(), cloneHistoryChain(), cloneShallowObject(), countBodyParts(), createBodyBonuses() (+29 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.12
-Nodes (4): Canvas, ChatClient, canEmit(), emitIfReady()
+Cohesion: 0.07
+Nodes (6): GhostManager, PartLootManager, GhostRecorder, createNpcTaskRewardPart(), grantNpcTaskReward(), recordReward()
 
 ### Community 6 - "Community 6"
-Cohesion: 0.08
-Nodes (19): getPosition(), validNick(), addNew(), Food, removeExcess(), balanceMass(), enumerateVisibleWorld(), getVisibleWorldForPlayer() (+11 more)
+Cohesion: 0.12
+Nodes (4): Canvas, ChatClient, canEmit(), emitIfReady()
 
 ### Community 7 - "Community 7"
 Cohesion: 0.12
@@ -107,55 +107,55 @@ Nodes (25): reset(), createDraftId(), getStorage(), loadDrafts(), normalizeDraft
 
 ### Community 8 - "Community 8"
 Cohesion: 0.09
-Nodes (21): build_bot_json(), clamp(), generate_frames(), main(), parse_args(), pick_random_target(), 在地图内随机挑一个目标点，留一点边距避免贴墙。, 朝目标移动最多 max_step，达到/超过则贴上。 (+13 more)
+Nodes (23): animloop(), applyTranslations(), enterGame(), renderPlayerCardPreviews(), renderStatusPanel(), resize(), startGame(), validNick() (+15 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.08
-Nodes (6): GhostManager, PartLootManager, GhostRecorder, createNpcTaskRewardPart(), grantNpcTaskReward(), recordReward()
+Cohesion: 0.09
+Nodes (21): build_bot_json(), clamp(), generate_frames(), main(), parse_args(), pick_random_target(), 在地图内随机挑一个目标点，留一点边距避免贴墙。, 朝目标移动最多 max_step，达到/超过则贴上。 (+13 more)
 
 ### Community 10 - "Community 10"
-Cohesion: 0.09
-Nodes (22): animloop(), applyTranslations(), enterGame(), renderPlayerCardPreviews(), renderStatusPanel(), resize(), startGame(), createBodySignatureController() (+14 more)
+Cohesion: 0.08
+Nodes (18): getPosition(), addNew(), Food, removeExcess(), balanceMass(), enumerateVisibleWorld(), getVisibleWorldForPlayer(), getTotalMass() (+10 more)
 
 ### Community 11 - "Community 11"
 Cohesion: 0.14
 Nodes (23): buildScenarioOptions(), createDriver(), ensureDir(), finalizeVideo(), httpGet(), main(), observeNpcActivity(), observeOnline() (+15 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.11
-Nodes (21): applyConnectionState(), clearConnectionState(), createConnectionState(), createStatePatch(), distance(), isEligibleConnectionTarget(), planAttempt(), resolveOutcome() (+13 more)
-
-### Community 13 - "Community 13"
 Cohesion: 0.13
 Nodes (16): askOpenAI(), normalizeContent(), buildChatMessages(), executeChatScenario(), main(), executeOfflineScenario(), main(), acceptResponse() (+8 more)
 
-### Community 14 - "Community 14"
+### Community 13 - "Community 13"
 Cohesion: 0.15
 Nodes (17): gameLoop(), getAvatarInnerRadius(), shouldUseAvatarRuntimeRender(), cellTouchingBorders(), circlePoint(), drawAvatarCell(), drawBorder(), drawCells() (+9 more)
 
-### Community 15 - "Community 15"
+### Community 14 - "Community 14"
 Cohesion: 0.15
 Nodes (14): clamp(), createBehaviorProfile(), hexToHue(), normalizeIntent(), normalizeNpcKey(), NpcState, assertCardShape(), extractAnchorsText() (+6 more)
 
-### Community 16 - "Community 16"
-Cohesion: 0.23
-Nodes (9): buildNpcIntentPrompt(), buildNpcReplyPrompt(), buildNpcUtterPrompt(), buildSummarizeSessionPrompt(), buildUpdatePersonaImpressionPrompt(), formatMemoryBlock(), formatRecentChats(), formatSessionEvents() (+1 more)
-
-### Community 17 - "Community 17"
+### Community 15 - "Community 15"
 Cohesion: 0.27
 Nodes (7): buildCandidateFromTemplate(), buildDraftCandidates(), clone(), randomPick(), removeMissingPart(), getDefaultTemplateById(), getDefaultTemplates()
 
-### Community 18 - "Community 18"
+### Community 16 - "Community 16"
 Cohesion: 0.29
 Nodes (6): projectBodyPartForSync(), projectEquipmentSlotsForSync(), projectPartLootForSync(), projectPlayerForSync(), projectPlayersForSync(), projectVisibleWorldForSync()
 
-### Community 19 - "Community 19"
+### Community 17 - "Community 17"
+Cohesion: 0.38
+Nodes (9): applyConnectionState(), clearConnectionState(), createConnectionState(), createStatePatch(), distance(), isEligibleConnectionTarget(), planAttempt(), resolveOutcome() (+1 more)
+
+### Community 18 - "Community 18"
 Cohesion: 0.44
 Nodes (9): analyzeCanvas(), canvasToGrid(), clamp(), compareGrids(), createEmptyGrid(), createReferenceGrid(), getTier(), gridCoverage() (+1 more)
 
-### Community 20 - "Community 20"
+### Community 19 - "Community 19"
 Cohesion: 0.39
 Nodes (9): Agar.IO Clone game UI, Colored food pellets, Grid-based arena, Leaderboard panel, Mobile joystick and targeting controls, Two simultaneous game viewports, Player cell dragon, Player cell huy (+1 more)
+
+### Community 20 - "Community 20"
+Cohesion: 0.29
+Nodes (3): adjustForBoundaries(), constructor(), move()
 
 ### Community 21 - "Community 21"
 Cohesion: 0.38
@@ -208,12 +208,12 @@ Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Inp
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `addPlayer()` connect `Community 6` to `Community 3`, `Community 12`, `Community 15`?**
+- **Why does `addPlayer()` connect `Community 10` to `Community 8`, `Community 1`, `Community 14`?**
   _High betweenness centrality (0.157) - this node is a cross-community bridge._
-- **Why does `ask()` connect `Community 13` to `Community 0`, `Community 1`, `Community 2`?**
+- **Why does `ask()` connect `Community 12` to `Community 0`, `Community 2`, `Community 3`?**
   _High betweenness centrality (0.131) - this node is a cross-community bridge._
-- **Why does `emit()` connect `Community 6` to `Community 10`, `Community 5`?**
-  _High betweenness centrality (0.102) - this node is a cross-community bridge._
+- **Why does `emit()` connect `Community 10` to `Community 8`, `Community 6`?**
+  _High betweenness centrality (0.103) - this node is a cross-community bridge._
 - **Are the 9 inferred relationships involving `ask()` (e.g. with `createCacheKey()` and `get()`) actually correct?**
   _`ask()` has 9 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 3 inferred relationships involving `runScenario()` (e.g. with `main()` and `main()`) actually correct?**

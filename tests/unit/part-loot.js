@@ -52,4 +52,32 @@ describe('partLoot.js', () => {
     expect(manager.data[0].part.templateId).to.equal('hand-open');
     expect(manager.data[0].source).to.equal('slot-replacement');
   });
+
+  it('should append picked history and transfer ownership before equipping loot', () => {
+    const manager = new PartLootManager();
+    const player = body.createBodyState([]);
+    player.id = 'player-1';
+    player.name = 'Alice';
+    player.x = 100;
+    player.y = 100;
+    player.cells = [
+      { x: 100, y: 100, radius: 40 }
+    ];
+
+    manager.addPart({
+      type: 'HAND',
+      templateId: 'hand-thread',
+      sourceType: 'map_pickup',
+      currentOwnerId: null
+    }, { x: 112, y: 100 }, 'map-pickup');
+
+    const pickups = manager.collectForPlayer(player);
+    const equippedHand = player.bodyParts.find((part) => part.partType === 'HAND');
+    const historyTypes = equippedHand.historyChain.map((entry) => entry.eventType);
+
+    expect(pickups[0].equippedPart.currentOwnerId).to.equal('player-1');
+    expect(equippedHand.currentOwnerId).to.equal('player-1');
+    expect(historyTypes).to.include('picked');
+    expect(historyTypes).to.include('equipped');
+  });
 });
