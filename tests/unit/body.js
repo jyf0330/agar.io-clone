@@ -54,6 +54,38 @@ describe('body.js', () => {
     });
   });
 
+  describe('V5 complete part objects', () => {
+    it('should create a full part object with V5 identity, source, stats, and history fields', () => {
+      const part = body.createBodyPart('HAND', 2, {
+        templateId: 'hand-open',
+        stats: {
+          pickupRange: 10
+        },
+        appearanceRef: 'refs/right-arm-open.png',
+        originPlayerId: 'player-a',
+        originPlayerName: 'Alice',
+        currentOwnerId: 'player-a',
+        sourceType: 'self_created',
+        sourceEventId: 'event-created-hand'
+      });
+
+      expect(part.partId).to.equal('hand-2');
+      expect(part.id).to.equal(part.partId);
+      expect(part.partType).to.equal('HAND');
+      expect(part.type).to.equal('HAND');
+      expect(part.displayName).to.equal('Hand');
+      expect(part.stats.pickupRange).to.equal(10);
+      expect(part.appearanceRef).to.equal('refs/right-arm-open.png');
+      expect(part.originPlayerId).to.equal('player-a');
+      expect(part.originPlayerName).to.equal('Alice');
+      expect(part.currentOwnerId).to.equal('player-a');
+      expect(part.sourceType).to.equal('self_created');
+      expect(part.sourceEventId).to.equal('event-created-hand');
+      expect(part.historyChain).to.have.length(1);
+      expect(part.historyChain[0].eventType).to.equal('created');
+    });
+  });
+
   describe('getStealableParts', () => {
     it('should only return core parts for default steal logic', () => {
       const bodyState = body.createBodyState([
@@ -113,6 +145,35 @@ describe('body.js', () => {
       expect(gained.stolenFrom).to.equal(undefined);
     });
 
+    it('should mark stolen parts as kill loot without losing their origin history', () => {
+      const loser = body.createBodyState([
+        body.createBodyPart('HAND', 1, {
+          originPlayerId: 'loser',
+          originPlayerName: 'Bob',
+          currentOwnerId: 'loser',
+          sourceType: 'self_created'
+        })
+      ]);
+      const eater = body.createBodyState([
+        body.createBodyPart('MOUTH', 1)
+      ]);
+      loser.id = 'loser';
+      loser.name = 'Bob';
+      eater.id = 'eater';
+      eater.name = 'Alice';
+
+      body.stealRandomCorePart(loser, eater, () => 0);
+      const gained = eater.bodyParts.find((part) => part.partType === 'HAND');
+      const historyTypes = gained.historyChain.map((entry) => entry.eventType);
+
+      expect(gained.originPlayerId).to.equal('loser');
+      expect(gained.currentOwnerId).to.equal('eater');
+      expect(gained.sourceType).to.equal('kill_loot');
+      expect(historyTypes).to.include('created');
+      expect(historyTypes).to.include('stolen');
+      expect(historyTypes).to.include('equipped');
+    });
+
     it('should stay unchanged when there is no core part to steal', () => {
       const loser = body.createBodyState([
         body.createBodyPart('SPIKE', 1)
@@ -158,6 +219,32 @@ describe('body.js', () => {
       expect(result.droppedPart.signatureTier).to.equal('faint');
       expect(result.droppedPart.x).to.equal(20);
       expect(result.droppedPart.y).to.equal(30);
+    });
+
+    it('should append equipped, replaced, and dropped history entries during replacement', () => {
+      const player = body.createBodyState([
+        body.createBodyPart('HAND', 1, {
+          currentOwnerId: 'player-1',
+          sourceType: 'self_created'
+        })
+      ]);
+      player.id = 'player-1';
+      const incoming = body.createBodyPart('HAND', 2, {
+        currentOwnerId: 'player-2',
+        sourceType: 'map_pickup'
+      });
+
+      const result = body.equipBodyPart(player, incoming, { x: 20, y: 30 });
+      const equipped = player.bodyParts.find((part) => part.partType === 'HAND');
+      const equippedHistory = equipped.historyChain.map((entry) => entry.eventType);
+      const droppedHistory = result.droppedPart.historyChain.map((entry) => entry.eventType);
+
+      expect(equipped.currentOwnerId).to.equal('player-1');
+      expect(equippedHistory).to.include('created');
+      expect(equippedHistory).to.include('equipped');
+      expect(result.droppedPart.currentOwnerId).to.equal(null);
+      expect(droppedHistory).to.include('replaced');
+      expect(droppedHistory).to.include('dropped');
     });
   });
 

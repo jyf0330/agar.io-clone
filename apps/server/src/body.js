@@ -21,28 +21,123 @@ function getPartDefinition(type) {
     return definition;
 }
 
+function getPartType(partOrType) {
+    if (typeof partOrType === 'string') {
+        return partOrType;
+    }
+
+    return partOrType && (partOrType.partType || partOrType.type);
+}
+
+function inferSourceType(source) {
+    if (source === 'npc-task') {
+        return 'npc_reward';
+    }
+    if (source === 'ghost-echo') {
+        return 'ghost_echo';
+    }
+    if (source === 'signature-drawing' || source === 'signature-default') {
+        return 'self_created';
+    }
+    if (source === 'slot-replacement' || source === 'world') {
+        return 'map_pickup';
+    }
+
+    return source || 'self_created';
+}
+
+function cloneShallowObject(value) {
+    return Object.assign({}, value || {});
+}
+
+function cloneHistoryChain(historyChain) {
+    return (historyChain || []).map((entry) => Object.assign({}, entry));
+}
+
+function createHistoryEntry(eventType, data) {
+    const payload = data || {};
+    return {
+        eventType: eventType,
+        eventId: payload.eventId || payload.sourceEventId || null,
+        playerId: payload.playerId || null,
+        playerName: payload.playerName || null,
+        fromPlayerId: payload.fromPlayerId || null,
+        toPlayerId: payload.toPlayerId || null,
+        sourceType: payload.sourceType || null,
+        x: typeof payload.x === 'number' ? payload.x : null,
+        y: typeof payload.y === 'number' ? payload.y : null,
+        at: payload.at || null
+    };
+}
+
+function appendPartHistory(part, eventType, data) {
+    const nextPart = cloneBodyPart(part);
+    nextPart.historyChain = cloneHistoryChain(nextPart.historyChain);
+    nextPart.historyChain.push(createHistoryEntry(eventType, data));
+    return nextPart;
+}
+
 function createBodyPart(type, ordinal, overrides) {
-    const definition = getPartDefinition(type);
+    const source = overrides || {};
+    const normalizedType = getPartType(type) || getPartType(source);
+    const definition = getPartDefinition(normalizedType);
     const index = typeof ordinal === 'number' ? ordinal : 1;
+    const partId = source.partId || source.id || normalizedType.toLowerCase() + '-' + index;
+    const sourceType = source.sourceType || inferSourceType(source.source);
+    const historyChain = source.historyChain
+        ? cloneHistoryChain(source.historyChain)
+        : [createHistoryEntry('created', {
+            sourceEventId: source.sourceEventId,
+            playerId: source.originPlayerId || source.currentOwnerId,
+            playerName: source.originPlayerName,
+            sourceType: sourceType
+        })];
 
     return Object.assign({
-        id: type.toLowerCase() + '-' + index,
-        type: type,
+        id: partId,
+        partId: partId,
+        type: normalizedType,
+        partType: normalizedType,
         label: definition.label,
+        displayName: definition.label,
         mount: definition.mount,
-        isCore: definition.isCore
-    }, overrides || {});
+        isCore: definition.isCore,
+        templateId: source.templateId || null,
+        stats: cloneShallowObject(source.stats),
+        appearanceRef: source.appearanceRef || source.templateId || null,
+        imageData: source.imageData || null,
+        drawingDataRef: source.drawingDataRef || source.userStrokeDataUrl || null,
+        originPlayerId: source.originPlayerId || null,
+        originPlayerName: source.originPlayerName || null,
+        currentOwnerId: Object.prototype.hasOwnProperty.call(source, 'currentOwnerId') ? source.currentOwnerId : null,
+        sourceType: sourceType,
+        source: source.source || sourceType,
+        sourceEventId: source.sourceEventId || null,
+        historyChain: historyChain
+    }, source, {
+        id: partId,
+        partId: partId,
+        type: normalizedType,
+        partType: normalizedType,
+        displayName: source.displayName || source.label || definition.label,
+        stats: cloneShallowObject(source.stats),
+        historyChain: historyChain
+    });
 }
 
 function cloneBodyPart(part, overrides) {
-    return Object.assign({}, part || {}, overrides || {});
+    const cloned = Object.assign({}, part || {}, overrides || {});
+    cloned.stats = cloneShallowObject(cloned.stats);
+    cloned.signatureBonus = cloneShallowObject(cloned.signatureBonus);
+    cloned.historyChain = cloneHistoryChain(cloned.historyChain);
+    return cloned;
 }
 
 function normalizeBodyParts(parts) {
     const typeCounts = {};
 
     return (parts || []).map((part) => {
-        const type = part.type;
+        const type = getPartType(part);
         typeCounts[type] = (typeCounts[type] || 0) + 1;
         return createBodyPart(type, typeCounts[type], part);
     });
@@ -55,7 +150,7 @@ function countBodyParts(parts) {
     });
 
     (parts || []).forEach((part) => {
-        counts[part.type] += 1;
+        counts[getPartType(part)] += 1;
     });
 
     return counts;
@@ -98,7 +193,9 @@ function createSignaturePart(signature, ordinal, basePart) {
         signatureSimilarity: signature && typeof signature.similarity === 'number' ? signature.similarity : 0,
         signatureBonus: getSignatureBonus(type, tier),
         userStrokeDataUrl: usePlayerStroke ? signature.imageDataUrl : null,
-        source: signature && signature.skipped ? 'signature-default' : 'signature-drawing'
+        drawingDataRef: usePlayerStroke ? signature.imageDataUrl : null,
+        source: signature && signature.skipped ? 'signature-default' : 'signature-drawing',
+        sourceType: 'self_created'
     }));
 }
 
@@ -152,30 +249,49 @@ function createDroppedPart(part, position) {
 
 function equipBodyPart(target, incomingPart, dropPosition) {
     const existingParts = target.bodyParts || [];
+    const incomingType = getPartType(incomingPart);
+    const equippedIncomingPart = appendPartHistory(createBodyPart(incomingType, 1, incomingPart), 'equipped', {
+        playerId: target.id || null,
+        playerName: target.name || null,
+        sourceType: incomingPart && incomingPart.sourceType
+    });
+    equippedIncomingPart.currentOwnerId = target.id || null;
     let droppedPart = null;
     let replaced = false;
 
     const nextParts = existingParts.map((part) => {
-        if (!replaced && part.type === incomingPart.type) {
-            droppedPart = createDroppedPart(part, dropPosition);
+        if (!replaced && getPartType(part) === incomingType) {
+            droppedPart = appendPartHistory(createDroppedPart(part, dropPosition), 'replaced', {
+                playerId: target.id || null,
+                playerName: target.name || null,
+                sourceType: part.sourceType
+            });
+            droppedPart = appendPartHistory(droppedPart, 'dropped', {
+                playerId: target.id || null,
+                playerName: target.name || null,
+                x: dropPosition && dropPosition.x,
+                y: dropPosition && dropPosition.y,
+                sourceType: part.sourceType
+            });
+            droppedPart.currentOwnerId = null;
             replaced = true;
-            return cloneBodyPart(incomingPart);
+            return cloneBodyPart(equippedIncomingPart);
         }
 
         return part;
     });
 
     if (!replaced) {
-        nextParts.push(cloneBodyPart(incomingPart));
+        nextParts.push(cloneBodyPart(equippedIncomingPart));
     }
 
     applyBodyState(target, {
         bodyParts: nextParts,
-        bodySignature: getSignatureType(target.bodySignature) === incomingPart.type ? null : target.bodySignature
+        bodySignature: getSignatureType(target.bodySignature) === incomingType ? null : target.bodySignature
     });
 
     return {
-        equippedPart: cloneBodyPart(incomingPart),
+        equippedPart: cloneBodyPart(equippedIncomingPart),
         droppedPart: droppedPart
     };
 }
@@ -196,14 +312,14 @@ function getStealableParts(target) {
 
 function getPartCount(target, type) {
     if (Array.isArray(target)) {
-        return target.filter((part) => part.type === type).length;
+        return target.filter((part) => getPartType(part) === type).length;
     }
 
     if (target.bodyPartCounts && typeof target.bodyPartCounts[type] === 'number') {
         return target.bodyPartCounts[type];
     }
 
-    return (target.bodyParts || []).filter((part) => part.type === type).length;
+    return (target.bodyParts || []).filter((part) => getPartType(part) === type).length;
 }
 
 function createBodyBonuses(target) {
@@ -270,7 +386,22 @@ function stealRandomCorePart(loser, eater, randomFn) {
         : Math.floor(Math.random() * stealable.length);
     const selectedPart = stealable[pickIndex];
     const nextLoserParts = (loser.bodyParts || []).filter((part) => part !== selectedPart);
-    const nextEaterParts = (eater.bodyParts || []).concat(cloneBodyPart(selectedPart));
+    let stolenPart = appendPartHistory(selectedPart, 'stolen', {
+        fromPlayerId: loser.id || null,
+        playerId: loser.id || null,
+        playerName: loser.name || null,
+        toPlayerId: eater.id || null,
+        sourceType: 'kill_loot'
+    });
+    stolenPart = appendPartHistory(stolenPart, 'equipped', {
+        playerId: eater.id || null,
+        playerName: eater.name || null,
+        fromPlayerId: loser.id || null,
+        sourceType: 'kill_loot'
+    });
+    stolenPart.currentOwnerId = eater.id || null;
+    stolenPart.sourceType = 'kill_loot';
+    const nextEaterParts = (eater.bodyParts || []).concat(cloneBodyPart(stolenPart));
 
     applyBodyState(loser, {
         bodyParts: nextLoserParts,
@@ -280,12 +411,13 @@ function stealRandomCorePart(loser, eater, randomFn) {
         bodyParts: nextEaterParts
     });
 
-    return selectedPart;
+    return stolenPart;
 }
 
 module.exports = {
     TYPES,
     config: bodyConfig,
+    appendPartHistory,
     createBodyPart,
     cloneBodyPart,
     createSignaturePart,
