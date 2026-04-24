@@ -77,6 +77,38 @@ describe('memory store', function () {
         });
     });
 
+    it('should mark seed sessions and clear historical echo data', function () {
+        const store = loadStore(path.join(tmpDir, 'memory.db'));
+
+        store.recordSession({
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            startedAt: 1000,
+            isSeed: false
+        });
+        store.recordPlayerTrace({
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            t: 0,
+            x: 10,
+            y: 20
+        });
+        store.recordEvent({
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            kind: 'ghost_trace',
+            payload: {x: 10, y: 20}
+        });
+
+        store.markSeedSession('session-1');
+        expect(store.listSessions({sessionId: 'session-1'})[0].isSeed).to.equal(true);
+
+        store.clearHistoricalEchoData();
+        expect(store.listSessions({sessionId: 'session-1'})).to.have.length(0);
+        expect(store.listPlayerTraces({sessionId: 'session-1'})).to.have.length(0);
+        expect(store.listEvents({sessionId: 'session-1', kind: 'ghost_trace'})).to.have.length(0);
+    });
+
     it('should record and query V5 player trace points by session and player', function () {
         const store = loadStore(path.join(tmpDir, 'memory.db'));
 

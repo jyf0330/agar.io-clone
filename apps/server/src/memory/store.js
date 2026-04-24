@@ -414,6 +414,30 @@ function listTables() {
     return result.rows.map((row) => row.name);
 }
 
+function clearHistoricalEchoData() {
+    [
+        'ghost_anchors',
+        'combat_events',
+        'part_events',
+        'item_events',
+        'chat_records',
+        'player_traces',
+        'sessions'
+    ].forEach((tableName) => {
+        executeSql('DELETE FROM ' + tableName, []);
+    });
+    executeSql(
+        [
+            'DELETE FROM events WHERE kind IN (',
+            "'ghost_trace', 'ghost_chat', 'ghost_item',",
+            "'part_pickup', 'part_drop', 'part_equipped', 'part_replaced', 'part_stolen',",
+            "'kill', 'swallowed'",
+            ')'
+        ].join(' '),
+        []
+    );
+}
+
 function recordEvent(event) {
     const safeEvent = event || {};
     const result = executeSql(
@@ -496,6 +520,22 @@ function listSessions(filters) {
     );
 
     return result.rows.map(toCamelSession);
+}
+
+function markSeedSession(sessionId, playerId, isSeed) {
+    const seedValue = isSeed === false ? 0 : 1;
+    if (playerId) {
+        executeSql(
+            'UPDATE sessions SET is_seed = ?, is_replay_allowed = 1 WHERE session_id = ? AND player_id = ?',
+            [seedValue, sessionId, playerId]
+        );
+        return;
+    }
+
+    executeSql(
+        'UPDATE sessions SET is_seed = ?, is_replay_allowed = 1 WHERE session_id = ?',
+        [seedValue, sessionId]
+    );
 }
 
 function recordPlayerTrace(trace) {
@@ -849,9 +889,11 @@ module.exports = {
     resolveDbPath: resolveDbPath,
     migrate: migrate,
     listTables: listTables,
+    clearHistoricalEchoData: clearHistoricalEchoData,
     recordSession: recordSession,
     endSession: endSession,
     listSessions: listSessions,
+    markSeedSession: markSeedSession,
     recordPlayerTrace: recordPlayerTrace,
     listPlayerTraces: listPlayerTraces,
     recordChatRecord: recordChatRecord,

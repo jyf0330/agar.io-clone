@@ -1,12 +1,12 @@
 # Graph Report - agar.io-clone-master  (2026-04-25)
 
 ## Corpus Check
-- 141 files · ~253,264 words
+- 142 files · ~253,848 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 774 nodes · 1266 edges · 32 communities detected
-- Extraction: 85% EXTRACTED · 15% INFERRED · 0% AMBIGUOUS · INFERRED: 192 edges (avg confidence: 0.8)
+- 782 nodes · 1290 edges · 32 communities detected
+- Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 203 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -45,7 +45,7 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `Orchestrator` - 30 edges
-2. `executeSql()` - 26 edges
+2. `executeSql()` - 28 edges
 3. `GhostManager` - 23 edges
 4. `ask()` - 18 edges
 5. `GhostRecorder` - 17 edges
@@ -76,23 +76,23 @@
 
 ### Community 0 - "Community 0"
 Cohesion: 0.08
-Nodes (50): appendPartHistory(), applyBodyState(), applySignatureToParts(), cloneBodyPart(), cloneHistoryChain(), cloneShallowObject(), countBodyParts(), createBodyBonuses() (+42 more)
+Nodes (43): exportSession(), loadSeed(), main(), printUsage(), writeJson(), seedSummaries(), buildFallbackImpression(), clampRelationshipValue() (+35 more)
 
 ### Community 1 - "Community 1"
+Cohesion: 0.08
+Nodes (50): appendPartHistory(), applyBodyState(), applySignatureToParts(), cloneBodyPart(), cloneHistoryChain(), cloneShallowObject(), countBodyParts(), createBodyBonuses() (+42 more)
+
+### Community 2 - "Community 2"
 Cohesion: 0.05
 Nodes (33): getPosition(), validNick(), addNew(), Food, removeExcess(), balanceMass(), enumerateVisibleWorld(), getVisibleWorldForPlayer() (+25 more)
 
-### Community 2 - "Community 2"
-Cohesion: 0.08
-Nodes (36): seedSummaries(), buildFallbackImpression(), clampRelationshipValue(), parsePersonaResponse(), shouldUpdateFromSummaryCount(), updateNpcPersona(), updatePersonaImpressions(), addSessionSummary() (+28 more)
-
 ### Community 3 - "Community 3"
-Cohesion: 0.07
-Nodes (5): GhostManager, PartLootManager, createNpcTaskRewardPart(), grantNpcTaskReward(), recordReward()
-
-### Community 4 - "Community 4"
 Cohesion: 0.1
 Nodes (11): clamp(), randomWalkIntent(), buildContextualFallbackUtterance(), pickGreetingFallback(), stableIndex(), estimatePromptTokens(), getChatFallbackReply(), getMockChatReply() (+3 more)
+
+### Community 4 - "Community 4"
+Cohesion: 0.07
+Nodes (5): GhostManager, PartLootManager, createNpcTaskRewardPart(), grantNpcTaskReward(), recordReward()
 
 ### Community 5 - "Community 5"
 Cohesion: 0.12
@@ -171,16 +171,16 @@ Cohesion: 0.6
 Nodes (4): addHistoryEntry(), getStorage(), loadHistory(), saveHistory()
 
 ### Community 24 - "Community 24"
+Cohesion: 0.5
+Nodes (3): createController(), createFakeSocket(), createSocketController()
+
+### Community 25 - "Community 25"
 Cohesion: 0.6
 Nodes (3): createPaintedAvatarDataUrl(), createPaintedAvatarSvg(), escapeAttribute()
 
-### Community 25 - "Community 25"
-Cohesion: 0.5
-Nodes (2): clampScale(), getNextScale()
-
 ### Community 26 - "Community 26"
 Cohesion: 0.5
-Nodes (3): createController(), createFakeSocket(), createSocketController()
+Nodes (2): clampScale(), getNextScale()
 
 ### Community 27 - "Community 27"
 Cohesion: 0.67
@@ -207,7 +207,7 @@ Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Inp
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 15`** (20 nodes): `recorder.js`, `escapeRegExp()`, `GhostRecorder`, `.canRecordPlayer()`, `.constructor()`, `.getElapsed()`, `.recordChat()`, `.recordChatRecord()`, `.recordCombatEvent()`, `.recordEvent()`, `.recordGhostAnchor()`, `.recordItem()`, `.recordItemEvent()`, `.recordPartEvent()`, `.recordPartLifecycleEvent()`, `.recordPlayers()`, `.recordPlayerTrace()`, `.recordTypedCombatEvent()`, `loadForbiddenWords()`, `sanitizeReplayChat()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (5 nodes): `player-card-scale.js`, `canScaleIn()`, `canScaleOut()`, `clampScale()`, `getNextScale()`
+- **Thin community `Community 26`** (5 nodes): `player-card-scale.js`, `canScaleIn()`, `canScaleOut()`, `clampScale()`, `getNextScale()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 27`** (4 nodes): `clearModule()`, `createOpenAiMockServer()`, `loadWrapperFixture()`, `llm-wrapper.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -215,11 +215,11 @@ Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Inp
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `addPlayer()` connect `Community 1` to `Community 0`, `Community 6`?**
-  _High betweenness centrality (0.169) - this node is a cross-community bridge._
-- **Why does `ask()` connect `Community 12` to `Community 13`, `Community 2`, `Community 4`, `Community 5`?**
-  _High betweenness centrality (0.136) - this node is a cross-community bridge._
-- **Why does `emit()` connect `Community 1` to `Community 8`, `Community 9`?**
+- **Why does `addPlayer()` connect `Community 2` to `Community 1`, `Community 6`?**
+  _High betweenness centrality (0.171) - this node is a cross-community bridge._
+- **Why does `ask()` connect `Community 12` to `Community 0`, `Community 13`, `Community 3`, `Community 5`?**
+  _High betweenness centrality (0.137) - this node is a cross-community bridge._
+- **Why does `emit()` connect `Community 2` to `Community 8`, `Community 9`?**
   _High betweenness centrality (0.100) - this node is a cross-community bridge._
 - **Are the 9 inferred relationships involving `ask()` (e.g. with `createCacheKey()` and `get()`) actually correct?**
   _`ask()` has 9 INFERRED edges - model-reasoned connections that need verification._
@@ -228,4 +228,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
