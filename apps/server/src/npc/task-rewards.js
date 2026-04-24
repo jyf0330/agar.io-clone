@@ -21,16 +21,13 @@ function recordReward(memoryStore, payload) {
     }
 
     const now = Date.now();
-    memoryStore.recordEvent({
-        eventId: ['l1', payload.sessionId || 'session', payload.player.id, payload.npcId || 'npc', 'npc_task_completed', now].join(':'),
+    const baseEvent = {
         playerId: payload.player.id,
         npcId: payload.npcId,
         sessionId: payload.sessionId,
         mapId: payload.mapId || 'fixed-arena',
         x: payload.position.x,
         y: payload.position.y,
-        kind: 'npc_task_completed',
-        eventType: 'npc_task_completed',
         payload: {
             taskId: payload.taskId,
             npcName: payload.npcName,
@@ -41,7 +38,18 @@ function recordReward(memoryStore, payload) {
         },
         ts: now,
         createdAt: now
-    });
+    };
+
+    memoryStore.recordEvent(Object.assign({}, baseEvent, {
+        eventId: ['l1', payload.sessionId || 'session', payload.player.id, payload.npcId || 'npc', 'npc_task_completed', now].join(':'),
+        kind: 'npc_task_completed',
+        eventType: 'npc_task_completed'
+    }));
+    memoryStore.recordEvent(Object.assign({}, baseEvent, {
+        eventId: ['l1', payload.sessionId || 'session', payload.player.id, payload.npcId || 'npc', 'rewarded_part', now].join(':'),
+        kind: 'rewarded_part',
+        eventType: 'rewarded_part'
+    }));
 }
 
 function grantNpcTaskReward(options) {

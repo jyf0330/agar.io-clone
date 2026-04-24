@@ -37,6 +37,7 @@ describe('npc task rewards', () => {
     expect(result.part.source).to.equal('npc-task');
     expect(result.loot.x).to.equal(300);
     expect(map.partLoot.data[0].part.templateId).to.equal('hand-thread');
+    expect(events).to.have.length(2);
     expect(events[0]).to.include({
       playerId: 'player-1',
       npcId: 'mochi',
@@ -50,5 +51,12 @@ describe('npc task rewards', () => {
     expect(events[0].eventId).to.contain(':npc_task_completed:');
     expect(events[0].payload.rewardedPartType).to.equal('HAND');
     expect(events[0].payload.part.templateId).to.equal('hand-thread');
+    expect(events[1]).to.include({
+      kind: 'rewarded_part',
+      eventType: 'rewarded_part',
+      playerId: 'player-1',
+      npcId: 'mochi'
+    });
+    expect(events[1].eventId).to.contain(':rewarded_part:');
   });
 });
