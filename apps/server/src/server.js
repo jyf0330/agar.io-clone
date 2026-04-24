@@ -15,6 +15,7 @@ const mapUtils = require('./map/map');
 const {createPaintedAvatarDataUrl} = require('./npc/avatar-paint');
 const memoryStore = require('./memory/store');
 const {summarizeSession} = require('./memory/session-summarizer');
+const {updatePersonaImpressions} = require('./memory/persona-updater');
 const NpcState = require('./npc/npc');
 const Orchestrator = require('./npc/orchestrator');
 const {loadPersonalityCard} = require('./npc/personality-loader');
@@ -235,8 +236,13 @@ async function finalizeRoundMemoryIfNeeded() {
             playerId: humanPlayer.id,
             sessionId: memorySessionId
         });
+        const impressions = await updatePersonaImpressions({
+            npcs: npcRoster,
+            playerId: humanPlayer.id
+        });
         roundMemorySummary.done = true;
-        console.log('[NPC] wrote ' + summaries.length + ' session memory summaries');
+        const updatedCount = impressions.filter((entry) => !entry.skipped).length;
+        console.log('[NPC] wrote ' + summaries.length + ' session memory summaries; updated ' + updatedCount + ' persona impressions');
     } catch (error) {
         roundMemorySummary.started = false;
         console.error('[NPC] session memory summary failed', error);

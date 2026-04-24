@@ -179,9 +179,42 @@ function buildSummarizeSessionPrompt(npc, events) {
     };
 }
 
+function formatSessionSummaries(summaries) {
+    const rows = Array.isArray(summaries) ? summaries.slice(0, 5) : [];
+    if (!rows.length) {
+        return '暂无局末摘要。';
+    }
+
+    return rows.map((summary, index) => {
+        return String(index + 1) + '. ' + (summary.summary || '') + '（关系变化 ' + (summary.relationshipDelta || 0) + '）';
+    }).join('\n');
+}
+
+function buildUpdatePersonaImpressionPrompt(npc, summaries, currentImpression) {
+    return {
+        system: [
+            '你是长期人物画像压缩器。',
+            '目标：把最近 5 局摘要压缩成稳定的人物画像，避免记忆膨胀。',
+            '必须遵循 NPC 人设锚点：',
+            npc && npc.personality ? npc.personality.anchorsText || '' : ''
+        ].join('\n\n'),
+        user: [
+            '当前人物画像：' + (currentImpression && currentImpression.impression ? currentImpression.impression : '暂无'),
+            '最近 5 局摘要：',
+            formatSessionSummaries(summaries),
+            '请输出 JSON，不要解释。',
+            '格式：{"impression":"不超过150字，说明玩家偏好、互动方式、NPC对玩家的感觉","relationshipValue":0}',
+            'relationshipValue 是 0-100 的整数。'
+        ].join('\n'),
+        maxTokens: 180,
+        temperature: 0.4
+    };
+}
+
 module.exports = {
     buildNpcIntentPrompt: buildNpcIntentPrompt,
     buildNpcUtterPrompt: buildNpcUtterPrompt,
     buildNpcReplyPrompt: buildNpcReplyPrompt,
-    buildSummarizeSessionPrompt: buildSummarizeSessionPrompt
+    buildSummarizeSessionPrompt: buildSummarizeSessionPrompt,
+    buildUpdatePersonaImpressionPrompt: buildUpdatePersonaImpressionPrompt
 };

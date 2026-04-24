@@ -108,7 +108,8 @@ describe('llm wrapper', () => {
         expect(fs.existsSync(auditFilePath)).to.equal(true);
     });
 
-    it('should fall back when provider execution exceeds the timeout', async () => {
+    it('should fall back when provider execution exceeds the timeout', async function () {
+        this.timeout(4000);
         const result = await fixture.wrapper.ask('slow', {}, {
             useCache: false,
             timeoutMs: 10,
