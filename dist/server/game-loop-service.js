@@ -97,7 +97,20 @@ function createGameLoopService(options) {
     const partPickups = map.partLoot.collectForPlayer(currentPlayer);
     if (ghostRecorder) {
       partPickups.forEach(pickup => {
-        ghostRecorder.recordItem(currentPlayer, pickup.equippedPart, pickup.loot, Date.now());
+        const now = Date.now();
+        const lootPosition = {
+          x: pickup.loot.x,
+          y: pickup.loot.y
+        };
+        ghostRecorder.recordItem(currentPlayer, pickup.equippedPart, pickup.loot, now);
+        if (typeof ghostRecorder.recordPartEvent === 'function') {
+          ghostRecorder.recordPartEvent(currentPlayer, 'part_pickup', pickup.equippedPart, lootPosition, now);
+          ghostRecorder.recordPartEvent(currentPlayer, 'part_equipped', pickup.equippedPart, lootPosition, now);
+          if (pickup.droppedPart) {
+            ghostRecorder.recordPartEvent(currentPlayer, 'part_replaced', pickup.droppedPart, lootPosition, now);
+            ghostRecorder.recordPartEvent(currentPlayer, 'part_drop', pickup.droppedPart, lootPosition, now);
+          }
+        }
       });
     }
     currentPlayer.virusSplit(cellsToSplit, config.limitSplit, config.defaultPlayerMass);

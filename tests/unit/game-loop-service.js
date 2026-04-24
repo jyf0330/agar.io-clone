@@ -39,4 +39,60 @@ describe('game-loop-service.js', () => {
     expect(hand.source).to.equal('ghost-echo');
     expect(map.partLoot.data[0].source).to.equal('slot-replacement');
   });
+
+  it('should record part lifecycle events when pickup replaces an equipped slot', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const player = new playerUtils.Player('player-1');
+    const recorded = [];
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'collector',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+    map.partLoot.addPart({
+      type: 'HAND',
+      templateId: 'hand-thread',
+      source: 'map-pickup'
+    }, { x: 100, y: 100 }, 'map-pickup');
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      ghostRecorder: {
+        recordItem() {},
+        recordPartEvent(playerArg, eventType, partArg, positionArg) {
+          recorded.push({
+            playerId: playerArg.id,
+            eventType,
+            partType: partArg.partType,
+            x: positionArg.x,
+            y: positionArg.y
+          });
+        }
+      },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    service.tickPlayer(player);
+
+    expect(recorded.map((entry) => entry.eventType)).to.deep.equal([
+      'part_pickup',
+      'part_equipped',
+      'part_replaced',
+      'part_drop'
+    ]);
+    expect(recorded.every((entry) => entry.playerId === 'player-1')).to.equal(true);
+    expect(recorded[0].partType).to.equal('HAND');
+    expect(recorded[0].x).to.equal(100);
+    expect(recorded[0].y).to.equal(100);
+  });
 });
