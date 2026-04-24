@@ -1,12 +1,12 @@
 # Graph Report - agar.io-clone-master  (2026-04-25)
 
 ## Corpus Check
-- 141 files · ~251,187 words
+- 141 files · ~251,608 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 763 nodes · 1243 edges · 32 communities detected
-- Extraction: 85% EXTRACTED · 15% INFERRED · 0% AMBIGUOUS · INFERRED: 188 edges (avg confidence: 0.8)
+- 766 nodes · 1249 edges · 32 communities detected
+- Extraction: 85% EXTRACTED · 15% INFERRED · 0% AMBIGUOUS · INFERRED: 189 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -48,10 +48,10 @@
 2. `executeSql()` - 26 edges
 3. `ask()` - 18 edges
 4. `GhostRecorder` - 17 edges
-5. `ChatClient` - 16 edges
-6. `runScenario()` - 15 edges
-7. `addPlayer()` - 14 edges
-8. `GhostManager` - 14 edges
+5. `GhostManager` - 16 edges
+6. `ChatClient` - 16 edges
+7. `runScenario()` - 15 edges
+8. `addPlayer()` - 14 edges
 9. `get()` - 13 edges
 10. `Canvas` - 13 edges
 
@@ -83,11 +83,11 @@ Cohesion: 0.06
 Nodes (31): getPosition(), addNew(), Food, removeExcess(), balanceMass(), enumerateVisibleWorld(), getVisibleWorldForPlayer(), clamp() (+23 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.08
-Nodes (36): seedSummaries(), buildFallbackImpression(), clampRelationshipValue(), parsePersonaResponse(), shouldUpdateFromSummaryCount(), updateNpcPersona(), updatePersonaImpressions(), addSessionSummary() (+28 more)
+Cohesion: 0.09
+Nodes (30): seedSummaries(), addSessionSummary(), buildWhere(), endSession(), executeSql(), getPersonaImpression(), getPythonExecutable(), listChatRecords() (+22 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.11
+Cohesion: 0.1
 Nodes (11): clamp(), randomWalkIntent(), buildContextualFallbackUtterance(), pickGreetingFallback(), stableIndex(), estimatePromptTokens(), getChatFallbackReply(), getMockChatReply() (+3 more)
 
 ### Community 4 - "Community 4"
@@ -99,36 +99,36 @@ Cohesion: 0.08
 Nodes (24): adjustForBoundaries(), constructor(), move(), Cell, changeCellMass(), checkForCollisions(), clientProvidedData(), constructor() (+16 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.09
-Nodes (23): reset(), build_bot_json(), clamp(), generate_frames(), main(), parse_args(), pick_random_target(), 在地图内随机挑一个目标点，留一点边距避免贴墙。 (+15 more)
-
-### Community 7 - "Community 7"
-Cohesion: 0.12
-Nodes (4): Canvas, ChatClient, canEmit(), emitIfReady()
-
-### Community 8 - "Community 8"
-Cohesion: 0.09
-Nodes (23): animloop(), applyTranslations(), enterGame(), renderPlayerCardPreviews(), renderStatusPanel(), resize(), startGame(), validNick() (+15 more)
-
-### Community 9 - "Community 9"
 Cohesion: 0.08
 Nodes (5): GhostManager, PartLootManager, createNpcTaskRewardPart(), grantNpcTaskReward(), recordReward()
 
+### Community 7 - "Community 7"
+Cohesion: 0.11
+Nodes (5): resize(), Canvas, ChatClient, canEmit(), emitIfReady()
+
+### Community 8 - "Community 8"
+Cohesion: 0.12
+Nodes (25): reset(), createDraftId(), getStorage(), loadDrafts(), normalizeDraftPayload(), saveDraft(), createPlayerCardEditor(), createHistoryState() (+17 more)
+
+### Community 9 - "Community 9"
+Cohesion: 0.09
+Nodes (21): build_bot_json(), clamp(), generate_frames(), main(), parse_args(), pick_random_target(), 在地图内随机挑一个目标点，留一点边距避免贴墙。, 朝目标移动最多 max_step，达到/超过则贴上。 (+13 more)
+
 ### Community 10 - "Community 10"
-Cohesion: 0.13
-Nodes (23): createDraftId(), getStorage(), loadDrafts(), normalizeDraftPayload(), saveDraft(), createPlayerCardEditor(), createHistoryState(), redo() (+15 more)
+Cohesion: 0.09
+Nodes (22): animloop(), applyTranslations(), enterGame(), renderPlayerCardPreviews(), renderStatusPanel(), startGame(), validNick(), createBodySignatureController() (+14 more)
 
 ### Community 11 - "Community 11"
+Cohesion: 0.11
+Nodes (25): buildFallbackImpression(), clampRelationshipValue(), parsePersonaResponse(), shouldUpdateFromSummaryCount(), updateNpcPersona(), updatePersonaImpressions(), buildNpcIntentPrompt(), buildNpcReplyPrompt() (+17 more)
+
+### Community 12 - "Community 12"
 Cohesion: 0.14
 Nodes (23): buildScenarioOptions(), createDriver(), ensureDir(), finalizeVideo(), httpGet(), main(), observeNpcActivity(), observeOnline() (+15 more)
 
-### Community 12 - "Community 12"
-Cohesion: 0.13
-Nodes (16): askOpenAI(), normalizeContent(), buildChatMessages(), executeChatScenario(), main(), executeOfflineScenario(), main(), acceptResponse() (+8 more)
-
 ### Community 13 - "Community 13"
 Cohesion: 0.13
-Nodes (19): buildNpcIntentPrompt(), buildNpcReplyPrompt(), buildNpcUtterPrompt(), buildSummarizeSessionPrompt(), buildUpdatePersonaImpressionPrompt(), formatMemoryBlock(), formatRecentChats(), formatSessionEvents() (+11 more)
+Nodes (16): askOpenAI(), normalizeContent(), buildChatMessages(), executeChatScenario(), main(), executeOfflineScenario(), main(), acceptResponse() (+8 more)
 
 ### Community 14 - "Community 14"
 Cohesion: 0.15
@@ -215,11 +215,11 @@ Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Inp
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `addPlayer()` connect `Community 1` to `Community 0`, `Community 8`, `Community 5`?**
+- **Why does `addPlayer()` connect `Community 1` to `Community 0`, `Community 10`, `Community 5`?**
   _High betweenness centrality (0.171) - this node is a cross-community bridge._
-- **Why does `ask()` connect `Community 12` to `Community 2`, `Community 3`, `Community 4`, `Community 13`?**
-  _High betweenness centrality (0.134) - this node is a cross-community bridge._
-- **Why does `emit()` connect `Community 1` to `Community 8`, `Community 7`?**
+- **Why does `ask()` connect `Community 13` to `Community 3`, `Community 11`, `Community 4`?**
+  _High betweenness centrality (0.135) - this node is a cross-community bridge._
+- **Why does `emit()` connect `Community 1` to `Community 10`, `Community 7`?**
   _High betweenness centrality (0.101) - this node is a cross-community bridge._
 - **Are the 9 inferred relationships involving `ask()` (e.g. with `createCacheKey()` and `get()`) actually correct?**
   _`ask()` has 9 INFERRED edges - model-reasoned connections that need verification._

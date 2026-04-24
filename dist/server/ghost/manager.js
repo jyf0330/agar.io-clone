@@ -29,6 +29,28 @@ function normalizeAnchor(anchor) {
     priority: anchor.priority || 0
   };
 }
+function interpolateTrace(points, t) {
+  if (!points || !points.length) {
+    return null;
+  }
+  if (t <= points[0].t) {
+    return points[0];
+  }
+  for (let index = 1; index < points.length; index++) {
+    const previous = points[index - 1];
+    const next = points[index];
+    if (t <= next.t) {
+      const duration = Math.max(1, next.t - previous.t);
+      const ratio = Math.max(0, Math.min(1, (t - previous.t) / duration));
+      return {
+        x: previous.x + (next.x - previous.x) * ratio,
+        y: previous.y + (next.y - previous.y) * ratio,
+        t: t
+      };
+    }
+  }
+  return points[points.length - 1];
+}
 class GhostManager {
   constructor(options) {
     const settings = options || {};
@@ -95,6 +117,16 @@ class GhostManager {
     const key = event.sessionId + ':' + event.ghostId;
     return this.activeGhosts[key] || this.getActiveGhostCount() < this.maxActiveGhosts;
   }
+  loadTracePoints(event) {
+    if (!this.memoryStore || typeof this.memoryStore.listPlayerTraces !== 'function') {
+      return [];
+    }
+    return this.memoryStore.listPlayerTraces({
+      sessionId: event.sessionId,
+      playerId: event.ghostId,
+      limit: 1000
+    }).filter(point => typeof point.x === 'number' && typeof point.y === 'number' && typeof point.t === 'number').sort((left, right) => left.t - right.t);
+  }
   activateTrace(event, now) {
     const key = event.sessionId + ':' + event.ghostId;
     this.activeGhosts[key] = {
@@ -106,6 +138,9 @@ class GhostManager {
       y: event.y,
       chat: event.chat || '',
       lastSeenAt: now,
+      activatedAt: now,
+      anchorT: event.t,
+      tracePoints: this.loadTracePoints(event),
       radius: 34,
       isGhost: true
     };
@@ -132,6 +167,17 @@ class GhostManager {
       }
     });
   }
+  updateGhostPositions(now) {
+    Object.keys(this.activeGhosts).forEach(key => {
+      const ghost = this.activeGhosts[key];
+      const replayT = ghost.anchorT + Math.max(0, now - ghost.activatedAt);
+      const point = interpolateTrace(ghost.tracePoints, replayT);
+      if (point) {
+        ghost.x = point.x;
+        ghost.y = point.y;
+      }
+    });
+  }
   tick(state) {
     const safeState = state || {};
     const map = safeState.map;
@@ -140,6 +186,7 @@ class GhostManager {
     const startedAt = safeState.matchStartedAt || now;
     const elapsedMs = Math.max(0, now - startedAt);
     this.pruneGhosts(now);
+    this.updateGhostPositions(now);
     this.getEvents().forEach(event => {
       if (!this.isInTimeWindow(event, elapsedMs) || !this.isNearAnyPlayer(event, players) || this.isAnchorCoolingDown(event, now)) {
         return;
