@@ -83,6 +83,8 @@ exports.Player = class {
     this.name = null;
     this.admin = false;
     this.playerCardPreviewDataUrl = null;
+    this.consentToRecord = true;
+    this.isReplayAllowed = true;
     this.screenWidth = null;
     this.screenHeight = null;
     this.timeToMerge = null;
@@ -114,6 +116,8 @@ exports.Player = class {
     this.screenHeight = playerData.screenHeight;
     this.playerCardPreviewDataUrl = playerData.playerCardPreviewDataUrl || null;
     this.bodySignature = playerData.bodySignature || null;
+    this.consentToRecord = playerData.consentToRecord !== false;
+    this.isReplayAllowed = this.consentToRecord;
     body.applyBodyState(this, {
       bodySignature: this.bodySignature
     });

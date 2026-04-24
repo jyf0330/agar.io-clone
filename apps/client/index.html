@@ -34,6 +34,8 @@
             <input type="text" tabindex="0" autofocus placeholder="请输入你的名字" id="playerNameInput" maxlength="25" />
             <b class="input-error" data-i18n="startMenu.invalidName">昵称只能包含字母、数字或下划线</b>
             <br />
+            <label class="record-consent-row"><input id="recordConsentInput" type="checkbox" checked><span data-i18n="startMenu.recordConsent">同意录制本局用于历史回响</span></label>
+            <br />
             <a onclick="document.getElementById('spawn_cell').play();"><button id="startButton" data-i18n="startMenu.play">开始游戏</button></a>
             <button id="spectateButton" data-i18n="startMenu.spectate">观战</button>
             <button id="paintCardButton" data-i18n="startMenu.drawCard">绘制名片</button>

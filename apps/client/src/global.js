@@ -29,6 +29,7 @@ module.exports = {
     toggleMassState: 0,
     playerCard: null,
     bodySignature: null,
+    consentToRecord: true,
     targetPlayerCardPreviewDataUrl: null,
     backgroundColor: '#f2fbff',
     lineColor: '#000000',

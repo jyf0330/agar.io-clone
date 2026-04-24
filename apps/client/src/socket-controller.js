@@ -73,6 +73,8 @@ function createSocketController(options) {
             nextPlayer.target = options.getCanvasTarget();
             nextPlayer.playerCardPreviewDataUrl = options.getPlayerCardPreviewDataUrl();
             nextPlayer.bodySignature = options.global.bodySignature || null;
+            nextPlayer.consentToRecord = options.global.consentToRecord !== false;
+            nextPlayer.isReplayAllowed = nextPlayer.consentToRecord;
             options.setPlayer(nextPlayer);
             options.getChat().player = nextPlayer;
             nextSocket.emit('gotit', nextPlayer);

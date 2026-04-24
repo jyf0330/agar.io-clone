@@ -21,6 +21,7 @@ var i18n = require('./i18n');
 var socketEmit = require('./socket-emit');
 
 var playerNameInput = document.getElementById('playerNameInput');
+var recordConsentInput = document.getElementById('recordConsentInput');
 var socket;
 var playerCardEditor;
 var avatarDraftController;
@@ -49,6 +50,7 @@ function enterGame(type) {
     global.playerType = type;
     global.playerCard = playerCardStorage.loadPlayerCard();
     global.bodySignature = bodySignatureStorage.loadBodySignature();
+    global.consentToRecord = type === 'player' && (!recordConsentInput || recordConsentInput.checked !== false);
     global.targetPlayerCardPreviewDataUrl = null;
     global.disconnected = false;
     global.kicked = false;

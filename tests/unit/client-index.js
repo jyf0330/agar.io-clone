@@ -20,6 +20,13 @@ describe('client index html', () => {
     expect(html).to.include('id="bodySignatureSubmitButton"');
   });
 
+  it('should expose a V5 recording consent toggle before entering the game', () => {
+    const html = fs.readFileSync(path.resolve(__dirname, '../../apps/client/index.html'), 'utf8');
+
+    expect(html).to.include('id="recordConsentInput"');
+    expect(html).to.include('data-i18n="startMenu.recordConsent"');
+  });
+
   it('should include the V5 body signature image assets', () => {
     [
       '../../apps/client/assets/img/body-signature/body-base-missing-right-arm.png',
