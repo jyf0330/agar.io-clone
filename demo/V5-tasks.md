@@ -24,13 +24,14 @@
 
 - [x] **A0.1** 默认关闭 V3 NPC / 记忆 / 聊天 AI 侧边系统，保留 `V3_NPC_ENABLED=1` 回放旧 Week 1 demo；V5 开发不再被 NPC loop 抢走主流程。
 - [x] **A0.2** 开局入口改回显式开始菜单，不再自动跳过开始流程，保证画板能成为进入对局前的第一步。
-- [x] **A0.3** 鬼魂 / 宠物 / 录制功能暂不开发，等签名画板本地闭环稳定后再进入 Phase C。
+- [x] **A0.3** 鬼魂 / 宠物 / 录制功能先不阻塞 Phase A；签名画板本地闭环稳定后，已在 Phase C 接入鬼魂录制/回放与宠物任务奖励。
 
 ### A1 配置与资源
 
 - [x] **A1.1** 新增 `configs/game/body-signature.js`（或 `demo/configs/`）：本期 **签名槽类型**（如 `HAND`）、**三张参考图** 路径、`templateId`、**基础加成表**、哈希阈值 `low: 0.1`、`high: 0.7`（相似度映射规则说明）。  
   当前实现：先落在 `apps/client/src/body-signature-config.js`，使用程序化参考轮廓，避免 Phase A 被资源管线卡住。
-- [ ] **A1.2** 资源目录：三张 ref PNG（透明底统一尺寸，如 128×128），放入 `demo/assets/body-signature-refs/` 或 `apps/client/img/body-signature/`（与 webpack 复制策略一致）。
+- [x] **A1.2** 资源目录：三张 ref PNG（透明底统一尺寸，如 128×128），放入 `demo/assets/body-signature-refs/` 或 `apps/client/img/body-signature/`（与 webpack 复制策略一致）。  
+  当前实现：资源位于 `apps/client/assets/img/body-signature/refs/`，构建复制到 `dist/client/img/body-signature/refs/`。
 
 ### A2 UI 结构（HTML/CSS）
 
@@ -58,7 +59,8 @@
 
 ### A5 构建与依赖
 
-- [ ] **A5.1** `npm install browser-image-hash`（或选定库），webpack 能打包。
+- [x] **A5.1** `npm install browser-image-hash`（或选定库），webpack 能打包。  
+  当前实现：选定库为本地 `body-signature-analysis.js` 的 16×16 alpha-grid 感知近似，避免新增依赖；webpack 已能打包。
 - [x] **A5.2** `npm run build` 通过；手动：开局 → 画板 → 提交 → 进入游戏（数据可先只打 `console.log`）。
 
 **Phase A 完成标准**：不连服务端也能 **完整走通画板 → 本地持久化签名结果 → 进入现有对局**；控制台或 UI 临时显示「模板 / 档位」。
@@ -69,15 +71,19 @@
 
 - [x] **B1** [`socket-controller.js`](../apps/client/src/socket-controller.js) / 握手 payload：附加 `bodySignature` 对象。
 - [x] **B2** [`apps/server/src/server.js`](../apps/server/src/server.js)（或 `player.js`）：创建 `Player` 时读入并挂在 `player.bodySignature`；**暂不**改 `body.js` 数值，先日志校验。
-- [ ] **B3** 将 `bodySignature` 同步进 `enumerateVisibleWorld` 或仅自用 HUD（后续再接 `applyBodyState`）。
+- [x] **B3** 将 `bodySignature` 同步进 `enumerateVisibleWorld` 或仅自用 HUD（后续再接 `applyBodyState`）。  
+  当前实现：`player-projection.js` 下发 `bodySignature`，客户端 `player-hydration.js` 同步；服务端同时把签名转成权威 `bodyParts`。
 
 ---
 
 ## Phase C · 玩法挂钩（P2，画板之后）
 
-- [ ] **C1** [`body.js`](../apps/server/src/body.js)：`createBodyPart` 支持 `templateId` / `signatureBonus`；开局默认 loadout + 签名槽覆盖。
-- [ ] **C2** 槽位换装 + `stealRandomCorePart` 完整对象（见 V5 §5）。
-- [ ] **C3** 鬼魂 / 录制 / 宠物：按 [`PLAN-v5-historical-echo.md`](PLAN-v5-historical-echo.md) §七排期。
+- [x] **C1** [`body.js`](../apps/server/src/body.js)：`createBodyPart` 支持 `templateId` / `signatureBonus`；开局默认 loadout + 签名槽覆盖。  
+  当前实现：`bodySignature` 在 `Player.clientProvidedData` 后覆盖 HAND 槽；`faint/echo` 转成 `connectionRangeBonus`，并进入同步 payload。
+- [x] **C2** 槽位换装 + `stealRandomCorePart` 完整对象（见 V5 §5）。  
+  当前实现：`equipBodyPart` 会替换同类型槽并把旧件掉落；`stealRandomCorePart` 保留完整 part 对象；`PartLootManager` 负责世界掉落、拾取、同步与客户端绘制。
+- [x] **C3** 鬼魂 / 录制 / 宠物：按 [`PLAN-v5-historical-echo.md`](PLAN-v5-historical-echo.md) §七排期。  
+  当前实现：`ghost/recorder.js` 写入轨迹/聊天/物品 L1 事件；`ghost/manager.js` 按时间+地点触发历史回响与绝对坐标物品；客户端绘制 ghost；宠物任务请求通过 `npc/task-rewards.js` 生成完整部位奖励并记录事实。
 
 ---
 
@@ -93,3 +99,4 @@
 ## 修订
 
 - 2026-04-24：初版，**Phase A 画板优先**。
+- 2026-04-25：完成 Phase B/C 剩余项：签名同步与服务端权威部位、世界部位掉落/拾取、历史回响录制/回放、宠物任务奖励链路。

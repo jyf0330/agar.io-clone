@@ -9886,8 +9886,8 @@
       "source_file": "apps/server/src/npc/task-rewards.js",
       "source_location": "L7",
       "weight": 1.0,
-      "_src": "task_rewards_createnpctaskrewardpart",
-      "_tgt": "body_createbodypart",
+      "_src": "body_createbodypart",
+      "_tgt": "task_rewards_createnpctaskrewardpart",
       "source": "body_createbodypart",
       "target": "task_rewards_createnpctaskrewardpart"
     },
@@ -12646,8 +12646,8 @@
       "source_file": "apps/server/src/npc/task-rewards.js",
       "source_location": "L23",
       "weight": 1.0,
-      "_src": "task_rewards_recordreward",
-      "_tgt": "recorder_ghostrecorder_recordevent",
+      "_src": "recorder_ghostrecorder_recordevent",
+      "_tgt": "task_rewards_recordreward",
       "source": "recorder_ghostrecorder_recordevent",
       "target": "task_rewards_recordreward"
     },
@@ -12910,8 +12910,8 @@
       "source_file": "apps/server/src/npc/task-rewards.js",
       "source_location": "L55",
       "weight": 1.0,
-      "_src": "task_rewards_grantnpctaskreward",
-      "_tgt": "partloot_partlootmanager_addpart",
+      "_src": "partloot_partlootmanager_addpart",
+      "_tgt": "task_rewards_grantnpctaskreward",
       "source": "partloot_partlootmanager_addpart",
       "target": "task_rewards_grantnpctaskreward"
     },
