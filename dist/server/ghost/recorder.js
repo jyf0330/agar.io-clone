@@ -142,11 +142,32 @@ class GhostRecorder {
     });
   }
   recordItem(player, part, position, now) {
-    this.recordEvent(player, 'ghost_item', {
+    const payload = {
       x: position.x,
       y: position.y,
       part: body.cloneBodyPart(part)
-    }, now);
+    };
+    this.recordEvent(player, 'ghost_item', payload, now);
+    this.recordItemEvent(player, 'part_pickup', payload, now);
+  }
+  recordItemEvent(player, eventType, payload, now) {
+    if (!this.memoryStore || typeof this.memoryStore.recordItemEvent !== 'function' || !this.canRecordPlayer(player)) {
+      return;
+    }
+    const elapsed = this.getElapsed(now || Date.now());
+    this.memoryStore.recordItemEvent({
+      eventId: [this.sessionId, player.id, eventType, elapsed, payload.x, payload.y].join(':'),
+      sessionId: this.sessionId,
+      playerId: player.id,
+      eventType: eventType,
+      t: elapsed,
+      x: payload.x,
+      y: payload.y,
+      payload: {
+        part: payload.part
+      },
+      ts: now || Date.now()
+    });
   }
   recordPartEvent(player, eventType, part, position, now, payload) {
     const eventPosition = position || {};

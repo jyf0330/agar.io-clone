@@ -62,6 +62,24 @@ CREATE INDEX IF NOT EXISTS idx_chat_records_session_player_t
 CREATE INDEX IF NOT EXISTS idx_chat_records_position
   ON chat_records(session_id, x, y);
 
+CREATE TABLE IF NOT EXISTS item_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id TEXT,
+  session_id TEXT,
+  player_id TEXT,
+  event_type TEXT,
+  t INTEGER,
+  x REAL,
+  y REAL,
+  payload TEXT,
+  ts INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_item_events_session_type_t
+  ON item_events(session_id, event_type, t);
+CREATE INDEX IF NOT EXISTS idx_item_events_position
+  ON item_events(session_id, x, y);
+
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   player_id TEXT,
@@ -246,6 +264,21 @@ function toCamelChatRecord(row) {
         y: row.y,
         text: row.text || '',
         replayAllowed: row.replay_allowed === 1,
+        ts: row.ts
+    };
+}
+
+function toCamelItemEvent(row) {
+    return {
+        id: row.id,
+        eventId: row.event_id,
+        sessionId: row.session_id,
+        playerId: row.player_id,
+        eventType: row.event_type,
+        t: row.t,
+        x: row.x,
+        y: row.y,
+        payload: row.payload ? JSON.parse(row.payload) : {},
         ts: row.ts
     };
 }
@@ -446,6 +479,48 @@ function listChatRecords(filters) {
     return result.rows.map(toCamelChatRecord);
 }
 
+function recordItemEvent(event) {
+    const safeEvent = event || {};
+    const result = executeSql(
+        [
+            'INSERT INTO item_events(',
+            'event_id, session_id, player_id, event_type, t, x, y, payload, ts',
+            ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ].join(' '),
+        [
+            safeEvent.eventId || null,
+            safeEvent.sessionId || null,
+            safeEvent.playerId || null,
+            safeEvent.eventType || 'item_event',
+            typeof safeEvent.t === 'number' ? safeEvent.t : 0,
+            typeof safeEvent.x === 'number' ? safeEvent.x : null,
+            typeof safeEvent.y === 'number' ? safeEvent.y : null,
+            JSON.stringify(safeEvent.payload || {}),
+            typeof safeEvent.ts === 'number' ? safeEvent.ts : Date.now()
+        ]
+    );
+
+    return {
+        id: result.lastID
+    };
+}
+
+function listItemEvents(filters) {
+    const where = buildWhere(filters || {}, {
+        playerId: 'player_id',
+        sessionId: 'session_id',
+        eventType: 'event_type'
+    });
+    const limit = normalizeLimit(filters && filters.limit, 500);
+    const result = executeSql(
+        'SELECT * FROM item_events' + where.sql + ' ORDER BY t ASC, id ASC LIMIT ?',
+        where.params.concat(limit),
+        {mode: 'all'}
+    );
+
+    return result.rows.map(toCamelItemEvent);
+}
+
 function listEvents(filters) {
     const where = buildWhere(filters || {}, {
         playerId: 'player_id',
@@ -552,6 +627,8 @@ module.exports = {
     listPlayerTraces: listPlayerTraces,
     recordChatRecord: recordChatRecord,
     listChatRecords: listChatRecords,
+    recordItemEvent: recordItemEvent,
+    listItemEvents: listItemEvents,
     recordEvent: recordEvent,
     listEvents: listEvents,
     addSessionSummary: addSessionSummary,

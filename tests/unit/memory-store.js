@@ -36,6 +36,7 @@ describe('memory store', function () {
         expect(tables).to.include('sessions');
         expect(tables).to.include('player_traces');
         expect(tables).to.include('chat_records');
+        expect(tables).to.include('item_events');
         expect(tables).to.include('events');
         expect(tables).to.include('session_summaries');
         expect(tables).to.include('persona_impressions');
@@ -138,6 +139,40 @@ describe('memory store', function () {
             text: '这里有回声',
             replayAllowed: true,
             ts: 1220
+        });
+    });
+
+    it('should record and query V5 item events with JSON payloads', function () {
+        const store = loadStore(path.join(tmpDir, 'memory.db'));
+
+        store.recordItemEvent({
+            eventId: 'item-1',
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            eventType: 'part_pickup',
+            t: 240,
+            x: 160,
+            y: 170,
+            payload: {part: {type: 'HAND'}},
+            ts: 1240
+        });
+
+        const itemEvents = store.listItemEvents({
+            sessionId: 'session-1',
+            eventType: 'part_pickup'
+        });
+
+        expect(itemEvents).to.deep.include({
+            id: itemEvents[0].id,
+            eventId: 'item-1',
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            eventType: 'part_pickup',
+            t: 240,
+            x: 160,
+            y: 170,
+            payload: {part: {type: 'HAND'}},
+            ts: 1240
         });
     });
 

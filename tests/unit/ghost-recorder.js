@@ -208,4 +208,36 @@ describe('ghost recorder', () => {
       ts: 1220
     });
   });
+
+  it('should mirror recorded item pickups into typed item events', () => {
+    const itemEvents = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      memoryStore: {
+        recordEvent() {},
+        recordItemEvent(event) {
+          itemEvents.push(event);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      consentToRecord: true
+    };
+
+    recorder.recordItem(player, { type: 'HAND', templateId: 'hand-open' }, { x: 140, y: 150 }, 1240);
+
+    expect(itemEvents[0]).to.deep.include({
+      sessionId: 'session-now',
+      playerId: 'player-1',
+      eventType: 'part_pickup',
+      t: 240,
+      x: 140,
+      y: 150,
+      ts: 1240
+    });
+    expect(itemEvents[0].payload.part.templateId).to.equal('hand-open');
+  });
 });
