@@ -1,6 +1,32 @@
 "use strict";
 
+const path = require('path');
 const body = require('../body');
+function loadForbiddenWords() {
+  try {
+    const pool = require(path.resolve(process.cwd(), 'demo/critiques/pool.json'));
+    return pool && pool.meta && Array.isArray(pool.meta.forbiddenWords) ? pool.meta.forbiddenWords : [];
+  } catch (_error) {
+    return [];
+  }
+}
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+const forbiddenWords = loadForbiddenWords();
+function sanitizeReplayChat(text) {
+  let sanitized = String(text || '');
+  sanitized = sanitized.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[email]');
+  sanitized = sanitized.replace(/https?:\/\/\S+|www\.\S+/gi, '[link]');
+  sanitized = sanitized.replace(/\+?\d[\d\s-]{8,}\d/g, '[phone]');
+  forbiddenWords.forEach(word => {
+    if (!word) {
+      return;
+    }
+    sanitized = sanitized.replace(new RegExp(escapeRegExp(word), 'g'), '[filtered]');
+  });
+  return sanitized;
+}
 class GhostRecorder {
   constructor(options) {
     const settings = options || {};
@@ -53,7 +79,7 @@ class GhostRecorder {
     this.recordEvent(player, 'ghost_chat', {
       x: player.x,
       y: player.y,
-      chat: String(message || '').substring(0, 140)
+      chat: sanitizeReplayChat(message).substring(0, 140)
     }, now);
   }
   recordItem(player, part, position, now) {
@@ -82,3 +108,4 @@ class GhostRecorder {
   }
 }
 module.exports = GhostRecorder;
+module.exports.sanitizeReplayChat = sanitizeReplayChat;

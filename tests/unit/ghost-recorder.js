@@ -43,4 +43,34 @@ describe('ghost recorder', () => {
     expect(events[1].payload.chat).to.equal('hello from now');
     expect(events[2].payload.part.templateId).to.equal('hand-thread');
   });
+
+  it('should sanitize sensitive ghost chat before recording replay material', () => {
+    const events = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      memoryStore: {
+        recordEvent(event) {
+          events.push(event);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      x: 120,
+      y: 130
+    };
+
+    recorder.recordChat(player, 'call 13812345678 mail a@b.com see https://example.com 死亡', 1220);
+
+    expect(events[0].payload.chat).to.contain('[phone]');
+    expect(events[0].payload.chat).to.contain('[email]');
+    expect(events[0].payload.chat).to.contain('[link]');
+    expect(events[0].payload.chat).to.contain('[filtered]');
+    expect(events[0].payload.chat).to.not.contain('13812345678');
+    expect(events[0].payload.chat).to.not.contain('a@b.com');
+    expect(events[0].payload.chat).to.not.contain('https://example.com');
+    expect(events[0].payload.chat).to.not.contain('死亡');
+  });
 });
