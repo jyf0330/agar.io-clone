@@ -34,6 +34,8 @@ class GhostRecorder {
     this.startedAt = settings.startedAt || Date.now();
     this.sampleIntervalMs = settings.sampleIntervalMs || 200;
     this.memoryStore = settings.memoryStore || null;
+    this.mapId = settings.mapId || 'default-map';
+    this.isSeed = settings.isSeed === true;
     this.lastTraceAtByPlayer = {};
   }
   getElapsed(now) {
@@ -76,6 +78,23 @@ class GhostRecorder {
         hue: player.hue,
         bodyParts: (player.bodyParts || []).map(part => body.cloneBodyPart(part))
       }, now);
+    });
+  }
+  recordPlayerSession(player, now) {
+    if (!this.memoryStore || typeof this.memoryStore.recordSession !== 'function' || !player) {
+      return;
+    }
+    this.memoryStore.recordSession({
+      sessionId: this.sessionId,
+      playerId: player.id,
+      playerName: player.name || '',
+      mapId: this.mapId,
+      consentToRecord: player.consentToRecord !== false,
+      startedAt: this.startedAt,
+      endedAt: null,
+      isSeed: this.isSeed,
+      isReplayAllowed: player.isReplayAllowed !== false,
+      ts: now || Date.now()
     });
   }
   recordChat(player, message, now) {

@@ -102,4 +102,38 @@ describe('ghost recorder', () => {
 
     expect(events).to.deep.equal([]);
   });
+
+  it('should record player session metadata for historical echo replay eligibility', () => {
+    const sessions = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      mapId: 'fixed-arena',
+      memoryStore: {
+        recordSession(session) {
+          sessions.push(session);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      consentToRecord: true,
+      isReplayAllowed: true
+    };
+
+    recorder.recordPlayerSession(player, 1200);
+
+    expect(sessions[0]).to.deep.include({
+      sessionId: 'session-now',
+      playerId: 'player-1',
+      playerName: 'Live Huy',
+      mapId: 'fixed-arena',
+      consentToRecord: true,
+      startedAt: 1000,
+      endedAt: null,
+      isSeed: false,
+      isReplayAllowed: true
+    });
+  });
 });

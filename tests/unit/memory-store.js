@@ -33,9 +33,42 @@ describe('memory store', function () {
         const store = loadStore(path.join(tmpDir, 'memory.db'));
         const tables = store.listTables();
 
+        expect(tables).to.include('sessions');
         expect(tables).to.include('events');
         expect(tables).to.include('session_summaries');
         expect(tables).to.include('persona_impressions');
+    });
+
+    it('should record and list V5 historical echo session metadata', function () {
+        const store = loadStore(path.join(tmpDir, 'memory.db'));
+
+        store.recordSession({
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            playerName: 'Archivist',
+            mapId: 'fixed-arena',
+            consentToRecord: false,
+            startedAt: 1000,
+            endedAt: null,
+            isSeed: true,
+            isReplayAllowed: false
+        });
+        store.endSession('session-1', 'player-a', 2000);
+
+        const sessions = store.listSessions({sessionId: 'session-1'});
+
+        expect(sessions).to.have.length(1);
+        expect(sessions[0]).to.include({
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            playerName: 'Archivist',
+            mapId: 'fixed-arena',
+            consentToRecord: false,
+            startedAt: 1000,
+            endedAt: 2000,
+            isSeed: true,
+            isReplayAllowed: false
+        });
     });
 
     it('should record and query raw npc events with JSON payloads', function () {

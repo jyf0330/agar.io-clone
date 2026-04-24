@@ -85,7 +85,9 @@ const ghostManager = new GhostManager({
 const ghostRecorder = new GhostRecorder({
   memoryStore: memoryStore,
   sessionId: memorySessionId,
-  startedAt: roundClock.startedAt
+  startedAt: roundClock.startedAt,
+  mapId: config.mapId || 'fixed-arena',
+  isSeed: process.env.V5_SEED_SESSION === '1'
 });
 const gameLoopService = createGameLoopService({
   config,
@@ -372,6 +374,7 @@ const addPlayer = socket => {
       const sanitizedName = clientPlayerData.name.replace(/(<([^>]+)>)/ig, '');
       clientPlayerData.name = sanitizedName;
       currentPlayer.clientProvidedData(clientPlayerData);
+      ghostRecorder.recordPlayerSession(currentPlayer, Date.now());
       map.players.pushNew(currentPlayer);
       if (npcRoster.length && !npcsAnchoredToPlayer) {
         npcRoster.forEach((npc, index) => {
@@ -403,6 +406,9 @@ const addPlayer = socket => {
   });
   socket.on('disconnect', () => {
     delete sockets[socket.id];
+    if (typeof memoryStore.endSession === 'function') {
+      memoryStore.endSession(memorySessionId, currentPlayer.id, Date.now());
+    }
     npcsAnchoredToPlayer = false;
     connectionService.clearTimer(currentPlayer.id);
     map.players.removePlayerByID(currentPlayer.id);

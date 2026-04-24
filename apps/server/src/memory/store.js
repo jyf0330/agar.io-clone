@@ -7,6 +7,25 @@ const path = require('path');
 const DEFAULT_MEMORY_DB_PATH = path.resolve(process.cwd(), 'data/memory.db');
 
 const schemaSql = `
+CREATE TABLE IF NOT EXISTS sessions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_id TEXT,
+  player_id TEXT,
+  player_name TEXT,
+  map_id TEXT,
+  consent_to_record INTEGER,
+  started_at INTEGER,
+  ended_at INTEGER,
+  is_seed INTEGER,
+  is_replay_allowed INTEGER,
+  UNIQUE(session_id, player_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_map_started
+  ON sessions(map_id, started_at);
+CREATE INDEX IF NOT EXISTS idx_sessions_player_started
+  ON sessions(player_id, started_at);
+
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   player_id TEXT,
@@ -150,6 +169,21 @@ function toCamelImpression(row) {
     };
 }
 
+function toCamelSession(row) {
+    return {
+        id: row.id,
+        sessionId: row.session_id,
+        playerId: row.player_id,
+        playerName: row.player_name || '',
+        mapId: row.map_id || '',
+        consentToRecord: row.consent_to_record === 1,
+        startedAt: row.started_at,
+        endedAt: row.ended_at,
+        isSeed: row.is_seed === 1,
+        isReplayAllowed: row.is_replay_allowed === 1
+    };
+}
+
 function buildWhere(filters, mapping) {
     const clauses = [];
     const params = [];
@@ -200,6 +234,68 @@ function recordEvent(event) {
     return {
         id: result.lastID
     };
+}
+
+function recordSession(session) {
+    const safeSession = session || {};
+    const result = executeSql(
+        [
+            'INSERT INTO sessions(',
+            'session_id, player_id, player_name, map_id, consent_to_record,',
+            'started_at, ended_at, is_seed, is_replay_allowed',
+            ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'ON CONFLICT(session_id, player_id) DO UPDATE SET',
+            'player_name = excluded.player_name,',
+            'map_id = excluded.map_id,',
+            'consent_to_record = excluded.consent_to_record,',
+            'started_at = excluded.started_at,',
+            'ended_at = COALESCE(excluded.ended_at, sessions.ended_at),',
+            'is_seed = excluded.is_seed,',
+            'is_replay_allowed = excluded.is_replay_allowed'
+        ].join(' '),
+        [
+            safeSession.sessionId || null,
+            safeSession.playerId || null,
+            safeSession.playerName || '',
+            safeSession.mapId || 'default-map',
+            safeSession.consentToRecord === false ? 0 : 1,
+            typeof safeSession.startedAt === 'number' ? safeSession.startedAt : Date.now(),
+            typeof safeSession.endedAt === 'number' ? safeSession.endedAt : null,
+            safeSession.isSeed === true ? 1 : 0,
+            safeSession.isReplayAllowed === false ? 0 : 1
+        ]
+    );
+
+    return {
+        id: result.lastID
+    };
+}
+
+function endSession(sessionId, playerId, endedAt) {
+    executeSql(
+        'UPDATE sessions SET ended_at = ? WHERE session_id = ? AND player_id = ?',
+        [
+            typeof endedAt === 'number' ? endedAt : Date.now(),
+            sessionId,
+            playerId
+        ]
+    );
+}
+
+function listSessions(filters) {
+    const where = buildWhere(filters || {}, {
+        playerId: 'player_id',
+        sessionId: 'session_id',
+        mapId: 'map_id'
+    });
+    const limit = normalizeLimit(filters && filters.limit, 100);
+    const result = executeSql(
+        'SELECT * FROM sessions' + where.sql + ' ORDER BY started_at DESC, id DESC LIMIT ?',
+        where.params.concat(limit),
+        {mode: 'all'}
+    );
+
+    return result.rows.map(toCamelSession);
 }
 
 function listEvents(filters) {
@@ -301,6 +397,9 @@ module.exports = {
     resolveDbPath: resolveDbPath,
     migrate: migrate,
     listTables: listTables,
+    recordSession: recordSession,
+    endSession: endSession,
+    listSessions: listSessions,
     recordEvent: recordEvent,
     listEvents: listEvents,
     addSessionSummary: addSessionSummary,
