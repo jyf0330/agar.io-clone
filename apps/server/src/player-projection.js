@@ -20,6 +20,10 @@ function projectPartLootForSync(loot) {
     });
 }
 
+function projectGhostForSync(ghost) {
+    return Object.assign({}, ghost);
+}
+
 function projectPlayerForSync(player) {
     return {
         x: player.x,
@@ -60,6 +64,7 @@ function projectVisibleWorldForSync(visibleWorld) {
         visibleFood: visibleWorld.visibleFood,
         visibleMass: visibleWorld.visibleMass,
         visiblePartLoot: (visibleWorld.visiblePartLoot || []).map(projectPartLootForSync),
+        visibleGhosts: (visibleWorld.visibleGhosts || []).map(projectGhostForSync),
         visibleViruses: visibleWorld.visibleViruses
     };
 }
@@ -98,5 +103,6 @@ module.exports = {
     projectPlayersForSync,
     projectVisibleWorldForSync,
     projectPartLootForSync,
+    projectGhostForSync,
     createSpectatorSyncData
 };

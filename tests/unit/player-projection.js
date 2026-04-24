@@ -61,6 +61,14 @@ describe('player-projection.js', () => {
       type: 'HAND',
       templateId: 'hand-thread'
     }, { x: 260, y: 260 });
+    map.ghosts.push({
+      id: 'old-session:old-player',
+      name: 'Past Huy',
+      x: 255,
+      y: 255,
+      radius: 34,
+      chat: 'hello'
+    });
 
     let projectedWorld;
     map.enumerateVisibleWorld((visibleWorld) => {
@@ -72,6 +80,7 @@ describe('player-projection.js', () => {
     expect(projectPlayersForSync(map.players.data)).to.deep.equal(projectedWorld.visiblePlayers);
     expect(projectedWorld.playerData.id).to.equal('player-1');
     expect(projectedWorld.visiblePartLoot[0].part.templateId).to.equal('hand-thread');
+    expect(projectedWorld.visibleGhosts[0].name).to.equal('Past Huy');
     expect(spectatorData.id).to.equal('spectator-1');
     expect(spectatorData.bodyPartCount).to.equal(0);
   });

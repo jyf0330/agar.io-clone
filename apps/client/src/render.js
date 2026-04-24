@@ -69,6 +69,36 @@ const drawPartLoot = (position, loot, graph) => {
     graph.restore();
 };
 
+const drawGhost = (position, ghost, graph) => {
+    const radius = ghost.radius || 34;
+
+    graph.save();
+    graph.globalAlpha = 0.42;
+    graph.beginPath();
+    graph.arc(position.x, position.y, radius, 0, FULL_ANGLE);
+    graph.closePath();
+    graph.fillStyle = '#aee8ff';
+    graph.strokeStyle = '#ffffff';
+    graph.lineWidth = 3;
+    graph.fill();
+    graph.stroke();
+    graph.globalAlpha = 1;
+    graph.textAlign = 'center';
+    graph.textBaseline = 'middle';
+    graph.font = 'bold 12px sans-serif';
+    graph.fillStyle = '#ffffff';
+    graph.strokeStyle = 'rgba(31, 56, 68, 0.8)';
+    graph.lineWidth = 2;
+    graph.strokeText(ghost.name || 'Echo', position.x, position.y);
+    graph.fillText(ghost.name || 'Echo', position.x, position.y);
+    if (ghost.chat) {
+        graph.font = 'bold 11px sans-serif';
+        graph.strokeText(ghost.chat, position.x, position.y - radius - 4);
+        graph.fillText(ghost.chat, position.x, position.y - radius - 4);
+    }
+    graph.restore();
+};
+
 const valueInRange = (min, max, value) => Math.min(max, Math.max(min, value))
 
 const circlePoint = (origo, radius, theta) => ({
@@ -255,6 +285,7 @@ module.exports = {
     drawVirus,
     drawFireFood,
     drawPartLoot,
+    drawGhost,
     drawCells,
     drawErrorMessage,
     drawGrid,

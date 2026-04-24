@@ -15,6 +15,11 @@ function createGameLoopService(options) {
     const map = options.map;
     const io = options.io;
     const connectionService = options.connectionService;
+    const ghostManager = options.ghostManager;
+    const ghostRecorder = options.ghostRecorder;
+    const getRoundClock = options.getRoundClock || function () {
+        return {startedAt: Date.now()};
+    };
     const getSocket = options.getSocket;
     const getSpectatorIds = options.getSpectatorIds;
     const initMassLog = util.mathLog(config.defaultPlayerMass, config.slowBase);
@@ -108,11 +113,29 @@ function createGameLoopService(options) {
             currentPlayer.changeCellMass(cellIndex, massGained);
         }
 
-        map.partLoot.collectForPlayer(currentPlayer);
+        const partPickups = map.partLoot.collectForPlayer(currentPlayer);
+        if (ghostRecorder) {
+            partPickups.forEach((pickup) => {
+                ghostRecorder.recordItem(currentPlayer, pickup.equippedPart, pickup.loot, Date.now());
+            });
+        }
         currentPlayer.virusSplit(cellsToSplit, config.limitSplit, config.defaultPlayerMass);
     }
 
     function tickGame() {
+        if (ghostManager) {
+            const now = Date.now();
+            const roundClock = getRoundClock();
+            ghostManager.tick({
+                map,
+                players: map.players.data,
+                matchStartedAt: roundClock.startedAt,
+                now
+            });
+            if (ghostRecorder) {
+                ghostRecorder.recordPlayers(map.players.data, now);
+            }
+        }
         map.players.data.forEach(tickPlayer);
         map.massFood.move(config.gameWidth, config.gameHeight);
 
@@ -175,7 +198,8 @@ function createGameLoopService(options) {
             map.food.data,
             map.massFood.data,
             map.viruses.data,
-            map.partLoot.data
+            map.partLoot.data,
+            map.ghosts
         );
 
         if (leaderboardChanged) {
@@ -199,7 +223,8 @@ function createGameLoopService(options) {
                 syncPayload.visibleFood,
                 syncPayload.visibleMass,
                 syncPayload.visibleViruses,
-                syncPayload.visiblePartLoot
+                syncPayload.visiblePartLoot,
+                syncPayload.visibleGhosts
             );
 
             if (leaderboardChanged) {

@@ -244,6 +244,7 @@ window.onload = function () {
             fireFood = nextWorldState.fireFood;
             viruses = nextWorldState.viruses;
             partLoot = nextWorldState.partLoot;
+            ghosts = nextWorldState.ghosts;
         }
     });
 
@@ -327,6 +328,7 @@ var foods = [];
 var viruses = [];
 var fireFood = [];
 var partLoot = [];
+var ghosts = [];
 var users = [];
 var leaderboard = [];
 var target = { x: player.x, y: player.y };
@@ -493,6 +495,10 @@ function gameLoop() {
         partLoot.forEach(loot => {
             let position = getPosition(loot, player, global.screen);
             render.drawPartLoot(position, loot, graph);
+        });
+        ghosts.forEach(ghost => {
+            let position = getPosition(ghost, player, global.screen);
+            render.drawGhost(position, ghost, graph);
         });
 
 

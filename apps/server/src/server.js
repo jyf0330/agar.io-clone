@@ -28,18 +28,61 @@ const {loadPersonalityCard} = require('./npc/personality-loader');
 const {getPosition} = require("./lib/entityUtils");
 const createConnectionService = require('./connection-service');
 const createGameLoopService = require('./game-loop-service');
+const GhostManager = require('./ghost/manager');
+const GhostRecorder = require('./ghost/recorder');
 const memorySessionId = process.env.MEMORY_SESSION_ID || 'session-' + Date.now();
 const npcFeaturesEnabled = process.env.V3_NPC_ENABLED === '1';
 
 let map = new mapUtils.Map(config);
+const roundClock = {
+    startedAt: Date.now(),
+    durationMs: 90000
+};
 const connectionService = createConnectionService({
     players: map.players
+});
+const ghostManager = new GhostManager({
+    memoryStore: memoryStore,
+    seedEvents: [
+        {
+            id: 'seed-trace-hand',
+            sessionId: 'seed-history',
+            ghostId: 'seed-player',
+            kind: 'trace',
+            t: 8000,
+            x: config.gameWidth / 2,
+            y: config.gameHeight / 2,
+            name: '历史回响'
+        },
+        {
+            id: 'seed-item-hand',
+            sessionId: 'seed-history',
+            ghostId: 'seed-player',
+            kind: 'item',
+            t: 9000,
+            x: (config.gameWidth / 2) + 80,
+            y: config.gameHeight / 2,
+            part: {
+                type: 'HAND',
+                templateId: 'hand-open',
+                source: 'ghost-echo'
+            }
+        }
+    ]
+});
+const ghostRecorder = new GhostRecorder({
+    memoryStore: memoryStore,
+    sessionId: memorySessionId,
+    startedAt: roundClock.startedAt
 });
 const gameLoopService = createGameLoopService({
     config,
     map,
     io,
     connectionService,
+    ghostManager,
+    ghostRecorder,
+    getRoundClock: () => roundClock,
     getSocket: (id) => sockets[id],
     getSpectatorIds: () => spectators.slice()
 });
@@ -70,10 +113,6 @@ const orchestrator = new Orchestrator({
 });
 let npcRoster = [];
 let npcsAnchoredToPlayer = false;
-const roundClock = {
-    startedAt: Date.now(),
-    durationMs: 90000
-};
 const chatState = {
     recentChats: [],
     lastPlayerAction: 'idle'
@@ -403,6 +442,7 @@ const addPlayer = (socket) => {
         if (npcFeaturesEnabled) {
             rememberRecentChat(currentPlayer, _message);
         }
+        ghostRecorder.recordChat(currentPlayer, _message, Date.now());
         socket.broadcast.emit('serverSendPlayerChat', {
             sender: currentPlayer.name,
             message: _message.substring(0, 35)

@@ -15,6 +15,7 @@ exports.Map = class {
         this.massFood = new exports.massFoodUtils.MassFoodManager();
         this.partLoot = new exports.partLootUtils.PartLootManager();
         this.players = new exports.playerUtils.PlayerManager();
+        this.ghosts = [];
     }
 
     balanceMass(foodMass, gameMass, maxFood, maxVirus) {
@@ -45,6 +46,7 @@ exports.Map = class {
             visibleViruses: this.viruses.data.filter(entity => isVisibleEntity(entity, currentPlayer)),
             visibleMass: this.massFood.data.filter(entity => isVisibleEntity(entity, currentPlayer)),
             visiblePartLoot: this.partLoot.data.filter(entity => isVisibleEntity(entity, currentPlayer)),
+            visibleGhosts: this.ghosts.filter(entity => isVisibleEntity(entity, currentPlayer)),
             visiblePlayers: this.players.data.filter((player) => {
                 return player.cells.some((cell) => isVisibleEntity(cell, currentPlayer));
             })
