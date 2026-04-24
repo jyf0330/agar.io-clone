@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "questions": [
+    {
+      "id": "home",
+      "npcId": "mochi",
+      "question": "你住在哪里？",
+      "fallbackAnswer": "我住在花园西边的苔藓石头下。",
+      "keywords": ["花园", "西边", "苔藓"]
+    },
+    {
+      "id": "rain",
+      "npcId": "mochi",
+      "question": "如果下雨你会做什么？",
+      "fallbackAnswer": "我会躲一会儿，也觉得雨像天空在涂色。",
+      "keywords": ["雨", "天空", "涂色"]
+    },
+    {
+      "id": "color",
+      "npcId": "mochi",
+      "question": "你最喜欢什么颜色？",
+      "fallbackAnswer": "我喜欢安静的蓝绿色。",
+      "keywords": ["蓝", "绿", "安静"]
+    },
+    {
+      "id": "friend",
+      "npcId": "mochi",
+      "question": "你的朋友是谁？",
+      "fallbackAnswer": "豆豆是我的朋友。",
+      "keywords": ["豆豆", "朋友"]
+    },
+    {
+      "id": "pastime",
+      "npcId": "mochi",
+      "question": "你会做什么来打发时间？",
+      "fallbackAnswer": "我会收集落叶，慢慢晒太阳。",
+      "keywords": ["落叶", "晒太阳"]
+    },
+    {
+      "id": "home",
+      "npcId": "doudou",
+      "question": "你住在哪里？",
+      "fallbackAnswer": "我总在花园里跑来跑去，哪里热闹住哪里!!",
+      "keywords": ["花园", "热闹", "跑"]
+    },
+    {
+      "id": "rain",
+      "npcId": "doudou",
+      "question": "如果下雨你会做什么？",
+      "fallbackAnswer": "我会踩水花，再偷偷涂一笔!!",
+      "keywords": ["水花", "涂", "偷偷"]
+    },
+    {
+      "id": "color",
+      "npcId": "doudou",
+      "question": "你最喜欢什么颜色？",
+      "fallbackAnswer": "亮一点、乱一点，我都喜欢!!",
+      "keywords": ["亮", "乱", "喜欢"]
+    },
+    {
+      "id": "friend",
+      "npcId": "doudou",
+      "question": "你的朋友是谁？",
+      "fallbackAnswer": "麻薯和乌龟都算吧，我会逗他们!!",
+      "keywords": ["麻薯", "乌龟", "逗"]
+    },
+    {
+      "id": "pastime",
+      "npcId": "doudou",
+      "question": "你会做什么来打发时间？",
+      "fallbackAnswer": "我会追着颜色跑，顺手画别人!!",
+      "keywords": ["颜色", "跑", "画"]
+    },
+    {
+      "id": "home",
+      "npcId": "wugui",
+      "question": "你住在哪里？",
+      "fallbackAnswer": "我常待在花园边缘，那里安稳。",
+      "keywords": ["花园", "边缘", "安稳"]
+    },
+    {
+      "id": "rain",
+      "npcId": "wugui",
+      "question": "如果下雨你会做什么？",
+      "fallbackAnswer": "我会慢慢找遮蔽处，等雨势过去。",
+      "keywords": ["慢慢", "遮蔽", "雨"]
+    },
+    {
+      "id": "color",
+      "npcId": "wugui",
+      "question": "你最喜欢什么颜色？",
+      "fallbackAnswer": "看心情，稳一点的绿色不错。",
+      "keywords": ["看心情", "稳", "绿色"]
+    },
+    {
+      "id": "friend",
+      "npcId": "wugui",
+      "question": "你的朋友是谁？",
+      "fallbackAnswer": "麻薯和豆豆都在这里，我会慢慢照看。",
+      "keywords": ["麻薯", "豆豆", "照看"]
+    },
+    {
+      "id": "pastime",
+      "npcId": "wugui",
+      "question": "你会做什么来打发时间？",
+      "fallbackAnswer": "我会慢慢巡游，观察花园变化。",
+      "keywords": ["慢慢", "巡游", "观察"]
+    }
+  ]
+}
