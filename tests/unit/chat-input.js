@@ -72,15 +72,18 @@ describe('chat-input.js', () => {
     chatInput.show();
 
     const quickBar = findByClass(wrapper, 'npc-chat-quickbar');
+    const actionBar = findByClass(wrapper, 'npc-chat-actionbar');
     const switchBar = findByClass(wrapper, 'npc-chat-switchbar');
     expect(quickBar.children.length).to.equal(5);
     expect(quickBar.children.map((button) => button.textContent)).to.include('哪里有回声？');
+    expect(actionBar.children.map((button) => button.textContent)).to.deep.equal(['任务', '结算']);
     expect(switchBar.children.map((button) => button.textContent)).to.deep.equal(['Mochi', 'Doudou', 'Wugui']);
 
     quickBar.children[0].listeners.click();
+    actionBar.children[0].listeners.click();
     switchBar.children[1].listeners.click();
 
-    expect(sent).to.deep.equal(['哪里有回声？', 'pet doudou']);
-    expect(chatInput.getLocalMessages()).to.deep.equal(['哪里有回声？', 'pet doudou']);
+    expect(sent).to.deep.equal(['哪里有回声？', '任务', 'pet doudou']);
+    expect(chatInput.getLocalMessages()).to.deep.equal(['哪里有回声？', '任务', 'pet doudou']);
   });
 });

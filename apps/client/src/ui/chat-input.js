@@ -7,6 +7,10 @@ const QUICK_PET_QUESTIONS = [
     '我现在该打还是跑？',
     '你记得上一局吗？'
 ];
+const QUICK_ACTIONS = [
+    {label: '任务', command: '任务'},
+    {label: '结算', command: '快速结算'}
+];
 const QUICK_PET_SWITCHES = [
     {label: 'Mochi', command: 'pet mochi'},
     {label: 'Doudou', command: 'pet doudou'},
@@ -28,6 +32,7 @@ function createChatInput(options) {
         let historyLabel;
         let composer;
         let quickBar;
+        let actionBar;
         let switchBar;
 
         if (root) {
@@ -65,6 +70,22 @@ function createChatInput(options) {
             quickBar.appendChild(button);
         });
 
+        actionBar = document.createElement('div');
+        actionBar.className = 'npc-chat-actionbar';
+        QUICK_ACTIONS.forEach((action) => {
+            const button = document.createElement('button');
+            button.className = 'npc-chat-action';
+            button.type = 'button';
+            button.textContent = action.label;
+            button.addEventListener('click', () => {
+                if (typeof sendHandler === 'function' && sendHandler(action.command) === false) {
+                    return;
+                }
+                addLocalMessage(action.command);
+            });
+            actionBar.appendChild(button);
+        });
+
         switchBar = document.createElement('div');
         switchBar.className = 'npc-chat-switchbar';
         QUICK_PET_SWITCHES.forEach((pet) => {
@@ -96,6 +117,7 @@ function createChatInput(options) {
         composer.appendChild(input);
         root.appendChild(history);
         root.appendChild(quickBar);
+        root.appendChild(actionBar);
         root.appendChild(switchBar);
         root.appendChild(composer);
 
