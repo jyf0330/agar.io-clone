@@ -318,24 +318,37 @@ describe('memory store', function () {
     it('should record and query raw npc events with JSON payloads', function () {
         const store = loadStore(path.join(tmpDir, 'memory.db'));
         const event = store.recordEvent({
+            eventId: 'l1-session-1-player-a-mochi-1',
             playerId: 'player-a',
             npcId: 'mochi',
             sessionId: 'session-1',
+            mapId: 'fixed-arena',
+            x: 120,
+            y: 140,
             kind: 'npc_speak',
+            eventType: 'chat_turn',
             payload: {text: '蓝色很好'},
-            ts: 123
+            ts: 123,
+            createdAt: 124
         });
 
-        const events = store.listEvents({sessionId: 'session-1'});
+        const events = store.listEvents({sessionId: 'session-1', mapId: 'fixed-arena'});
 
         expect(event.id).to.be.a('number');
+        expect(event.eventId).to.equal('l1-session-1-player-a-mochi-1');
         expect(events).to.have.length(1);
         expect(events[0]).to.include({
+            eventId: 'l1-session-1-player-a-mochi-1',
             playerId: 'player-a',
             npcId: 'mochi',
             sessionId: 'session-1',
+            mapId: 'fixed-arena',
+            x: 120,
+            y: 140,
             kind: 'npc_speak',
-            ts: 123
+            eventType: 'chat_turn',
+            ts: 123,
+            createdAt: 124
         });
         expect(events[0].payload).to.deep.equal({text: '蓝色很好'});
     });

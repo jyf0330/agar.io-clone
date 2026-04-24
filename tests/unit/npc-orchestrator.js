@@ -552,6 +552,15 @@ describe('npc orchestrator', () => {
         expect(capturedPrompt.user).to.contain('part_pickup');
         expect(capturedPrompt.system).to.contain('上局一起捡了手');
         expect(memoryEvents.some((event) => event.kind === 'chat_turn' && event.npcId === 'doudou')).to.equal(true);
+        expect(memoryEvents[0]).to.include({
+            eventType: 'chat_turn',
+            mapId: 'fixed-arena',
+            x: humanPlayer.x,
+            y: humanPlayer.y,
+            createdAt: baseNow + 2000
+        });
+        expect(memoryEvents[0].eventId).to.contain('l1:');
+        expect(memoryEvents[0].eventId).to.contain(':chat_turn:');
         expect(orchestrator.lastHandledChatTs).to.equal(baseNow + 1000);
     });
 

@@ -332,16 +332,32 @@ class Orchestrator {
         }
 
         const anchorPlayer = this.getAnchorPlayer(gameState);
+        const now = Date.now();
+        const npcId = npc && npc.id ? npc.id : '';
+        const ownerPlayerId = playerId || (anchorPlayer && anchorPlayer.id) || '';
         try {
             this.config.recordEvent({
+                eventId: [
+                    'l1',
+                    this.getSessionId(gameState),
+                    ownerPlayerId || 'player',
+                    npcId || 'npc',
+                    kind,
+                    now
+                ].join(':'),
                 kind: kind,
-                npcId: npc && npc.id ? npc.id : '',
-                playerId: playerId || (anchorPlayer && anchorPlayer.id) || '',
+                eventType: kind,
+                npcId: npcId,
+                playerId: ownerPlayerId,
                 sessionId: this.getSessionId(gameState),
+                mapId: (gameState && gameState.mapId) || this.config.mapId || 'fixed-arena',
+                x: anchorPlayer && typeof anchorPlayer.x === 'number' ? anchorPlayer.x : null,
+                y: anchorPlayer && typeof anchorPlayer.y === 'number' ? anchorPlayer.y : null,
                 payload: Object.assign({
                     npcName: npc && npc.player ? npc.player.name : ''
                 }, payload || {}),
-                ts: Date.now()
+                ts: now,
+                createdAt: now
             });
         } catch (error) {
             console.warn('[NPC] memory event write failed', error.message);

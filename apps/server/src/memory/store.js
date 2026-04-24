@@ -137,12 +137,18 @@ CREATE INDEX IF NOT EXISTS idx_ghost_anchors_position
 
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id TEXT,
   player_id TEXT,
   npc_id TEXT,
   session_id TEXT,
+  map_id TEXT,
+  x REAL,
+  y REAL,
   kind TEXT,
+  event_type TEXT,
   payload TEXT,
-  ts INTEGER
+  ts INTEGER,
+  created_at INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS idx_events_session ON events(session_id, npc_id, ts);
@@ -213,6 +219,20 @@ function executeSql(query, params, options) {
         '    except sqlite3.OperationalError as error:',
         '        if "duplicate column name" not in str(error):',
         '            raise',
+        '    for column_sql in [',
+        '        "ALTER TABLE events ADD COLUMN event_id TEXT",',
+        '        "ALTER TABLE events ADD COLUMN map_id TEXT",',
+        '        "ALTER TABLE events ADD COLUMN x REAL",',
+        '        "ALTER TABLE events ADD COLUMN y REAL",',
+        '        "ALTER TABLE events ADD COLUMN event_type TEXT",',
+        '        "ALTER TABLE events ADD COLUMN created_at INTEGER"',
+        '    ]:',
+        '        try:',
+        '            conn.execute(column_sql)',
+        '            conn.commit()',
+        '        except sqlite3.OperationalError as error:',
+        '            if "duplicate column name" not in str(error):',
+        '                raise',
         '    cursor = conn.execute(payload["query"], payload["params"])',
         '    if payload["mode"] == "all":',
         '        rows = [dict(row) for row in cursor.fetchall()]',
@@ -241,12 +261,18 @@ function executeSql(query, params, options) {
 function toCamelEvent(row) {
     return {
         id: row.id,
+        eventId: row.event_id || String(row.id),
         playerId: row.player_id,
         npcId: row.npc_id,
         sessionId: row.session_id,
+        mapId: row.map_id || '',
+        x: row.x,
+        y: row.y,
         kind: row.kind,
+        eventType: row.event_type || row.kind,
         payload: row.payload ? JSON.parse(row.payload) : null,
-        ts: row.ts
+        ts: row.ts,
+        createdAt: row.created_at || row.ts
     };
 }
 
@@ -440,23 +466,33 @@ function clearHistoricalEchoData() {
 
 function recordEvent(event) {
     const safeEvent = event || {};
+    const ts = typeof safeEvent.ts === 'number' ? safeEvent.ts : Date.now();
+    const kind = safeEvent.kind || safeEvent.eventType || 'event';
     const result = executeSql(
         [
-            'INSERT INTO events(player_id, npc_id, session_id, kind, payload, ts)',
-            'VALUES (?, ?, ?, ?, ?, ?)'
+            'INSERT INTO events(',
+            'event_id, player_id, npc_id, session_id, map_id, x, y, kind, event_type, payload, ts, created_at',
+            ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         ].join(' '),
         [
+            safeEvent.eventId || null,
             safeEvent.playerId || null,
             safeEvent.npcId || null,
             safeEvent.sessionId || null,
-            safeEvent.kind || 'event',
+            safeEvent.mapId || null,
+            typeof safeEvent.x === 'number' ? safeEvent.x : null,
+            typeof safeEvent.y === 'number' ? safeEvent.y : null,
+            kind,
+            safeEvent.eventType || kind,
             JSON.stringify(safeEvent.payload || {}),
-            typeof safeEvent.ts === 'number' ? safeEvent.ts : Date.now()
+            ts,
+            typeof safeEvent.createdAt === 'number' ? safeEvent.createdAt : ts
         ]
     );
 
     return {
-        id: result.lastID
+        id: result.lastID,
+        eventId: safeEvent.eventId || String(result.lastID)
     };
 }
 
@@ -795,6 +831,8 @@ function listEvents(filters) {
         playerId: 'player_id',
         npcId: 'npc_id',
         sessionId: 'session_id',
+        mapId: 'map_id',
+        eventType: 'event_type',
         kind: 'kind'
     });
     const limit = normalizeLimit(filters && filters.limit, 500);

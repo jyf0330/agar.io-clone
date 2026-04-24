@@ -1,7 +1,7 @@
 # Graph Report - agar.io-clone-master  (2026-04-25)
 
 ## Corpus Check
-- 148 files · ~258,597 words
+- 148 files · ~259,773 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -56,8 +56,8 @@
 10. `Canvas` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `loadFabric()` --calls--> `createElement()`  [INFERRED]
-  apps/client/src/player-card-editor.js → tests/unit/chat-input.js
+- `createElement()` --calls--> `loadFabric()`  [INFERRED]
+  tests/unit/chat-input.js → apps/client/src/player-card-editor.js
 - `mocha()` --calls--> `run()`  [INFERRED]
   gulpfile.js → apps/server/src/sql.js
 - `normalize()` --calls--> `constructor()`  [INFERRED]
