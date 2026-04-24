@@ -308,4 +308,47 @@ describe('ghost recorder', () => {
     });
     expect(combatEvents[0].payload.targetPlayerId).to.equal('player-2');
   });
+
+  it('should generate ghost anchors from replayable chat, part, and combat events', () => {
+    const anchors = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      mapId: 'fixed-arena',
+      memoryStore: {
+        recordEvent() {},
+        recordChatRecord() {},
+        recordPartEvent() {},
+        recordCombatEvent() {},
+        recordGhostAnchor(anchor) {
+          anchors.push(anchor);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      x: 120,
+      y: 130,
+      consentToRecord: true
+    };
+
+    recorder.recordChat(player, 'hello from now', 1220);
+    recorder.recordPartEvent(player, 'part_pickup', { type: 'HAND' }, { x: 150, y: 160 }, 1260);
+    recorder.recordCombatEvent(player, 'kill', { id: 'target-1', name: 'Target' }, { x: 170, y: 180 }, 1280);
+
+    expect(anchors.map((anchor) => anchor.eventType)).to.deep.equal([
+      'chat_message',
+      'part_pickup',
+      'kill'
+    ]);
+    expect(anchors[0]).to.deep.include({
+      sourceSessionId: 'session-now',
+      sourcePlayerId: 'player-1',
+      mapId: 'fixed-arena',
+      t: 220,
+      x: 120,
+      y: 130
+    });
+  });
 });

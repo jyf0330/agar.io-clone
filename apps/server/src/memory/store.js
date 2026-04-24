@@ -116,6 +116,25 @@ CREATE INDEX IF NOT EXISTS idx_combat_events_session_type_t
 CREATE INDEX IF NOT EXISTS idx_combat_events_position
   ON combat_events(session_id, x, y);
 
+CREATE TABLE IF NOT EXISTS ghost_anchors (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  anchor_id TEXT,
+  source_session_id TEXT,
+  source_player_id TEXT,
+  map_id TEXT,
+  t INTEGER,
+  x REAL,
+  y REAL,
+  event_type TEXT,
+  priority INTEGER,
+  ts INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_ghost_anchors_map_type_t
+  ON ghost_anchors(map_id, event_type, t);
+CREATE INDEX IF NOT EXISTS idx_ghost_anchors_position
+  ON ghost_anchors(map_id, x, y);
+
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   player_id TEXT,
@@ -345,6 +364,22 @@ function toCamelCombatEvent(row) {
         x: row.x,
         y: row.y,
         payload: row.payload ? JSON.parse(row.payload) : {},
+        ts: row.ts
+    };
+}
+
+function toCamelGhostAnchor(row) {
+    return {
+        id: row.id,
+        anchorId: row.anchor_id,
+        sourceSessionId: row.source_session_id,
+        sourcePlayerId: row.source_player_id,
+        mapId: row.map_id,
+        t: row.t,
+        x: row.x,
+        y: row.y,
+        eventType: row.event_type,
+        priority: row.priority,
         ts: row.ts
     };
 }
@@ -671,6 +706,50 @@ function listCombatEvents(filters) {
     return result.rows.map(toCamelCombatEvent);
 }
 
+function recordGhostAnchor(anchor) {
+    const safeAnchor = anchor || {};
+    const result = executeSql(
+        [
+            'INSERT INTO ghost_anchors(',
+            'anchor_id, source_session_id, source_player_id, map_id, t, x, y, event_type, priority, ts',
+            ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ].join(' '),
+        [
+            safeAnchor.anchorId || null,
+            safeAnchor.sourceSessionId || null,
+            safeAnchor.sourcePlayerId || null,
+            safeAnchor.mapId || 'default-map',
+            typeof safeAnchor.t === 'number' ? safeAnchor.t : 0,
+            typeof safeAnchor.x === 'number' ? safeAnchor.x : null,
+            typeof safeAnchor.y === 'number' ? safeAnchor.y : null,
+            safeAnchor.eventType || 'anchor',
+            typeof safeAnchor.priority === 'number' ? safeAnchor.priority : 0,
+            typeof safeAnchor.ts === 'number' ? safeAnchor.ts : Date.now()
+        ]
+    );
+
+    return {
+        id: result.lastID
+    };
+}
+
+function listGhostAnchors(filters) {
+    const where = buildWhere(filters || {}, {
+        sourceSessionId: 'source_session_id',
+        sourcePlayerId: 'source_player_id',
+        mapId: 'map_id',
+        eventType: 'event_type'
+    });
+    const limit = normalizeLimit(filters && filters.limit, 500);
+    const result = executeSql(
+        'SELECT * FROM ghost_anchors' + where.sql + ' ORDER BY priority DESC, t ASC, id ASC LIMIT ?',
+        where.params.concat(limit),
+        {mode: 'all'}
+    );
+
+    return result.rows.map(toCamelGhostAnchor);
+}
+
 function listEvents(filters) {
     const where = buildWhere(filters || {}, {
         playerId: 'player_id',
@@ -783,6 +862,8 @@ module.exports = {
     listPartEvents: listPartEvents,
     recordCombatEvent: recordCombatEvent,
     listCombatEvents: listCombatEvents,
+    recordGhostAnchor: recordGhostAnchor,
+    listGhostAnchors: listGhostAnchors,
     recordEvent: recordEvent,
     listEvents: listEvents,
     addSessionSummary: addSessionSummary,

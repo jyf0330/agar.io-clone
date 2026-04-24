@@ -145,6 +145,7 @@ class GhostRecorder {
             chat: sanitized
         }, now);
         this.recordChatRecord(player, sanitized, now);
+        this.recordGhostAnchor(player, 'chat_message', player.x, player.y, 20, now);
     }
 
     recordChatRecord(player, text, now) {
@@ -205,6 +206,9 @@ class GhostRecorder {
         }, payload || {});
         this.recordEvent(player, eventType, eventPayload, now);
         this.recordPartLifecycleEvent(player, eventType, eventPayload, now);
+        if (eventType === 'part_pickup' || eventType === 'part_stolen') {
+            this.recordGhostAnchor(player, eventType, eventPayload.x, eventPayload.y, eventType === 'part_stolen' ? 70 : 50, now);
+        }
     }
 
     recordPartLifecycleEvent(player, eventType, payload, now) {
@@ -236,6 +240,9 @@ class GhostRecorder {
         }, payload || {});
         this.recordEvent(player, eventType, eventPayload, now);
         this.recordTypedCombatEvent(player, eventType, eventPayload, now);
+        if (eventType === 'kill') {
+            this.recordGhostAnchor(player, 'kill', eventPayload.x, eventPayload.y, 80, now);
+        }
     }
 
     recordTypedCombatEvent(player, eventType, payload, now) {
@@ -253,6 +260,29 @@ class GhostRecorder {
             x: payload.x,
             y: payload.y,
             payload: payload,
+            ts: now || Date.now()
+        });
+    }
+
+    recordGhostAnchor(player, eventType, x, y, priority, now) {
+        if (!this.memoryStore || typeof this.memoryStore.recordGhostAnchor !== 'function' || !this.canRecordPlayer(player)) {
+            return;
+        }
+        if (typeof x !== 'number' || typeof y !== 'number') {
+            return;
+        }
+
+        const elapsed = this.getElapsed(now || Date.now());
+        this.memoryStore.recordGhostAnchor({
+            anchorId: [this.sessionId, player.id, eventType, elapsed, x, y].join(':'),
+            sourceSessionId: this.sessionId,
+            sourcePlayerId: player.id,
+            mapId: this.mapId,
+            t: elapsed,
+            x: x,
+            y: y,
+            eventType: eventType,
+            priority: priority,
             ts: now || Date.now()
         });
     }

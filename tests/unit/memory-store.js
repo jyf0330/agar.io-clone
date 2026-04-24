@@ -39,6 +39,7 @@ describe('memory store', function () {
         expect(tables).to.include('item_events');
         expect(tables).to.include('part_events');
         expect(tables).to.include('combat_events');
+        expect(tables).to.include('ghost_anchors');
         expect(tables).to.include('events');
         expect(tables).to.include('session_summaries');
         expect(tables).to.include('persona_impressions');
@@ -243,6 +244,42 @@ describe('memory store', function () {
             y: 210,
             payload: {targetPlayerId: 'player-b'},
             ts: 1280
+        });
+    });
+
+    it('should record and query V5 ghost anchors by map and event type', function () {
+        const store = loadStore(path.join(tmpDir, 'memory.db'));
+
+        store.recordGhostAnchor({
+            anchorId: 'anchor-1',
+            sourceSessionId: 'session-1',
+            sourcePlayerId: 'player-a',
+            mapId: 'fixed-arena',
+            t: 300,
+            x: 220,
+            y: 230,
+            eventType: 'part_pickup',
+            priority: 50,
+            ts: 1300
+        });
+
+        const anchors = store.listGhostAnchors({
+            mapId: 'fixed-arena',
+            eventType: 'part_pickup'
+        });
+
+        expect(anchors).to.deep.include({
+            id: anchors[0].id,
+            anchorId: 'anchor-1',
+            sourceSessionId: 'session-1',
+            sourcePlayerId: 'player-a',
+            mapId: 'fixed-arena',
+            t: 300,
+            x: 220,
+            y: 230,
+            eventType: 'part_pickup',
+            priority: 50,
+            ts: 1300
         });
     });
 
