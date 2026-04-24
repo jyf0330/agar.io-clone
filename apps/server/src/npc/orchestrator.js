@@ -753,7 +753,31 @@ class Orchestrator {
             answer: text,
             source: 'active_pet'
         }, latestChat.playerId);
+        this.recordPetQuestionFact(npc, latestChat, safeState, text);
         return true;
+    }
+
+    recordPetQuestionFact(npc, latestChat, safeState, answerText) {
+        const anchorPlayer = this.getAnchorPlayer(safeState) || {x: 0, y: 0};
+        const petContext = buildPetContext(anchorPlayer, safeState);
+        const message = String(latestChat && latestChat.message ? latestChat.message : '');
+
+        if (/哪里有回声/.test(message) && petContext.upcomingEchoes.length) {
+            this.recordNpcEvent('guided_to_echo', npc, safeState, {
+                question: message,
+                answer: answerText,
+                targetEcho: petContext.upcomingEchoes[0]
+            }, latestChat.playerId);
+            return;
+        }
+
+        if (/这件部位要不要换/.test(message) && petContext.nearbyPartLoot.length) {
+            this.recordNpcEvent('pet_suggested_part', npc, safeState, {
+                question: message,
+                answer: answerText,
+                suggestedPart: petContext.nearbyPartLoot[0]
+            }, latestChat.playerId);
+        }
     }
 
     queueFollowPlayerIntent(npc, safeState) {
