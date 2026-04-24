@@ -2572,7 +2572,7 @@
       "label": "createGameLoopService()",
       "file_type": "code",
       "source_file": "apps/server/src/game-loop-service.js",
-      "source_location": "L14",
+      "source_location": "L16",
       "id": "game_loop_service_creategameloopservice",
       "community": 51,
       "norm_label": "creategameloopservice()"
@@ -12949,7 +12949,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/game-loop-service.js",
-      "source_location": "L14",
+      "source_location": "L16",
       "weight": 1.0,
       "_src": "apps_server_src_game_loop_service_js",
       "_tgt": "game_loop_service_creategameloopservice",

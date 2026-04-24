@@ -144,6 +144,89 @@ describe('game-loop-service.js', () => {
     expect(memoryEvents[0].payload.partType).to.equal('HAND');
   });
 
+  it('should record accepted pet suggestion when the suggested part is picked', () => {
+    const originalNow = Date.now;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const player = new playerUtils.Player('player-1');
+    const memoryEvents = [];
+    const suggestion = {
+      kind: 'pet_suggested_part',
+      eventType: 'pet_suggested_part',
+      playerId: 'player-1',
+      npcId: 'mochi',
+      sessionId: 'session-pickup',
+      ts: 1700000000000 - 5000,
+      payload: {
+        suggestedPart: {
+          partType: 'HAND',
+          displayName: 'Thread Hand'
+        }
+      }
+    };
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'collector',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+    map.partLoot.addPart({
+      type: 'HAND',
+      templateId: 'hand-thread',
+      source: 'map-pickup'
+    }, { x: 100, y: 100 }, 'map-pickup');
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      ghostRecorder: {
+        sessionId: 'session-pickup',
+        recordItem() {},
+        recordPartEvent() {}
+      },
+      memoryStore: {
+        listEvents(filters) {
+          if (filters.eventType === 'pet_suggested_part') {
+            return [suggestion];
+          }
+          return [];
+        },
+        recordEvent(event) {
+          memoryEvents.push(event);
+        }
+      },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    try {
+      Date.now = () => 1700000000000;
+      service.tickPlayer(player);
+    } finally {
+      Date.now = originalNow;
+    }
+
+    expect(memoryEvents.some((event) => event.kind === 'player_picked_with_me')).to.equal(true);
+    const accepted = memoryEvents.find((event) => event.kind === 'player_accepted_pet_suggestion');
+    expect(accepted).to.include({
+      eventType: 'player_accepted_pet_suggestion',
+      playerId: 'player-1',
+      npcId: 'mochi',
+      sessionId: 'session-pickup',
+      mapId: 'fixed-arena',
+      x: 100,
+      y: 100
+    });
+    expect(accepted.payload.suggestionEventId).to.equal(suggestion.eventId || '');
+    expect(accepted.payload.partType).to.equal('HAND');
+  });
+
   it('should record combat and stolen part events when a player is fully eaten', () => {
     const map = new mapUtils.Map(Object.assign({}, config, {
       partLoot: {

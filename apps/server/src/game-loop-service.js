@@ -11,6 +11,8 @@ const {
     projectVisibleWorldForSync
 } = require('./player-projection');
 
+const PET_SUGGESTION_ACCEPT_WINDOW_MS = 30000;
+
 function createGameLoopService(options) {
     const config = options.config;
     const map = options.map;
@@ -58,6 +60,82 @@ function createGameLoopService(options) {
             players: map.players.data.length,
             leaderboard
         });
+    }
+
+    function getRecorderSessionId() {
+        return ghostRecorder && ghostRecorder.sessionId ? ghostRecorder.sessionId : null;
+    }
+
+    function getPetId(player) {
+        return player && player.activePet ? player.activePet.petId || player.activePet.npcId || 'pet' : 'pet';
+    }
+
+    function findRecentPartSuggestion(player, pickedPart, now) {
+        if (!memoryStore || typeof memoryStore.listEvents !== 'function' || !player || !player.activePet || !pickedPart) {
+            return null;
+        }
+
+        const petId = getPetId(player);
+        const sessionId = getRecorderSessionId();
+        const filters = {
+            eventType: 'pet_suggested_part',
+            playerId: player.id,
+            npcId: petId,
+            limit: 10
+        };
+        if (sessionId) {
+            filters.sessionId = sessionId;
+        }
+
+        try {
+            const events = memoryStore.listEvents(filters) || [];
+            const pickedType = pickedPart.partType || pickedPart.type;
+            for (let index = events.length - 1; index >= 0; index -= 1) {
+                const event = events[index] || {};
+                const payload = event.payload || {};
+                const suggestedPart = payload.suggestedPart || {};
+                const suggestedType = suggestedPart.partType || suggestedPart.type;
+                const eventTs = typeof event.ts === 'number' ? event.ts : 0;
+                if (suggestedType === pickedType && now - eventTs <= PET_SUGGESTION_ACCEPT_WINDOW_MS) {
+                    return event;
+                }
+            }
+        } catch (error) {
+            console.warn('[NPC] suggestion lookup failed', error.message);
+        }
+
+        return null;
+    }
+
+    function recordAcceptedPetSuggestion(player, pickup, suggestion, now) {
+        if (!memoryStore || typeof memoryStore.recordEvent !== 'function' || !suggestion) {
+            return;
+        }
+
+        const petId = getPetId(player);
+        try {
+            memoryStore.recordEvent({
+                eventId: ['l1', getRecorderSessionId() || 'session', player.id, petId, 'player_accepted_pet_suggestion', now].join(':'),
+                kind: 'player_accepted_pet_suggestion',
+                eventType: 'player_accepted_pet_suggestion',
+                playerId: player.id,
+                npcId: petId,
+                sessionId: getRecorderSessionId(),
+                mapId: config.mapId || 'fixed-arena',
+                x: pickup.loot.x,
+                y: pickup.loot.y,
+                payload: {
+                    suggestionEventId: suggestion.eventId || '',
+                    partId: pickup.equippedPart.partId,
+                    partType: pickup.equippedPart.partType,
+                    sourceType: pickup.equippedPart.sourceType
+                },
+                ts: now,
+                createdAt: now
+            });
+        } catch (error) {
+            console.warn('[NPC] accepted suggestion memory write failed', error.message);
+        }
     }
 
     function tickPlayer(currentPlayer) {
@@ -123,15 +201,16 @@ function createGameLoopService(options) {
         if (memoryStore && currentPlayer.activePet) {
             partPickups.forEach((pickup) => {
                 const now = Date.now();
-                const petId = currentPlayer.activePet.petId || currentPlayer.activePet.npcId || 'pet';
+                const petId = getPetId(currentPlayer);
+                const suggestion = findRecentPartSuggestion(currentPlayer, pickup.equippedPart, now);
                 try {
                     memoryStore.recordEvent({
-                        eventId: ['l1', ghostRecorder && ghostRecorder.sessionId ? ghostRecorder.sessionId : 'session', currentPlayer.id, petId, 'player_picked_with_me', now].join(':'),
+                        eventId: ['l1', getRecorderSessionId() || 'session', currentPlayer.id, petId, 'player_picked_with_me', now].join(':'),
                         kind: 'player_picked_with_me',
                         eventType: 'player_picked_with_me',
                         playerId: currentPlayer.id,
                         npcId: petId,
-                        sessionId: ghostRecorder && ghostRecorder.sessionId ? ghostRecorder.sessionId : null,
+                        sessionId: getRecorderSessionId(),
                         mapId: config.mapId || 'fixed-arena',
                         x: pickup.loot.x,
                         y: pickup.loot.y,
@@ -146,6 +225,7 @@ function createGameLoopService(options) {
                 } catch (error) {
                     console.warn('[NPC] pickup memory write failed', error.message);
                 }
+                recordAcceptedPetSuggestion(currentPlayer, pickup, suggestion, now);
             });
         }
         if (ghostRecorder) {
