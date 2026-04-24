@@ -57,6 +57,9 @@ class GhostManager {
     this.triggerRadius = settings.triggerRadius || 800;
     this.triggerWindowMs = settings.timeWindowMs || settings.triggerWindowMs || 1200;
     this.followTimeoutMs = settings.followTimeoutMs || 30000;
+    this.activeRadius = settings.activeRadius || this.triggerRadius;
+    this.lonelyTimeoutMs = settings.lonelyTimeoutMs || this.followTimeoutMs;
+    this.clipGraceMs = typeof settings.clipGraceMs === 'number' ? settings.clipGraceMs : 500;
     this.maxActiveGhosts = typeof settings.maxActiveGhosts === 'number' ? settings.maxActiveGhosts : 3;
     this.anchorCooldownMs = typeof settings.anchorCooldownMs === 'number' ? settings.anchorCooldownMs : 60000;
     this.chatBubbleDurationMs = typeof settings.chatBubbleDurationMs === 'number' ? settings.chatBubbleDurationMs : 4000;
@@ -187,8 +190,24 @@ class GhostManager {
   }
   pruneGhosts(now) {
     Object.keys(this.activeGhosts).forEach(key => {
-      if (now - this.activeGhosts[key].lastSeenAt > this.followTimeoutMs) {
+      const ghost = this.activeGhosts[key];
+      const tracePoints = ghost.tracePoints || [];
+      const replayT = ghost.anchorT + Math.max(0, now - ghost.activatedAt);
+      const traceEnded = tracePoints.length > 1 && replayT > tracePoints[tracePoints.length - 1].t + this.clipGraceMs;
+      const lonely = now - ghost.lastSeenAt > this.lonelyTimeoutMs;
+      if (traceEnded || lonely) {
         delete this.activeGhosts[key];
+      }
+    });
+  }
+  touchGhostsWithNearbyPlayers(players, now) {
+    Object.keys(this.activeGhosts).forEach(key => {
+      const ghost = this.activeGhosts[key];
+      const hasNearbyPlayer = (players || []).some(player => {
+        return !player.isNpc && distance(player, ghost) <= this.activeRadius;
+      });
+      if (hasNearbyPlayer) {
+        ghost.lastSeenAt = now;
       }
     });
   }
@@ -273,10 +292,11 @@ class GhostManager {
     const now = safeState.now || Date.now();
     const startedAt = safeState.matchStartedAt || now;
     const elapsedMs = Math.max(0, now - startedAt);
-    this.pruneGhosts(now);
     this.updateGhostPositions(now);
     this.updateGhostChats(now);
     this.updateGhostPartPickups(map, now);
+    this.touchGhostsWithNearbyPlayers(players, now);
+    this.pruneGhosts(now);
     this.getEvents().forEach(event => {
       if (!this.isInTimeWindow(event, elapsedMs) || !this.isNearAnyPlayer(event, players) || this.isAnchorCoolingDown(event, now)) {
         return;

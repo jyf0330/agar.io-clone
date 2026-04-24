@@ -278,7 +278,7 @@ describe('ghost manager', () => {
         listPlayerTraces() {
           return [
             {sessionId: 'old-session', playerId: 'old-player', t: 1000, x: 305, y: 300},
-            {sessionId: 'old-session', playerId: 'old-player', t: 1200, x: 345, y: 320}
+            {sessionId: 'old-session', playerId: 'old-player', t: 6000, x: 345, y: 320}
           ];
         },
         listChatRecords() {
@@ -408,5 +408,85 @@ describe('ghost manager', () => {
     expect(map.partLoot.data[0].part.sourceType).to.equal('ghost_echo');
     expect(map.partLoot.data[0].part.ghostSessionId).to.equal('old-session');
     expect(map.partLoot.data[0].part.ghostEventId).to.equal('part-event-1');
+  });
+
+  it('should disperse active ghosts when players leave or the trace clip ends', () => {
+    const startedAt = 1000;
+    const map = new mapUtils.Map(config);
+    const player = new playerUtils.Player('player-1');
+    player.init({ x: 300, y: 300 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'viewer',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+
+    const createManager = () => new GhostManager({
+      triggerRadius: 100,
+      activeRadius: 100,
+      lonelyTimeoutMs: 500,
+      clipGraceMs: 200,
+      timeWindowMs: 250,
+      memoryStore: {
+        listGhostAnchors() {
+          return [{
+            anchorId: 'anchor-1',
+            sourceSessionId: 'old-session',
+            sourcePlayerId: 'old-player',
+            t: 1000,
+            x: 305,
+            y: 300,
+            eventType: 'part_pickup',
+            priority: 50
+          }];
+        },
+        listPlayerTraces() {
+          return [
+            {sessionId: 'old-session', playerId: 'old-player', t: 1000, x: 305, y: 300},
+            {sessionId: 'old-session', playerId: 'old-player', t: 1200, x: 345, y: 320}
+          ];
+        },
+        listEvents() {
+          return [];
+        }
+      }
+    });
+
+    const lonelyManager = createManager();
+    lonelyManager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1000
+    });
+    player.x = 1000;
+    player.y = 1000;
+    lonelyManager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1601
+    });
+
+    expect(map.ghosts).to.have.length(0);
+
+    player.x = 300;
+    player.y = 300;
+    const endedManager = createManager();
+    endedManager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1000
+    });
+    endedManager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1501
+    });
+
+    expect(map.ghosts).to.have.length(0);
   });
 });
