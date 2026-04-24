@@ -240,4 +240,36 @@ describe('ghost recorder', () => {
     });
     expect(itemEvents[0].payload.part.templateId).to.equal('hand-open');
   });
+
+  it('should mirror part lifecycle events into typed part events', () => {
+    const partEvents = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      memoryStore: {
+        recordEvent() {},
+        recordPartEvent(event) {
+          partEvents.push(event);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      consentToRecord: true
+    };
+
+    recorder.recordPartEvent(player, 'part_equipped', { type: 'HAND', templateId: 'hand-open' }, { x: 150, y: 160 }, 1260);
+
+    expect(partEvents[0]).to.deep.include({
+      sessionId: 'session-now',
+      playerId: 'player-1',
+      eventType: 'part_equipped',
+      t: 260,
+      x: 150,
+      y: 160,
+      ts: 1260
+    });
+    expect(partEvents[0].payload.part.templateId).to.equal('hand-open');
+  });
 });

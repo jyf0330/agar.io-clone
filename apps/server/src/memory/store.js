@@ -80,6 +80,24 @@ CREATE INDEX IF NOT EXISTS idx_item_events_session_type_t
 CREATE INDEX IF NOT EXISTS idx_item_events_position
   ON item_events(session_id, x, y);
 
+CREATE TABLE IF NOT EXISTS part_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id TEXT,
+  session_id TEXT,
+  player_id TEXT,
+  event_type TEXT,
+  t INTEGER,
+  x REAL,
+  y REAL,
+  payload TEXT,
+  ts INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_part_events_session_type_t
+  ON part_events(session_id, event_type, t);
+CREATE INDEX IF NOT EXISTS idx_part_events_position
+  ON part_events(session_id, x, y);
+
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   player_id TEXT,
@@ -269,6 +287,21 @@ function toCamelChatRecord(row) {
 }
 
 function toCamelItemEvent(row) {
+    return {
+        id: row.id,
+        eventId: row.event_id,
+        sessionId: row.session_id,
+        playerId: row.player_id,
+        eventType: row.event_type,
+        t: row.t,
+        x: row.x,
+        y: row.y,
+        payload: row.payload ? JSON.parse(row.payload) : {},
+        ts: row.ts
+    };
+}
+
+function toCamelPartEvent(row) {
     return {
         id: row.id,
         eventId: row.event_id,
@@ -521,6 +554,48 @@ function listItemEvents(filters) {
     return result.rows.map(toCamelItemEvent);
 }
 
+function recordPartEvent(event) {
+    const safeEvent = event || {};
+    const result = executeSql(
+        [
+            'INSERT INTO part_events(',
+            'event_id, session_id, player_id, event_type, t, x, y, payload, ts',
+            ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ].join(' '),
+        [
+            safeEvent.eventId || null,
+            safeEvent.sessionId || null,
+            safeEvent.playerId || null,
+            safeEvent.eventType || 'part_event',
+            typeof safeEvent.t === 'number' ? safeEvent.t : 0,
+            typeof safeEvent.x === 'number' ? safeEvent.x : null,
+            typeof safeEvent.y === 'number' ? safeEvent.y : null,
+            JSON.stringify(safeEvent.payload || {}),
+            typeof safeEvent.ts === 'number' ? safeEvent.ts : Date.now()
+        ]
+    );
+
+    return {
+        id: result.lastID
+    };
+}
+
+function listPartEvents(filters) {
+    const where = buildWhere(filters || {}, {
+        playerId: 'player_id',
+        sessionId: 'session_id',
+        eventType: 'event_type'
+    });
+    const limit = normalizeLimit(filters && filters.limit, 500);
+    const result = executeSql(
+        'SELECT * FROM part_events' + where.sql + ' ORDER BY t ASC, id ASC LIMIT ?',
+        where.params.concat(limit),
+        {mode: 'all'}
+    );
+
+    return result.rows.map(toCamelPartEvent);
+}
+
 function listEvents(filters) {
     const where = buildWhere(filters || {}, {
         playerId: 'player_id',
@@ -629,6 +704,8 @@ module.exports = {
     listChatRecords: listChatRecords,
     recordItemEvent: recordItemEvent,
     listItemEvents: listItemEvents,
+    recordPartEvent: recordPartEvent,
+    listPartEvents: listPartEvents,
     recordEvent: recordEvent,
     listEvents: listEvents,
     addSessionSummary: addSessionSummary,

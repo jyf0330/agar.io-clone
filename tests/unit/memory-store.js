@@ -37,6 +37,7 @@ describe('memory store', function () {
         expect(tables).to.include('player_traces');
         expect(tables).to.include('chat_records');
         expect(tables).to.include('item_events');
+        expect(tables).to.include('part_events');
         expect(tables).to.include('events');
         expect(tables).to.include('session_summaries');
         expect(tables).to.include('persona_impressions');
@@ -173,6 +174,40 @@ describe('memory store', function () {
             y: 170,
             payload: {part: {type: 'HAND'}},
             ts: 1240
+        });
+    });
+
+    it('should record and query V5 part lifecycle events with JSON payloads', function () {
+        const store = loadStore(path.join(tmpDir, 'memory.db'));
+
+        store.recordPartEvent({
+            eventId: 'part-1',
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            eventType: 'part_equipped',
+            t: 260,
+            x: 180,
+            y: 190,
+            payload: {part: {partId: 'p1', type: 'HAND'}},
+            ts: 1260
+        });
+
+        const partEvents = store.listPartEvents({
+            sessionId: 'session-1',
+            eventType: 'part_equipped'
+        });
+
+        expect(partEvents).to.deep.include({
+            id: partEvents[0].id,
+            eventId: 'part-1',
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            eventType: 'part_equipped',
+            t: 260,
+            x: 180,
+            y: 190,
+            payload: {part: {partId: 'p1', type: 'HAND'}},
+            ts: 1260
         });
     });
 
