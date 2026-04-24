@@ -470,6 +470,11 @@ describe('npc orchestrator', () => {
                 if (promptId === 'pet_question_reply') {
                     capturedPrompt = options.prompt;
                     expect(params.petContext.nearbyPartLoot[0].displayName).to.equal('Echo Hand');
+                    expect(params.petContext.mapPartSpawnTendency.templates[0]).to.include({
+                        partType: 'HAND',
+                        displayName: 'Map Hand'
+                    });
+                    expect(params.petContext.mapPartSpawnTendency.maxWorldParts).to.equal(4);
                     return Promise.resolve({
                         ok: true,
                         text: '东南有Echo手。',
@@ -534,6 +539,16 @@ describe('npc orchestrator', () => {
                         inTimeWindow: true
                     }]
                 },
+                partLootConfig: {
+                    enabled: true,
+                    maxWorldParts: 4,
+                    spawnBatch: 2,
+                    templates: [{
+                        type: 'HAND',
+                        displayName: 'Map Hand',
+                        stats: {pickupRange: 10}
+                    }]
+                },
                 recentChats: [{
                     ts: baseNow + 1000,
                     playerId: humanPlayer.id,
@@ -552,6 +567,8 @@ describe('npc orchestrator', () => {
         expect(events[0].payload.text).to.equal('东南有Echo手。');
         expect(capturedPrompt.user).to.contain('Echo Hand');
         expect(capturedPrompt.user).to.contain('part_pickup');
+        expect(capturedPrompt.user).to.contain('地图散落部位刷新倾向');
+        expect(capturedPrompt.user).to.contain('Map Hand');
         expect(capturedPrompt.system).to.contain('上局一起捡了手');
         expect(memoryEvents.some((event) => event.kind === 'chat_turn' && event.npcId === 'doudou')).to.equal(true);
         expect(memoryEvents.some((event) => event.kind === 'guided_to_echo' && event.npcId === 'doudou')).to.equal(true);

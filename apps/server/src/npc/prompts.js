@@ -87,6 +87,7 @@ function buildNpcIntentPrompt(npcs, batchContext) {
             '  - 玩家装备：' + JSON.stringify(petContext.equipment || []),
             '  - 附近可拾取部位：' + JSON.stringify(petContext.nearbyPartLoot || []),
             '  - 即将触发的历史回响：' + JSON.stringify(petContext.upcomingEchoes || []),
+            '  - 地图散落部位刷新倾向：' + JSON.stringify(petContext.mapPartSpawnTendency || {}),
             '  - 玩家刚才做的事：' + entry.last_player_action,
             '  - 你的原型：' + entry.archetype,
             '  - 你的行为摘要：' + entry.behavior_summary,
@@ -187,6 +188,7 @@ function formatPetContextBlock(petContext) {
         '当前实体化阶段：' + (context.materializationStage || 'HOLLOW'),
         '附近可拾取部位：' + JSON.stringify(context.nearbyPartLoot || []),
         '附近/即将触发的历史回响：' + JSON.stringify(context.upcomingEchoes || []),
+        '地图散落部位刷新倾向：' + JSON.stringify(context.mapPartSpawnTendency || {}),
         '玩家短板部位：' + JSON.stringify(context.shortSlots || [])
     ].join('\n');
 }

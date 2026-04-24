@@ -92,6 +92,24 @@ function summarizeEquipmentSlots(player) {
     });
 }
 
+function summarizeMapPartSpawnTendency(gameState) {
+    const settings = gameState && gameState.partLootConfig ? gameState.partLootConfig : {};
+    const templates = Array.isArray(settings.templates) ? settings.templates : [];
+
+    return {
+        enabled: settings.enabled !== false && templates.length > 0,
+        maxWorldParts: typeof settings.maxWorldParts === 'number' ? settings.maxWorldParts : 0,
+        spawnBatch: typeof settings.spawnBatch === 'number' ? settings.spawnBatch : 0,
+        templates: templates.slice(0, 5).map((template) => {
+            return {
+                partType: template.partType || template.type || 'HAND',
+                displayName: template.displayName || template.label || template.templateId || template.type || 'part',
+                stats: Object.assign({}, template.stats || {})
+            };
+        })
+    };
+}
+
 function buildPetContext(anchorPlayer, gameState) {
     const safeState = gameState || {};
     const playerPosition = {
@@ -128,6 +146,7 @@ function buildPetContext(anchorPlayer, gameState) {
         activePet: anchorPlayer.activePet || null,
         nearbyPartLoot: nearbyPartLoot,
         upcomingEchoes: upcomingEchoes,
+        mapPartSpawnTendency: summarizeMapPartSpawnTendency(safeState),
         shortSlots: summarizeEquipmentSlots(anchorPlayer).filter((entry) => !entry.stats || !Object.keys(entry.stats).length).slice(0, 3)
     };
 }

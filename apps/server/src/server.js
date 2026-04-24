@@ -719,6 +719,7 @@ if (npcFeaturesEnabled) {
             mapWidth: config.gameWidth,
             mapHeight: config.gameHeight,
             partLoot: map.partLoot.data,
+            partLootConfig: config.partLoot,
             ghostDebug: map.ghostDebug,
             mapId: config.mapId || 'fixed-arena',
             matchStartedAt: roundClock.startedAt,
