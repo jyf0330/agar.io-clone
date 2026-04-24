@@ -23,6 +23,7 @@ describe('player-projection.js', () => {
     });
     player.admin = true;
     player.target = { x: 99, y: 42 };
+    player.npcRelationships = [{npcId: 'mochi', relationshipValue: 7}];
 
     const projected = projectPlayerForSync(player);
 
@@ -30,6 +31,7 @@ describe('player-projection.js', () => {
     expect(projected.playerCardPreviewDataUrl).to.equal('data:image/png;base64,card');
     expect(projected.admin).to.equal(undefined);
     expect(projected.target).to.equal(undefined);
+    expect(projected.npcRelationships[0].relationshipValue).to.equal(7);
     expect(projected.cells[0].toCircle).to.equal(undefined);
   });
 

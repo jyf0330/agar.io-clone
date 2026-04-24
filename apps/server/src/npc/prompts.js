@@ -42,7 +42,8 @@ function formatMemoryBlock(memory) {
         : '暂无长期画像。';
     const summaryText = summaries.length
         ? summaries.map((summary, index) => {
-            return String(index + 1) + '. ' + String(summary.summary || '').slice(0, 80);
+            const expectation = summary.expectation ? ' 明天期望：' + String(summary.expectation).slice(0, 40) : '';
+            return String(index + 1) + '. ' + String(summary.summary || '').slice(0, 80) + expectation;
         }).join('\n')
         : '暂无局末摘要。';
 

@@ -13,13 +13,20 @@ describe('relationship-status.js', () => {
     const markup = formatRelationshipStatus({
       intimacy: 2,
       spike: 1,
-      pollution: 3
+      pollution: 3,
+      npcRelationships: [
+        { npcId: 'mochi', npcName: 'Mochi', relationshipValue: 7 },
+        { npcId: 'doudou', npcName: 'Doudou', relationshipValue: 12 }
+      ]
     });
 
     expect(markup).to.contain('Resonance');
     expect(markup).to.contain('Intimacy: 2');
     expect(markup).to.contain('Spike: 1');
     expect(markup).to.contain('Pollution: 3');
+    expect(markup).to.contain('NPC Relationships');
+    expect(markup).to.contain('Mochi: 7');
+    expect(markup).to.contain('Doudou: 12');
   });
 
   it('should stay empty when relationship attributes are unavailable', () => {

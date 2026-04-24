@@ -71,6 +71,7 @@ describe('memory session summarizer', () => {
         expect(summaries.length).to.equal(3);
         expect(summaries.map((summary) => summary.npcId).sort()).to.deep.equal(['doudou', 'mochi', 'wugui']);
         expect(summaries.every((summary) => summary.summary.length <= 80)).to.equal(true);
+        expect(summaries.every((summary) => summary.expectation.length > 0)).to.equal(true);
     });
 
     it('should write fallback summaries when the llm is offline', async () => {
@@ -108,5 +109,50 @@ describe('memory session summarizer', () => {
         expect(summaries.length).to.equal(1);
         expect(summaries[0].summary).to.not.equal('');
         expect(summaries[0].summary).to.contain('麻薯');
+        expect(summaries[0].expectation).to.not.equal('');
+    });
+
+    it('should lower relationship when a flower expectation is missed', async () => {
+        const sessionId = 'summary-missed-expectation';
+        const npc = createNpc('mochi', '麻薯');
+
+        store.addSessionSummary({
+            playerId: 'player-d',
+            npcId: npc.id,
+            sessionId: 'previous-session',
+            summary: '玩家答应明天画花。',
+            expectation: '明天给我一朵蓝绿色的小花，好吗？',
+            relationshipDelta: 1,
+            ts: 5000
+        });
+        store.recordEvent({
+            playerId: 'player-d',
+            npcId: npc.id,
+            sessionId: sessionId,
+            kind: 'npc_intent',
+            payload: {
+                type: 'move_to'
+            },
+            ts: 6000
+        });
+
+        await summarizer.summarizeSession({
+            npcs: [npc],
+            sessionId: sessionId,
+            playerId: 'player-d',
+            store: store,
+            ask() {
+                return Promise.reject(new Error('offline'));
+            },
+            ts: 7000
+        });
+
+        const summaries = store.listSessionSummaries({
+            sessionId: sessionId,
+            npcId: npc.id,
+            limit: 10
+        });
+
+        expect(summaries[0].relationshipDelta).to.equal(-2);
     });
 });

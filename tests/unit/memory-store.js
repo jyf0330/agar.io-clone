@@ -71,6 +71,7 @@ describe('memory store', function () {
             npcId: 'doudou',
             sessionId: 'session-1',
             summary: '玩家问了颜色，豆豆很开心。',
+            expectation: '明天带一个很亮的颜色来。',
             relationshipDelta: 2,
             ts: 456
         });
@@ -82,7 +83,9 @@ describe('memory store', function () {
             updatedTs: 789
         });
 
-        expect(store.listSessionSummaries({playerId: 'player-a'})).to.have.length(1);
+        const summaries = store.listSessionSummaries({playerId: 'player-a'});
+        expect(summaries).to.have.length(1);
+        expect(summaries[0].expectation).to.contain('亮');
         expect(store.getPersonaImpression('player-a', 'doudou')).to.include({
             playerId: 'player-a',
             npcId: 'doudou',

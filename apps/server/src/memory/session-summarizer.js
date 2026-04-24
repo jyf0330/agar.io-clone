@@ -3,6 +3,8 @@
 const store = require('./store');
 const wrapper = require('../llm/wrapper');
 const {buildSummarizeSessionPrompt} = require('../npc/prompts');
+const path = require('path');
+const expectationPool = require(path.resolve(process.cwd(), 'demo/critiques/expectations.json'));
 
 const fallbackTemplates = [
     '{npcName}记下了这一局：你靠近花园、回应了它，关系微微变亮。',
@@ -39,17 +41,68 @@ function buildFallbackSummary(npc, events) {
     return fallbackTemplates[index].replace('{npcName}', getNpcName(npc)).slice(0, 80);
 }
 
-function estimateRelationshipDelta(events) {
+function getScoring(npc) {
+    return npc
+        && npc.personality
+        && npc.personality.relationship_schema
+        && npc.personality.relationship_schema.scoring
+        ? npc.personality.relationship_schema.scoring
+        : {};
+}
+
+function getEventText(events) {
+    return (Array.isArray(events) ? events : []).map((event) => {
+        const payload = event.payload || {};
+        return [
+            event.kind || '',
+            payload.text || '',
+            payload.message || '',
+            payload.reason || '',
+            payload.type || ''
+        ].join(' ');
+    }).join(' ');
+}
+
+function estimateRelationshipDelta(events, npc, previousSummary) {
     const rows = Array.isArray(events) ? events : [];
-    return rows.reduce((score, event) => {
+    const scoring = getScoring(npc);
+    let score = rows.reduce((total, event) => {
         if (event.kind === 'player_chat' || event.kind === 'npc_chat_reply') {
-            return score + 1;
+            return total + (scoring.player_greets_on_return || 1);
         }
         if (event.kind === 'npc_paint') {
-            return score + 1;
+            return total + (scoring.player_paints_me_any_color || scoring.player_paints_cool_color || 1);
         }
-        return score;
+        return total;
     }, 0);
+
+    if (!rows.length && typeof scoring.player_ignores_me_whole_round === 'number') {
+        score += scoring.player_ignores_me_whole_round;
+    }
+
+    const previousExpectation = previousSummary && previousSummary.expectation ? previousSummary.expectation : '';
+    if (/花/.test(previousExpectation) && !/花/.test(getEventText(rows))) {
+        score -= 2;
+    }
+
+    return Math.max(-10, Math.min(10, score));
+}
+
+function buildTomorrowExpectation(npc, events) {
+    const entries = Array.isArray(expectationPool.entries) ? expectationPool.entries : [];
+    const npcEntries = entries.filter((entry) => entry.npcId === (npc && npc.id));
+    const genericEntries = entries.filter((entry) => entry.npcId === '*');
+    const candidates = npcEntries.length ? npcEntries : genericEntries;
+    if (!candidates.length) {
+        return '明天回来时，给花园留一笔吧。';
+    }
+
+    const eventCount = Array.isArray(events) ? events.length : 0;
+    const index = Math.abs(String(npc && npc.id ? npc.id : 'npc').split('').reduce((sum, char) => {
+        return sum + char.charCodeAt(0);
+    }, eventCount)) % candidates.length;
+
+    return candidates[index].text;
 }
 
 async function summarizeNpcSession(options) {
@@ -64,7 +117,13 @@ async function summarizeNpcSession(options) {
         npcId: npc.id,
         limit: 50
     });
+    const previousSummary = memoryStore.listSessionSummaries({
+        playerId: playerId,
+        npcId: npc.id,
+        limit: 1
+    })[0] || null;
     const fallback = buildFallbackSummary(npc, events);
+    const expectation = buildTomorrowExpectation(npc, events);
     let summary = fallback;
 
     try {
@@ -91,13 +150,15 @@ async function summarizeNpcSession(options) {
         npcId: npc.id,
         sessionId: sessionId,
         summary: summary,
-        relationshipDelta: estimateRelationshipDelta(events),
+        expectation: expectation,
+        relationshipDelta: estimateRelationshipDelta(events, npc, previousSummary),
         ts: settings.ts || Date.now()
     });
 
     return Object.assign({
         npcId: npc.id,
-        summary: summary
+        summary: summary,
+        expectation: expectation
     }, saved);
 }
 
@@ -117,6 +178,7 @@ async function summarizeSession(options) {
 
 module.exports = {
     buildFallbackSummary: buildFallbackSummary,
+    buildTomorrowExpectation: buildTomorrowExpectation,
     estimateRelationshipDelta: estimateRelationshipDelta,
     summarizeNpcSession: summarizeNpcSession,
     summarizeSession: summarizeSession

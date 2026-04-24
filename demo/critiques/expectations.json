@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "version": 1,
+    "description": "Offline fallback pool for Week 2 tomorrow expectations."
+  },
+  "entries": [
+    {"npcId": "mochi", "text": "明天给我一朵蓝绿色的小花，好吗？"},
+    {"npcId": "mochi", "text": "明天来时，慢慢画一条冷色线吧。"},
+    {"npcId": "mochi", "text": "明天如果你回来，我想看一片安静的叶子。"},
+    {"npcId": "mochi", "text": "明天别太急，我想看你画一点风。"},
+    {"npcId": "mochi", "text": "明天给花园留一点蓝色吧。"},
+    {"npcId": "doudou", "text": "明天你要先追我，再画我!!"},
+    {"npcId": "doudou", "text": "明天带一个很亮的颜色来!!"},
+    {"npcId": "doudou", "text": "明天别只看着，来涂我一下!!"},
+    {"npcId": "doudou", "text": "明天我们比谁先跑到边上!!"},
+    {"npcId": "doudou", "text": "明天给我一笔乱乱的惊喜!!"},
+    {"npcId": "wugui", "text": "明天若回来，请记得慢一点靠近。"},
+    {"npcId": "wugui", "text": "明天画一笔稳重的绿色给我看。"},
+    {"npcId": "wugui", "text": "明天先观察，再决定落笔。"},
+    {"npcId": "wugui", "text": "明天别急着抢颜色，留一点分寸。"},
+    {"npcId": "wugui", "text": "明天若守约，我会记下这一步。"},
+    {"npcId": "*", "text": "明天回来时，给花园留一笔吧。"},
+    {"npcId": "*", "text": "明天我想看看你会选什么颜色。"},
+    {"npcId": "*", "text": "明天如果你回来，我会认得你。"},
+    {"npcId": "*", "text": "明天试着靠近一点，好吗？"},
+    {"npcId": "*", "text": "明天让我们从一小笔开始。"}
+  ]
+}

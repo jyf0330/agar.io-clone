@@ -6,7 +6,7 @@ function formatRelationshipStatus(player) {
         return '';
     }
 
-    return [
+    var rows = [
         '<br />',
         '<span class="title">' + i18n.t('hud.resonance') + '</span>',
         '<br />',
@@ -15,7 +15,20 @@ function formatRelationshipStatus(player) {
         i18n.t('hud.spike', { value: player.spike }),
         '<br />',
         i18n.t('hud.pollution', { value: player.pollution })
-    ].join('');
+    ];
+    if (Array.isArray(player.npcRelationships) && player.npcRelationships.length) {
+        rows.push('<br />');
+        rows.push('<span class="title">' + i18n.t('hud.npcRelationships') + '</span>');
+        player.npcRelationships.forEach(function (entry) {
+            rows.push('<br />');
+            rows.push(i18n.t('hud.npcRelationshipValue', {
+                name: entry.npcName || entry.npcId,
+                value: entry.relationshipValue
+            }));
+        });
+    }
+
+    return rows.join('');
 }
 
 module.exports = formatRelationshipStatus;

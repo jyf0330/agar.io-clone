@@ -16,6 +16,7 @@ const PLAYER_SYNC_FIELDS = [
     'bodyParts',
     'bodyPartCount',
     'bodyPartCounts',
+    'npcRelationships',
     'playerCardPreviewDataUrl',
     'cells'
 ];

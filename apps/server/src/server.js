@@ -219,6 +219,70 @@ function rememberRecentChat(currentPlayer, message) {
     return entry;
 }
 
+function speakPreviousExpectations(currentPlayer) {
+    npcRoster.forEach((npc) => {
+        try {
+            const latestSummary = memoryStore.listSessionSummaries({
+                playerId: currentPlayer.id,
+                npcId: npc.id,
+                limit: 1
+            })[0];
+            if (!latestSummary || !latestSummary.expectation) {
+                return;
+            }
+
+            const text = '昨天我说：' + latestSummary.expectation;
+            io.emit('npc:speak', {
+                npcId: npc.id,
+                npcName: npc.player.name,
+                text: text.slice(0, 28),
+                duration: 4000
+            });
+            memoryStore.recordEvent({
+                kind: 'npc_expectation_recall',
+                playerId: currentPlayer.id,
+                npcId: npc.id,
+                sessionId: memorySessionId,
+                payload: {
+                    text: text,
+                    expectation: latestSummary.expectation
+                },
+                ts: Date.now()
+            });
+        } catch (error) {
+            console.warn('[NPC] expectation recall failed', error.message);
+        }
+    });
+}
+
+function refreshNpcRelationshipsForPlayers() {
+    const humanPlayers = map.players.data.filter((player) => !player.isNpc);
+    humanPlayers.forEach((player) => {
+        player.npcRelationships = npcRoster.map((npc) => {
+            let relationshipValue = npc.personality
+                && npc.personality.relationship_schema
+                && typeof npc.personality.relationship_schema.init_value === 'number'
+                ? npc.personality.relationship_schema.init_value
+                : 0;
+
+            try {
+                const impression = memoryStore.getPersonaImpression(player.id, npc.id);
+                if (impression && typeof impression.relationshipValue === 'number') {
+                    relationshipValue = impression.relationshipValue;
+                }
+            } catch (error) {
+                console.warn('[NPC] relationship HUD refresh failed', error.message);
+            }
+
+            return {
+                npcId: npc.id,
+                npcName: npc.player.name,
+                relationshipValue: relationshipValue
+            };
+        });
+    });
+}
+
 async function finalizeRoundMemoryIfNeeded() {
     const elapsedMs = Date.now() - roundClock.startedAt;
     if (roundMemorySummary.done || roundMemorySummary.started || elapsedMs < roundClock.durationMs) {
@@ -277,6 +341,7 @@ const addPlayer = (socket) => {
                     placeNpcNearPlayer(npc, currentPlayer, index);
                 });
                 npcsAnchoredToPlayer = true;
+                speakPreviousExpectations(currentPlayer);
             }
             io.emit('playerJoin', { name: currentPlayer.name });
             console.log('Total players: ' + map.players.data.length);
@@ -460,6 +525,7 @@ setInterval(() => {
         console.error('[NPC] session memory finalizer failed', error);
     });
 }, 1000);
+setInterval(refreshNpcRelationshipsForPlayers, 1000);
 setInterval(gameLoopService.sendUpdates, 1000 / config.networkUpdateFactor);
 
 // Don't touch, IP configurations.

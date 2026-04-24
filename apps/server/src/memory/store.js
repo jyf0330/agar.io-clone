@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS session_summaries (
   npc_id TEXT,
   session_id TEXT,
   summary TEXT,
+  expectation TEXT,
   relationship_delta INTEGER,
   ts INTEGER
 );
@@ -78,6 +79,12 @@ function executeSql(query, params, options) {
         'conn.row_factory = sqlite3.Row',
         'try:',
         '    conn.executescript(payload["schemaSql"])',
+        '    try:',
+        '        conn.execute("ALTER TABLE session_summaries ADD COLUMN expectation TEXT DEFAULT \'\'")',
+        '        conn.commit()',
+        '    except sqlite3.OperationalError as error:',
+        '        if "duplicate column name" not in str(error):',
+        '            raise',
         '    cursor = conn.execute(payload["query"], payload["params"])',
         '    if payload["mode"] == "all":',
         '        rows = [dict(row) for row in cursor.fetchall()]',
@@ -122,6 +129,7 @@ function toCamelSummary(row) {
         npcId: row.npc_id,
         sessionId: row.session_id,
         summary: row.summary,
+        expectation: row.expectation || '',
         relationshipDelta: row.relationship_delta,
         ts: row.ts
     };
@@ -216,14 +224,15 @@ function addSessionSummary(summary) {
     const result = executeSql(
         [
             'INSERT INTO session_summaries(',
-            'player_id, npc_id, session_id, summary, relationship_delta, ts',
-            ') VALUES (?, ?, ?, ?, ?, ?)'
+            'player_id, npc_id, session_id, summary, expectation, relationship_delta, ts',
+            ') VALUES (?, ?, ?, ?, ?, ?, ?)'
         ].join(' '),
         [
             safeSummary.playerId || null,
             safeSummary.npcId || null,
             safeSummary.sessionId || null,
             safeSummary.summary || '',
+            safeSummary.expectation || '',
             typeof safeSummary.relationshipDelta === 'number' ? safeSummary.relationshipDelta : 0,
             typeof safeSummary.ts === 'number' ? safeSummary.ts : Date.now()
         ]
