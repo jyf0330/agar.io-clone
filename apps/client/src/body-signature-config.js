@@ -5,6 +5,7 @@ module.exports = {
     storageKey: 'agar.bodySignature',
     canvasSize: 280,
     missingPart: 'HAND',
+    bodyBaseImage: 'img/body-signature/body-base-missing-right-arm.png',
     tiers: {
         none: {
             minSimilarity: 0,
@@ -28,6 +29,7 @@ module.exports = {
             part: 'HAND',
             labelKey: 'signature.ref.handOpen',
             hintKey: 'signature.ref.handOpenHint',
+            image: 'img/body-signature/refs/right-arm-open.png',
             swatch: '#f5a86f'
         },
         {
@@ -35,6 +37,7 @@ module.exports = {
             part: 'HAND',
             labelKey: 'signature.ref.handGrab',
             hintKey: 'signature.ref.handGrabHint',
+            image: 'img/body-signature/refs/right-arm-grab.png',
             swatch: '#c986ff'
         },
         {
@@ -42,6 +45,7 @@ module.exports = {
             part: 'HAND',
             labelKey: 'signature.ref.handThread',
             hintKey: 'signature.ref.handThreadHint',
+            image: 'img/body-signature/refs/right-arm-thread.png',
             swatch: '#59c7e8'
         }
     ]

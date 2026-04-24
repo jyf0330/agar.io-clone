@@ -158,6 +158,7 @@ window.onload = function () {
         i18n: i18n,
         panelEl: document.getElementById('bodySignaturePanel'),
         canvasEl: document.getElementById('bodySignatureCanvas'),
+        bodyImageEl: document.getElementById('bodySignatureBodyImage'),
         refsEl: document.getElementById('bodySignatureRefs'),
         clearButton: document.getElementById('bodySignatureClearButton'),
         submitButton: document.getElementById('bodySignatureSubmitButton'),

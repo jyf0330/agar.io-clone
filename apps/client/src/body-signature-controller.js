@@ -9,6 +9,7 @@ function createBodySignatureController(options) {
     var i18n = options.i18n;
     var panelEl = options.panelEl;
     var canvas = options.canvasEl;
+    var bodyImageEl = options.bodyImageEl;
     var refsEl = options.refsEl;
     var clearButton = options.clearButton;
     var submitButton = options.submitButton;
@@ -88,15 +89,20 @@ function createBodySignatureController(options) {
         refsEl.innerHTML = '';
         config.references.forEach(function (reference) {
             var card = document.createElement('div');
+            var preview = document.createElement('img');
             var swatch = document.createElement('span');
             var title = document.createElement('strong');
             var hint = document.createElement('small');
 
             card.className = 'body-signature-ref';
+            preview.className = 'body-signature-ref-image';
+            preview.src = reference.image;
+            preview.alt = '';
             swatch.className = 'body-signature-ref-swatch';
             swatch.style.backgroundColor = reference.swatch;
             title.textContent = i18n.t(reference.labelKey);
             hint.textContent = i18n.t(reference.hintKey);
+            card.appendChild(preview);
             card.appendChild(swatch);
             card.appendChild(title);
             card.appendChild(hint);
@@ -161,6 +167,9 @@ function createBodySignatureController(options) {
 
     function open(type, done) {
         onComplete = done;
+        if (bodyImageEl) {
+            bodyImageEl.src = config.bodyBaseImage;
+        }
         renderReferenceCards();
         resetCanvas();
         if (panelEl.className.indexOf('open') === -1) {

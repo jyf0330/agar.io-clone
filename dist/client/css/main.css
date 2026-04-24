@@ -608,6 +608,23 @@ div {
     color: #6c4a43;
 }
 
+.body-signature-character {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 14px;
+    padding: 12px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.48);
+}
+
+.body-signature-character img {
+    display: block;
+    width: auto;
+    max-width: 210px;
+    max-height: 260px;
+    object-fit: contain;
+}
+
 .body-signature-refs {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -622,6 +639,16 @@ div {
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.56);
     box-sizing: border-box;
+}
+
+.body-signature-ref-image {
+    display: block;
+    width: 100%;
+    height: 92px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    object-fit: contain;
+    background: rgba(255, 246, 229, 0.72);
 }
 
 .body-signature-ref-swatch {
