@@ -1,79 +1,139 @@
-"use strict";
+'use strict';
 
 const path = require('path');
 const fs = require('fs');
+const childProcess = require('child_process');
 const config = require(path.resolve(process.cwd(), 'config'));
 const sqlInfo = config.sqlinfo;
-const dbPath = path.join(__dirname, 'db', sqlInfo.fileName);
-let sqlite3;
-try {
-  sqlite3 = require('sqlite3').verbose();
-} catch (error) {
-  console.warn('[WARN] sqlite3 unavailable, database logging is disabled.');
-  console.warn(`[WARN] ${error.message}`);
-  sqlite3 = null;
+const dbPath = path.resolve(process.cwd(), 'data/server-db', sqlInfo.fileName);
+let database = null;
+let nativeLoadAttempted = false;
+let nativeLoadError = null;
+const schemaSql = `
+CREATE TABLE IF NOT EXISTS failed_login_attempts (
+  username TEXT,
+  ip_address TEXT
+);
+
+CREATE TABLE IF NOT EXISTS chat_messages (
+  username TEXT,
+  message TEXT,
+  ip_address TEXT,
+  timestamp INTEGER
+);
+`;
+function ensureDatabaseFolder() {
+  fs.mkdirSync(path.dirname(dbPath), {
+    recursive: true
+  });
 }
-if (!sqlite3) {
-  module.exports = {
-    run(_query, _params, callback) {
-      if (typeof callback === 'function') callback(null);
-    },
-    close(callback) {
-      if (typeof callback === 'function') callback(null);
-    }
-  };
-} else {
-  // Ensure the database folder exists
-  const dbFolder = path.dirname(dbPath);
-  if (!fs.existsSync(dbFolder)) {
-    fs.mkdirSync(dbFolder, {
-      recursive: true
-    });
-    console.log(`Created the database folder: ${dbFolder}`);
+function normalizeParams(params, callback) {
+  if (typeof params === 'function') {
+    return {
+      params: [],
+      callback: params
+    };
   }
-
-  // Create the database connection
-  const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, err => {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log('Connected to the SQLite database.');
-
-      // Perform any necessary table creations
-      db.serialize(() => {
-        db.run(`CREATE TABLE IF NOT EXISTS failed_login_attempts (
-        username TEXT,
-        ip_address TEXT
-      )`, err => {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log("Created failed_login_attempts table");
-          }
-        });
-        db.run(`CREATE TABLE IF NOT EXISTS chat_messages (
-        username TEXT,
-        message TEXT,
-        ip_address TEXT,
-        timestamp INTEGER
-      )`, err => {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log("Created chat_messages table");
-          }
-        });
-      });
+  return {
+    params: Array.isArray(params) ? params : [],
+    callback: callback
+  };
+}
+function tryLoadNativeDatabase() {
+  if (nativeLoadAttempted) {
+    return database;
+  }
+  nativeLoadAttempted = true;
+  try {
+    const Database = require('better-sqlite3');
+    ensureDatabaseFolder();
+    database = new Database(dbPath);
+    database.exec(schemaSql);
+    return database;
+  } catch (error) {
+    nativeLoadError = error;
+    database = null;
+  }
+  return null;
+}
+function getPythonExecutable() {
+  return process.env.PYTHON || process.env.PYTHON3 || 'python3';
+}
+function runWithPythonSqlite(query, params) {
+  ensureDatabaseFolder();
+  const payload = JSON.stringify({
+    dbPath: dbPath,
+    schemaSql: schemaSql,
+    query: query,
+    params: params || []
+  });
+  const script = ['import json, sqlite3, sys', 'payload = json.loads(sys.stdin.read())', 'conn = sqlite3.connect(payload["dbPath"])', 'try:', '    conn.executescript(payload["schemaSql"])', '    cursor = conn.execute(payload["query"], payload["params"])', '    conn.commit()', '    print(json.dumps({"changes": conn.total_changes, "lastID": cursor.lastrowid}))', 'finally:', '    conn.close()'].join('\n');
+  const result = childProcess.spawnSync(getPythonExecutable(), ['-c', script], {
+    input: payload,
+    encoding: 'utf8'
+  });
+  if (result.error) {
+    throw result.error;
+  }
+  if (result.status !== 0) {
+    throw new Error((result.stderr || result.stdout || 'python sqlite failed').trim());
+  }
+  return JSON.parse(result.stdout || '{}');
+}
+function run(query, params, callback) {
+  const normalized = normalizeParams(params, callback);
+  try {
+    const db = tryLoadNativeDatabase();
+    const result = db ? db.prepare(query).run(normalized.params) : runWithPythonSqlite(query, normalized.params);
+    if (typeof normalized.callback === 'function') {
+      normalized.callback(null, result);
+    }
+    return result;
+  } catch (error) {
+    if (typeof normalized.callback === 'function') {
+      normalized.callback(error);
+      return null;
+    }
+    throw error;
+  }
+}
+function close(callback) {
+  try {
+    if (database) {
+      database.close();
+      database = null;
+      nativeLoadAttempted = false;
+    }
+    if (typeof callback === 'function') {
+      callback(null);
+    }
+  } catch (error) {
+    if (typeof callback === 'function') {
+      callback(error);
+      return;
+    }
+    throw error;
+  }
+}
+function getStatus() {
+  return {
+    path: dbPath,
+    native: Boolean(database),
+    nativeLoadAttempted: nativeLoadAttempted,
+    nativeLoadError: nativeLoadError ? nativeLoadError.message : null,
+    fallback: database ? null : 'python-sqlite3'
+  };
+}
+process.on('beforeExit', () => {
+  close(error => {
+    if (error) {
+      console.error('Error closing the database connection. ', error);
     }
   });
-  process.on('beforeExit', () => {
-    db.close(err => {
-      if (err) {
-        console.error('Error closing the database connection. ', err);
-      } else {
-        console.log('Closed the database connection.');
-      }
-    });
-  });
-  module.exports = db;
-}
+});
+module.exports = {
+  run: run,
+  close: close,
+  getStatus: getStatus,
+  ensureDatabase: tryLoadNativeDatabase
+};
