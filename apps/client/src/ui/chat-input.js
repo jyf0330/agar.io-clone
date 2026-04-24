@@ -1,5 +1,13 @@
 'use strict';
 
+const QUICK_PET_QUESTIONS = [
+    '哪里有回声？',
+    '附近有什么部位？',
+    '这件部位要不要换？',
+    '我现在该打还是跑？',
+    '你记得上一局吗？'
+];
+
 function createChatInput(options) {
     const settings = options || {};
     const document = settings.document;
@@ -14,6 +22,7 @@ function createChatInput(options) {
         let history;
         let historyLabel;
         let composer;
+        let quickBar;
 
         if (root) {
             return root;
@@ -34,6 +43,22 @@ function createChatInput(options) {
         historyList.className = 'npc-chat-history-list';
         history.appendChild(historyList);
 
+        quickBar = document.createElement('div');
+        quickBar.className = 'npc-chat-quickbar';
+        QUICK_PET_QUESTIONS.forEach((question) => {
+            const button = document.createElement('button');
+            button.className = 'npc-chat-quick';
+            button.type = 'button';
+            button.textContent = question;
+            button.addEventListener('click', () => {
+                if (typeof sendHandler === 'function' && sendHandler(question) === false) {
+                    return;
+                }
+                addLocalMessage(question);
+            });
+            quickBar.appendChild(button);
+        });
+
         composer = document.createElement('div');
         composer.className = 'npc-chat-composer';
 
@@ -48,6 +73,7 @@ function createChatInput(options) {
 
         composer.appendChild(input);
         root.appendChild(history);
+        root.appendChild(quickBar);
         root.appendChild(composer);
 
         wrapper = document.getElementById('gameAreaWrapper') || document.body;
@@ -159,7 +185,10 @@ function createChatInput(options) {
         focus: focus,
         setSendHandler: setSendHandler,
         addLocalMessage: addLocalMessage,
-        getLocalMessages: getLocalMessages
+        getLocalMessages: getLocalMessages,
+        getQuickQuestions: function () {
+            return QUICK_PET_QUESTIONS.slice();
+        }
     };
 }
 

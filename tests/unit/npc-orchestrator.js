@@ -449,6 +449,112 @@ describe('npc orchestrator', () => {
         expect(orchestrator.lastHandledChatTs).to.equal(baseNow + 1000);
     });
 
+    it('should answer quick pet questions with active pet context and LLM prompt', async () => {
+        const baseNow = 1700001500000;
+        const originalNow = Date.now;
+        const events = [];
+        const memoryEvents = [];
+        const humanPlayer = createHumanPlayer();
+        const mochi = createNpc('mochi', {spawn: {x: 100, y: 120}});
+        const doudou = createNpc('doudou', {spawn: {x: 160, y: 180}});
+        let capturedPrompt = null;
+        humanPlayer.setActivePet({
+            petId: 'doudou',
+            name: 'Doudou',
+            personality: '调皮捣蛋'
+        });
+        const orchestrator = new Orchestrator({
+            ask(promptId, params, options) {
+                if (promptId === 'pet_question_reply') {
+                    capturedPrompt = options.prompt;
+                    expect(params.petContext.nearbyPartLoot[0].displayName).to.equal('Echo Hand');
+                    return Promise.resolve({
+                        ok: true,
+                        text: '东南有Echo手。',
+                        source: 'llm'
+                    });
+                }
+
+                return Promise.resolve({
+                    ok: true,
+                    text: '[]',
+                    source: 'llm'
+                });
+            },
+            memoryStore: {
+                listSessionSummaries() {
+                    return [{summary: '上局一起捡了手。'}];
+                },
+                getPersonaImpression() {
+                    return {impression: '玩家爱追回声。'};
+                }
+            },
+            recordEvent(event) {
+                memoryEvents.push(event);
+            },
+            mapWidth: 500,
+            mapHeight: 400,
+            maxCallsPerSec: 5,
+            emitEvent(name, payload) {
+                events.push({name: name, payload: payload});
+            },
+            sessionStartedAt: baseNow,
+            roundDurationMs: 90000
+        });
+
+        Date.now = () => baseNow;
+        mochi.spawnedAt = baseNow;
+        doudou.spawnedAt = baseNow;
+        orchestrator.registerNpc(mochi);
+        orchestrator.registerNpc(doudou);
+
+        try {
+            Date.now = () => baseNow + 2000;
+            await orchestrator.tick({
+                players: [humanPlayer, mochi.player, doudou.player],
+                partLoot: [{
+                    x: humanPlayer.x + 140,
+                    y: humanPlayer.y + 120,
+                    part: {
+                        partType: 'HAND',
+                        displayName: 'Echo Hand',
+                        stats: {pickupRange: 10},
+                        sourceType: 'ghost_echo'
+                    }
+                }],
+                ghostDebug: {
+                    triggerRadius: 800,
+                    anchors: [{
+                        x: humanPlayer.x + 120,
+                        y: humanPlayer.y + 90,
+                        t: 1200,
+                        eventType: 'part_pickup',
+                        inTimeWindow: true
+                    }]
+                },
+                recentChats: [{
+                    ts: baseNow + 1000,
+                    playerId: humanPlayer.id,
+                    playerName: humanPlayer.name,
+                    message: '哪里有回声？'
+                }],
+                matchStartedAt: baseNow,
+                roundDurationMs: 90000
+            }, 1000);
+        } finally {
+            Date.now = originalNow;
+        }
+
+        expect(events).to.have.length(1);
+        expect(events[0].payload.npcId).to.equal('doudou');
+        expect(events[0].payload.text).to.equal('东南有Echo手。');
+        expect(capturedPrompt.user).to.contain('Echo Hand');
+        expect(capturedPrompt.user).to.contain('part_pickup');
+        expect(capturedPrompt.system).to.contain('上局一起捡了手');
+        expect(memoryEvents.some((event) => event.kind === 'chat_turn' && event.npcId === 'doudou')).to.equal(true);
+        expect(orchestrator.lastHandledChatTs).to.equal(baseNow + 1000);
+    });
+
     it('should move doudou toward the player when asked to come over', async () => {
         const baseNow = 1700002000000;
         const originalNow = Date.now;

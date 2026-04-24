@@ -175,6 +175,42 @@ function buildNpcReplyPrompt(npcs, recentChats, playerMessage, memoryByNpc) {
     };
 }
 
+function formatPetContextBlock(petContext) {
+    const context = petContext || {};
+
+    return [
+        '当前玩家装备：' + JSON.stringify(context.equipment || []),
+        '当前实体化阶段：' + (context.materializationStage || 'HOLLOW'),
+        '附近可拾取部位：' + JSON.stringify(context.nearbyPartLoot || []),
+        '附近/即将触发的历史回响：' + JSON.stringify(context.upcomingEchoes || []),
+        '玩家短板部位：' + JSON.stringify(context.shortSlots || [])
+    ].join('\n');
+}
+
+function buildPetQuestionPrompt(npc, playerMessage, petContext, memory) {
+    return {
+        system: [
+            '你是玩家当前跟宠，只能回答真实上下文里存在的事实。',
+            '不能编造地图热点、回声、部位、上局经历。',
+            '如果事实不足，必须说不确定或给保守建议。',
+            '人设锚点：',
+            npc && npc.personality ? npc.personality.anchorsText || '' : '',
+            '记忆（只允许使用这些长期记忆，不要编造）：',
+            formatMemoryBlock(memory)
+        ].join('\n\n'),
+        user: [
+            '玩家问：' + (playerMessage && playerMessage.message ? playerMessage.message : ''),
+            '真实 petContext：',
+            formatPetContextBlock(petContext),
+            '请只输出一句中文，15 字以内。',
+            '可回答类型：speak / hint_loot / hint_echo / move_to / 保守建议。',
+            '涉及“上次”“记得”时，必须来自上面的记忆；没有记忆就说还没有共同记忆。'
+        ].join('\n'),
+        maxTokens: 80,
+        temperature: 0.45
+    };
+}
+
 function formatSessionEvents(events) {
     const rows = Array.isArray(events) ? events.slice(0, 50) : [];
     if (!rows.length) {
@@ -249,6 +285,7 @@ module.exports = {
     buildNpcIntentPrompt: buildNpcIntentPrompt,
     buildNpcUtterPrompt: buildNpcUtterPrompt,
     buildNpcReplyPrompt: buildNpcReplyPrompt,
+    buildPetQuestionPrompt: buildPetQuestionPrompt,
     buildSummarizeSessionPrompt: buildSummarizeSessionPrompt,
     buildUpdatePersonaImpressionPrompt: buildUpdatePersonaImpressionPrompt,
     formatMemoryBlock: formatMemoryBlock

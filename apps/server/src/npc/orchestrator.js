@@ -2,7 +2,7 @@
 
 const wrapper = require('../llm/wrapper');
 const {randomWalkIntent} = require('./fallback');
-const {buildNpcIntentPrompt, buildNpcUtterPrompt, buildNpcReplyPrompt} = require('./prompts');
+const {buildNpcIntentPrompt, buildNpcUtterPrompt, buildNpcReplyPrompt, buildPetQuestionPrompt} = require('./prompts');
 const {buildContextualFallbackUtterance} = require('./greetings');
 
 function getTimeOfDayLabel(date) {
@@ -55,8 +55,21 @@ function isFollowPlayerMessage(message) {
     return /走过来|过来|来这边|靠近我/.test(String(message || ''));
 }
 
+function isPetQuestionMessage(message) {
+    return /哪里有回声|附近有什么部位|这件部位要不要换|我现在该打还是跑|你记得上一局吗/.test(String(message || ''));
+}
+
 function distance(left, right) {
     return Math.hypot((left.x || 0) - (right.x || 0), (left.y || 0) - (right.y || 0));
+}
+
+function getDirection(from, to) {
+    const dx = (to.x || 0) - (from.x || 0);
+    const dy = (to.y || 0) - (from.y || 0);
+    const vertical = dy < -80 ? '北' : dy > 80 ? '南' : '';
+    const horizontal = dx < -80 ? '西' : dx > 80 ? '东' : '';
+
+    return (vertical + horizontal) || '附近';
 }
 
 function summarizeEquipmentSlots(player) {
@@ -138,6 +151,65 @@ function getMockChatReply(npcId, latestChat) {
     }
 
     return getChatFallbackReply(npcId);
+}
+
+function hasMemoryEvidence(memory) {
+    const safeMemory = memory || {};
+    return Boolean(
+        (Array.isArray(safeMemory.summaries) && safeMemory.summaries.length)
+        || (safeMemory.impression && safeMemory.impression.impression)
+    );
+}
+
+function buildPetQuestionFallbackReply(question, petContext, memory, anchorPlayer) {
+    const context = petContext || {};
+    const playerPosition = anchorPlayer || {x: 0, y: 0};
+    const echoes = Array.isArray(context.upcomingEchoes) ? context.upcomingEchoes : [];
+    const loot = Array.isArray(context.nearbyPartLoot) ? context.nearbyPartLoot : [];
+    const message = String(question || '');
+
+    if (/哪里有回声/.test(message)) {
+        if (!echoes.length) {
+            return '暂时没闻到回声。';
+        }
+        return getDirection(playerPosition, echoes[0]) + '有回声。';
+    }
+
+    if (/附近有什么部位/.test(message)) {
+        if (!loot.length) {
+            return '附近没看到部位。';
+        }
+        return getDirection(playerPosition, loot[0]) + '有' + String(loot[0].displayName || loot[0].partType || '部位').slice(0, 5) + '。';
+    }
+
+    if (/这件部位要不要换/.test(message)) {
+        if (!loot.length) {
+            return '先别换，没目标。';
+        }
+        const stats = loot[0].stats || {};
+        const statName = Object.keys(stats)[0];
+        if (!statName) {
+            return '属性不明，先观望。';
+        }
+        return statName + '+' + stats[statName] + '，可换。';
+    }
+
+    if (/我现在该打还是跑/.test(message)) {
+        if (context.materializationStage === 'REAL' || context.materializationStage === 'OVERREAL') {
+            return '能打，但别贪。';
+        }
+        return '先跑，补部位。';
+    }
+
+    if (/你记得上一局吗/.test(message)) {
+        if (!hasMemoryEvidence(memory)) {
+            return '还没有共同记忆。';
+        }
+        const summary = memory.summaries && memory.summaries[0] ? memory.summaries[0].summary : memory.impression.impression;
+        return '记得，' + String(summary || '').slice(0, 10);
+    }
+
+    return '我先保守点。';
 }
 
 class Orchestrator {
@@ -606,6 +678,68 @@ class Orchestrator {
         }
     }
 
+    getActivePetNpc(safeState) {
+        const anchorPlayer = this.getAnchorPlayer(safeState);
+        const activePetId = anchorPlayer && anchorPlayer.activePet ? anchorPlayer.activePet.petId : null;
+
+        return this.npcs.find((npc) => npc.id === activePetId) || this.npcs[0] || null;
+    }
+
+    async generatePetQuestionReply(npc, latestChat, safeState) {
+        const anchorPlayer = this.getAnchorPlayer(safeState) || {x: 0, y: 0};
+        const petContext = buildPetContext(anchorPlayer, safeState);
+        const memory = this.getMemoryForNpc(npc, safeState);
+        const fallback = buildPetQuestionFallbackReply(latestChat.message, petContext, memory, anchorPlayer);
+        const prompt = buildPetQuestionPrompt(npc, latestChat, petContext, memory);
+        const now = Date.now();
+
+        if (estimatePromptTokens(prompt) > this.config.maxPromptTokens || !this.consumeCallBudget(now)) {
+            return fallback;
+        }
+
+        try {
+            const result = await this.config.ask('pet_question_reply', {
+                npcId: npc.id,
+                playerId: anchorPlayer.id || '',
+                message: latestChat.message,
+                petContext: petContext
+            }, {
+                timeoutMs: Math.min(this.config.timeoutMs, 3500),
+                useCache: false,
+                prompt: prompt
+            });
+
+            if (result && result.ok && result.text && result.text.indexOf('MOCK:') !== 0) {
+                return String(result.text).trim().slice(0, 15) || fallback;
+            }
+        } catch (_error) {
+            return fallback;
+        }
+
+        return fallback;
+    }
+
+    async handlePetQuestion(latestChat, safeState) {
+        const npc = this.getActivePetNpc(safeState);
+        if (!npc || typeof this.config.emitEvent !== 'function') {
+            return false;
+        }
+
+        const text = await this.generatePetQuestionReply(npc, latestChat, safeState);
+        this.config.emitEvent('npc:speak', {
+            npcId: npc.id,
+            npcName: npc.player.name,
+            text: text,
+            duration: 3500
+        });
+        this.recordNpcEvent('chat_turn', npc, safeState, {
+            question: latestChat.message,
+            answer: text,
+            source: 'active_pet'
+        }, latestChat.playerId);
+        return true;
+    }
+
     queueFollowPlayerIntent(npc, safeState) {
         const anchorPlayer = this.getAnchorPlayer(safeState);
         if (!npc || !anchorPlayer) {
@@ -630,6 +764,11 @@ class Orchestrator {
         }
 
         const latestChat = nextChats.sort((left, right) => left.ts - right.ts).pop();
+        if (isPetQuestionMessage(latestChat.message) && await this.handlePetQuestion(latestChat, safeState)) {
+            this.lastHandledChatTs = latestChat.ts;
+            return;
+        }
+
         const replies = await this.generateChatReplies(latestChat, safeState);
 
         if (typeof this.config.emitEvent === 'function') {
