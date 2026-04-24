@@ -65,6 +65,7 @@ class GhostManager {
         this.followTimeoutMs = settings.followTimeoutMs || 30000;
         this.maxActiveGhosts = typeof settings.maxActiveGhosts === 'number' ? settings.maxActiveGhosts : 3;
         this.anchorCooldownMs = typeof settings.anchorCooldownMs === 'number' ? settings.anchorCooldownMs : 60000;
+        this.chatBubbleDurationMs = typeof settings.chatBubbleDurationMs === 'number' ? settings.chatBubbleDurationMs : 4000;
         this.seedEvents = (settings.seedEvents || []).map(normalizeEvent);
         this.memoryStore = settings.memoryStore || null;
         this.spawnedItemIds = {};
@@ -145,6 +146,20 @@ class GhostManager {
             .sort((left, right) => left.t - right.t);
     }
 
+    loadChatRecords(event) {
+        if (!this.memoryStore || typeof this.memoryStore.listChatRecords !== 'function') {
+            return [];
+        }
+
+        return this.memoryStore.listChatRecords({
+            sessionId: event.sessionId,
+            playerId: event.ghostId,
+            limit: 500
+        })
+            .filter((chat) => chat.replayAllowed !== false && chat.text && typeof chat.t === 'number')
+            .sort((left, right) => left.t - right.t);
+    }
+
     activateTrace(event, now) {
         const key = event.sessionId + ':' + event.ghostId;
         this.activeGhosts[key] = {
@@ -159,6 +174,7 @@ class GhostManager {
             activatedAt: now,
             anchorT: event.t,
             tracePoints: this.loadTracePoints(event),
+            chatRecords: this.loadChatRecords(event),
             radius: 34,
             isGhost: true
         };
@@ -201,6 +217,18 @@ class GhostManager {
         });
     }
 
+    updateGhostChats(now) {
+        Object.keys(this.activeGhosts).forEach((key) => {
+            const ghost = this.activeGhosts[key];
+            const replayT = ghost.anchorT + Math.max(0, now - ghost.activatedAt);
+            const chat = (ghost.chatRecords || []).filter((record) => {
+                return record.t <= replayT && replayT - record.t <= this.chatBubbleDurationMs;
+            }).pop();
+
+            ghost.chat = chat ? chat.text : '';
+        });
+    }
+
     tick(state) {
         const safeState = state || {};
         const map = safeState.map;
@@ -211,6 +239,7 @@ class GhostManager {
 
         this.pruneGhosts(now);
         this.updateGhostPositions(now);
+        this.updateGhostChats(now);
         this.getEvents().forEach((event) => {
             if (
                 !this.isInTimeWindow(event, elapsedMs)

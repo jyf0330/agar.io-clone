@@ -245,4 +245,81 @@ describe('ghost manager', () => {
     expect(map.ghosts[0].x).to.equal(325);
     expect(map.ghosts[0].y).to.equal(310);
   });
+
+  it('should show persisted replay-allowed chat when the ghost reaches the original chat time', () => {
+    const startedAt = 1000;
+    const map = new mapUtils.Map(config);
+    const player = new playerUtils.Player('player-1');
+    player.init({ x: 300, y: 300 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'viewer',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+
+    const manager = new GhostManager({
+      triggerRadius: 100,
+      timeWindowMs: 250,
+      chatBubbleDurationMs: 4000,
+      memoryStore: {
+        listGhostAnchors() {
+          return [{
+            anchorId: 'anchor-1',
+            sourceSessionId: 'old-session',
+            sourcePlayerId: 'old-player',
+            t: 1000,
+            x: 305,
+            y: 300,
+            eventType: 'chat_message',
+            priority: 20
+          }];
+        },
+        listPlayerTraces() {
+          return [
+            {sessionId: 'old-session', playerId: 'old-player', t: 1000, x: 305, y: 300},
+            {sessionId: 'old-session', playerId: 'old-player', t: 1200, x: 345, y: 320}
+          ];
+        },
+        listChatRecords() {
+          return [
+            {sessionId: 'old-session', playerId: 'old-player', t: 900, text: 'too old', replayAllowed: true},
+            {sessionId: 'old-session', playerId: 'old-player', t: 1100, text: 'old hello', replayAllowed: true},
+            {sessionId: 'old-session', playerId: 'old-player', t: 1100, text: 'hidden', replayAllowed: false}
+          ];
+        },
+        listEvents() {
+          return [];
+        }
+      }
+    });
+
+    manager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1000
+    });
+
+    expect(map.ghosts[0].chat).to.equal('');
+
+    manager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 1100
+    });
+
+    expect(map.ghosts).to.have.length(1);
+    expect(map.ghosts[0].chat).to.equal('old hello');
+
+    manager.tick({
+      map,
+      players: map.players.data,
+      matchStartedAt: startedAt,
+      now: startedAt + 5200
+    });
+
+    expect(map.ghosts[0].chat).to.equal('');
+  });
 });
