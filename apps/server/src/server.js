@@ -25,6 +25,7 @@ const {updatePersonaImpressions} = require('./memory/persona-updater');
 const NpcState = require('./npc/npc');
 const Orchestrator = require('./npc/orchestrator');
 const taskRewards = require('./npc/task-rewards');
+const returnMemory = require('./npc/return-memory');
 const {loadPersonalityCard} = require('./npc/personality-loader');
 const {getPosition} = require("./lib/entityUtils");
 const createConnectionService = require('./connection-service');
@@ -329,39 +330,50 @@ function rememberRecentChat(currentPlayer, message) {
 }
 
 function speakPreviousExpectations(currentPlayer) {
-    npcRoster.forEach((npc) => {
-        try {
-            const latestSummary = memoryStore.listSessionSummaries({
-                playerId: currentPlayer.id,
-                npcId: npc.id,
-                limit: 1
-            })[0];
-            if (!latestSummary || !latestSummary.expectation) {
-                return;
-            }
+    const activeNpc = npcRoster.find((npc) => currentPlayer.activePet && currentPlayer.activePet.petId === npc.id);
+    if (!activeNpc) {
+        return;
+    }
 
-            const text = '昨天我说：' + latestSummary.expectation;
-            io.emit('npc:speak', {
-                npcId: npc.id,
-                npcName: npc.player.name,
-                text: text.slice(0, 28),
-                duration: 4000
-            });
-            memoryStore.recordEvent({
-                kind: 'npc_expectation_recall',
-                playerId: currentPlayer.id,
-                npcId: npc.id,
-                sessionId: memorySessionId,
-                payload: {
-                    text: text,
-                    expectation: latestSummary.expectation
-                },
-                ts: Date.now()
-            });
-        } catch (error) {
-            console.warn('[NPC] expectation recall failed', error.message);
+    try {
+        const latestSummary = memoryStore.listSessionSummaries({
+            playerId: currentPlayer.id,
+            npcId: activeNpc.id,
+            limit: 1
+        })[0];
+        const text = returnMemory.buildReturnMemoryLine(latestSummary);
+        if (!text) {
+            return;
         }
-    });
+        const now = Date.now();
+
+        io.emit('npc:speak', {
+            npcId: activeNpc.id,
+            npcName: activeNpc.player.name,
+            text: text,
+            duration: 4000
+        });
+        memoryStore.recordEvent({
+            eventId: ['l1', memorySessionId, currentPlayer.id, activeNpc.id, 'return_memory', now].join(':'),
+            kind: 'chat_turn',
+            eventType: 'chat_turn',
+            playerId: currentPlayer.id,
+            npcId: activeNpc.id,
+            sessionId: memorySessionId,
+            mapId: config.mapId || 'fixed-arena',
+            x: currentPlayer.x,
+            y: currentPlayer.y,
+            payload: {
+                answer: text,
+                source: 'return_memory',
+                referencedL1EventIds: latestSummary.referencedL1EventIds || []
+            },
+            ts: now,
+            createdAt: now
+        });
+    } catch (error) {
+        console.warn('[NPC] return memory recall failed', error.message);
+    }
 }
 
 function refreshNpcRelationshipsForPlayers() {
