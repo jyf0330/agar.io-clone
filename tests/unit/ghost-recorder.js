@@ -272,4 +272,40 @@ describe('ghost recorder', () => {
     });
     expect(partEvents[0].payload.part.templateId).to.equal('hand-open');
   });
+
+  it('should mirror combat events into typed combat events', () => {
+    const combatEvents = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      memoryStore: {
+        recordEvent() {},
+        recordCombatEvent(event) {
+          combatEvents.push(event);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      consentToRecord: true
+    };
+    const target = {
+      id: 'player-2',
+      name: 'Target Huy'
+    };
+
+    recorder.recordCombatEvent(player, 'kill', target, { x: 170, y: 180 }, 1280);
+
+    expect(combatEvents[0]).to.deep.include({
+      sessionId: 'session-now',
+      playerId: 'player-1',
+      eventType: 'kill',
+      t: 280,
+      x: 170,
+      y: 180,
+      ts: 1280
+    });
+    expect(combatEvents[0].payload.targetPlayerId).to.equal('player-2');
+  });
 });

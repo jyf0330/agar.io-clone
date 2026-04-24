@@ -228,12 +228,33 @@ class GhostRecorder {
 
     recordCombatEvent(player, eventType, target, position, now, payload) {
         const eventPosition = position || {};
-        this.recordEvent(player, eventType, Object.assign({
+        const eventPayload = Object.assign({
             x: eventPosition.x,
             y: eventPosition.y,
             targetPlayerId: target && target.id ? target.id : '',
             targetPlayerName: target && target.name ? target.name : ''
-        }, payload || {}), now);
+        }, payload || {});
+        this.recordEvent(player, eventType, eventPayload, now);
+        this.recordTypedCombatEvent(player, eventType, eventPayload, now);
+    }
+
+    recordTypedCombatEvent(player, eventType, payload, now) {
+        if (!this.memoryStore || typeof this.memoryStore.recordCombatEvent !== 'function' || !this.canRecordPlayer(player)) {
+            return;
+        }
+
+        const elapsed = this.getElapsed(now || Date.now());
+        this.memoryStore.recordCombatEvent({
+            eventId: [this.sessionId, player.id, eventType, elapsed, payload.x, payload.y].join(':'),
+            sessionId: this.sessionId,
+            playerId: player.id,
+            eventType: eventType,
+            t: elapsed,
+            x: payload.x,
+            y: payload.y,
+            payload: payload,
+            ts: now || Date.now()
+        });
     }
 }
 

@@ -38,6 +38,7 @@ describe('memory store', function () {
         expect(tables).to.include('chat_records');
         expect(tables).to.include('item_events');
         expect(tables).to.include('part_events');
+        expect(tables).to.include('combat_events');
         expect(tables).to.include('events');
         expect(tables).to.include('session_summaries');
         expect(tables).to.include('persona_impressions');
@@ -208,6 +209,40 @@ describe('memory store', function () {
             y: 190,
             payload: {part: {partId: 'p1', type: 'HAND'}},
             ts: 1260
+        });
+    });
+
+    it('should record and query V5 combat events with JSON payloads', function () {
+        const store = loadStore(path.join(tmpDir, 'memory.db'));
+
+        store.recordCombatEvent({
+            eventId: 'combat-1',
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            eventType: 'kill',
+            t: 280,
+            x: 200,
+            y: 210,
+            payload: {targetPlayerId: 'player-b'},
+            ts: 1280
+        });
+
+        const combatEvents = store.listCombatEvents({
+            sessionId: 'session-1',
+            eventType: 'kill'
+        });
+
+        expect(combatEvents).to.deep.include({
+            id: combatEvents[0].id,
+            eventId: 'combat-1',
+            sessionId: 'session-1',
+            playerId: 'player-a',
+            eventType: 'kill',
+            t: 280,
+            x: 200,
+            y: 210,
+            payload: {targetPlayerId: 'player-b'},
+            ts: 1280
         });
     });
 

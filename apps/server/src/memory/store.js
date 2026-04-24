@@ -98,6 +98,24 @@ CREATE INDEX IF NOT EXISTS idx_part_events_session_type_t
 CREATE INDEX IF NOT EXISTS idx_part_events_position
   ON part_events(session_id, x, y);
 
+CREATE TABLE IF NOT EXISTS combat_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id TEXT,
+  session_id TEXT,
+  player_id TEXT,
+  event_type TEXT,
+  t INTEGER,
+  x REAL,
+  y REAL,
+  payload TEXT,
+  ts INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_combat_events_session_type_t
+  ON combat_events(session_id, event_type, t);
+CREATE INDEX IF NOT EXISTS idx_combat_events_position
+  ON combat_events(session_id, x, y);
+
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   player_id TEXT,
@@ -302,6 +320,21 @@ function toCamelItemEvent(row) {
 }
 
 function toCamelPartEvent(row) {
+    return {
+        id: row.id,
+        eventId: row.event_id,
+        sessionId: row.session_id,
+        playerId: row.player_id,
+        eventType: row.event_type,
+        t: row.t,
+        x: row.x,
+        y: row.y,
+        payload: row.payload ? JSON.parse(row.payload) : {},
+        ts: row.ts
+    };
+}
+
+function toCamelCombatEvent(row) {
     return {
         id: row.id,
         eventId: row.event_id,
@@ -596,6 +629,48 @@ function listPartEvents(filters) {
     return result.rows.map(toCamelPartEvent);
 }
 
+function recordCombatEvent(event) {
+    const safeEvent = event || {};
+    const result = executeSql(
+        [
+            'INSERT INTO combat_events(',
+            'event_id, session_id, player_id, event_type, t, x, y, payload, ts',
+            ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ].join(' '),
+        [
+            safeEvent.eventId || null,
+            safeEvent.sessionId || null,
+            safeEvent.playerId || null,
+            safeEvent.eventType || 'combat_event',
+            typeof safeEvent.t === 'number' ? safeEvent.t : 0,
+            typeof safeEvent.x === 'number' ? safeEvent.x : null,
+            typeof safeEvent.y === 'number' ? safeEvent.y : null,
+            JSON.stringify(safeEvent.payload || {}),
+            typeof safeEvent.ts === 'number' ? safeEvent.ts : Date.now()
+        ]
+    );
+
+    return {
+        id: result.lastID
+    };
+}
+
+function listCombatEvents(filters) {
+    const where = buildWhere(filters || {}, {
+        playerId: 'player_id',
+        sessionId: 'session_id',
+        eventType: 'event_type'
+    });
+    const limit = normalizeLimit(filters && filters.limit, 500);
+    const result = executeSql(
+        'SELECT * FROM combat_events' + where.sql + ' ORDER BY t ASC, id ASC LIMIT ?',
+        where.params.concat(limit),
+        {mode: 'all'}
+    );
+
+    return result.rows.map(toCamelCombatEvent);
+}
+
 function listEvents(filters) {
     const where = buildWhere(filters || {}, {
         playerId: 'player_id',
@@ -706,6 +781,8 @@ module.exports = {
     listItemEvents: listItemEvents,
     recordPartEvent: recordPartEvent,
     listPartEvents: listPartEvents,
+    recordCombatEvent: recordCombatEvent,
+    listCombatEvents: listCombatEvents,
     recordEvent: recordEvent,
     listEvents: listEvents,
     addSessionSummary: addSessionSummary,
