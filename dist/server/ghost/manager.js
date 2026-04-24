@@ -15,6 +15,20 @@ function normalizeEvent(event) {
     name: event.name || payload.name || 'Echo'
   });
 }
+function normalizeAnchor(anchor) {
+  return {
+    id: anchor.anchorId || anchor.id,
+    kind: 'trace',
+    sessionId: anchor.sourceSessionId || 'seed-session',
+    ghostId: anchor.sourcePlayerId || 'ghost',
+    t: typeof anchor.t === 'number' ? anchor.t : 0,
+    x: anchor.x,
+    y: anchor.y,
+    name: anchor.name || '历史回响',
+    anchorEventType: anchor.eventType || 'anchor',
+    priority: anchor.priority || 0
+  };
+}
 class GhostManager {
   constructor(options) {
     const settings = options || {};
@@ -30,10 +44,13 @@ class GhostManager {
     this.anchorTriggeredAt = {};
   }
   getEvents() {
-    if (!this.memoryStore || typeof this.memoryStore.listEvents !== 'function') {
+    if (!this.memoryStore) {
       return this.seedEvents;
     }
-    const recorded = [].concat(this.memoryStore.listEvents({
+    const anchors = typeof this.memoryStore.listGhostAnchors === 'function' ? this.memoryStore.listGhostAnchors({
+      limit: 1000
+    }).map(normalizeAnchor) : [];
+    const recorded = typeof this.memoryStore.listEvents === 'function' ? [].concat(this.memoryStore.listEvents({
       kind: 'ghost_trace',
       limit: 1000
     })).concat(this.memoryStore.listEvents({
@@ -47,8 +64,8 @@ class GhostManager {
       kind: event.kind.replace('ghost_', ''),
       sessionId: event.sessionId,
       playerId: event.playerId
-    })));
-    return this.seedEvents.concat(recorded);
+    }))) : [];
+    return this.seedEvents.concat(anchors).concat(recorded);
   }
   isNearAnyPlayer(event, players) {
     return (players || []).some(player => {
