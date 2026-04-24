@@ -1,6 +1,13 @@
 /*jslint bitwise: true, node: true */
 'use strict';
 
+try {
+  require('dotenv').config({
+    path: require('path').resolve(process.cwd(), '.env.local')
+  });
+} catch (error) {
+  console.warn('[V3] dotenv not installed or .env.local missing; falling back to process.env only.');
+}
 const express = require('express');
 const path = require('path');
 const app = express();

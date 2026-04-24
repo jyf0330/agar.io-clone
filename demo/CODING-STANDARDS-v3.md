@@ -129,7 +129,10 @@
 
 ### 4.4 节流
 - `v3:playerChat` 客户端侧最小 500ms 间隔。
-- `v3:npcUtter` / `v3:npcPaint` 服务端推送无需节流（由 NPC Orchestrator 的 token 预算兜底，见 §5.3）。
+- `v3:npcUtter` / `v3:npcPaint` 服务端推送**没有独立节流**——它们的产出频率由上游两条路径各自限制：
+  - **NPC 自主行为路径**：NPC Orchestrator 每秒跑 1 次 batch `npc_intent`（§5.3），3 只 NPC 一批，一条 batch 最多产 3 个 utter/paint 意图。
+  - **玩家 chat 触发的 reply 路径**：由 `v3:playerChat` 的 500ms 间隔兜底，再经 wrapper 的全局 5 次 / 秒 LLM 上限过滤。两条路径加起来的 LLM 调用都要计进 wrapper 的全局预算。
+- 如果某天 demo 现场感到"NPC 说话过密"，优先调 `v3Config.llm.perSecondCap` 和 Orchestrator 的轮询间隔，**不要**去 socket 层加节流——会搞乱审计日志和预算统计。
 
 ---
 
@@ -193,6 +196,15 @@ if (!result.ok || result.source === 'fallback') {
 2. 配一条 fallback（可以是 `critiques/*.json` 里查表，也可以是硬编码常量）。
 3. 在 `demo/docs/llm-wrapper.md` 里加一行说明。
 
+**Batch 调用规矩（Day 5 起 NPC intent 强制）**：
+Week 1 Day 3 单只 NPC 时可以 1 只 1 次独立调 `npc_intent`。
+**Day 5 起 3 只 NPC 同屏后**，必须把 3 只塞一个 batch prompt 一次问出来（参考 [handoff/week1.md](handoff/week1.md) Day 5）：
+
+- 每秒 **1 个** batch 请求代替 3 个独立请求，token 用量降到 1/3 以下。
+- Batch 响应约定：LLM 返回 JSON 对象，每只 NPC 一个 key，如 `{ "mochi": {...}, "doudou": {...}, "wugui": {...} }`。
+- Wrapper 校验层对每只的 `text` 分别跑 forbiddenWords；任何一只不过 → **只这只走 fallback**，其它照常。
+- 审计日志里 batch 记一条，payload 里写 `{ npcs: ['mochi','doudou','wugui'], ... }`，不要拆三行。
+
 ### 5.4 Prompt 硬规则（禁词 / 安全）
 所有输出都必须过**同一组校验**（写在 wrapper 层）：
 - 长度 6–200 字。
@@ -207,28 +219,56 @@ if (!result.ok || result.source === 'fallback') {
 [demo/critiques/pool.json](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/critiques/pool.json) 的 `meta.forbiddenWords`。
 
 **规矩**：
-- Wrapper 启动时 `require('demo/critiques/pool.json').meta.forbiddenWords`，不许在 JS 代码里硬编码一份。
+- Wrapper 启动时**用 `path.resolve(process.cwd(), ...)`** 从仓库根加载，不许在 JS 代码里硬编码一份。实际写法（已落地在 [apps/server/src/llm/wrapper.js:9](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/apps/server/src/llm/wrapper.js)）：
+  ```js
+  const path = require('path');
+  const pool = require(path.resolve(process.cwd(), 'demo/critiques/pool.json'));
+  const forbiddenWords = pool.meta.forbiddenWords || [];
+  ```
+  不要写 `require('demo/critiques/pool.json')`——Node 不是 webpack，会报 `Cannot find module`。
+- JSON 改动后 `require` 的 cache 不会自动失效。改禁词后**必须重启 server**（彩排 / demo 前统一加载一次即可）。
 - handoff week1.md Day 2 示例里那段 `const bad = ['遗弃', ...]` 是草稿说明，**实际代码不能那么写**，必须读 JSON。
 - 要新加禁词只改 `pool.json`，审稿 / 策划在一个文件里管住所有。
 - Python 一致性脚本也一样，`json.load(open('demo/critiques/pool.json'))['meta']['forbiddenWords']`。
 
 ### 5.5 人设锚点（anchors）强制注入
 - 每个 NPC 的 `demo/npcs/personality-cards/{id}.yaml` 里 `anchors` 段是**全字符串一字不改**塞进 `system` prompt。
-- 注入模板写死在 `apps/server/src/npc/promptBuilder.js`，禁止绕过。
+- 注入模板写死在 `apps/server/src/npc/promptBuilder.js`（或 `npc/prompts.js`），禁止绕过。
 - 审计日志里必须能 `grep` 到 anchors 原文（PLAN-v3 Q3 的演示要当场给评委看）。
-- 改 anchors 等于改人设，必须走 PR review（即使是 21 天内）；不允许悄悄 "调一下口吻"。
+- 改 anchors 等于改人设，**仪式化流程**（和 §1.1 单分支规则兼容）：
+  1. 独立 commit，message 必须以 `[anchors-change]` 开头，例：`[anchors-change] mochi anchors v1 -> v2: 口吻更柔`。
+  2. 改前把旧版 archive 到 `demo/npcs/personality-cards/archive/{id}-v{n}.yaml`（§9.2 已定，这里互指）。
+  3. 在 [progress.md](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/progress.md) 当日条目里明说"改了 {id} 的 anchors / 为什么改 / 下次一致性跑 baseline 要重跑"。
+  4. 下次 `run_consistency.py` 必须重跑，新分数入 baseline。
+- **禁止**悄悄"调一下口吻"——单分支环境下没有 PR 拦截，只靠 commit 命名 + progress.md 留痕 + 一致性回归自曝。
 
 ### 5.6 Cache 规则
-- key = `hash(promptId + normalizedParams + personalityCardVersion + l3Version)`。
-- L3 人物画像变了 → cache 自动失效（因为 key 里带版本）。
-- 一致性测试的 15 个问题**必须** `cache: false`——要的就是漂移检测本尊。
-- NPC intent 的 cache TTL ≤ 60 秒（否则所有 NPC 每秒同一 intent，demo 现场会被评委一眼看穿）。
+Cache 分两阶段实现，**不要**在 Day 2 就上终态版——过度设计会拖 Week 1 进度。
+
+**Week 1（Day 2 起）· 基础版**（和 [handoff/week1.md](handoff/week1.md) Day 1 合同一致）：
+- `key = sha256(promptId + JSON.stringify(params))`
+- SQLite 表 `llm_cache(key TEXT PRIMARY KEY, text TEXT, ts INTEGER)`
+- 一致性测试的 15 个问题**必须** `useCache: false`——要的就是漂移检测本尊。
+
+**Week 2（Day 11 Prompt 注入机制 起）· 加强版**：
+- `key = sha256(promptId + JSON.stringify(params) + personalityCardVersion + l3Version)`
+- 理由：改人设卡 anchors 或 L3 人物画像后，老 cache 里的回答会过期、和新人设矛盾。带版本可以自动失效。
+- `personalityCardVersion`：每张 yaml 头部加 `version: N`，改过一次就 bump 一次。
+- `l3Version`：按 `persona_impressions` 表的最新 `updated_ts` 或 id。
+
+**Day 2 实作时先按基础版写，但 `createCacheKey` 已封装一个函数**（见 [cache.js:57](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/apps/server/src/llm/cache.js)）。Day 11 改成加强版只改这一处。
+
+**TTL / 重复回答问题**：
+- 当前 `cache.js` **没有 TTL**（写进去永不过期，除非手动 reset）。这意味着如果 NPC intent 的 `params` 长时间不变，会一直命中同一条 cache。
+- **硬规矩**：`npc_intent` 调用**必须** `useCache: false`——NPC 行为不能被 cache 固化。其它只读型 prompt（`critique` / `summarize_session` / `update_persona_impression`）可以走 cache。
+- 如果 Week 2 发现"3 只 NPC 总说同一句"是主要 bug 源，再给 `cache.js` 加 TTL 字段（`ts` 列已经在了，加个 `maxAgeSeconds` 参数即可），但**不要**在 Week 1 提前做。
 
 ### 5.7 API Key 管理
-- 只从 `process.env.LLM_API_KEY`（或 provider 特定名）读，**不要**写进任何 `config/`、`*.json`、`*.yaml`。
-- [.env.local](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/.env.local) 放真 key，**必须在 .gitignore**。
-- `.env.local.example` 入 git，只放占位 `LLM_API_KEY=<your-key-here>`。
-- 没有 `.env.local` 时 wrapper 必须**仍然能启动**（fallback-only 模式），不能 `process.exit(1)`。
+- Provider 特定名读：OpenAI 走 `process.env.OPENAI_API_KEY`，Anthropic 走 `process.env.ANTHROPIC_API_KEY`；**不要**写进任何 `config/`、`*.json`、`*.yaml`。
+- [.env.local](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/.env.local) 放真 key，**必须在 .gitignore**（已就位）。
+- [.env.local.example](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/.env.local.example) 入 git，只放占位（已就位）。
+- **如何让 Node 读到 .env.local**：入口文件顶部 `require('dotenv').config({ path: '.env.local' })`——已在 [apps/server/src/server.js](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/apps/server/src/server.js) 顶部用 `try/catch` 包好，dotenv 没装 / .env.local 不存在都能降级到纯 `process.env`。
+- 没有 `.env.local` 时 wrapper 必须**仍然能启动**（fallback-only 模式），不能 `process.exit(1)`。这条已由 [apps/server/src/llm/wrapper.js](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/apps/server/src/llm/wrapper.js) + `providers/openai.js` 的超时 + 重试 + fallback 链保证。
 
 （延续 [docs/12 · P0-2](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/docs/12-priority-fix-list.md) 的教训：**任何默认 API key / 密码进代码 = 红线**。）
 
@@ -236,9 +276,18 @@ if (!result.ok || result.source === 'fallback') {
 
 ## 6. 记忆层纪律（SQLite 三级）
 
-### 6.1 唯一入口
-所有对 `data/memory.db` 的读写必须走 `apps/server/src/memory/store.js`。
-禁止散在业务代码里写 `db.prepare('...').run(...)`，一律通过 `store.insertEvent(...)` / `store.getLatestL2(npcId, playerId, n)` 之类语义接口。
+### 6.1 两个 SQLite 文件，物理隔离
+V3 实际会有**两个独立** SQLite 数据库，不要互相串用：
+
+| 文件 | 管者 | 用途 | 已实现？ |
+|---|---|---|---|
+| `data/llm-cache.sqlite3` | [apps/server/src/llm/cache.js](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/apps/server/src/llm/cache.js) | Wrapper 的 LLM 响应缓存（`llm_cache` 表） | ✅ 已实现，better-sqlite3 失败自动降级到 `data/llm-cache.json` |
+| `data/memory.db` | `apps/server/src/memory/store.js`（Week 2 Day 8 建） | 业务记忆（L1 `events` / L2 `session_summaries` / L3 `persona_impressions`） | ⏳ Week 2 Day 8 |
+
+**硬规矩**：
+- **Cache 那个库别塞业务表**，业务记忆那个库别塞 cache——一个崩不影响另一个。
+- 所有对 `data/memory.db` 的读写必须走 `apps/server/src/memory/store.js`。禁止散在业务代码里写 `db.prepare('...').run(...)`，一律通过 `store.insertEvent(...)` / `store.getLatestL2(npcId, playerId, n)` 之类语义接口。
+- LLM cache 已经被 `cache.js` 封装（`createCacheKey` / `get` / `set`），业务代码**不要**直接开 cache 库。
 
 ### 6.2 三级职责边界（按 PLAN-v3 §3.4）
 | 层 | 写入触发 | **是否进 prompt** | 保留策略 |
@@ -264,17 +313,31 @@ if (!result.ok || result.source === 'fallback') {
 
 ## 7. 审计日志纪律
 
-### 7.1 格式
-每次 LLM 调用追加一行 JSON 到 `data/audit/YYYY-MM-DD.jsonl`：
+### 7.1 格式（已落地版本，以实际代码为准）
+每次 LLM 调用追加一行 JSON 到 `data/audit/YYYY-MM-DD.jsonl`。字段以 [apps/server/src/llm/wrapper.js `createAuditEntry`](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/apps/server/src/llm/wrapper.js) 和 [demo/docs/llm-wrapper.md](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/docs/llm-wrapper.md) 为准：
 
 ```json
-{"ts":1714000000,"promptId":"npc_intent","npcId":"mochi","playerId":"aning","tokenIn":842,"tokenOut":18,"cached":false,"ok":true,"promptHash":"sha1:...","outputPreview":"走向蓝色笔触"}
+{"ts":1760000000000,"promptId":"npc_utter","params":{"npcId":"mochi","sessionId":"s1"},"text":"See you in the blue corner.","source":"llm","elapsedMs":412,"tokenIn":823,"tokenOut":24}
 ```
 
+字段约定：
+
+| 字段 | 说明 |
+|---|---|
+| `ts` | `Date.now()` 毫秒 |
+| `promptId` | 和 wrapper 返回值一致 |
+| `params` | 结构化上下文（含 `npcId` / `playerId` / `sessionId` 等），**这里就是回查用的**，不要再另外写顶层 npcId/playerId |
+| `text` | 完整回复（注意长度已被 wrapper 校验到 6–200 字） |
+| `source` | `llm` / `cache` / `fallback`，**Q2 / Q4 演示唯一依据** |
+| `elapsedMs` | 监控预算 |
+| `tokenIn` / `tokenOut` | Q2 记忆膨胀演示必须用 |
+
+> 规范旧版本写过 `cached:false` / `promptHash:sha1:...` / `outputPreview`——**已废弃**，不要再按旧版本实现。以上面这份字段表为唯一事实。
+
 ### 7.2 三条硬规矩
-1. **不写完整 prompt**（体积会爆）。只写 hash + promptId + 关键 param。完整 prompt 要看的话走 dev-mode 开关 `process.env.V3_FULL_AUDIT=1`。
-2. **不写 API key / 玩家隐私**（万一玩家在聊天里发了东西）。`outputPreview` 截断到 40 字。
-3. **异步写**，不要阻塞 LLM 调用返回。写失败只 `console.warn`，不崩。
+1. **`text` 字段写完整回复**（长度已被 6–200 字校验控制住，不怕爆）。但 **`params` 里不要塞完整 prompt 全文**——prompt 本身写在 `apps/server/src/llm/prompts.js`（枚举 + 常量），审计靠 `promptId` + `params` 就能回放。
+2. **不写 API key / 玩家隐私**。如果 `params` 里某个字段可能含玩家原文，加到一份 redact 白名单再写（例：玩家昵称 OK，玩家聊天原文要打码到前 40 字）。
+3. **异步写**，不要阻塞 LLM 调用返回。写失败只 `console.warn`，不崩（[audit.js 已按此实现](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/apps/server/src/llm/audit.js)）。
 
 ### 7.3 用途
 - Q2（记忆膨胀）演示：`jq '.tokenIn' data/audit/*.jsonl | awk '...'` 画长度曲线。
@@ -305,7 +368,11 @@ V3 **对 Python 依赖有条件放宽**，只限以下白名单，其它仍然 s
 - JSON 文件输入输出，不用管道。
 
 ### 8.3 一致性脚本特殊要求
-- `run_consistency.py` 必须**走 LLM wrapper 的 HTTP 接口**（或者直接用 provider SDK 但 `cache=false`、`temperature` 固定），结果不能被 cache 污染。
+- `run_consistency.py` 直接用 provider SDK 打 LLM，**不要**想"走 Node wrapper 的 HTTP 接口"——Node wrapper 是个 module，没暴露 HTTP，Python 调不到。硬规矩：
+  - `cache=False`（provider SDK 本身无 cache，主要是不允许写任何自家 cache 层）。
+  - `temperature` 固定写死（建议 0.2–0.4，具体数值和 score baseline 一起锁）。
+  - token budget 和 wrapper 同步（input < 2000, output < 200），超了当前题记 0 分，不重试。
+  - **同一组禁词 / anchors 注入**——Python 从 `demo/critiques/pool.json` 和 `demo/npcs/personality-cards/*.yaml` 读，确保和 Node 端同口径。
 - `score_drift.py` 输出必须包含：
   - 单题得分（0–100）
   - 每个 NPC 的汇总分
@@ -318,7 +385,9 @@ V3 **对 Python 依赖有条件放宽**，只限以下白名单，其它仍然 s
 ## 9. 资产 / JSON / YAML 数据
 
 ### 9.1 骨架 PNG
-- 放 `demo/assets/skeletons/skel-{1..6}.png`，严格 6 张（V2 的 5 张 + 小乌龟 F）。
+- 实际路径：`demo/assets/skeleton-bases/skeleton-{a,b,c,d,e,f}-{NAME}.png`，6 张（A-E 是 V2 的 5 张玩家用 + F 是小乌龟专给 `wugui` NPC）。
+  - 对齐已落地资源（[demo/assets/skeleton-bases/](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/demo/assets/skeleton-bases/)）+ [handoff/week1.md](handoff/week1.md) Day 1 ✅ + [prompts/skeleton-bases.md](prompts/skeleton-bases.md)。
+  - 规范旧版本写过 `demo/assets/skeletons/skel-{1..6}.png`——**已废弃**，不要新建这个目录。
 - 客户端按命名固定加载，不 `readdir`。
 
 ### 9.2 人设卡 YAML
@@ -354,10 +423,12 @@ module.exports = {
   llm: { timeoutMs: 5000, retry: 3, maxInTokens: 2000, maxOutTokens: 200, perSecondCap: 5 },
   memory: { l2KeepLatest: 3, l3TriggerEverySessions: 5 },
   game: { sessionSeconds: 90, gardenSize: 2000 },
-  consistency: { passThreshold: 0.80 },
-  ...
+  consistency: { passThreshold: 0.80 }
+  // 后续新 section 追加在这里（上面那行尾**不要留逗号**）
 };
 ```
+
+> 注意：上面示例里的 `// ...` 是文档注释，不是 JS 的 spread 语法。**不要**把 `...` 当代码复制进去——真实 `v3Config.js` 里每个 section 一行、尾部末尾**不要拖一个 `...`**。
 
 理由：Day 15 之后彩排会反复调数字，分散在 10 个文件里会死。
 
@@ -393,8 +464,12 @@ module.exports = {
 ```
 node ./node_modules/gulp/bin/gulp.js test
 node ./node_modules/gulp/bin/gulp.js build
-# 有网环境：http://localhost:3000 跑一局 90 秒，看控制台
-# 无网环境（Day 2 之后每日做一次）：关 WiFi，再跑一局，确认 fallback 触发但游戏不崩
+# 有网 + 有 key：http://localhost:3000 跑一局 90 秒，看控制台应看到 [V3] source=llm
+# 模拟 LLM 挂（Day 2 之后每日做一次）：
+#   方法 A（推荐）：临时把 .env.local 里 OPENAI_API_KEY 改空，重启服务，跑一局。
+#   方法 B：LLM_PROVIDER=unsupported node ./node_modules/gulp/bin/gulp.js run
+#   通过标准：控制台有 [V3 fallback] ...，游戏不崩，NPC 继续动。
+# 不建议"关 WiFi"——会引入 DNS / npm registry 超时之类的无关噪音。
 ```
 
 ### 12.2 Token 预算抽样（Day 11 之后每日）
