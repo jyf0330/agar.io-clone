@@ -55,6 +55,64 @@ function isFollowPlayerMessage(message) {
     return /走过来|过来|来这边|靠近我/.test(String(message || ''));
 }
 
+function distance(left, right) {
+    return Math.hypot((left.x || 0) - (right.x || 0), (left.y || 0) - (right.y || 0));
+}
+
+function summarizeEquipmentSlots(player) {
+    const slots = player && player.equipmentSlots ? player.equipmentSlots : {};
+    return Object.keys(slots).filter((slotId) => slots[slotId]).map((slotId) => {
+        const part = slots[slotId];
+        return {
+            slotId: slotId,
+            partType: part.partType || part.type,
+            displayName: part.displayName || part.label || part.templateId || part.partId || 'part',
+            stats: Object.assign({}, part.stats || {}),
+            sourceType: part.sourceType || ''
+        };
+    });
+}
+
+function buildPetContext(anchorPlayer, gameState) {
+    const safeState = gameState || {};
+    const playerPosition = {
+        x: anchorPlayer.x || 0,
+        y: anchorPlayer.y || 0
+    };
+    const nearbyPartLoot = (safeState.partLoot || []).filter((loot) => distance(playerPosition, loot) <= 500).slice(0, 3).map((loot) => {
+        const part = loot.part || {};
+        return {
+            x: Math.round(loot.x),
+            y: Math.round(loot.y),
+            partType: part.partType || part.type,
+            displayName: part.displayName || part.label || part.templateId || 'part',
+            stats: Object.assign({}, part.stats || {}),
+            sourceType: part.sourceType || loot.source || ''
+        };
+    });
+    const ghostDebug = safeState.ghostDebug || {};
+    const upcomingEchoes = (ghostDebug.anchors || []).filter((anchor) => {
+        return anchor.inTimeWindow || distance(playerPosition, anchor) <= (ghostDebug.triggerRadius || 800);
+    }).slice(0, 3).map((anchor) => {
+        return {
+            x: Math.round(anchor.x),
+            y: Math.round(anchor.y),
+            t: anchor.t,
+            eventType: anchor.eventType || 'anchor',
+            inTimeWindow: Boolean(anchor.inTimeWindow)
+        };
+    });
+
+    return {
+        equipment: summarizeEquipmentSlots(anchorPlayer),
+        materializationStage: anchorPlayer.materializationStage || 'HOLLOW',
+        activePet: anchorPlayer.activePet || null,
+        nearbyPartLoot: nearbyPartLoot,
+        upcomingEchoes: upcomingEchoes,
+        shortSlots: summarizeEquipmentSlots(anchorPlayer).filter((entry) => !entry.stats || !Object.keys(entry.stats).length).slice(0, 3)
+    };
+}
+
 function getMockChatReply(npcId, latestChat) {
     const message = String(latestChat && latestChat.message ? latestChat.message : '');
     if (/颜色/.test(message)) {
@@ -254,6 +312,7 @@ class Orchestrator {
                 round_phase: roundState.isEndgame ? 'endgame' : 'midgame',
                 round_remaining_sec: Math.ceil(roundState.remainingMs / 1000),
                 last_player_action: gameState && gameState.lastPlayerAction ? gameState.lastPlayerAction : 'idle',
+                petContext: buildPetContext(anchorPlayer, gameState),
                 memory: this.getMemoryForNpc(npc, gameState)
             };
         });

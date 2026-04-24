@@ -69,6 +69,7 @@ function buildNpcIntentPrompt(npcs, batchContext) {
     }).join('\n\n');
 
     const sceneSections = contexts.map((entry) => {
+        const petContext = entry.petContext || {};
         return [
             'NPC: ' + entry.npcName + ' (' + entry.npcId + ')',
             '当前场景：',
@@ -77,6 +78,11 @@ function buildNpcIntentPrompt(npcs, batchContext) {
             '  - 剩余秒数：' + entry.round_remaining_sec,
             '  - 你的位置：(' + entry.npc.x + ', ' + entry.npc.y + ')',
             '  - 玩家位置：(' + entry.player.x + ', ' + entry.player.y + ')',
+            '  - 玩家实体化阶段：' + (petContext.materializationStage || 'HOLLOW'),
+            '  - 当前跟宠：' + (petContext.activePet && petContext.activePet.petId ? petContext.activePet.petId : 'unknown'),
+            '  - 玩家装备：' + JSON.stringify(petContext.equipment || []),
+            '  - 附近可拾取部位：' + JSON.stringify(petContext.nearbyPartLoot || []),
+            '  - 即将触发的历史回响：' + JSON.stringify(petContext.upcomingEchoes || []),
             '  - 玩家刚才做的事：' + entry.last_player_action,
             '  - 你的原型：' + entry.archetype,
             '  - 你的行为摘要：' + entry.behavior_summary,

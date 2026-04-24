@@ -677,6 +677,8 @@ if (npcFeaturesEnabled) {
             players: map.players.data,
             mapWidth: config.gameWidth,
             mapHeight: config.gameHeight,
+            partLoot: map.partLoot.data,
+            ghostDebug: map.ghostDebug,
             matchStartedAt: roundClock.startedAt,
             roundDurationMs: roundClock.durationMs,
             sessionId: memorySessionId,

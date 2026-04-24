@@ -123,6 +123,12 @@ describe('npc orchestrator', () => {
             defaultPlayerMass: 10
         });
         const humanPlayer = createHumanPlayer();
+        humanPlayer.materializationStage = 'PARTIAL';
+        humanPlayer.setActivePet({
+            petId: 'doudou',
+            name: 'Doudou',
+            personality: '调皮捣蛋'
+        });
         let capturedPrompt = null;
         const orchestrator = new Orchestrator({
             ask(_promptId, _params, options) {
@@ -163,13 +169,37 @@ describe('npc orchestrator', () => {
 
         orchestrator.registerNpc(npc);
         await orchestrator.tick({
-            players: [humanPlayer, npc.player]
+            players: [humanPlayer, npc.player],
+            partLoot: [{
+                x: 300,
+                y: 330,
+                part: {
+                    partType: 'HAND',
+                    displayName: 'Thread Hand',
+                    stats: {pickupRange: 10},
+                    sourceType: 'ghost_echo'
+                }
+            }],
+            ghostDebug: {
+                triggerRadius: 800,
+                anchors: [{
+                    x: 310,
+                    y: 335,
+                    t: 1200,
+                    eventType: 'part_pickup',
+                    inTimeWindow: true
+                }]
+            }
         }, 1000);
 
         expect(capturedPrompt.system).to.contain('玩家喜欢蓝绿色');
         expect(capturedPrompt.system).to.contain('第一局玩家画了蓝色');
         expect(capturedPrompt.system).to.contain('第三局玩家靠近麻薯');
         expect(capturedPrompt.system).to.not.contain('第四局不应该进入 prompt');
+        expect(capturedPrompt.user).to.contain('玩家实体化阶段：PARTIAL');
+        expect(capturedPrompt.user).to.contain('当前跟宠：doudou');
+        expect(capturedPrompt.user).to.contain('Thread Hand');
+        expect(capturedPrompt.user).to.contain('part_pickup');
     });
 
     it('should fall back to random walk when the llm call fails', async () => {
