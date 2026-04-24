@@ -97,6 +97,7 @@ class Orchestrator {
             ask: wrapper.ask,
             emitEvent: null,
             recordEvent: null,
+            memoryStore: null,
             paintPlayer: null
         }, settings);
         this.npcs = [];
@@ -154,6 +155,41 @@ class Orchestrator {
     getAnchorPlayer(gameState) {
         const players = gameState && Array.isArray(gameState.players) ? gameState.players : [];
         return players.find((player) => !player.isNpc) || null;
+    }
+
+    getMemoryForNpc(npc, gameState) {
+        const memoryStore = this.config.memoryStore;
+        const anchorPlayer = this.getAnchorPlayer(gameState);
+        if (!memoryStore || !anchorPlayer || !npc) {
+            return {
+                summaries: [],
+                impression: null
+            };
+        }
+
+        try {
+            return {
+                summaries: memoryStore.listSessionSummaries({
+                    playerId: anchorPlayer.id,
+                    npcId: npc.id,
+                    limit: 3
+                }),
+                impression: memoryStore.getPersonaImpression(anchorPlayer.id, npc.id)
+            };
+        } catch (error) {
+            console.warn('[NPC] memory recall failed', error.message);
+            return {
+                summaries: [],
+                impression: null
+            };
+        }
+    }
+
+    buildMemoryByNpc(gameState) {
+        return this.npcs.reduce((memoryMap, npc) => {
+            memoryMap[npc.id] = this.getMemoryForNpc(npc, gameState);
+            return memoryMap;
+        }, {});
     }
 
     getSessionId(gameState) {
@@ -217,7 +253,8 @@ class Orchestrator {
                 time_of_day: getTimeOfDayLabel(now),
                 round_phase: roundState.isEndgame ? 'endgame' : 'midgame',
                 round_remaining_sec: Math.ceil(roundState.remainingMs / 1000),
-                last_player_action: gameState && gameState.lastPlayerAction ? gameState.lastPlayerAction : 'idle'
+                last_player_action: gameState && gameState.lastPlayerAction ? gameState.lastPlayerAction : 'idle',
+                memory: this.getMemoryForNpc(npc, gameState)
             };
         });
     }
@@ -457,7 +494,7 @@ class Orchestrator {
     }
 
     async generateChatReplies(latestChat, safeState) {
-        const prompt = buildNpcReplyPrompt(this.npcs, safeState.recentChats || [], latestChat);
+        const prompt = buildNpcReplyPrompt(this.npcs, safeState.recentChats || [], latestChat, this.buildMemoryByNpc(safeState));
         const fallbackReplies = this.npcs.reduce((replyMap, npc) => {
             replyMap[npc.id] = getChatFallbackReply(npc.id);
             return replyMap;
@@ -671,7 +708,8 @@ class Orchestrator {
                     npcX: context.npc.x,
                     npcY: context.npc.y,
                     intentType: nextIntent.type,
-                    npcColor: npc.color
+                    npcColor: npc.color,
+                    memory: context.memory
                 }).then(() => {
                     const movementIntent = this.buildRoamIntent(npc, mapSize, safeState);
                     npc.applyIntent(movementIntent);

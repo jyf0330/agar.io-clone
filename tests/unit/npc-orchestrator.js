@@ -115,6 +115,63 @@ describe('npc orchestrator', () => {
         expect(npc.player.target.y).to.equal(140);
     });
 
+    it('should inject bounded L2 and L3 memory into npc prompts', async () => {
+        const npc = new NpcState({
+            id: 'mochi',
+            personality: createPersonality(),
+            spawn: { x: 100, y: 120 },
+            defaultPlayerMass: 10
+        });
+        const humanPlayer = createHumanPlayer();
+        let capturedPrompt = null;
+        const orchestrator = new Orchestrator({
+            ask(_promptId, _params, options) {
+                capturedPrompt = options.prompt;
+                return Promise.resolve({
+                    ok: true,
+                    text: JSON.stringify({
+                        intent: 'move_to',
+                        params: {
+                            x: 240,
+                            y: 260
+                        },
+                        reason: '记得玩家'
+                    }),
+                    source: 'llm'
+                });
+            },
+            memoryStore: {
+                listSessionSummaries(filters) {
+                    expect(filters.limit).to.equal(3);
+                    return [
+                        {summary: '第一局玩家画了蓝色'},
+                        {summary: '第二局玩家回来问候'},
+                        {summary: '第三局玩家靠近麻薯'},
+                        {summary: '第四局不应该进入 prompt'}
+                    ];
+                },
+                getPersonaImpression() {
+                    return {
+                        impression: '玩家喜欢蓝绿色，会温和地靠近。'
+                    };
+                }
+            },
+            mapWidth: 500,
+            mapHeight: 400,
+            maxCallsPerSec: 5
+        });
+
+        orchestrator.registerNpc(npc);
+        await orchestrator.tick({
+            players: [humanPlayer, npc.player]
+        }, 1000);
+
+        expect(capturedPrompt.system).to.contain('玩家喜欢蓝绿色');
+        expect(capturedPrompt.system).to.contain('第一局玩家画了蓝色');
+        expect(capturedPrompt.system).to.contain('第三局玩家靠近麻薯');
+        expect(capturedPrompt.system).to.not.contain('第四局不应该进入 prompt');
+    });
+
     it('should fall back to random walk when the llm call fails', async () => {
         const npc = new NpcState({
             id: 'mochi',

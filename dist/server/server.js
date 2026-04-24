@@ -58,6 +58,7 @@ const orchestrator = new Orchestrator({
   recordEvent(event) {
     memoryStore.recordEvent(event);
   },
+  memoryStore: memoryStore,
   paintPlayer(targetPlayer, npc) {
     targetPlayer.npcPaintCount = (targetPlayer.npcPaintCount || 0) + 1;
     targetPlayer.playerCardPreviewDataUrl = createPaintedAvatarDataUrl(targetPlayer.playerCardPreviewDataUrl, npc.color, targetPlayer.npcPaintCount);

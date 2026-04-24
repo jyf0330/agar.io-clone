@@ -143,15 +143,19 @@ function buildResult(base) {
     }, base || {});
 }
 
-function createAuditEntry(promptId, params, result) {
+function createAuditEntry(promptId, params, result, promptRequest, estimatedInputTokens) {
     return {
         ts: Date.now(),
         promptId: promptId,
         params: params || {},
+        prompt: promptRequest ? {
+            system: promptRequest.system,
+            user: promptRequest.user
+        } : undefined,
         text: result.text,
         source: result.source,
         elapsedMs: result.elapsedMs,
-        tokenIn: result.tokenIn,
+        tokenIn: result.tokenIn || estimatedInputTokens || 0,
         tokenOut: result.tokenOut
     };
 }
@@ -190,7 +194,7 @@ async function ask(promptId, params, opts) {
             elapsedMs: Date.now() - startedAt,
             reason: 'input_budget'
         });
-        audit.append(createAuditEntry(promptId, safeParams, budgetResult));
+        audit.append(createAuditEntry(promptId, safeParams, budgetResult, promptRequest, estimatedInputTokens));
         return budgetResult;
     }
 
@@ -222,7 +226,7 @@ async function ask(promptId, params, opts) {
                     promptId: promptId,
                     elapsedMs: result.elapsedMs
                 });
-                audit.append(createAuditEntry(promptId, safeParams, rejectedResult));
+                audit.append(createAuditEntry(promptId, safeParams, rejectedResult, promptRequest, estimatedInputTokens));
                 return rejectedResult;
             }
 
@@ -230,7 +234,7 @@ async function ask(promptId, params, opts) {
                 cache.set(cacheKey, text);
             }
 
-            audit.append(createAuditEntry(promptId, safeParams, result));
+            audit.append(createAuditEntry(promptId, safeParams, result, promptRequest, estimatedInputTokens));
             return result;
         } catch (error) {
             lastError = error;
@@ -246,7 +250,7 @@ async function ask(promptId, params, opts) {
         fallbackResult.reason = 'timeout';
     }
 
-    audit.append(createAuditEntry(promptId, safeParams, fallbackResult));
+    audit.append(createAuditEntry(promptId, safeParams, fallbackResult, promptRequest, estimatedInputTokens));
     return fallbackResult;
 }
 

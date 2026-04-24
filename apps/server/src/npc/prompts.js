@@ -34,13 +34,35 @@ function formatRecentChats(recentChats) {
     }).join('\n');
 }
 
+function formatMemoryBlock(memory) {
+    const safeMemory = memory || {};
+    const summaries = Array.isArray(safeMemory.summaries) ? safeMemory.summaries.slice(0, 3) : [];
+    const impression = safeMemory.impression && safeMemory.impression.impression
+        ? safeMemory.impression.impression
+        : '暂无长期画像。';
+    const summaryText = summaries.length
+        ? summaries.map((summary, index) => {
+            return String(index + 1) + '. ' + String(summary.summary || '').slice(0, 80);
+        }).join('\n')
+        : '暂无局末摘要。';
+
+    return [
+        '长期画像：' + String(impression).slice(0, 150),
+        '最近 3 局摘要：',
+        summaryText
+    ].join('\n');
+}
+
 function buildNpcIntentPrompt(npcs, batchContext) {
     const npcList = Array.isArray(npcs) ? npcs : [npcs];
     const contexts = Array.isArray(batchContext) ? batchContext : [batchContext];
     const anchorSections = npcList.map((npc) => {
+        const context = contexts.find((entry) => entry.npcId === npc.id) || {};
         return [
             'NPC: ' + npc.player.name + ' (' + npc.id + ')',
             formatBehaviorSummary(npc),
+            '记忆（只允许使用这些长期记忆，不要编造）：',
+            formatMemoryBlock(context.memory),
             npc.personality.anchorsText || ''
         ].join('\n');
     }).join('\n\n');
@@ -89,6 +111,8 @@ function buildNpcUtterPrompt(npc, context) {
     return {
         system: [
             '你是游戏里的 NPC，人设如下（必须严格遵循）：',
+            '记忆（只允许使用这些长期记忆，不要编造）：',
+            formatMemoryBlock(safeContext.memory),
             npc.personality.anchorsText || ''
         ].join('\n\n'),
         user: [
@@ -104,13 +128,16 @@ function buildNpcUtterPrompt(npc, context) {
     };
 }
 
-function buildNpcReplyPrompt(npcs, recentChats, playerMessage) {
+function buildNpcReplyPrompt(npcs, recentChats, playerMessage, memoryByNpc) {
     const npcList = Array.isArray(npcs) ? npcs : [npcs];
     const latestMessage = playerMessage || {};
     const anchorSections = npcList.map((npc) => {
+        const memory = memoryByNpc && memoryByNpc[npc.id] ? memoryByNpc[npc.id] : null;
         return [
             'NPC: ' + npc.player.name + ' (' + npc.id + ')',
             formatBehaviorSummary(npc),
+            '记忆（只允许使用这些长期记忆，不要编造）：',
+            formatMemoryBlock(memory),
             npc.personality.anchorsText || ''
         ].join('\n');
     }).join('\n\n');
@@ -216,5 +243,6 @@ module.exports = {
     buildNpcUtterPrompt: buildNpcUtterPrompt,
     buildNpcReplyPrompt: buildNpcReplyPrompt,
     buildSummarizeSessionPrompt: buildSummarizeSessionPrompt,
-    buildUpdatePersonaImpressionPrompt: buildUpdatePersonaImpressionPrompt
+    buildUpdatePersonaImpressionPrompt: buildUpdatePersonaImpressionPrompt,
+    formatMemoryBlock: formatMemoryBlock
 };

@@ -106,6 +106,10 @@ describe('llm wrapper', () => {
 
         const auditFilePath = fixture.audit.getAuditFilePath();
         expect(fs.existsSync(auditFilePath)).to.equal(true);
+        const auditEntry = JSON.parse(fs.readFileSync(auditFilePath, 'utf8').trim().split('\n').pop());
+        expect(auditEntry.prompt.system).to.be.a('string');
+        expect(auditEntry.prompt.user).to.be.a('string');
+        expect(auditEntry.tokenIn).to.be.greaterThan(0);
     });
 
     it('should fall back when provider execution exceeds the timeout', async function () {

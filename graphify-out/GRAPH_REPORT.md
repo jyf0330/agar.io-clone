@@ -1,12 +1,12 @@
 # Graph Report - agar.io-clone-master  (2026-04-24)
 
 ## Corpus Check
-- 121 files · ~114,029 words
+- 121 files · ~115,444 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 614 nodes · 953 edges · 31 communities detected
-- Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 154 edges (avg confidence: 0.8)
+- 617 nodes · 961 edges · 30 communities detected
+- Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 156 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -36,14 +36,13 @@
 - [[_COMMUNITY_Community 23|Community 23]]
 - [[_COMMUNITY_Community 24|Community 24]]
 - [[_COMMUNITY_Community 25|Community 25]]
-- [[_COMMUNITY_Community 26|Community 26]]
+- [[_COMMUNITY_Community 27|Community 27]]
 - [[_COMMUNITY_Community 28|Community 28]]
 - [[_COMMUNITY_Community 29|Community 29]]
 - [[_COMMUNITY_Community 30|Community 30]]
-- [[_COMMUNITY_Community 31|Community 31]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Orchestrator` - 28 edges
+1. `Orchestrator` - 30 edges
 2. `ask()` - 18 edges
 3. `ChatClient` - 16 edges
 4. `runScenario()` - 15 edges
@@ -74,28 +73,28 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.08
-Nodes (23): adjustForBoundaries(), move(), Cell, changeCellMass(), checkForCollisions(), clientProvidedData(), constructor(), enumerateCollidingCells() (+15 more)
+Cohesion: 0.11
+Nodes (11): clamp(), randomWalkIntent(), buildContextualFallbackUtterance(), pickGreetingFallback(), stableIndex(), estimatePromptTokens(), getChatFallbackReply(), getMockChatReply() (+3 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.12
-Nodes (8): clamp(), randomWalkIntent(), estimatePromptTokens(), getChatFallbackReply(), getMockChatReply(), isFollowPlayerMessage(), Orchestrator, parseJsonPayload()
+Cohesion: 0.08
+Nodes (23): adjustForBoundaries(), move(), Cell, changeCellMass(), checkForCollisions(), clientProvidedData(), constructor(), enumerateCollidingCells() (+15 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.12
 Nodes (4): Canvas, ChatClient, canEmit(), emitIfReady()
 
 ### Community 3 - "Community 3"
-Cohesion: 0.12
-Nodes (25): reset(), createDraftId(), getStorage(), loadDrafts(), normalizeDraftPayload(), saveDraft(), createPlayerCardEditor(), createHistoryState() (+17 more)
-
-### Community 4 - "Community 4"
 Cohesion: 0.15
 Nodes (28): append(), getAuditFilePath(), resolveAuditDir(), toDateStamp(), createCacheKey(), ensureDatabase(), get(), loadDatabaseLibrary() (+20 more)
 
-### Community 5 - "Community 5"
+### Community 4 - "Community 4"
 Cohesion: 0.08
 Nodes (18): getPosition(), validNick(), addNew(), Food, removeExcess(), balanceMass(), enumerateVisibleWorld(), getVisibleWorldForPlayer() (+10 more)
+
+### Community 5 - "Community 5"
+Cohesion: 0.13
+Nodes (23): createDraftId(), getStorage(), loadDrafts(), normalizeDraftPayload(), saveDraft(), createPlayerCardEditor(), createHistoryState(), redo() (+15 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.13
@@ -130,12 +129,12 @@ Cohesion: 0.17
 Nodes (17): gameLoop(), getAvatarInnerRadius(), shouldUseAvatarRuntimeRender(), cellTouchingBorders(), circlePoint(), drawAvatarCell(), drawBorder(), drawCells() (+9 more)
 
 ### Community 14 - "Community 14"
-Cohesion: 0.16
-Nodes (14): buildNpcIntentPrompt(), buildNpcReplyPrompt(), buildNpcUtterPrompt(), buildSummarizeSessionPrompt(), buildUpdatePersonaImpressionPrompt(), formatRecentChats(), formatSessionEvents(), formatSessionSummaries() (+6 more)
+Cohesion: 0.15
+Nodes (11): reset(), buildClientJS(), getWebpackConfig(), mocha(), close(), ensureDatabaseFolder(), getPythonExecutable(), normalizeParams() (+3 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.17
-Nodes (9): buildClientJS(), getWebpackConfig(), mocha(), ensureDatabaseFolder(), getPythonExecutable(), normalizeParams(), run(), runWithPythonSqlite() (+1 more)
+Cohesion: 0.16
+Nodes (15): buildNpcIntentPrompt(), buildNpcReplyPrompt(), buildNpcUtterPrompt(), buildSummarizeSessionPrompt(), buildUpdatePersonaImpressionPrompt(), formatMemoryBlock(), formatRecentChats(), formatSessionEvents() (+7 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.24
@@ -177,23 +176,19 @@ Nodes (2): clampScale(), getNextScale()
 Cohesion: 0.67
 Nodes (2): clearModule(), loadWrapperFixture()
 
-### Community 26 - "Community 26"
-Cohesion: 0.83
-Nodes (3): buildContextualFallbackUtterance(), pickGreetingFallback(), stableIndex()
-
-### Community 28 - "Community 28"
+### Community 27 - "Community 27"
 Cohesion: 0.83
 Nodes (4): split icon, horizontal separation, left-right arrows, split
 
-### Community 29 - "Community 29"
+### Community 28 - "Community 28"
 Cohesion: 0.5
 Nodes (4): feed mass, feed icon, crosshair/target reticle, feed control
 
-### Community 30 - "Community 30"
+### Community 29 - "Community 29"
 Cohesion: 0.67
 Nodes (4): horizontal separation, player input control, split, split control icon
 
-### Community 31 - "Community 31"
+### Community 30 - "Community 30"
 Cohesion: 0.67
 Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Input
 
@@ -208,11 +203,11 @@ Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Inp
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `addPlayer()` connect `Community 5` to `Community 0`, `Community 11`, `Community 12`?**
-  _High betweenness centrality (0.200) - this node is a cross-community bridge._
-- **Why does `ask()` connect `Community 10` to `Community 1`, `Community 4`, `Community 14`, `Community 6`?**
-  _High betweenness centrality (0.167) - this node is a cross-community bridge._
-- **Why does `emit()` connect `Community 5` to `Community 9`, `Community 2`?**
+- **Why does `addPlayer()` connect `Community 4` to `Community 1`, `Community 11`, `Community 12`?**
+  _High betweenness centrality (0.199) - this node is a cross-community bridge._
+- **Why does `ask()` connect `Community 10` to `Community 0`, `Community 3`, `Community 6`, `Community 15`?**
+  _High betweenness centrality (0.166) - this node is a cross-community bridge._
+- **Why does `emit()` connect `Community 4` to `Community 9`, `Community 2`?**
   _High betweenness centrality (0.113) - this node is a cross-community bridge._
 - **Are the 9 inferred relationships involving `ask()` (e.g. with `createCacheKey()` and `get()`) actually correct?**
   _`ask()` has 9 INFERRED edges - model-reasoned connections that need verification._
@@ -221,4 +216,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `在地图内随机挑一个目标点，留一点边距避免贴墙。`, `朝目标移动最多 max_step，达到/超过则贴上。`, `Grid-based arena` to the rest of the system?**
   _6 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11 - nodes in this community are weakly interconnected._
