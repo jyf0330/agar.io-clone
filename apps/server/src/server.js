@@ -44,6 +44,11 @@ const connectionService = createConnectionService({
 });
 const ghostManager = new GhostManager({
     memoryStore: memoryStore,
+    triggerRadius: config.ghostEcho && config.ghostEcho.triggerRadius,
+    timeWindowMs: config.ghostEcho && config.ghostEcho.timeWindowMs,
+    maxActiveGhosts: config.ghostEcho && config.ghostEcho.maxActiveGhosts,
+    anchorCooldownMs: config.ghostEcho && config.ghostEcho.anchorCooldownMs,
+    followTimeoutMs: config.ghostEcho && config.ghostEcho.followTimeoutMs,
     seedEvents: [
         {
             id: 'seed-trace-hand',

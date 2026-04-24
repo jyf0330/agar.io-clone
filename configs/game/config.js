@@ -54,6 +54,13 @@ module.exports = {
             }
         ]
     },
+    ghostEcho: {
+        timeWindowMs: 30000,
+        triggerRadius: 800,
+        maxActiveGhosts: 3,
+        anchorCooldownMs: 60000,
+        followTimeoutMs: 30000
+    },
     slowBase: 4.5,
     logChat: 0,
     networkUpdateFactor: 40,

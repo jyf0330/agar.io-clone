@@ -19,12 +19,15 @@ class GhostManager {
   constructor(options) {
     const settings = options || {};
     this.triggerRadius = settings.triggerRadius || 800;
-    this.triggerWindowMs = settings.triggerWindowMs || 1200;
+    this.triggerWindowMs = settings.timeWindowMs || settings.triggerWindowMs || 1200;
     this.followTimeoutMs = settings.followTimeoutMs || 30000;
+    this.maxActiveGhosts = typeof settings.maxActiveGhosts === 'number' ? settings.maxActiveGhosts : 3;
+    this.anchorCooldownMs = typeof settings.anchorCooldownMs === 'number' ? settings.anchorCooldownMs : 60000;
     this.seedEvents = (settings.seedEvents || []).map(normalizeEvent);
     this.memoryStore = settings.memoryStore || null;
     this.spawnedItemIds = {};
     this.activeGhosts = {};
+    this.anchorTriggeredAt = {};
   }
   getEvents() {
     if (!this.memoryStore || typeof this.memoryStore.listEvents !== 'function') {
@@ -57,6 +60,23 @@ class GhostManager {
   }
   isInTimeWindow(event, elapsedMs) {
     return Math.abs(elapsedMs - event.t) <= this.triggerWindowMs;
+  }
+  getEventKey(event) {
+    return event.id || [event.sessionId, event.ghostId, event.kind, event.t, event.x, event.y].join(':');
+  }
+  isAnchorCoolingDown(event, now) {
+    const key = this.getEventKey(event);
+    return this.anchorTriggeredAt[key] && now - this.anchorTriggeredAt[key] < this.anchorCooldownMs;
+  }
+  markAnchorTriggered(event, now) {
+    this.anchorTriggeredAt[this.getEventKey(event)] = now;
+  }
+  getActiveGhostCount() {
+    return Object.keys(this.activeGhosts).length;
+  }
+  canActivateTrace(event) {
+    const key = event.sessionId + ':' + event.ghostId;
+    return this.activeGhosts[key] || this.getActiveGhostCount() < this.maxActiveGhosts;
   }
   activateTrace(event, now) {
     const key = event.sessionId + ':' + event.ghostId;
@@ -102,18 +122,24 @@ class GhostManager {
     const now = safeState.now || Date.now();
     const startedAt = safeState.matchStartedAt || now;
     const elapsedMs = Math.max(0, now - startedAt);
+    this.pruneGhosts(now);
     this.getEvents().forEach(event => {
-      if (!this.isInTimeWindow(event, elapsedMs) || !this.isNearAnyPlayer(event, players)) {
+      if (!this.isInTimeWindow(event, elapsedMs) || !this.isNearAnyPlayer(event, players) || this.isAnchorCoolingDown(event, now)) {
         return;
       }
       if (event.kind === 'trace') {
+        if (!this.canActivateTrace(event)) {
+          this.markAnchorTriggered(event, now);
+          return;
+        }
         this.activateTrace(event, now);
+        this.markAnchorTriggered(event, now);
       }
       if (event.kind === 'item') {
         this.spawnHistoricalItem(map, event);
+        this.markAnchorTriggered(event, now);
       }
     });
-    this.pruneGhosts(now);
     if (map) {
       map.ghosts = Object.keys(this.activeGhosts).map(key => this.activeGhosts[key]);
     }
