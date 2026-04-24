@@ -34,6 +34,10 @@ function createBodyPart(type, ordinal, overrides) {
     }, overrides || {});
 }
 
+function cloneBodyPart(part, overrides) {
+    return Object.assign({}, part || {}, overrides || {});
+}
+
 function normalizeBodyParts(parts) {
     const typeCounts = {};
 
@@ -61,8 +65,74 @@ function createDefaultBodyParts() {
     return normalizeBodyParts(bodyConfig.defaultLoadout.map((type) => ({type: type})));
 }
 
-function createBodyState(parts) {
-    const normalizedParts = normalizeBodyParts(parts || createDefaultBodyParts());
+function getSignatureType(signature) {
+    return signature && (signature.slotType || signature.missingPart || signature.part || signature.type);
+}
+
+function getSignatureTemplateId(signature) {
+    return signature && (signature.templateId || signature.selectedReferenceId || signature.referenceId);
+}
+
+function getSignatureTier(signature) {
+    if (!signature || !signature.tier) {
+        return 'none';
+    }
+
+    return signature.tier;
+}
+
+function getSignatureBonus(type, tier) {
+    const bonusesByType = bodyConfig.signatureBonuses || {};
+    const bonusesByTier = bonusesByType[type] || {};
+    return Object.assign({}, bonusesByTier[tier] || bonusesByTier.none || {});
+}
+
+function createSignaturePart(signature, ordinal, basePart) {
+    const type = getSignatureType(signature) || (basePart && basePart.type);
+    const tier = getSignatureTier(signature);
+    const usePlayerStroke = Boolean(signature && signature.imageDataUrl && !signature.skipped && tier !== 'none');
+
+    return createBodyPart(type, ordinal, Object.assign({}, basePart || {}, {
+        templateId: getSignatureTemplateId(signature),
+        signatureTier: tier,
+        signatureSimilarity: signature && typeof signature.similarity === 'number' ? signature.similarity : 0,
+        signatureBonus: getSignatureBonus(type, tier),
+        userStrokeDataUrl: usePlayerStroke ? signature.imageDataUrl : null,
+        source: signature && signature.skipped ? 'signature-default' : 'signature-drawing'
+    }));
+}
+
+function applySignatureToParts(parts, signature) {
+    const type = getSignatureType(signature);
+    if (!signature || !type) {
+        return parts;
+    }
+
+    let replaced = false;
+    let ordinal = 0;
+    const nextParts = (parts || []).map((part) => {
+        if (part.type === type) {
+            ordinal += 1;
+        }
+
+        if (!replaced && part.type === type) {
+            replaced = true;
+            return createSignaturePart(signature, ordinal, part);
+        }
+
+        return part;
+    });
+
+    if (!replaced) {
+        nextParts.push(createSignaturePart(signature, 1));
+    }
+
+    return nextParts;
+}
+
+function createBodyState(parts, signature) {
+    const sourceParts = applySignatureToParts(parts || createDefaultBodyParts(), signature);
+    const normalizedParts = normalizeBodyParts(sourceParts);
 
     return {
         bodyParts: normalizedParts,
@@ -72,11 +142,52 @@ function createBodyState(parts) {
     };
 }
 
+function createDroppedPart(part, position) {
+    return cloneBodyPart(part, {
+        x: position && typeof position.x === 'number' ? position.x : undefined,
+        y: position && typeof position.y === 'number' ? position.y : undefined,
+        droppedAt: Date.now()
+    });
+}
+
+function equipBodyPart(target, incomingPart, dropPosition) {
+    const existingParts = target.bodyParts || [];
+    let droppedPart = null;
+    let replaced = false;
+
+    const nextParts = existingParts.map((part) => {
+        if (!replaced && part.type === incomingPart.type) {
+            droppedPart = createDroppedPart(part, dropPosition);
+            replaced = true;
+            return cloneBodyPart(incomingPart);
+        }
+
+        return part;
+    });
+
+    if (!replaced) {
+        nextParts.push(cloneBodyPart(incomingPart));
+    }
+
+    applyBodyState(target, {
+        bodyParts: nextParts,
+        bodySignature: getSignatureType(target.bodySignature) === incomingPart.type ? null : target.bodySignature
+    });
+
+    return {
+        equippedPart: cloneBodyPart(incomingPart),
+        droppedPart: droppedPart
+    };
+}
+
 function applyBodyState(target, overrides) {
     const defaultState = createBodyState();
     const sourceParts = overrides && overrides.bodyParts ? overrides.bodyParts : defaultState.bodyParts;
+    const signature = overrides && Object.prototype.hasOwnProperty.call(overrides, 'bodySignature')
+        ? overrides.bodySignature
+        : target.bodySignature;
 
-    return Object.assign(target, defaultState, overrides || {}, createBodyState(sourceParts));
+    return Object.assign(target, defaultState, overrides || {}, createBodyState(sourceParts, signature));
 }
 
 function getStealableParts(target) {
@@ -113,7 +224,11 @@ function getMovementSpeedMultiplier(target) {
 
 function getConnectionRangeBonus(target) {
     const extraHands = Math.max(0, getPartCount(target, TYPES.HAND) - 1);
-    return extraHands * bodyConfig.abilityModifiers.connectionRangePerExtraHand;
+    const parts = Array.isArray(target) ? target : (target.bodyParts || []);
+    const signatureBonus = parts.reduce((total, part) => {
+        return total + ((part.signatureBonus && part.signatureBonus.connectionRangeBonus) || 0);
+    }, 0);
+    return (extraHands * bodyConfig.abilityModifiers.connectionRangePerExtraHand) + signatureBonus;
 }
 
 function getConnectionRange(baseRange, target) {
@@ -155,12 +270,11 @@ function stealRandomCorePart(loser, eater, randomFn) {
         : Math.floor(Math.random() * stealable.length);
     const selectedPart = stealable[pickIndex];
     const nextLoserParts = (loser.bodyParts || []).filter((part) => part !== selectedPart);
-    const nextEaterParts = (eater.bodyParts || []).concat({
-        type: selectedPart.type
-    });
+    const nextEaterParts = (eater.bodyParts || []).concat(cloneBodyPart(selectedPart));
 
     applyBodyState(loser, {
-        bodyParts: nextLoserParts
+        bodyParts: nextLoserParts,
+        bodySignature: getSignatureType(loser.bodySignature) === selectedPart.type ? null : loser.bodySignature
     });
     applyBodyState(eater, {
         bodyParts: nextEaterParts
@@ -173,8 +287,13 @@ module.exports = {
     TYPES,
     config: bodyConfig,
     createBodyPart,
+    cloneBodyPart,
+    createSignaturePart,
     createDefaultBodyParts,
     createBodyState,
+    applySignatureToParts,
+    createDroppedPart,
+    equipBodyPart,
     applyBodyState,
     getStealableParts,
     getPartCount,

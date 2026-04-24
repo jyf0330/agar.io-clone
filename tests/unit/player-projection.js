@@ -19,7 +19,13 @@ describe('player-projection.js', () => {
       name: 'tester',
       screenWidth: 800,
       screenHeight: 600,
-      playerCardPreviewDataUrl: 'data:image/png;base64,card'
+      playerCardPreviewDataUrl: 'data:image/png;base64,card',
+      bodySignature: {
+        slotType: 'HAND',
+        templateId: 'hand-open',
+        tier: 'echo',
+        similarity: 0.8
+      }
     });
     player.admin = true;
     player.target = { x: 99, y: 42 };
@@ -29,6 +35,12 @@ describe('player-projection.js', () => {
 
     expect(projected.name).to.equal('tester');
     expect(projected.playerCardPreviewDataUrl).to.equal('data:image/png;base64,card');
+    expect(projected.bodySignature).to.deep.equal({
+      slotType: 'HAND',
+      templateId: 'hand-open',
+      tier: 'echo',
+      similarity: 0.8
+    });
     expect(projected.admin).to.equal(undefined);
     expect(projected.target).to.equal(undefined);
     expect(projected.npcRelationships[0].relationshipValue).to.equal(7);

@@ -8,6 +8,19 @@ module.exports = {
         connectionRangePerExtraHand: 40,
         visionRangePerExtraHead: 120
     },
+    signatureBonuses: {
+        HAND: {
+            none: {
+                connectionRangeBonus: 0
+            },
+            faint: {
+                connectionRangeBonus: 10
+            },
+            echo: {
+                connectionRangeBonus: 15
+            }
+        }
+    },
     partDefinitions: {
         HEAD: {
             label: 'Head',

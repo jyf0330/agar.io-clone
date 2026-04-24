@@ -114,6 +114,9 @@ exports.Player = class {
     this.screenHeight = playerData.screenHeight;
     this.playerCardPreviewDataUrl = playerData.playerCardPreviewDataUrl || null;
     this.bodySignature = playerData.bodySignature || null;
+    body.applyBodyState(this, {
+      bodySignature: this.bodySignature
+    });
     this.setLastHeartbeat();
   }
   setLastHeartbeat() {

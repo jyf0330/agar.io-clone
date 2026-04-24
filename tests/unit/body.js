@@ -24,6 +24,34 @@ describe('body.js', () => {
       expect(player.bodyPartCounts.HEART).to.equal(1);
       expect(player.bodyPartCounts.SPIKE).to.equal(0);
     });
+
+    it('should convert a V5 body signature into the starter hand slot', () => {
+      const player = new playerUtils.Player('player-1');
+      player.init({ x: 100, y: 120 }, config.defaultPlayerMass);
+
+      player.clientProvidedData({
+        name: 'tester',
+        screenWidth: 800,
+        screenHeight: 600,
+        bodySignature: {
+          missingPart: 'HAND',
+          selectedReferenceId: 'hand-thread',
+          tier: 'echo',
+          similarity: 0.82,
+          imageDataUrl: 'data:image/png;base64,stroke',
+          skipped: false
+        }
+      });
+
+      const signedHand = player.bodyParts.find((part) => part.type === 'HAND');
+
+      expect(player.bodyPartCount).to.equal(bodyConfig.defaultLoadout.length);
+      expect(signedHand.templateId).to.equal('hand-thread');
+      expect(signedHand.signatureTier).to.equal('echo');
+      expect(signedHand.signatureBonus.connectionRangeBonus).to.equal(15);
+      expect(signedHand.userStrokeDataUrl).to.equal('data:image/png;base64,stroke');
+      expect(player.bodyBonuses.connectionRangeBonus).to.equal(15);
+    });
   });
 
   describe('getStealableParts', () => {
@@ -61,6 +89,30 @@ describe('body.js', () => {
       expect(eater.bodyParts.map((part) => part.type)).to.deep.equal(['MOUTH', 'HEART']);
     });
 
+    it('should preserve the complete part object when stealing V5 signed parts', () => {
+      const loser = body.createBodyState([
+        body.createBodyPart('HAND', 1, {
+          templateId: 'hand-open',
+          signatureTier: 'echo',
+          signatureBonus: { connectionRangeBonus: 15 },
+          source: 'signature-drawing'
+        })
+      ]);
+      const eater = body.createBodyState([
+        body.createBodyPart('MOUTH', 1)
+      ]);
+
+      const stolen = body.stealRandomCorePart(loser, eater, () => 0);
+      const gained = eater.bodyParts.find((part) => part.type === 'HAND');
+
+      expect(stolen.templateId).to.equal('hand-open');
+      expect(gained.templateId).to.equal('hand-open');
+      expect(gained.signatureTier).to.equal('echo');
+      expect(gained.signatureBonus.connectionRangeBonus).to.equal(15);
+      expect(gained.source).to.equal('signature-drawing');
+      expect(gained.stolenFrom).to.equal(undefined);
+    });
+
     it('should stay unchanged when there is no core part to steal', () => {
       const loser = body.createBodyState([
         body.createBodyPart('SPIKE', 1)
@@ -74,6 +126,38 @@ describe('body.js', () => {
       expect(stolen).to.equal(null);
       expect(loser.bodyPartCount).to.equal(1);
       expect(eater.bodyPartCount).to.equal(1);
+    });
+  });
+
+  describe('equipBodyPart', () => {
+    it('should replace an occupied slot and return the dropped complete part', () => {
+      const player = body.createBodyState([
+        body.createBodyPart('HEAD', 1),
+        body.createBodyPart('HAND', 1, {
+          templateId: 'hand-open',
+          signatureTier: 'faint',
+          signatureBonus: { connectionRangeBonus: 10 },
+          source: 'signature-drawing'
+        }),
+        body.createBodyPart('FOOT', 1)
+      ]);
+
+      const result = body.equipBodyPart(player, {
+        type: 'HAND',
+        templateId: 'hand-grab',
+        source: 'npc-task',
+        signatureBonus: { connectionRangeBonus: 15 }
+      }, { x: 20, y: 30 });
+
+      const equippedHand = player.bodyParts.find((part) => part.type === 'HAND');
+
+      expect(equippedHand.templateId).to.equal('hand-grab');
+      expect(equippedHand.source).to.equal('npc-task');
+      expect(player.bodyPartCounts.HAND).to.equal(1);
+      expect(result.droppedPart.templateId).to.equal('hand-open');
+      expect(result.droppedPart.signatureTier).to.equal('faint');
+      expect(result.droppedPart.x).to.equal(20);
+      expect(result.droppedPart.y).to.equal(30);
     });
   });
 
