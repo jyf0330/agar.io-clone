@@ -1,4 +1,7 @@
 const demoModeEnabled = process.env.V5_DEMO_MODE === '1';
+const npcModeEnabled = process.env.V5_NPC_ENABLED === '0'
+    ? process.env.V3_NPC_ENABLED === '1'
+    : true;
 
 const config = {
     host: "0.0.0.0",
@@ -69,6 +72,9 @@ const config = {
         enabled: demoModeEnabled,
         roundDurationMs: demoModeEnabled ? 120000 : 90000,
         showNearbyEchoHint: demoModeEnabled
+    },
+    npc: {
+        enabled: npcModeEnabled
     },
     slowBase: 4.5,
     logChat: 0,

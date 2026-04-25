@@ -35,7 +35,8 @@ var chatInput;
 var settlementPanel;
 var bodySignatureController;
 var hideStartMenuOnLoad = false;
-var npcFeaturesEnabled = window.location.search.indexOf('npc=1') !== -1 || window.V3_NPC_ENABLED === true;
+var npcFeaturesDisabled = window.location.search.indexOf('npc=0') !== -1 || window.V5_NPC_ENABLED === false;
+var npcFeaturesEnabled = !npcFeaturesDisabled || window.location.search.indexOf('npc=1') !== -1 || window.V3_NPC_ENABLED === true;
 
 var debug = function (args) {
     if (console && console.log) {

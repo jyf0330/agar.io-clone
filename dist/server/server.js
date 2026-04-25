@@ -45,7 +45,7 @@ const settlement = require('./settlement');
 const GhostManager = require('./ghost/manager');
 const GhostRecorder = require('./ghost/recorder');
 const memorySessionId = process.env.MEMORY_SESSION_ID || 'session-' + Date.now();
-const npcFeaturesEnabled = process.env.V3_NPC_ENABLED === '1';
+const npcFeaturesEnabled = !config.npc || config.npc.enabled !== false;
 let map = new mapUtils.Map(config);
 const roundClock = {
   startedAt: Date.now(),
@@ -282,8 +282,7 @@ function bootstrapDefaultNpcs() {
   return ['mochi', 'doudou', 'wugui'].map((cardId, index) => bootstrapNpc(cardId, index));
 }
 
-// V3 NPC/memory work is preserved, but V5 is now drawing-board-first.
-// Set V3_NPC_ENABLED=1 to re-enable the old milestone NPC loop.
+// V5 pets are part of the main demo path; set V5_NPC_ENABLED=0 to disable them locally.
 if (npcFeaturesEnabled) {
   npcRoster = bootstrapDefaultNpcs();
 }

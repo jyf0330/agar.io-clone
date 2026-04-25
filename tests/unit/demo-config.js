@@ -3,18 +3,34 @@
 const expect = require('chai').expect;
 const path = require('path');
 
-function loadConfigWithDemoFlag(value) {
+function loadConfigWithEnv(env) {
   const configPath = path.resolve(__dirname, '../../configs/game/config.js');
-  delete require.cache[configPath];
-  if (value === null) {
-    delete process.env.V5_DEMO_MODE;
-  } else {
-    process.env.V5_DEMO_MODE = value;
-  }
-  const config = require(configPath);
+  const original = {
+    V5_DEMO_MODE: process.env.V5_DEMO_MODE,
+    V5_NPC_ENABLED: process.env.V5_NPC_ENABLED,
+    V3_NPC_ENABLED: process.env.V3_NPC_ENABLED
+  };
   delete require.cache[configPath];
   delete process.env.V5_DEMO_MODE;
+  delete process.env.V5_NPC_ENABLED;
+  delete process.env.V3_NPC_ENABLED;
+  Object.keys(env || {}).forEach((key) => {
+    process.env[key] = env[key];
+  });
+  const config = require(configPath);
+  delete require.cache[configPath];
+  Object.keys(original).forEach((key) => {
+    if (original[key] === undefined) {
+      delete process.env[key];
+    } else {
+      process.env[key] = original[key];
+    }
+  });
   return config;
+}
+
+function loadConfigWithDemoFlag(value) {
+  return loadConfigWithEnv(value === null ? {} : {V5_DEMO_MODE: value});
 }
 
 describe('demo config', () => {
@@ -22,6 +38,7 @@ describe('demo config', () => {
     const config = loadConfigWithDemoFlag(null);
 
     expect(config.demo.enabled).to.equal(false);
+    expect(config.npc.enabled).to.equal(true);
     expect(config.partLoot.maxWorldParts).to.equal(8);
     expect(config.ghostEcho.triggerRadius).to.equal(800);
   });
@@ -37,5 +54,10 @@ describe('demo config', () => {
     expect(config.ghostEcho.triggerRadius).to.equal(1200);
     expect(config.ghostEcho.anchorCooldownMs).to.equal(15000);
     expect(config.ghostEcho.debug).to.equal(true);
+  });
+
+  it('should allow V5 npc features to be disabled without breaking legacy opt-in', () => {
+    expect(loadConfigWithEnv({V5_NPC_ENABLED: '0'}).npc.enabled).to.equal(false);
+    expect(loadConfigWithEnv({V5_NPC_ENABLED: '0', V3_NPC_ENABLED: '1'}).npc.enabled).to.equal(true);
   });
 });
