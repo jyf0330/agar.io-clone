@@ -6,6 +6,31 @@ const mapUtils = require('../../apps/server/src/map/map');
 const playerUtils = require('../../apps/server/src/map/player');
 
 describe('map visibility', () => {
+  it('should keep mass balancing quiet by default', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      gameMass: 10,
+      maxFood: 10,
+      maxVirus: 0,
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const originalDebug = console.debug;
+    const messages = [];
+    console.debug = function (message) {
+      messages.push(message);
+    };
+
+    try {
+      map.balanceMass(1, 10, 10, 0);
+    } finally {
+      console.debug = originalDebug;
+    }
+
+    expect(messages).to.deep.equal([]);
+    expect(map.food.data).to.have.length(10);
+  });
+
   it('should return raw visible world entities without projecting player DTOs', () => {
     const map = new mapUtils.Map(config);
     const viewer = new playerUtils.Player('viewer');

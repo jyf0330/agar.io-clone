@@ -1,7 +1,7 @@
 # Graph Report - agar.io-clone-master  (2026-04-25)
 
 ## Corpus Check
-- 161 files · ~269,993 words
+- 161 files · ~270,061 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
