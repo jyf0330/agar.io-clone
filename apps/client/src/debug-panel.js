@@ -4,9 +4,11 @@ var MAX_LOGS = 8;
 var MAX_RECENT_EVENTS = 3;
 var MAX_RECENT_TIMINGS = 3;
 var MAX_PROBE_LOGS = 6;
+var MAX_PERSISTED_LOGS = 20;
 var STALE_MOVE_MS = 2500;
 var RENDER_INTERVAL_MS = 250;
 var DEVOUR_WINDOW_MS = 3000;
+var STORAGE_KEY = 'agar.debugPanel.logs.v1';
 var RECENT_EVENT_IGNORES = {
     serverTellPlayerMove: true
 };
@@ -17,6 +19,8 @@ function createDebugState(now) {
         now: now || Date.now(),
         visible: true,
         logs: [],
+        previousLogs: [],
+        logStorage: null,
         frame: {
             fps: 0,
             frameMs: 0,
@@ -98,7 +102,45 @@ function updateState(state, patch) {
     return state;
 }
 
-function recordLog(state, message, level, now) {
+function sanitizeLogEntries(logs) {
+    return (logs || []).filter(function (entry) {
+        return entry && typeof entry.message === 'string';
+    }).slice(0, MAX_PERSISTED_LOGS).map(function (entry) {
+        return {
+            message: entry.message,
+            level: entry.level || 'info',
+            at: entry.at || 0
+        };
+    });
+}
+
+function persistLogs(state, storage) {
+    var targetStorage = storage || state.logStorage;
+    if (!targetStorage || typeof targetStorage.setItem !== 'function') {
+        return;
+    }
+    try {
+        targetStorage.setItem(STORAGE_KEY, JSON.stringify(sanitizeLogEntries(state.logs)));
+    } catch (error) {
+        // localStorage can fail in private mode or when quota is full; debug logging should keep running.
+    }
+}
+
+function restorePersistedLogs(state, storage) {
+    if (!storage || typeof storage.getItem !== 'function') {
+        return state;
+    }
+    try {
+        var raw = storage.getItem(STORAGE_KEY);
+        var parsed = raw ? JSON.parse(raw) : [];
+        state.previousLogs = Array.isArray(parsed) ? sanitizeLogEntries(parsed) : [];
+    } catch (error) {
+        state.previousLogs = [];
+    }
+    return state;
+}
+
+function recordLog(state, message, level, now, storage) {
     var timestamp = now || state.now || Date.now();
     if (state.perf && state.perf.devourActiveUntil && timestamp <= state.perf.devourActiveUntil) {
         state.perf.devourLogCount += 1;
@@ -110,6 +152,40 @@ function recordLog(state, message, level, now) {
     });
     if (state.logs.length > MAX_LOGS) {
         state.logs.length = MAX_LOGS;
+    }
+    persistLogs(state, storage);
+    return state;
+}
+
+function stringifyErrorReason(reason) {
+    if (!reason) {
+        return '未知原因';
+    }
+    if (reason.message) {
+        return reason.message;
+    }
+    return String(reason);
+}
+
+function recordGlobalError(state, event, storage, consoleLike, now) {
+    var message = event && event.message ? event.message : stringifyErrorReason(event && event.error);
+    var filename = event && event.filename ? event.filename : '';
+    var line = event && typeof event.lineno === 'number' ? event.lineno : 0;
+    var column = event && typeof event.colno === 'number' ? event.colno : 0;
+    var location = filename ? ' @ ' + filename + ':' + line + ':' + column : '';
+    var logMessage = '全局错误：' + message + location;
+    recordLog(state, logMessage, 'warn', now, storage);
+    if (consoleLike && typeof consoleLike.error === 'function') {
+        consoleLike.error('[DEBUG_PANEL] ' + logMessage);
+    }
+    return state;
+}
+
+function recordUnhandledRejection(state, event, storage, consoleLike, now) {
+    var logMessage = '未处理 Promise：' + stringifyErrorReason(event && event.reason);
+    recordLog(state, logMessage, 'warn', now, storage);
+    if (consoleLike && typeof consoleLike.error === 'function') {
+        consoleLike.error('[DEBUG_PANEL] ' + logMessage);
     }
     return state;
 }
@@ -386,6 +462,20 @@ function formatPerfProbeHtml(state, now) {
     ].join('');
 }
 
+function formatPreviousLogsHtml(state) {
+    if (!state.previousLogs || !state.previousLogs.length) {
+        return '';
+    }
+    return [
+        '<div class="debug-panel-log-title">上次崩溃前日志</div>',
+        '<ol class="debug-panel-log">'
+            + state.previousLogs.slice(0, MAX_LOGS).map(function (entry) {
+                return '<li class="is-' + escapeHtml(entry.level) + '">' + escapeHtml(entry.message) + '</li>';
+            }).join('')
+            + '</ol>'
+    ].join('');
+}
+
 function formatDebugPanel(state) {
     var now = state.now || Date.now();
     var runtimeLabel = state.game.started ? '游戏中' : '未开始';
@@ -439,6 +529,7 @@ function formatDebugPanel(state) {
             + formatModule('名片', state.modules.playerCard)
             + '</div>',
         formatPerfProbeHtml(state, now),
+        formatPreviousLogsHtml(state),
         '<div class="debug-panel-log-title">中文事件日志</div>',
         '<ol class="debug-panel-log">'
             + (state.logs.length ? state.logs.map(function (entry) {
@@ -486,6 +577,13 @@ function formatDebugPanelCopyText(state) {
         lines.push('最近慢事件：' + formatLatestTiming(state));
         lines.push('链路间隔：' + formatLatestGap(state));
         lines.push('主线程：' + formatLatestLongTask(state));
+    }
+
+    if (state.previousLogs && state.previousLogs.length) {
+        lines.push('上次崩溃前日志：');
+        state.previousLogs.slice(0, MAX_LOGS).forEach(function (entry) {
+            lines.push('- ' + entry.message);
+        });
     }
 
     if (state.logs.length) {
@@ -570,14 +668,29 @@ function summarizeModules(snapshot) {
     };
 }
 
+function getStorage(options, win) {
+    if (options && options.storage) {
+        return options.storage;
+    }
+    try {
+        return win && win.localStorage ? win.localStorage : null;
+    } catch (error) {
+        return null;
+    }
+}
+
 function createDebugPanel(options) {
     var document = options.document;
     var win = options.window;
     var root = document.getElementById('debugPanel');
     var toggle = document.getElementById('debugPanelToggle');
     var state = createDebugState(Date.now());
+    var storage = getStorage(options, win);
+    var consoleLike = win && win.console;
     var lastRenderAt = 0;
     var longTaskObserver = null;
+    var onGlobalError = null;
+    var onUnhandledRejection = null;
 
     if (!root) {
         root = document.createElement('div');
@@ -591,6 +704,9 @@ function createDebugPanel(options) {
         toggle.textContent = '调试';
         (document.getElementById('gameAreaWrapper') || document.body).appendChild(toggle);
     }
+
+    state.logStorage = storage;
+    restorePersistedLogs(state, storage);
 
     function render(force) {
         var now = Date.now();
@@ -613,11 +729,11 @@ function createDebugPanel(options) {
         copyButton.addEventListener('click', function () {
             copyTextToClipboard(document, win, formatDebugPanelCopyText(state))
                 .then(function () {
-                    recordLog(state, '调试面板内容已复制。', 'ok', Date.now());
+                    recordLog(state, '调试面板内容已复制。', 'ok', Date.now(), storage);
                     render(true);
                 })
                 .catch(function () {
-                    recordLog(state, '复制失败，请手动选择调试面板内容。', 'warn', Date.now());
+                    recordLog(state, '复制失败，请手动选择调试面板内容。', 'warn', Date.now(), storage);
                     render(true);
                 });
         });
@@ -625,9 +741,22 @@ function createDebugPanel(options) {
 
     toggle.addEventListener('click', function () {
         state.visible = !state.visible;
-        recordLog(state, state.visible ? '调试面板已展开' : '调试面板已收起', 'info', Date.now());
+        recordLog(state, state.visible ? '调试面板已展开' : '调试面板已收起', 'info', Date.now(), storage);
         render(true);
     });
+
+    if (win && typeof win.addEventListener === 'function') {
+        onGlobalError = function (event) {
+            recordGlobalError(state, event, storage, consoleLike, Date.now());
+            render(true);
+        };
+        onUnhandledRejection = function (event) {
+            recordUnhandledRejection(state, event, storage, consoleLike, Date.now());
+            render(true);
+        };
+        win.addEventListener('error', onGlobalError);
+        win.addEventListener('unhandledrejection', onUnhandledRejection);
+    }
 
     if (win && win.PerformanceObserver) {
         try {
@@ -639,7 +768,7 @@ function createDebugPanel(options) {
             });
             longTaskObserver.observe({entryTypes: ['longtask']});
         } catch (error) {
-            recordLog(state, '当前浏览器不支持 long task 探针。', 'warn', Date.now());
+            recordLog(state, '当前浏览器不支持 long task 探针。', 'warn', Date.now(), storage);
         }
     }
 
@@ -649,7 +778,7 @@ function createDebugPanel(options) {
         state: state,
         render: render,
         log: function (message, level) {
-            recordLog(state, message, level, Date.now());
+            recordLog(state, message, level, Date.now(), storage);
             render(true);
         },
         markSocketEvent: function (eventName) {
@@ -711,6 +840,14 @@ function createDebugPanel(options) {
             if (longTaskObserver && typeof longTaskObserver.disconnect === 'function') {
                 longTaskObserver.disconnect();
             }
+            if (win && typeof win.removeEventListener === 'function') {
+                if (onGlobalError) {
+                    win.removeEventListener('error', onGlobalError);
+                }
+                if (onUnhandledRejection) {
+                    win.removeEventListener('unhandledrejection', onUnhandledRejection);
+                }
+            }
             if (root && root.parentNode) {
                 root.parentNode.removeChild(root);
             }
@@ -724,7 +861,11 @@ function createDebugPanel(options) {
 module.exports = {
     createDebugState: createDebugState,
     updateState: updateState,
+    persistLogs: persistLogs,
+    restorePersistedLogs: restorePersistedLogs,
     recordLog: recordLog,
+    recordGlobalError: recordGlobalError,
+    recordUnhandledRejection: recordUnhandledRejection,
     markSocketEvent: markSocketEvent,
     startDevourProbe: startDevourProbe,
     recordMovementPayload: recordMovementPayload,

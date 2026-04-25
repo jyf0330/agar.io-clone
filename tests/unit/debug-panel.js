@@ -162,4 +162,63 @@ describe('debug-panel.js', () => {
     expect(text).to.contain('同步包 1 / Meta 1');
     expect(text).to.contain('最近慢事件：settlement 58ms');
   });
+
+  it('should persist and restore recent debug logs for crash recovery', () => {
+    const storage = {
+      value: null,
+      getItem() {
+        return this.value;
+      },
+      setItem(key, value) {
+        this.key = key;
+        this.value = value;
+      }
+    };
+    const state = debugPanel.createDebugState(1000);
+    debugPanel.recordLog(state, '吞噬前最后一条同步日志', 'warn', 1100, storage);
+
+    const nextState = debugPanel.createDebugState(2000);
+    debugPanel.restorePersistedLogs(nextState, storage);
+
+    const html = debugPanel.formatDebugPanel(nextState);
+    const text = debugPanel.formatDebugPanelCopyText(nextState);
+
+    expect(html).to.contain('上次崩溃前日志');
+    expect(html).to.contain('吞噬前最后一条同步日志');
+    expect(text).to.contain('上次崩溃前日志');
+    expect(text).to.contain('吞噬前最后一条同步日志');
+  });
+
+  it('should convert global errors and rejected promises into Chinese logs', () => {
+    const storage = {
+      setItem() {}
+    };
+    const errors = [];
+    const state = debugPanel.createDebugState(1000);
+
+    debugPanel.recordGlobalError(state, {
+      message: 'boom',
+      filename: 'app.js',
+      lineno: 12,
+      colno: 7,
+      error: new Error('boom')
+    }, storage, {
+      error(message) {
+        errors.push(message);
+      }
+    }, 1200);
+    debugPanel.recordUnhandledRejection(state, {
+      reason: new Error('async boom')
+    }, storage, {
+      error(message) {
+        errors.push(message);
+      }
+    }, 1300);
+
+    const text = debugPanel.formatDebugPanelCopyText(state);
+
+    expect(text).to.contain('全局错误：boom @ app.js:12:7');
+    expect(text).to.contain('未处理 Promise：async boom');
+    expect(errors.join('\n')).to.contain('[DEBUG_PANEL]');
+  });
 });
