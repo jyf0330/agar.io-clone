@@ -2,8 +2,11 @@
 
 var MAX_LOGS = 8;
 var MAX_RECENT_EVENTS = 3;
+var MAX_RECENT_TIMINGS = 3;
+var MAX_PROBE_LOGS = 6;
 var STALE_MOVE_MS = 2500;
 var RENDER_INTERVAL_MS = 250;
+var DEVOUR_WINDOW_MS = 3000;
 var RECENT_EVENT_IGNORES = {
     serverTellPlayerMove: true
 };
@@ -59,6 +62,19 @@ function createDebugState(now) {
             materialization: false,
             connection: false,
             playerCard: false
+        },
+        perf: {
+            devourLabel: '',
+            devourStartedAt: 0,
+            devourActiveUntil: 0,
+            devourLogCount: 0,
+            movementPacketsInWindow: 0,
+            metaPacketsInWindow: 0,
+            lastMovementPayload: null,
+            lastMetaPayload: null,
+            recentTimings: [],
+            eventGaps: [],
+            longTasks: []
         }
     };
 }
@@ -83,10 +99,14 @@ function updateState(state, patch) {
 }
 
 function recordLog(state, message, level, now) {
+    var timestamp = now || state.now || Date.now();
+    if (state.perf && state.perf.devourActiveUntil && timestamp <= state.perf.devourActiveUntil) {
+        state.perf.devourLogCount += 1;
+    }
     state.logs.unshift({
         message: message,
         level: level || 'info',
-        at: now || state.now || Date.now()
+        at: timestamp
     });
     if (state.logs.length > MAX_LOGS) {
         state.logs.length = MAX_LOGS;
@@ -173,6 +193,199 @@ function formatRecentEventsText(state, now) {
     }).join(' / ');
 }
 
+function trimRecent(list, max) {
+    if (list.length > max) {
+        list.length = max;
+    }
+}
+
+function recordProbeLog(state, message, level, now) {
+    var timestamp = now || state.now || Date.now();
+    var probeLogCount = state.perf ? state.perf.devourLogCount : 0;
+    if (!state.perf || probeLogCount < MAX_PROBE_LOGS || level === 'warn') {
+        recordLog(state, message, level || 'info', timestamp);
+    } else {
+        state.perf.devourLogCount += 1;
+    }
+}
+
+function isDevourWindowActive(state, now) {
+    return !!(state.perf && state.perf.devourActiveUntil && now <= state.perf.devourActiveUntil);
+}
+
+function startDevourProbe(state, label, now) {
+    var timestamp = now || state.now || Date.now();
+    state.perf.devourLabel = label || '未知玩家';
+    state.perf.devourStartedAt = timestamp;
+    state.perf.devourActiveUntil = timestamp + DEVOUR_WINDOW_MS;
+    state.perf.devourLogCount = 0;
+    state.perf.movementPacketsInWindow = 0;
+    state.perf.metaPacketsInWindow = 0;
+    state.perf.lastMovementPayload = null;
+    state.perf.lastMetaPayload = null;
+    state.perf.recentTimings = [];
+    state.perf.eventGaps = [];
+    state.perf.longTasks = [];
+    recordLog(state, '吞噬探针开启：' + state.perf.devourLabel + ' 被吃掉，观察 3 秒窗口。', 'warn', timestamp);
+    return state;
+}
+
+function recordMovementPayload(state, payload, handlerMs, now) {
+    var timestamp = now || state.now || Date.now();
+    var snapshot = {
+        players: payload.players || 0,
+        cells: payload.cells || 0,
+        foods: payload.foods || 0,
+        fireFood: payload.fireFood || 0,
+        viruses: payload.viruses || 0,
+        partLoot: payload.partLoot || 0,
+        ghosts: payload.ghosts || 0,
+        handlerMs: Math.round(handlerMs || 0),
+        at: timestamp
+    };
+    state.perf.lastMovementPayload = snapshot;
+    if (isDevourWindowActive(state, timestamp)) {
+        state.perf.movementPacketsInWindow += 1;
+        recordProbeLog(state, '吞噬窗口同步包：玩家 ' + snapshot.players
+            + ' / 细胞 ' + snapshot.cells
+            + ' / 食物 ' + snapshot.foods
+            + ' / 部位 ' + snapshot.partLoot
+            + ' / handler ' + snapshot.handlerMs + 'ms。', snapshot.handlerMs >= 16 ? 'warn' : 'info', timestamp);
+    }
+    return state;
+}
+
+function recordMetaPayload(state, payload, handlerMs, now) {
+    var timestamp = now || state.now || Date.now();
+    var snapshot = {
+        items: payload.items || 0,
+        bodyParts: payload.bodyParts || 0,
+        handlerMs: Math.round(handlerMs || 0),
+        at: timestamp
+    };
+    state.perf.lastMetaPayload = snapshot;
+    if (isDevourWindowActive(state, timestamp)) {
+        state.perf.metaPacketsInWindow += 1;
+        recordProbeLog(state, '吞噬窗口元数据：条目 ' + snapshot.items
+            + ' / 部位 ' + snapshot.bodyParts
+            + ' / handler ' + snapshot.handlerMs + 'ms。', snapshot.handlerMs >= 16 ? 'warn' : 'info', timestamp);
+    }
+    return state;
+}
+
+function recordHandlerTiming(state, eventName, handlerMs, now) {
+    var timestamp = now || state.now || Date.now();
+    var timing = {
+        eventName: eventName,
+        handlerMs: Math.round(handlerMs || 0),
+        at: timestamp
+    };
+    state.perf.recentTimings.unshift(timing);
+    trimRecent(state.perf.recentTimings, MAX_RECENT_TIMINGS);
+    if (isDevourWindowActive(state, timestamp) && timing.handlerMs >= 16) {
+        recordProbeLog(state, '吞噬窗口事件处理偏慢：' + eventName + ' ' + timing.handlerMs + 'ms。', timing.handlerMs >= 50 ? 'warn' : 'info', timestamp);
+    }
+    return state;
+}
+
+function recordDevourMilestone(state, eventName, now) {
+    var timestamp = now || state.now || Date.now();
+    if (!state.perf.devourStartedAt) {
+        return state;
+    }
+    var gap = {
+        eventName: eventName,
+        ms: timestamp - state.perf.devourStartedAt,
+        at: timestamp
+    };
+    state.perf.eventGaps.unshift(gap);
+    trimRecent(state.perf.eventGaps, MAX_RECENT_TIMINGS);
+    recordProbeLog(state, '吞噬链路：playerDied → ' + eventName + ' ' + gap.ms + 'ms。', gap.ms >= 500 ? 'warn' : 'info', timestamp);
+    return state;
+}
+
+function recordLongTask(state, durationMs, now) {
+    var timestamp = now || state.now || Date.now();
+    var task = {
+        durationMs: Math.round(durationMs || 0),
+        at: timestamp
+    };
+    state.perf.longTasks.unshift(task);
+    trimRecent(state.perf.longTasks, MAX_RECENT_TIMINGS);
+    if (isDevourWindowActive(state, timestamp) || task.durationMs >= 50) {
+        recordProbeLog(state, '主线程 long task ' + task.durationMs + 'ms。', task.durationMs >= 80 ? 'warn' : 'info', timestamp);
+    }
+    return state;
+}
+
+function formatMovementPayload(payload) {
+    if (!payload) {
+        return '暂无';
+    }
+    return '玩家 ' + payload.players
+        + ' / 细胞 ' + payload.cells
+        + ' / 食物 ' + payload.foods
+        + ' / 喷射 ' + payload.fireFood
+        + ' / 病毒 ' + payload.viruses
+        + ' / 部位 ' + payload.partLoot
+        + ' / 回响 ' + payload.ghosts
+        + ' / handler ' + payload.handlerMs + 'ms';
+}
+
+function formatMetaPayload(payload) {
+    if (!payload) {
+        return '暂无';
+    }
+    return '条目 ' + payload.items + ' / 部位 ' + payload.bodyParts + ' / handler ' + payload.handlerMs + 'ms';
+}
+
+function formatLatestTiming(state) {
+    var timing = state.perf.recentTimings[0];
+    if (!timing) {
+        return '暂无';
+    }
+    return timing.eventName + ' ' + timing.handlerMs + 'ms';
+}
+
+function formatLatestGap(state) {
+    var gap = state.perf.eventGaps[0];
+    if (!gap) {
+        return '暂无';
+    }
+    return 'playerDied → ' + gap.eventName + ' ' + gap.ms + 'ms';
+}
+
+function formatLatestLongTask(state) {
+    var task = state.perf.longTasks[0];
+    if (!task) {
+        return '暂无';
+    }
+    return 'long task ' + task.durationMs + 'ms';
+}
+
+function formatPerfProbeHtml(state, now) {
+    var perf = state.perf;
+    if (!perf || (!perf.devourStartedAt && !perf.lastMovementPayload && !perf.lastMetaPayload && !perf.recentTimings.length && !perf.longTasks.length)) {
+        return '';
+    }
+    var remainingMs = Math.max(0, (perf.devourActiveUntil || 0) - now);
+    var status = remainingMs > 0 ? '观察中 ' + (remainingMs / 1000).toFixed(1) + 's' : '窗口结束';
+    return [
+        '<div class="debug-panel-log-title">吞噬探针</div>',
+        '<div class="debug-panel-line">目标：' + escapeHtml(perf.devourLabel || '暂无')
+            + ' · ' + status
+            + ' · 同步包 ' + perf.movementPacketsInWindow
+            + ' · Meta ' + perf.metaPacketsInWindow
+            + ' · 日志 ' + perf.devourLogCount
+            + '</div>',
+        '<div class="debug-panel-line">最近同步：' + escapeHtml(formatMovementPayload(perf.lastMovementPayload)) + '</div>',
+        '<div class="debug-panel-line">最近元数据：' + escapeHtml(formatMetaPayload(perf.lastMetaPayload)) + '</div>',
+        '<div class="debug-panel-line">最近慢事件：' + escapeHtml(formatLatestTiming(state)) + '</div>',
+        '<div class="debug-panel-line">链路间隔：' + escapeHtml(formatLatestGap(state)) + '</div>',
+        '<div class="debug-panel-line">主线程：' + escapeHtml(formatLatestLongTask(state)) + '</div>'
+    ].join('');
+}
+
 function formatDebugPanel(state) {
     var now = state.now || Date.now();
     var runtimeLabel = state.game.started ? '游戏中' : '未开始';
@@ -225,6 +438,7 @@ function formatDebugPanel(state) {
             + formatModule('连接', state.modules.connection)
             + formatModule('名片', state.modules.playerCard)
             + '</div>',
+        formatPerfProbeHtml(state, now),
         '<div class="debug-panel-log-title">中文事件日志</div>',
         '<ol class="debug-panel-log">'
             + (state.logs.length ? state.logs.map(function (entry) {
@@ -263,6 +477,16 @@ function formatDebugPanelCopyText(state) {
             + ' / 连接 ' + (state.modules.connection ? '有输出' : '未输出')
             + ' / 名片 ' + (state.modules.playerCard ? '有输出' : '未输出')
     ];
+
+    if (state.perf && (state.perf.devourStartedAt || state.perf.lastMovementPayload || state.perf.lastMetaPayload)) {
+        lines.push('吞噬探针：' + (state.perf.devourLabel || '暂无'));
+        lines.push('吞噬包计数：同步包 ' + state.perf.movementPacketsInWindow + ' / Meta ' + state.perf.metaPacketsInWindow + ' / 日志 ' + state.perf.devourLogCount);
+        lines.push('最近同步：' + formatMovementPayload(state.perf.lastMovementPayload));
+        lines.push('最近元数据：' + formatMetaPayload(state.perf.lastMetaPayload));
+        lines.push('最近慢事件：' + formatLatestTiming(state));
+        lines.push('链路间隔：' + formatLatestGap(state));
+        lines.push('主线程：' + formatLatestLongTask(state));
+    }
 
     if (state.logs.length) {
         lines.push('中文事件日志：');
@@ -353,6 +577,7 @@ function createDebugPanel(options) {
     var toggle = document.getElementById('debugPanelToggle');
     var state = createDebugState(Date.now());
     var lastRenderAt = 0;
+    var longTaskObserver = null;
 
     if (!root) {
         root = document.createElement('div');
@@ -404,6 +629,20 @@ function createDebugPanel(options) {
         render(true);
     });
 
+    if (win && win.PerformanceObserver) {
+        try {
+            longTaskObserver = new win.PerformanceObserver(function (list) {
+                list.getEntries().forEach(function (entry) {
+                    recordLongTask(state, entry.duration, Date.now());
+                });
+                render(true);
+            });
+            longTaskObserver.observe({entryTypes: ['longtask']});
+        } catch (error) {
+            recordLog(state, '当前浏览器不支持 long task 探针。', 'warn', Date.now());
+        }
+    }
+
     render(true);
 
     return {
@@ -416,6 +655,30 @@ function createDebugPanel(options) {
         markSocketEvent: function (eventName) {
             markSocketEvent(state, eventName, Date.now());
             render(false);
+        },
+        startDevourProbe: function (label) {
+            startDevourProbe(state, label, Date.now());
+            render(true);
+        },
+        recordMovementPayload: function (payload, handlerMs) {
+            recordMovementPayload(state, payload || {}, handlerMs, Date.now());
+            render(false);
+        },
+        recordMetaPayload: function (payload, handlerMs) {
+            recordMetaPayload(state, payload || {}, handlerMs, Date.now());
+            render(false);
+        },
+        recordHandlerTiming: function (eventName, handlerMs) {
+            recordHandlerTiming(state, eventName, handlerMs, Date.now());
+            render(false);
+        },
+        recordDevourMilestone: function (eventName) {
+            recordDevourMilestone(state, eventName, Date.now());
+            render(true);
+        },
+        recordLongTask: function (durationMs) {
+            recordLongTask(state, durationMs, Date.now());
+            render(true);
         },
         update: function (patch) {
             updateState(state, patch || {});
@@ -445,6 +708,9 @@ function createDebugPanel(options) {
             render(false);
         },
         destroy: function () {
+            if (longTaskObserver && typeof longTaskObserver.disconnect === 'function') {
+                longTaskObserver.disconnect();
+            }
             if (root && root.parentNode) {
                 root.parentNode.removeChild(root);
             }
@@ -460,6 +726,12 @@ module.exports = {
     updateState: updateState,
     recordLog: recordLog,
     markSocketEvent: markSocketEvent,
+    startDevourProbe: startDevourProbe,
+    recordMovementPayload: recordMovementPayload,
+    recordMetaPayload: recordMetaPayload,
+    recordHandlerTiming: recordHandlerTiming,
+    recordDevourMilestone: recordDevourMilestone,
+    recordLongTask: recordLongTask,
     formatDebugPanel: formatDebugPanel,
     formatDebugPanelCopyText: formatDebugPanelCopyText,
     createDebugPanel: createDebugPanel

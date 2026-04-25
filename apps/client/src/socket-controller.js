@@ -33,6 +33,57 @@ function createSocketController(options) {
         }
     }
 
+    function recordDebugHandlerTiming(eventName, startedAt) {
+        if (options.debugPanel && typeof options.debugPanel.recordHandlerTiming === 'function') {
+            options.debugPanel.recordHandlerTiming(eventName, Date.now() - startedAt);
+        }
+    }
+
+    function countUserCells(userData) {
+        var total = 0;
+        (userData || []).forEach(function (user) {
+            total += Array.isArray(user.cells) ? user.cells.length : 0;
+        });
+        return total;
+    }
+
+    function countMetaBodyParts(metaList) {
+        var total = 0;
+        (metaList || []).forEach(function (meta) {
+            if (typeof meta.bodyPartCount === 'number') {
+                total += meta.bodyPartCount;
+            } else if (Array.isArray(meta.bodyParts)) {
+                total += meta.bodyParts.length;
+            }
+        });
+        return total;
+    }
+
+    function recordDebugMovementPayload(userData, foodsList, massList, virusList, partLootList, ghostList, startedAt) {
+        if (!options.debugPanel || typeof options.debugPanel.recordMovementPayload !== 'function') {
+            return;
+        }
+        options.debugPanel.recordMovementPayload({
+            players: (userData || []).length,
+            cells: countUserCells(userData),
+            foods: (foodsList || []).length,
+            fireFood: (massList || []).length,
+            viruses: (virusList || []).length,
+            partLoot: (partLootList || []).length,
+            ghosts: (ghostList || []).length
+        }, Date.now() - startedAt);
+    }
+
+    function recordDebugMetaPayload(metaList, startedAt) {
+        if (!options.debugPanel || typeof options.debugPanel.recordMetaPayload !== 'function') {
+            return;
+        }
+        options.debugPanel.recordMetaPayload({
+            items: (metaList || []).length,
+            bodyParts: countMetaBodyParts(metaList)
+        }, Date.now() - startedAt);
+    }
+
     function assignSocket(nextSocket) {
         socket = nextSocket;
         options.assignSocket(nextSocket);
@@ -190,11 +241,16 @@ function createSocketController(options) {
         });
 
         nextSocket.on('playerDied', function (data) {
+            var startedAt = Date.now();
             markDebugSocketEvent('playerDied');
             var playerName = data.playerEatenName || data.name;
             var playerLabel = isUnnamedCell(playerName) ? options.i18n.t('hud.unnamedCell') : playerName;
+            if (options.debugPanel && typeof options.debugPanel.startDevourProbe === 'function') {
+                options.debugPanel.startDevourProbe(playerLabel);
+            }
             logDebugPanel('玩家死亡事件：' + playerLabel + ' 被吃掉。', 'info');
             options.getChat().addSystemLine(options.i18n.t('system.playerEaten', {name: playerLabel}));
+            recordDebugHandlerTiming('playerDied', startedAt);
         });
 
         nextSocket.on('playerDisconnect', function (data) {
@@ -214,18 +270,23 @@ function createSocketController(options) {
         });
 
         nextSocket.on('leaderboard', function (data) {
+            var startedAt = Date.now();
             markDebugSocketEvent('leaderboard');
             options.setLeaderboard(data.leaderboard);
             logDebugPanel('排行榜更新，条目 ' + ((data.leaderboard || []).length) + ' 个。', 'info');
             renderHud(true);
+            recordDebugHandlerTiming('leaderboard', startedAt);
         });
 
         nextSocket.on('playerMetaUpdate', function (metaList) {
+            var startedAt = Date.now();
             markDebugSocketEvent('playerMetaUpdate');
             cachePlayerMeta(metaList);
             hydrateLocalPlayerMeta();
             logDebugPanel('玩家元数据更新，条目 ' + ((metaList || []).length) + ' 个。', 'info');
             renderHud(true);
+            recordDebugMetaPayload(metaList, startedAt);
+            recordDebugHandlerTiming('playerMetaUpdate', startedAt);
         });
 
         nextSocket.on('serverMSG', function (data) {
@@ -265,14 +326,20 @@ function createSocketController(options) {
         });
 
         nextSocket.on('settlement', function (data) {
+            var startedAt = Date.now();
             markDebugSocketEvent('settlement');
+            if (options.debugPanel && typeof options.debugPanel.recordDevourMilestone === 'function') {
+                options.debugPanel.recordDevourMilestone('settlement');
+            }
             logDebugPanel('结算输出已收到。', 'ok');
             if (options.settlementPanel) {
                 options.settlementPanel.show(data);
             }
+            recordDebugHandlerTiming('settlement', startedAt);
         });
 
         nextSocket.on('serverTellPlayerMove', function (playerData, userData, foodsList, massList, virusList, partLootList, ghostList) {
+            var startedAt = Date.now();
             markDebugSocketEvent('serverTellPlayerMove');
             if (options.global.playerType === 'player') {
                 hydrateLocalPlayerMeta();
@@ -289,10 +356,16 @@ function createSocketController(options) {
             });
             options.global.targetPlayerCardPreviewDataUrl = findConnectedTargetCardPreview(mergedUsers);
             renderHud(false);
+            recordDebugMovementPayload(userData, foodsList, massList, virusList, partLootList, ghostList, startedAt);
+            recordDebugHandlerTiming('serverTellPlayerMove', startedAt);
         });
 
         nextSocket.on('RIP', function () {
+            var startedAt = Date.now();
             markDebugSocketEvent('RIP');
+            if (options.debugPanel && typeof options.debugPanel.recordDevourMilestone === 'function') {
+                options.debugPanel.recordDevourMilestone('RIP');
+            }
             logDebugPanel('本机玩家死亡，准备回到开始菜单。', 'warn');
             options.global.gameStart = false;
             updateDebugPanel({
@@ -312,6 +385,7 @@ function createSocketController(options) {
                     options.global.animLoopHandle = undefined;
                 }
             }, 2500);
+            recordDebugHandlerTiming('RIP', startedAt);
         });
 
         nextSocket.on('kick', function (reason) {

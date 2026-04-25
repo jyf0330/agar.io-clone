@@ -125,4 +125,41 @@ describe('debug-panel.js', () => {
     expect(text).to.contain('NPC 输出：Mochi 说话。');
     expect(text).to.not.contain('<div');
   });
+
+  it('should record devour-window packet, metadata, handler, gap, and long-task probes', () => {
+    const state = debugPanel.createDebugState(1000);
+
+    debugPanel.startDevourProbe(state, 'Alice', 1000);
+    debugPanel.recordMovementPayload(state, {
+      players: 3,
+      cells: 5,
+      foods: 120,
+      fireFood: 2,
+      viruses: 4,
+      partLoot: 6,
+      ghosts: 1
+    }, 22, 1100);
+    debugPanel.recordMetaPayload(state, {
+      items: 3,
+      bodyParts: 12
+    }, 17, 1160);
+    debugPanel.recordHandlerTiming(state, 'settlement', 58, 1220);
+    debugPanel.recordDevourMilestone(state, 'settlement', 1250);
+    debugPanel.recordLongTask(state, 91, 1300);
+    debugPanel.updateState(state, { now: 1400 });
+
+    const html = debugPanel.formatDebugPanel(state);
+    const text = debugPanel.formatDebugPanelCopyText(state);
+
+    expect(html).to.contain('吞噬探针');
+    expect(html).to.contain('同步包 1');
+    expect(html).to.contain('Meta 1');
+    expect(html).to.contain('最近同步：玩家 3 / 细胞 5 / 食物 120 / 喷射 2 / 病毒 4 / 部位 6 / 回响 1 / handler 22ms');
+    expect(html).to.contain('最近元数据：条目 3 / 部位 12 / handler 17ms');
+    expect(html).to.contain('playerDied → settlement 250ms');
+    expect(html).to.contain('long task 91ms');
+    expect(text).to.contain('吞噬探针：Alice');
+    expect(text).to.contain('同步包 1 / Meta 1');
+    expect(text).to.contain('最近慢事件：settlement 58ms');
+  });
 });
