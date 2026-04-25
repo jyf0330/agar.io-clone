@@ -9,6 +9,7 @@ function createSocketController(options) {
     var playerMetaById = {};
     var playerMetaSignatures = {};
     var HUD_RENDER_INTERVAL_MS = 120;
+    var showPetGhostEvents = options.showPetGhostEvents === true;
 
     function debug(message) {
         if (options.debug) {
@@ -314,6 +315,9 @@ function createSocketController(options) {
         });
 
         nextSocket.on('npc:speak', function (data) {
+            if (!showPetGhostEvents) {
+                return;
+            }
             markDebugSocketEvent('npc:speak');
             logDebugPanel('NPC 输出：' + (data.npcName || data.npcId || '未知 NPC') + ' 说话。', 'ok');
             if (options.speechBubble) {
@@ -325,6 +329,9 @@ function createSocketController(options) {
         });
 
         nextSocket.on('npc:paint', function (data) {
+            if (!showPetGhostEvents) {
+                return;
+            }
             var localPlayer = options.getPlayer();
             if (!localPlayer) {
                 return;
@@ -369,7 +376,7 @@ function createSocketController(options) {
                 fireFood: massList,
                 viruses: virusList,
                 partLoot: partLootList || [],
-                ghosts: ghostList || []
+                ghosts: showPetGhostEvents ? (ghostList || []) : []
             });
             options.global.targetPlayerCardPreviewDataUrl = findConnectedTargetCardPreview(mergedUsers);
             renderHud(false);

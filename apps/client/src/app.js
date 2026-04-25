@@ -43,6 +43,7 @@ var bodySignatureController;
 var hideStartMenuOnLoad = false;
 var npcFeaturesDisabled = window.location.search.indexOf('npc=0') !== -1 || window.V5_NPC_ENABLED === false;
 var npcFeaturesEnabled = !npcFeaturesDisabled || window.location.search.indexOf('npc=1') !== -1 || window.V3_NPC_ENABLED === true;
+var petGhostEventsVisible = window.location.search.indexOf('petghost=1') !== -1 || window.V5_SHOW_PET_GHOST_EVENTS === true;
 var targetSync = socketEmit.createTargetSync({
     minIntervalMs: 50,
     keepAliveMs: 250
@@ -78,7 +79,7 @@ function enterGame(type) {
     if (settlementPanel) {
         settlementPanel.hide();
     }
-    if (chatInput && npcFeaturesEnabled) {
+    if (chatInput && npcFeaturesEnabled && petGhostEventsVisible) {
         chatInput.show();
     }
     socket = socketController.connect(type);
@@ -269,9 +270,10 @@ window.onload = function () {
         resize: resize,
         speechBubble: speechBubble,
         paintToast: paintToast,
-        chatInput: npcFeaturesEnabled ? chatInput : null,
-        settlementPanel: settlementPanel,
-        debugPanel: debugPanel,
+            chatInput: npcFeaturesEnabled && petGhostEventsVisible ? chatInput : null,
+            settlementPanel: settlementPanel,
+            debugPanel: debugPanel,
+            showPetGhostEvents: petGhostEventsVisible,
         setLeaderboard: function (nextLeaderboard) {
             leaderboard = nextLeaderboard;
         },
@@ -414,8 +416,10 @@ function renderStatusPanel() {
     status += formatConnectionStatus(player);
     status += formatRelationshipStatus(player);
     status += formatBodyStatus(player);
-    status += formatPetStatus(player);
-    status += formatGhostDebugStatus(player);
+    if (petGhostEventsVisible) {
+        status += formatPetStatus(player);
+        status += formatGhostDebugStatus(player);
+    }
     document.getElementById('status').innerHTML = status;
     if (bodyInventoryPanel) {
         bodyInventoryPanel.update();
@@ -522,20 +526,24 @@ function animloop() {
 }
 
 function gameLoop() {
+    var debugPlayer = petGhostEventsVisible ? player : Object.assign({}, player, {
+        activePet: null,
+        ghostDebug: null
+    });
     if (debugPanel) {
         debugPanel.sampleFrame({
             socket: socket,
             gameStart: global.gameStart,
             playerType: global.playerType,
-            player: player,
+            player: debugPlayer,
             users: users,
             foods: foods,
             fireFood: fireFood,
             viruses: viruses,
             partLoot: partLoot,
-            ghosts: ghosts,
+            ghosts: petGhostEventsVisible ? ghosts : [],
             chatReady: !!window.chat,
-            npcFeaturesEnabled: npcFeaturesEnabled
+            npcFeaturesEnabled: npcFeaturesEnabled && petGhostEventsVisible
         });
     }
     if (global.gameStart) {
@@ -559,11 +567,13 @@ function gameLoop() {
             let position = getPosition(loot, player, global.screen);
             render.drawPartLoot(position, loot, graph);
         });
-        ghosts.forEach(ghost => {
-            let position = getPosition(ghost, player, global.screen);
-            render.drawGhost(position, ghost, graph);
-        });
-        if (player.activePet && player.activePet.active && typeof player.activePet.x === 'number' && typeof player.activePet.y === 'number') {
+        if (petGhostEventsVisible) {
+            ghosts.forEach(ghost => {
+                let position = getPosition(ghost, player, global.screen);
+                render.drawGhost(position, ghost, graph);
+            });
+        }
+        if (petGhostEventsVisible && player.activePet && player.activePet.active && typeof player.activePet.x === 'number' && typeof player.activePet.y === 'number') {
             let petPosition = getPosition(player.activePet, player, global.screen);
             render.drawPet(petPosition, player.activePet, graph);
         }

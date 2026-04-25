@@ -34,9 +34,11 @@ function createController(overrides) {
   }, overrides && overrides.player);
   const calls = {
     debugLogs: [],
+    chatLines: [],
     renders: 0,
     cardRenders: 0,
-    toasts: 0
+    toasts: 0,
+    worldState: null
   };
 
   const controller = createSocketController(Object.assign({
@@ -97,7 +99,9 @@ function createController(overrides) {
     getChat() {
       return {
         addSystemLine() {},
-        addChatLine() {},
+        addChatLine(sender, message) {
+          calls.chatLines.push({sender, message});
+        },
         registerFunctions() {}
       };
     },
@@ -120,7 +124,9 @@ function createController(overrides) {
     resize() {},
     setLeaderboard() {},
     setPlayer() {},
-    setWorldState() {},
+    setWorldState(worldState) {
+      calls.worldState = worldState;
+    },
     paintToast: {
       show() {
         calls.toasts += 1;
@@ -171,6 +177,82 @@ describe('socket-controller.js', () => {
     expect(calls.cardRenders).to.equal(0);
     expect(calls.toasts).to.equal(0);
     expect(calls.debugLogs).to.have.length(0);
+  });
+
+  it('should hide pet and ghost event surfaces by default', () => {
+    const {controller, socket, player, calls} = createController();
+
+    controller.connect('player');
+    calls.debugLogs.length = 0;
+    socket.handlers['npc:speak']({
+      npcId: 'mochi',
+      npcName: 'Mochi',
+      text: '跟着你。'
+    });
+    socket.handlers['npc:paint']({
+      targetId: 'player-1',
+      previewDataUrl: 'data:image/png;base64,paint',
+      npcName: 'Mochi'
+    });
+
+    expect(calls.chatLines).to.have.length(0);
+    expect(calls.toasts).to.equal(0);
+    expect(calls.cardRenders).to.equal(0);
+    expect(calls.debugLogs).to.have.length(0);
+    expect(player.playerCardPreviewDataUrl).to.equal(undefined);
+
+    calls.cardRenders = 0;
+    socket.handlers.serverTellPlayerMove(
+      {id: 'player-1', cells: []},
+      [{id: 'player-1', cells: []}],
+      [],
+      [],
+      [],
+      [],
+      [{id: 'ghost-1'}]
+    );
+    expect(calls.worldState.ghosts).to.deep.equal([]);
+  });
+
+  it('should allow pet and ghost event surfaces when explicitly enabled', () => {
+    const {controller, socket, player, calls} = createController({
+      options: {
+        showPetGhostEvents: true
+      }
+    });
+
+    controller.connect('player');
+    calls.debugLogs.length = 0;
+    socket.handlers['npc:speak']({
+      npcId: 'mochi',
+      npcName: 'Mochi',
+      text: '跟着你。'
+    });
+    socket.handlers['npc:paint']({
+      targetId: 'player-1',
+      previewDataUrl: 'data:image/png;base64,paint',
+      npcName: 'Mochi'
+    });
+
+    expect(calls.chatLines[0]).to.deep.equal({
+      sender: 'Mochi',
+      message: '跟着你。'
+    });
+    expect(calls.toasts).to.equal(1);
+    expect(calls.cardRenders).to.equal(1);
+    expect(player.playerCardPreviewDataUrl).to.equal('data:image/png;base64,paint');
+
+    calls.cardRenders = 0;
+    socket.handlers.serverTellPlayerMove(
+      {id: 'player-1', cells: []},
+      [{id: 'player-1', cells: []}],
+      [],
+      [],
+      [],
+      [],
+      [{id: 'ghost-1'}]
+    );
+    expect(calls.worldState.ghosts).to.deep.equal([{id: 'ghost-1'}]);
   });
 
   it('should feed devour probe timings from socket events', () => {
