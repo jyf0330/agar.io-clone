@@ -314,4 +314,81 @@ describe('game-loop-service.js', () => {
     expect(socketEvents[0].payload.historyWritten).to.equal(true);
     expect(map.players.findByID('victim')).to.equal(null);
   });
+
+  it('should settle active human players when the round timer expires', () => {
+    const originalNow = Date.now;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const playerA = new playerUtils.Player('player-a');
+    const playerB = new playerUtils.Player('player-b');
+    const npc = new playerUtils.Player('npc-mochi');
+    const socketEvents = [];
+    const clearedTimers = [];
+
+    playerA.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    playerA.clientProvidedData({
+      name: 'Alice',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    playerB.init({ x: 180, y: 160 }, config.defaultPlayerMass);
+    playerB.clientProvidedData({
+      name: 'Bob',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    npc.init({ x: 220, y: 220 }, config.defaultPlayerMass);
+    npc.isNpc = true;
+    npc.name = 'Mochi';
+    map.players.pushNew(playerA);
+    map.players.pushNew(playerB);
+    map.players.pushNew(npc);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: {
+        clearTimer(id) {
+          clearedTimers.push(id);
+        }
+      },
+      getRoundClock() {
+        return {
+          startedAt: 1700000000000,
+          durationMs: 5000
+        };
+      },
+      getSocket(id) {
+        return {
+          emit(name, payload) {
+            socketEvents.push({id, name, payload});
+          }
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    try {
+      Date.now = () => 1700000006000;
+      service.tickGame();
+    } finally {
+      Date.now = originalNow;
+    }
+
+    expect(socketEvents.filter((event) => event.name === 'settlement')).to.have.length(2);
+    expect(socketEvents.filter((event) => event.name === 'RIP')).to.have.length(2);
+    expect(socketEvents.find((event) => event.id === 'player-a' && event.name === 'settlement').payload).to.include({
+      endedReason: 'round_end',
+      playerId: 'player-a',
+      historyWritten: true
+    });
+    expect(clearedTimers).to.have.members(['player-a', 'player-b']);
+    expect(map.players.findByID('player-a')).to.equal(null);
+    expect(map.players.findByID('player-b')).to.equal(null);
+    expect(map.players.findByID('npc-mochi')).to.not.equal(null);
+  });
 });

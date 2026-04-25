@@ -121,6 +121,37 @@ function createGameLoopService(options) {
       console.warn('[NPC] accepted suggestion memory write failed', error.message);
     }
   }
+  function isRoundExpired(now) {
+    const roundClock = getRoundClock() || {};
+    const startedAt = typeof roundClock.startedAt === 'number' ? roundClock.startedAt : 0;
+    const durationMs = typeof roundClock.durationMs === 'number' ? roundClock.durationMs : 0;
+    return durationMs > 0 && now - startedAt >= durationMs;
+  }
+  function settlePlayerRoundEnd(player) {
+    if (!player || player.isNpc) {
+      return;
+    }
+    const playerSocket = getSocket(player.id);
+    connectionService.clearTimer(player.id);
+    if (playerSocket) {
+      playerSocket.emit('settlement', settlement.buildSettlementSummary({
+        player,
+        endedReason: 'round_end',
+        recordingConsent: player.consentToRecord !== false,
+        historyWritten: player.isReplayAllowed !== false
+      }));
+      playerSocket.emit('RIP');
+    }
+    map.players.removePlayerByID(player.id);
+  }
+  function settleExpiredRound(now) {
+    if (!isRoundExpired(now)) {
+      return false;
+    }
+    const activeHumans = map.players.data.filter(player => player && !player.isNpc);
+    activeHumans.forEach(settlePlayerRoundEnd);
+    return activeHumans.length > 0;
+  }
   function tickPlayer(currentPlayer) {
     const socket = getSocket(currentPlayer.id);
     if (!currentPlayer.isNpc && currentPlayer.lastHeartbeat < new Date().getTime() - config.maxHeartbeatInterval) {
@@ -221,8 +252,8 @@ function createGameLoopService(options) {
     currentPlayer.virusSplit(cellsToSplit, config.limitSplit, config.defaultPlayerMass);
   }
   function tickGame() {
+    const now = Date.now();
     if (ghostManager) {
-      const now = Date.now();
       const roundClock = getRoundClock();
       ghostManager.tick({
         map,
@@ -233,6 +264,9 @@ function createGameLoopService(options) {
       if (ghostRecorder) {
         ghostRecorder.recordPlayers(map.players.data, now);
       }
+    }
+    if (settleExpiredRound(now)) {
+      return;
     }
     map.players.data.forEach(tickPlayer);
     map.massFood.move(config.gameWidth, config.gameHeight);
