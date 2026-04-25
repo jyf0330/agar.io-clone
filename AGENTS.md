@@ -58,9 +58,11 @@ There is no separate typecheck command in this JavaScript project.
   different branch name.
 - Keep commits focused on one concern.
 - Before committing, run the narrowest verification that proves the change.
-- If a cloud deployment is later added to this repository, every intentional
-  push should be paired with the matching deploy or sync step, and the target
-  environment should be stated.
+- Every intentional push that should affect the shared cloud server must be
+  paired with the matching cloud-server sync/deploy step. State the target host
+  or environment, the sync command or mechanism used, and whether it succeeded.
+- If a change should not be synced to the cloud server, say so explicitly before
+  or immediately after pushing.
 
 ## Testing Rules
 
