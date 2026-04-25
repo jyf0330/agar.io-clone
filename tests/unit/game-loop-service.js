@@ -462,6 +462,61 @@ describe('game-loop-service.js', () => {
     expect(map.players.findByID('late-player')).to.not.equal(null);
   });
 
+  it('should include authoritative round timer data in player sync updates', () => {
+    const originalNow = Date.now;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const player = new playerUtils.Player('player-timer');
+    const socketEvents = [];
+
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'Timer',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getRoundClock() {
+        return {
+          startedAt: 1700000000000,
+          durationMs: 600000
+        };
+      },
+      getSocket() {
+        return {
+          emit(name, playerData) {
+            socketEvents.push({name, playerData});
+          }
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    try {
+      Date.now = () => 1700000001000;
+      service.sendUpdates();
+    } finally {
+      Date.now = originalNow;
+    }
+
+    const moveEvent = socketEvents.find((event) => event.name === 'serverTellPlayerMove');
+    expect(moveEvent.playerData.roundTimer).to.deep.equal({
+      startedAt: 1700000000000,
+      durationMs: 600000,
+      elapsedMs: 1000,
+      remainingMs: 599000
+    });
+  });
+
   it('should settle all human players when one player reaches overreal body completion', () => {
     const originalNow = Date.now;
     const map = new mapUtils.Map(Object.assign({}, config, {

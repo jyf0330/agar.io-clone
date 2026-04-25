@@ -9,6 +9,7 @@ var formatRelationshipStatus = require('./relationship-status');
 var formatBodyStatus = require('./body-status');
 var formatGhostDebugStatus = require('./ghost-debug-status');
 var formatPetStatus = require('./pet-status');
+var formatRoundTimerStatus = require('./round-timer-status');
 var playerCardStorage = require('./player-card-storage');
 var formatPlayerCardPreview = require('./player-card-preview');
 var createPlayerCardEditor = require('./player-card-editor');
@@ -66,6 +67,9 @@ function enterGame(type) {
 
     document.getElementById('startMenuWrapper').style.maxHeight = '0px';
     document.getElementById('gameAreaWrapper').style.opacity = 1;
+    if (settlementPanel) {
+        settlementPanel.hide();
+    }
     if (chatInput && npcFeaturesEnabled) {
         chatInput.show();
     }
@@ -385,6 +389,7 @@ function renderStatusPanel() {
                 status += (i + 1) + '. ' + i18n.t('hud.unnamedCell');
         }
     }
+    status += formatRoundTimerStatus(player.roundTimer, i18n);
     status += formatMaterializationStatus(player);
     status += formatConnectionStatus(player);
     status += formatRelationshipStatus(player);

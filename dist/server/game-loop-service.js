@@ -133,6 +133,21 @@ function createGameLoopService(options) {
       roundClock.startedAt = now;
     }
   }
+  function buildRoundTimer(roundClock, now) {
+    roundClock = roundClock || getRoundClock() || {};
+    const startedAt = typeof roundClock.startedAt === 'number' ? roundClock.startedAt : 0;
+    const durationMs = typeof roundClock.durationMs === 'number' ? roundClock.durationMs : 0;
+    if (durationMs <= 0) {
+      return null;
+    }
+    const elapsedMs = Math.max(0, now - startedAt);
+    return {
+      startedAt,
+      durationMs,
+      elapsedMs,
+      remainingMs: Math.max(0, durationMs - elapsedMs)
+    };
+  }
   function settlePlayerGameEnd(player, endedReason, winnerName) {
     if (!player || player.isNpc) {
       return;
@@ -387,16 +402,19 @@ function createGameLoopService(options) {
     }
     const spectatorData = createSpectatorSyncData(socketId, config);
     spectatorData.ghostDebug = map.ghostDebug || null;
+    spectatorData.roundTimer = buildRoundTimer(getRoundClock(), Date.now());
     socket.emit('serverTellPlayerMove', spectatorData, projectPlayersForSync(map.players.data), map.food.data, map.massFood.data, map.viruses.data, map.partLoot.data, map.ghosts);
     if (leaderboardChanged) {
       sendLeaderboard(socket);
     }
   }
   function sendUpdates() {
+    const now = Date.now();
     getSpectatorIds().forEach(updateSpectator);
     map.enumerateVisibleWorld(function (visibleWorld) {
       const syncPayload = projectVisibleWorldForSync(visibleWorld);
       syncPayload.playerData.ghostDebug = map.ghostDebug || null;
+      syncPayload.playerData.roundTimer = buildRoundTimer(getRoundClock(), now);
       const socket = getSocket(syncPayload.playerData.id);
       if (!socket) {
         return;

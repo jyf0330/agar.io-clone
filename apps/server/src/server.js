@@ -40,7 +40,7 @@ const npcFeaturesEnabled = !config.npc || config.npc.enabled !== false;
 let map = new mapUtils.Map(config);
 const roundClock = {
     startedAt: Date.now(),
-    durationMs: config.demo && config.demo.roundDurationMs ? config.demo.roundDurationMs : 90000
+    durationMs: config.demo && config.demo.roundDurationMs ? config.demo.roundDurationMs : 600000
 };
 const connectionService = createConnectionService({
     players: map.players

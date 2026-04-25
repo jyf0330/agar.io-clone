@@ -375,6 +375,11 @@ div {
     font-size: 16.1px;
 }
 
+#status .round-timer {
+    color: #FFE680;
+    font-size: 18px;
+}
+
 .chatbox {
     position: absolute;
     width: 300px;

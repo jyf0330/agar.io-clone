@@ -21,6 +21,7 @@ const PLAYER_SYNC_FIELDS = [
     'npcRelationships',
     'playerCardPreviewDataUrl',
     'ghostDebug',
+    'roundTimer',
     'cells'
 ];
 

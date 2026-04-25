@@ -28,6 +28,7 @@ describe('player-hydration.js', () => {
       npcRelationships: [{npcId: 'mochi', relationshipValue: 7}],
       playerCardPreviewDataUrl: 'data:image/png;base64,card',
       ghostDebug: {enabled: true, activeGhostCount: 1},
+      roundTimer: {remainingMs: 599000, durationMs: 600000},
       cells: [{ x: 1, y: 2, mass: 3, radius: 4 }]
     };
 
@@ -40,6 +41,7 @@ describe('player-hydration.js', () => {
     expect(player.activePet.memoryKey).to.equal('player-1:mochi');
     expect(player.npcRelationships[0].relationshipValue).to.equal(7);
     expect(player.ghostDebug.activeGhostCount).to.equal(1);
+    expect(player.roundTimer.remainingMs).to.equal(599000);
     expect(player.cells[0].mass).to.equal(3);
   });
 });

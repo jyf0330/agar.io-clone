@@ -94,7 +94,12 @@ function createSettlementPanel(options) {
         panel.classList.remove('is-hidden');
     }
 
+    function hide() {
+        ensureRoot().classList.add('is-hidden');
+    }
+
     return {
+        hide: hide,
         show: show,
         formatKeyEventLine: formatKeyEventLine,
         formatPartLine: formatPartLine

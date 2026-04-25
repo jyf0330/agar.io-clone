@@ -38,6 +38,7 @@ describe('demo config', () => {
     const config = loadConfigWithDemoFlag(null);
 
     expect(config.demo.enabled).to.equal(false);
+    expect(config.demo.roundDurationMs).to.equal(600000);
     expect(config.npc.enabled).to.equal(true);
     expect(config.partLoot.maxWorldParts).to.equal(8);
     expect(config.ghostEcho.triggerRadius).to.equal(800);
@@ -47,7 +48,7 @@ describe('demo config', () => {
     const config = loadConfigWithDemoFlag('1');
 
     expect(config.demo.enabled).to.equal(true);
-    expect(config.demo.roundDurationMs).to.equal(120000);
+    expect(config.demo.roundDurationMs).to.equal(600000);
     expect(config.partLoot.maxWorldParts).to.equal(14);
     expect(config.partLoot.spawnBatch).to.equal(3);
     expect(config.ghostEcho.timeWindowMs).to.equal(60000);
