@@ -17,16 +17,16 @@ describe('body.js', () => {
 
       expect(player.bodyPartCount).to.equal(bodyConfig.defaultLoadout.length);
       expect(player.bodyParts.map((part) => part.type)).to.deep.equal(bodyConfig.defaultLoadout);
-      expect(player.bodyPartCounts.HEAD).to.equal(1);
+      expect(player.bodyPartCounts.HEAD).to.equal(0);
       expect(player.bodyPartCounts.HAND).to.equal(1);
-      expect(player.bodyPartCounts.FOOT).to.equal(1);
-      expect(player.bodyPartCounts.MOUTH).to.equal(1);
-      expect(player.bodyPartCounts.HEART).to.equal(1);
+      expect(player.bodyPartCounts.FOOT).to.equal(0);
+      expect(player.bodyPartCounts.MOUTH).to.equal(0);
+      expect(player.bodyPartCounts.HEART).to.equal(0);
       expect(player.bodyPartCounts.SPIKE).to.equal(0);
-      expect(player.equipmentSlots.head.partType).to.equal('HEAD');
+      expect(player.equipmentSlots.head).to.equal(null);
       expect(player.equipmentSlots.rightHand.partType).to.equal('HAND');
-      expect(player.equipmentSlots.rightLeg.partType).to.equal('FOOT');
-      expect(player.equipmentSlots.torso.partType).to.equal('MOUTH');
+      expect(player.equipmentSlots.rightLeg).to.equal(null);
+      expect(player.equipmentSlots.torso).to.equal(null);
       expect(player.equipmentSlots.leftHand).to.equal(null);
       expect(player.equipmentSlots.leftLeg).to.equal(null);
     });
@@ -56,6 +56,8 @@ describe('body.js', () => {
       expect(signedHand.signatureTier).to.equal('echo');
       expect(signedHand.signatureBonus.connectionRangeBonus).to.equal(15);
       expect(signedHand.userStrokeDataUrl).to.equal('data:image/png;base64,stroke');
+      expect(signedHand.originPlayerId).to.equal('player-1');
+      expect(signedHand.currentOwnerId).to.equal('player-1');
       expect(player.bodyBonuses.connectionRangeBonus).to.equal(15);
     });
   });
@@ -291,6 +293,54 @@ describe('body.js', () => {
     });
   });
 
+  describe('hasBodyCompletion', () => {
+    it('should require one own drawn part and every other core part from outside', () => {
+      const partial = body.createBodyState([
+        body.createBodyPart('HAND', 1, {
+          originPlayerId: 'player-1',
+          currentOwnerId: 'player-1',
+          sourceType: 'self_created'
+        }),
+        body.createBodyPart('HEAD', 1, { sourceType: 'map_pickup' }),
+        body.createBodyPart('FOOT', 1, { sourceType: 'map_pickup' }),
+        body.createBodyPart('MOUTH', 1, { sourceType: 'map_pickup' })
+      ]);
+      const complete = body.createBodyState([
+        body.createBodyPart('HAND', 1, {
+          originPlayerId: 'player-1',
+          currentOwnerId: 'player-1',
+          sourceType: 'self_created'
+        }),
+        body.createBodyPart('HEAD', 1, { sourceType: 'map_pickup' }),
+        body.createBodyPart('FOOT', 1, { sourceType: 'map_pickup' }),
+        body.createBodyPart('MOUTH', 1, { sourceType: 'npc_reward' }),
+        body.createBodyPart('HEART', 1, { sourceType: 'kill_loot' })
+      ]);
+      const tooManyOwnParts = body.createBodyState([
+        body.createBodyPart('HAND', 1, {
+          originPlayerId: 'player-1',
+          currentOwnerId: 'player-1',
+          sourceType: 'self_created'
+        }),
+        body.createBodyPart('HEAD', 1, {
+          originPlayerId: 'player-1',
+          currentOwnerId: 'player-1',
+          sourceType: 'self_created'
+        }),
+        body.createBodyPart('FOOT', 1, { sourceType: 'map_pickup' }),
+        body.createBodyPart('MOUTH', 1, { sourceType: 'npc_reward' }),
+        body.createBodyPart('HEART', 1, { sourceType: 'kill_loot' })
+      ]);
+      partial.id = 'player-1';
+      complete.id = 'player-1';
+      tooManyOwnParts.id = 'player-1';
+
+      expect(body.hasBodyCompletion(partial)).to.equal(false);
+      expect(body.hasBodyCompletion(complete)).to.equal(true);
+      expect(body.hasBodyCompletion(tooManyOwnParts)).to.equal(false);
+    });
+  });
+
   describe('movement and perception integration', () => {
     it('should move farther when a player has extra feet', () => {
       const defaultPlayer = new playerUtils.Player('default-player');
@@ -365,13 +415,13 @@ describe('body.js', () => {
       });
 
       expect(result.playerData.bodyPartCount).to.equal(bodyConfig.defaultLoadout.length);
-      expect(result.playerData.bodyPartCounts.HEART).to.equal(1);
-      expect(result.playerData.bodyParts[0].type).to.equal('HEAD');
-      expect(result.playerData.equipmentSlots.head.partType).to.equal('HEAD');
+      expect(result.playerData.bodyPartCounts.HEART).to.equal(0);
+      expect(result.playerData.bodyParts[0].type).to.equal('HAND');
+      expect(result.playerData.equipmentSlots.head).to.equal(null);
       expect(result.playerData.equipmentSlots.rightHand.partType).to.equal('HAND');
       expect(result.visiblePlayers[0].bodyPartCount).to.equal(bodyConfig.defaultLoadout.length);
       expect(result.visiblePlayers[0].bodyPartCounts.SPIKE).to.equal(0);
-      expect(result.visiblePlayers[0].equipmentSlots.rightLeg.partType).to.equal('FOOT');
+      expect(result.visiblePlayers[0].equipmentSlots.rightLeg).to.equal(null);
     });
   });
 });

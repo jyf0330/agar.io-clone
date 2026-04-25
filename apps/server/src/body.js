@@ -192,6 +192,21 @@ function cloneBodyPart(part, overrides) {
     return cloned;
 }
 
+function applyOwnedPartDefaults(parts, target) {
+    const ownerId = target && target.id;
+    const ownerName = target && target.name;
+
+    return (parts || []).map((part) => {
+        const nextPart = cloneBodyPart(part);
+        if (nextPart.sourceType === 'self_created' && ownerId) {
+            nextPart.originPlayerId = nextPart.originPlayerId || ownerId;
+            nextPart.currentOwnerId = nextPart.currentOwnerId || ownerId;
+            nextPart.originPlayerName = nextPart.originPlayerName || ownerName || null;
+        }
+        return nextPart;
+    });
+}
+
 function normalizeBodyParts(parts) {
     const typeCounts = {};
 
@@ -338,6 +353,14 @@ function applyBodyState(target, overrides) {
         ? overrides.bodySignature
         : target.bodySignature;
     const bodyState = createBodyState(sourceParts, signature);
+    const ownedParts = applyOwnedPartDefaults(bodyState.bodyParts, target);
+
+    bodyState.bodyParts = ownedParts;
+    bodyState.bodyPartCount = ownedParts.length;
+    bodyState.bodyPartCounts = countBodyParts(ownedParts);
+    bodyState.equipmentSlots = createEquipmentSlots(ownedParts);
+    bodyState.bodyBonuses = createBodyBonuses(ownedParts);
+
     const materializationState = materialization.createMaterializationState(
         materialization.resolveMaterializationFromBodyParts(bodyState.bodyParts)
     );
@@ -370,6 +393,47 @@ function createBodyBonuses(target) {
         breakSpikeBonus: getBreakSpikeBonus(target),
         playerDevourMassMultiplier: getPlayerDevourMassMultiplier(target)
     };
+}
+
+function getCompletionPartTypes() {
+    return Object.keys(bodyConfig.partDefinitions).filter((type) => {
+        return bodyConfig.partDefinitions[type] && bodyConfig.partDefinitions[type].isCore;
+    });
+}
+
+function isOwnPart(target, part) {
+    return Boolean(
+        target
+        && target.id
+        && part
+        && (part.originPlayerId === target.id || part.currentOwnerId === target.id)
+    );
+}
+
+function isForeignPart(target, part) {
+    if (!part || isOwnPart(target, part)) {
+        return false;
+    }
+    return part.sourceType !== 'self_created';
+}
+
+function hasBodyCompletion(target) {
+    const parts = target && Array.isArray(target.bodyParts) ? target.bodyParts : [];
+    const completionTypes = getCompletionPartTypes();
+    const ownTypes = completionTypes.filter((type) => {
+        return parts.some((part) => getPartType(part) === type && isOwnPart(target, part));
+    });
+
+    if (ownTypes.length !== 1) {
+        return false;
+    }
+
+    return completionTypes.every((type) => {
+        if (ownTypes.indexOf(type) !== -1) {
+            return true;
+        }
+        return parts.some((part) => getPartType(part) === type && isForeignPart(target, part));
+    });
 }
 
 function getMovementSpeedMultiplier(target) {
@@ -471,6 +535,10 @@ module.exports = {
     getStealableParts,
     getPartCount,
     createBodyBonuses,
+    getCompletionPartTypes,
+    isOwnPart,
+    isForeignPart,
+    hasBodyCompletion,
     getMovementSpeedMultiplier,
     getConnectionRangeBonus,
     getConnectionRange,

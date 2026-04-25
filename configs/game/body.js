@@ -1,5 +1,5 @@
 module.exports = {
-    defaultLoadout: ['HEAD', 'HAND', 'FOOT', 'MOUTH', 'HEART'],
+    defaultLoadout: ['HAND'],
     abilityModifiers: {
         resonanceIntimacyPerExtraHeart: 1,
         breakSpikePerExtraSpike: 1,

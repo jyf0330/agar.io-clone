@@ -239,7 +239,7 @@ function createGameLoopService(options) {
 
     function settleBodyCompletion() {
         const winner = map.players.data.find((player) => {
-            return player && !player.isNpc && player.materializationStage === 'OVERREAL';
+            return player && !player.isNpc && body.hasBodyCompletion(player);
         });
         if (!winner) {
             return false;

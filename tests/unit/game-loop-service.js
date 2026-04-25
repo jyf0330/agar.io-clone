@@ -70,6 +70,51 @@ describe('game-loop-service.js', () => {
     expect(map.partLoot.data).to.have.length(0);
   });
 
+  it('should not end the round when a default player collects one extra part', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const player = new playerUtils.Player('player-1');
+    const socketEvents = [];
+
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'collector',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+    map.partLoot.addPart({
+      type: 'HEAD',
+      templateId: 'head-default',
+      source: 'map-pickup'
+    }, { x: 100, y: 100 }, 'map-pickup');
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() {
+        return {
+          emit(name, payload) {
+            socketEvents.push({name, payload});
+          },
+          disconnect() {}
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    service.tickGame();
+
+    expect(player.bodyPartCounts.HEAD).to.equal(1);
+    expect(socketEvents.filter((event) => event.name === 'settlement' || event.name === 'RIP')).to.have.length(0);
+    expect(map.players.findByID('player-1')).to.equal(player);
+  });
+
   it('should record part lifecycle events when pickup adds to the inventory', () => {
     const map = new mapUtils.Map(Object.assign({}, config, {
       partLoot: {
@@ -601,7 +646,7 @@ describe('game-loop-service.js', () => {
     expect(moveEvent.users[0].equipmentSlots).to.equal(undefined);
   });
 
-  it('should settle all human players when one player reaches overreal body completion', () => {
+  it('should settle all human players when one player completes a foreign body set', () => {
     const originalNow = Date.now;
     const map = new mapUtils.Map(Object.assign({}, config, {
       partLoot: {
@@ -622,12 +667,15 @@ describe('game-loop-service.js', () => {
     });
     body.applyBodyState(winner, {
       bodyParts: [
-        body.createBodyPart('HEAD', 1),
-        body.createBodyPart('HAND', 1),
-        body.createBodyPart('FOOT', 1),
-        body.createBodyPart('MOUTH', 1),
-        body.createBodyPart('HEART', 1),
-        body.createBodyPart('SPIKE', 1)
+        body.createBodyPart('HAND', 1, {
+          originPlayerId: 'winner',
+          currentOwnerId: 'winner',
+          sourceType: 'self_created'
+        }),
+        body.createBodyPart('HEAD', 1, { sourceType: 'map_pickup' }),
+        body.createBodyPart('FOOT', 1, { sourceType: 'map_pickup' }),
+        body.createBodyPart('MOUTH', 1, { sourceType: 'npc_reward' }),
+        body.createBodyPart('HEART', 1, { sourceType: 'kill_loot' })
       ]
     });
     rival.init({ x: 240, y: 240 }, config.defaultPlayerMass);
