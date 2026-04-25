@@ -211,7 +211,7 @@ describe('body.js', () => {
   });
 
   describe('equipBodyPart', () => {
-    it('should replace an occupied slot and return the dropped complete part', () => {
+    it('should keep existing parts and add the collected part to inventory', () => {
       const player = body.createBodyState([
         body.createBodyPart('HEAD', 1),
         body.createBodyPart('HAND', 1, {
@@ -230,18 +230,16 @@ describe('body.js', () => {
         signatureBonus: { connectionRangeBonus: 15 }
       }, { x: 20, y: 30 });
 
-      const equippedHand = player.bodyParts.find((part) => part.type === 'HAND');
+      const hands = player.bodyParts.filter((part) => part.type === 'HAND');
+      const collectedHand = hands.find((part) => part.templateId === 'hand-grab');
 
-      expect(equippedHand.templateId).to.equal('hand-grab');
-      expect(equippedHand.source).to.equal('npc-task');
-      expect(player.bodyPartCounts.HAND).to.equal(1);
-      expect(result.droppedPart.templateId).to.equal('hand-open');
-      expect(result.droppedPart.signatureTier).to.equal('faint');
-      expect(result.droppedPart.x).to.equal(20);
-      expect(result.droppedPart.y).to.equal(30);
+      expect(hands).to.have.length(2);
+      expect(collectedHand.source).to.equal('npc-task');
+      expect(player.bodyPartCounts.HAND).to.equal(2);
+      expect(result.droppedPart).to.equal(null);
     });
 
-    it('should append equipped, replaced, and dropped history entries during replacement', () => {
+    it('should append equipped history without marking existing parts as dropped', () => {
       const player = body.createBodyState([
         body.createBodyPart('HAND', 1, {
           currentOwnerId: 'player-1',
@@ -255,16 +253,18 @@ describe('body.js', () => {
       });
 
       const result = body.equipBodyPart(player, incoming, { x: 20, y: 30 });
-      const equipped = player.bodyParts.find((part) => part.partType === 'HAND');
+      const equipped = player.bodyParts.find((part) => part.currentOwnerId === 'player-1' && part.sourceType === 'map_pickup');
+      const original = player.bodyParts.find((part) => part.sourceType === 'self_created');
       const equippedHistory = equipped.historyChain.map((entry) => entry.eventType);
-      const droppedHistory = result.droppedPart.historyChain.map((entry) => entry.eventType);
+      const originalHistory = original.historyChain.map((entry) => entry.eventType);
 
       expect(equipped.currentOwnerId).to.equal('player-1');
       expect(equippedHistory).to.include('created');
       expect(equippedHistory).to.include('equipped');
-      expect(result.droppedPart.currentOwnerId).to.equal(null);
-      expect(droppedHistory).to.include('replaced');
-      expect(droppedHistory).to.include('dropped');
+      expect(original.currentOwnerId).to.equal('player-1');
+      expect(originalHistory).to.not.include('replaced');
+      expect(originalHistory).to.not.include('dropped');
+      expect(result.droppedPart).to.equal(null);
     });
   });
 

@@ -90,7 +90,6 @@ class PartLootManager {
     collectForPlayer(player) {
         const pickups = [];
         const remaining = [];
-        const replacementDrops = [];
 
         this.data.forEach((loot) => {
             if (!canCollectLoot(player, loot)) {
@@ -113,19 +112,9 @@ class PartLootManager {
                 equippedPart: result.equippedPart,
                 droppedPart: result.droppedPart
             });
-
-            if (result.droppedPart) {
-                replacementDrops.push({
-                    part: result.droppedPart,
-                    position: {x: loot.x, y: loot.y}
-                });
-            }
         });
 
         this.data = remaining;
-        replacementDrops.forEach((drop) => {
-            this.addPart(drop.part, drop.position, 'slot-replacement');
-        });
 
         return pickups;
     }

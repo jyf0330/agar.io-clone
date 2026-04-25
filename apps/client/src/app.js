@@ -19,6 +19,7 @@ var createSpeechBubble = require('./ui/speech-bubble');
 var createPaintToast = require('./ui/paint-toast');
 var createChatInput = require('./ui/chat-input');
 var createSettlementPanel = require('./ui/settlement-panel');
+var createBodyInventoryPanel = require('./ui/body-inventory-panel');
 var createBodySignatureController = require('./body-signature-controller');
 var bodySignatureStorage = require('./body-signature-storage');
 var bodySignatureConfig = require('./body-signature-config');
@@ -36,6 +37,7 @@ var speechBubble;
 var paintToast;
 var chatInput;
 var settlementPanel;
+var bodyInventoryPanel;
 var debugPanel;
 var bodySignatureController;
 var hideStartMenuOnLoad = false;
@@ -214,6 +216,12 @@ window.onload = function () {
     });
     settlementPanel = createSettlementPanel({
         document: document
+    });
+    bodyInventoryPanel = createBodyInventoryPanel({
+        document: document,
+        getPlayer: function () {
+            return player;
+        }
     });
     debugPanel = debugPanelModule.createDebugPanel({
         document: document,
@@ -409,6 +417,9 @@ function renderStatusPanel() {
     status += formatPetStatus(player);
     status += formatGhostDebugStatus(player);
     document.getElementById('status').innerHTML = status;
+    if (bodyInventoryPanel) {
+        bodyInventoryPanel.update();
+    }
 }
 
 function renderPlayerCardPreviews() {

@@ -313,37 +313,12 @@ function equipBodyPart(target, incomingPart, dropPosition) {
     const equippedIncomingPart = appendPartHistory(createBodyPart(incomingType, 1, incomingPart), 'equipped', {
         playerId: target.id || null,
         playerName: target.name || null,
+        x: dropPosition && dropPosition.x,
+        y: dropPosition && dropPosition.y,
         sourceType: incomingPart && incomingPart.sourceType
     });
     equippedIncomingPart.currentOwnerId = target.id || null;
-    let droppedPart = null;
-    let replaced = false;
-
-    const nextParts = existingParts.map((part) => {
-        if (!replaced && getPartType(part) === incomingType) {
-            droppedPart = appendPartHistory(createDroppedPart(part, dropPosition), 'replaced', {
-                playerId: target.id || null,
-                playerName: target.name || null,
-                sourceType: part.sourceType
-            });
-            droppedPart = appendPartHistory(droppedPart, 'dropped', {
-                playerId: target.id || null,
-                playerName: target.name || null,
-                x: dropPosition && dropPosition.x,
-                y: dropPosition && dropPosition.y,
-                sourceType: part.sourceType
-            });
-            droppedPart.currentOwnerId = null;
-            replaced = true;
-            return cloneBodyPart(equippedIncomingPart);
-        }
-
-        return part;
-    });
-
-    if (!replaced) {
-        nextParts.push(cloneBodyPart(equippedIncomingPart));
-    }
+    const nextParts = existingParts.concat(cloneBodyPart(equippedIncomingPart));
 
     applyBodyState(target, {
         bodyParts: nextParts,
@@ -352,7 +327,7 @@ function equipBodyPart(target, incomingPart, dropPosition) {
 
     return {
         equippedPart: cloneBodyPart(equippedIncomingPart),
-        droppedPart: droppedPart
+        droppedPart: null
     };
 }
 

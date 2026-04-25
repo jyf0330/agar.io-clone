@@ -23,7 +23,7 @@ describe('partLoot.js', () => {
     expect(loot.part.signatureBonus.connectionRangeBonus).to.equal(10);
   });
 
-  it('should equip collected loot and drop the replaced slot part', () => {
+  it('should equip collected loot without dropping the previous same-type part', () => {
     const manager = new PartLootManager();
     const player = body.createBodyState([
       body.createBodyPart('HAND', 1, {
@@ -44,13 +44,42 @@ describe('partLoot.js', () => {
     }, { x: 112, y: 100 });
 
     const pickups = manager.collectForPlayer(player);
-    const equippedHand = player.bodyParts.find((part) => part.type === 'HAND');
+    const hands = player.bodyParts.filter((part) => part.type === 'HAND');
 
     expect(pickups).to.have.length(1);
-    expect(equippedHand.templateId).to.equal('hand-thread');
-    expect(manager.data).to.have.length(1);
-    expect(manager.data[0].part.templateId).to.equal('hand-open');
-    expect(manager.data[0].source).to.equal('slot-replacement');
+    expect(hands.map((part) => part.templateId)).to.deep.equal(['hand-open', 'hand-thread']);
+    expect(pickups[0].droppedPart).to.equal(null);
+    expect(manager.data).to.have.length(0);
+  });
+
+  it('should consume same-type loot only once and keep all collected copies', () => {
+    const manager = new PartLootManager();
+    const player = body.createBodyState([
+      body.createBodyPart('HEAD', 1, {
+        templateId: 'starter-head'
+      })
+    ]);
+    player.id = 'player-head';
+    player.x = 100;
+    player.y = 100;
+    player.cells = [
+      { x: 100, y: 100, radius: 40 }
+    ];
+
+    manager.addPart({
+      type: 'HEAD',
+      templateId: 'map-head'
+    }, { x: 100, y: 100 }, 'map-pickup');
+
+    const firstPickups = manager.collectForPlayer(player);
+    const secondPickups = manager.collectForPlayer(player);
+    const collectedHead = player.bodyParts.find((part) => part.templateId === 'map-head');
+
+    expect(firstPickups).to.have.length(1);
+    expect(secondPickups).to.have.length(0);
+    expect(collectedHead.templateId).to.equal('map-head');
+    expect(player.bodyPartCounts.HEAD).to.equal(2);
+    expect(manager.data).to.have.length(0);
   });
 
   it('should append picked history and transfer ownership before equipping loot', () => {

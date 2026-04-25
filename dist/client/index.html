@@ -17,6 +17,17 @@
         <div id="status"><span class="title">排行榜</span></div>
         <div id="playerCardHud"></div>
         <div id="targetCardHud"></div>
+        <button id="bodyInventoryButton" class="body-inventory-button" type="button">部位 0</button>
+        <div id="bodyInventoryPanel" class="body-inventory-panel is-hidden">
+            <div class="body-inventory-header">
+                <div>
+                    <div class="body-inventory-title">吞入部位</div>
+                    <div class="body-inventory-subtitle">已获得的部位和属性</div>
+                </div>
+                <button id="bodyInventoryCloseButton" class="body-inventory-close" type="button">关闭</button>
+            </div>
+            <div id="bodyInventoryList" class="body-inventory-list"></div>
+        </div>
         <div class="chatbox" id="chatbox">
             <ul id="chatList" class="chat-list"></ul>
             <input id="chatInput" type="text" class="chat-input" placeholder="Chat here..." maxlength="35" />

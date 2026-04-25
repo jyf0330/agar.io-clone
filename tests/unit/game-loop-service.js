@@ -63,13 +63,14 @@ describe('game-loop-service.js', () => {
 
     service.tickPlayer(player);
 
-    const hand = player.bodyParts.find((part) => part.type === 'HAND');
+    const hand = player.bodyParts.find((part) => part.templateId === 'hand-thread');
     expect(hand.templateId).to.equal('hand-thread');
     expect(hand.source).to.equal('ghost-echo');
-    expect(map.partLoot.data[0].source).to.equal('slot-replacement');
+    expect(player.bodyPartCounts.HAND).to.equal(2);
+    expect(map.partLoot.data).to.have.length(0);
   });
 
-  it('should record part lifecycle events when pickup replaces an equipped slot', () => {
+  it('should record part lifecycle events when pickup adds to the inventory', () => {
     const map = new mapUtils.Map(Object.assign({}, config, {
       partLoot: {
         enabled: false
@@ -122,9 +123,7 @@ describe('game-loop-service.js', () => {
 
     expect(recorded.map((entry) => entry.eventType)).to.deep.equal([
       'part_pickup',
-      'part_equipped',
-      'part_replaced',
-      'part_drop'
+      'part_equipped'
     ]);
     expect(recorded.every((entry) => entry.playerId === 'player-1')).to.equal(true);
     expect(recorded[0].partType).to.equal('HAND');

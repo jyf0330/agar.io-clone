@@ -20,6 +20,15 @@ describe('client index html', () => {
     expect(html).to.include('id="bodySignatureSubmitButton"');
   });
 
+  it('should expose the body inventory panel ids', () => {
+    const html = fs.readFileSync(path.resolve(__dirname, '../../apps/client/index.html'), 'utf8');
+
+    expect(html).to.include('id="bodyInventoryButton"');
+    expect(html).to.include('id="bodyInventoryPanel"');
+    expect(html).to.include('id="bodyInventoryList"');
+    expect(html).to.include('id="bodyInventoryCloseButton"');
+  });
+
   it('should expose a V5 recording consent toggle before entering the game', () => {
     const html = fs.readFileSync(path.resolve(__dirname, '../../apps/client/index.html'), 'utf8');
 
