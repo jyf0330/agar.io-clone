@@ -3,6 +3,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SOURCE_REPO_ROOT="${AGAR_SOURCE_ROOT:-$REPO_ROOT}"
+RUNTIME_ROOT="${AGAR_RUNTIME_ROOT:-$HOME/Library/Application Support/AgarioClone/runtime}"
 HOST="${AGAR_DESKTOP_HOST:-127.0.0.1}"
 DEFAULT_PORT="${AGAR_DESKTOP_PORT:-3000}"
 LOG_DIR="$REPO_ROOT/.launcher"
@@ -18,6 +20,38 @@ candidate_ports=("$DEFAULT_PORT" "3060" "3061" "3062")
 is_port_listening() {
     local port="$1"
     lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1
+}
+
+listener_pids() {
+    local port="$1"
+    lsof -tiTCP:"$port" -sTCP:LISTEN 2>/dev/null || true
+}
+
+project_listener_pid() {
+    local port="$1"
+    local pid
+
+    while read -r pid; do
+        if [[ -n "$pid" ]] && is_project_server_pid "$pid"; then
+            echo "$pid"
+            return 0
+        fi
+    done < <(listener_pids "$port")
+
+    return 1
+}
+
+is_project_server_pid() {
+    local pid="$1"
+    local command_line
+    local cwd
+
+    command_line="$(ps -p "$pid" -o command= 2>/dev/null || true)"
+    cwd="$(lsof -a -p "$pid" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p' | head -1)"
+
+    [[ "$command_line" == *"dist/server/server.js"* ]] && {
+        [[ "$cwd" == "$REPO_ROOT"* || "$cwd" == "$SOURCE_REPO_ROOT"* || "$cwd" == "$RUNTIME_ROOT"* ]]
+    }
 }
 
 is_game_ready() {
@@ -43,15 +77,68 @@ cleanup_stale_pid() {
     fi
 }
 
-find_running_game() {
-    local port
-    for port in "${candidate_ports[@]}"; do
-        if is_game_ready "$port"; then
-            echo "$port"
+stop_pid() {
+    local pid="$1"
+    local attempt
+
+    if ! kill -0 "$pid" >/dev/null 2>&1; then
+        return 0
+    fi
+
+    echo "Stopping existing game server PID $pid"
+    kill "$pid" >/dev/null 2>&1 || true
+
+    for attempt in $(seq 1 20); do
+        if ! kill -0 "$pid" >/dev/null 2>&1; then
             return 0
         fi
+        sleep 0.2
     done
-    return 1
+
+    echo "Force stopping existing game server PID $pid"
+    kill -9 "$pid" >/dev/null 2>&1 || true
+}
+
+stop_existing_game_servers() {
+    local port
+    local pid
+    local attempt
+    local still_running
+
+    cleanup_stale_pid
+
+    if [[ -f "$PID_FILE" ]]; then
+        pid="$(cat "$PID_FILE")"
+        if [[ -n "$pid" ]] && is_project_server_pid "$pid"; then
+            stop_pid "$pid"
+        fi
+        rm -f "$PID_FILE"
+    fi
+
+    for port in "${candidate_ports[@]}"; do
+        while read -r pid; do
+            if [[ -n "$pid" ]] && is_project_server_pid "$pid"; then
+                stop_pid "$pid"
+            fi
+        done < <(listener_pids "$port")
+    done
+
+    for attempt in $(seq 1 20); do
+        still_running=0
+        for port in "${candidate_ports[@]}"; do
+            while read -r pid; do
+                if [[ -n "$pid" ]] && is_project_server_pid "$pid"; then
+                    still_running=1
+                fi
+            done < <(listener_pids "$port")
+        done
+
+        if [[ "$still_running" -eq 0 ]]; then
+            return 0
+        fi
+
+        sleep 0.2
+    done
 }
 
 find_free_port() {
@@ -76,7 +163,9 @@ wait_for_server() {
         fi
 
         if ! kill -0 "$pid" >/dev/null 2>&1; then
-            return 1
+            if ! project_listener_pid "$port" >/dev/null; then
+                return 1
+            fi
         fi
 
         sleep 1
@@ -87,12 +176,7 @@ wait_for_server() {
 
 cleanup_stale_pid
 
-if running_port="$(find_running_game)"; then
-    echo "Game server already available on http://$HOST:$running_port/"
-    echo "$running_port" > "$PORT_FILE"
-    open_game "$running_port"
-    exit 0
-fi
+stop_existing_game_servers
 
 if [[ ! -x "./node_modules/gulp/bin/gulp.js" ]]; then
     echo "Missing ./node_modules/gulp/bin/gulp.js"
@@ -125,6 +209,10 @@ echo "$server_pid" > "$PID_FILE"
 echo "$launch_port" > "$PORT_FILE"
 
 if wait_for_server "$launch_port" "$server_pid"; then
+    if actual_pid="$(project_listener_pid "$launch_port")"; then
+        server_pid="$actual_pid"
+        echo "$server_pid" > "$PID_FILE"
+    fi
     open_game "$launch_port"
     echo
     echo "Server ready."

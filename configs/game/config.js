@@ -1,4 +1,6 @@
 const demoModeEnabled = process.env.V5_DEMO_MODE === '1';
+const persistedGhostHistoryEnabled = process.env.V5_GHOST_PERSISTENCE === '1';
+const ghostTraceRecordingEnabled = process.env.V5_GHOST_TRACE_RECORDING === '1';
 const npcModeEnabled = process.env.V5_NPC_ENABLED === '0'
     ? process.env.V3_NPC_ENABLED === '1'
     : true;
@@ -66,7 +68,10 @@ const config = {
         maxActiveGhosts: 3,
         anchorCooldownMs: 60000,
         followTimeoutMs: 30000,
-        debug: false
+        debug: false,
+        persistedHistory: persistedGhostHistoryEnabled,
+        recordPlayerTraces: ghostTraceRecordingEnabled,
+        eventRefreshIntervalMs: 2000
     },
     demo: {
         enabled: demoModeEnabled,

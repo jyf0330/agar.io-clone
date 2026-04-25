@@ -36,6 +36,7 @@ class GhostRecorder {
     this.memoryStore = settings.memoryStore || null;
     this.mapId = settings.mapId || 'default-map';
     this.isSeed = settings.isSeed === true;
+    this.recordPlayerTracesEnabled = settings.recordPlayerTraces === true;
     this.lastTraceAtByPlayer = {};
   }
   getElapsed(now) {
@@ -63,6 +64,9 @@ class GhostRecorder {
     });
   }
   recordPlayers(players, now) {
+    if (!this.recordPlayerTracesEnabled) {
+      return;
+    }
     (players || []).forEach(player => {
       if (!this.canRecordPlayer(player) || player.isNpc) {
         return;

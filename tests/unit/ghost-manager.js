@@ -252,6 +252,32 @@ describe('ghost manager', () => {
     expect(map.ghosts[0].sessionId).to.equal('old-session');
   });
 
+  it('should cache persisted trigger lookups during hot ticks', () => {
+    let anchorLookups = 0;
+    let eventLookups = 0;
+    const manager = new GhostManager({
+      mapId: 'fixed-arena',
+      eventRefreshIntervalMs: 1000,
+      memoryStore: {
+        listGhostAnchors() {
+          anchorLookups += 1;
+          return [];
+        },
+        listEvents() {
+          eventLookups += 1;
+          return [];
+        }
+      }
+    });
+
+    manager.getEvents('fixed-arena', 1000);
+    manager.getEvents('fixed-arena', 1200);
+    manager.getEvents('fixed-arena', 2101);
+
+    expect(anchorLookups).to.equal(2);
+    expect(eventLookups).to.equal(6);
+  });
+
   it('should replay persisted single-player trace points after an anchor activates', () => {
     const startedAt = 1000;
     const map = new mapUtils.Map(config);

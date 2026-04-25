@@ -79,12 +79,16 @@ class GhostManager {
         this.mapId = settings.mapId || null;
         this.seedEvents = (settings.seedEvents || []).map(normalizeEvent);
         this.memoryStore = settings.memoryStore || null;
+        this.eventRefreshIntervalMs = typeof settings.eventRefreshIntervalMs === 'number'
+            ? settings.eventRefreshIntervalMs
+            : 2000;
+        this.eventCacheByMapId = {};
         this.spawnedItemIds = {};
         this.activeGhosts = {};
         this.anchorTriggeredAt = {};
     }
 
-    getEvents(mapId) {
+    loadEvents(mapId) {
         const currentMapId = mapId || this.mapId;
         const anchorFilters = {limit: 1000};
         if (currentMapId) {
@@ -113,6 +117,24 @@ class GhostManager {
             : [];
 
         return this.seedEvents.filter((event) => eventMatchesMap(event, currentMapId)).concat(anchors).concat(recorded);
+    }
+
+    getEvents(mapId, now) {
+        const currentMapId = mapId || this.mapId || '';
+        const cacheKey = currentMapId || '__all__';
+        const timestamp = typeof now === 'number' ? now : Date.now();
+        const cached = this.eventCacheByMapId[cacheKey];
+
+        if (cached && timestamp - cached.loadedAt < this.eventRefreshIntervalMs) {
+            return cached.events;
+        }
+
+        const events = this.loadEvents(currentMapId);
+        this.eventCacheByMapId[cacheKey] = {
+            loadedAt: timestamp,
+            events
+        };
+        return events;
     }
 
     isNearAnyPlayer(event, players) {
@@ -377,7 +399,7 @@ class GhostManager {
         const startedAt = safeState.matchStartedAt || now;
         const elapsedMs = Math.max(0, now - startedAt);
         const mapId = safeState.mapId || (map && map.config && map.config.mapId) || this.mapId;
-        const events = this.getEvents(mapId);
+        const events = this.getEvents(mapId, now);
 
         this.updateGhostPositions(now);
         this.updateGhostChats(now);

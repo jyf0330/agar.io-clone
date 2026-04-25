@@ -10,6 +10,7 @@ describe('ghost recorder', () => {
       sessionId: 'session-now',
       startedAt: 1000,
       sampleIntervalMs: 200,
+      recordPlayerTraces: true,
       memoryStore: {
         recordEvent(event) {
           events.push(event);
@@ -44,11 +45,41 @@ describe('ghost recorder', () => {
     expect(events[2].payload.part.templateId).to.equal('hand-thread');
   });
 
+  it('should keep continuous movement recording off by default', () => {
+    const events = [];
+    const traces = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      memoryStore: {
+        recordEvent(event) {
+          events.push(event);
+        },
+        recordPlayerTrace(trace) {
+          traces.push(trace);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      x: 120,
+      y: 130,
+      consentToRecord: true
+    };
+
+    recorder.recordPlayers([player], 1200);
+
+    expect(events).to.deep.equal([]);
+    expect(traces).to.deep.equal([]);
+  });
+
   it('should sanitize sensitive ghost chat before recording replay material', () => {
     const events = [];
     const recorder = new GhostRecorder({
       sessionId: 'session-now',
       startedAt: 1000,
+      recordPlayerTraces: true,
       memoryStore: {
         recordEvent(event) {
           events.push(event);
@@ -79,6 +110,7 @@ describe('ghost recorder', () => {
     const recorder = new GhostRecorder({
       sessionId: 'session-now',
       startedAt: 1000,
+      recordPlayerTraces: true,
       memoryStore: {
         recordEvent(event) {
           events.push(event);
@@ -142,6 +174,7 @@ describe('ghost recorder', () => {
     const recorder = new GhostRecorder({
       sessionId: 'session-now',
       startedAt: 1000,
+      recordPlayerTraces: true,
       memoryStore: {
         recordEvent() {},
         recordPlayerTrace(trace) {

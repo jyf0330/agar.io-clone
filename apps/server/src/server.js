@@ -46,7 +46,7 @@ const connectionService = createConnectionService({
     players: map.players
 });
 const ghostManager = new GhostManager({
-    memoryStore: memoryStore,
+    memoryStore: config.ghostEcho && config.ghostEcho.persistedHistory ? memoryStore : null,
     triggerRadius: config.ghostEcho && config.ghostEcho.triggerRadius,
     timeWindowMs: config.ghostEcho && config.ghostEcho.timeWindowMs,
     maxActiveGhosts: config.ghostEcho && config.ghostEcho.maxActiveGhosts,
@@ -54,6 +54,7 @@ const ghostManager = new GhostManager({
     followTimeoutMs: config.ghostEcho && config.ghostEcho.followTimeoutMs,
     mapId: config.mapId || 'fixed-arena',
     debug: Boolean((config.ghostEcho && config.ghostEcho.debug) || process.env.GHOST_DEBUG === '1'),
+    eventRefreshIntervalMs: config.ghostEcho && config.ghostEcho.eventRefreshIntervalMs,
     seedEvents: [
         {
             id: 'seed-trace-hand',
@@ -86,6 +87,7 @@ const ghostRecorder = new GhostRecorder({
     sessionId: memorySessionId,
     startedAt: roundClock.startedAt,
     mapId: config.mapId || 'fixed-arena',
+    recordPlayerTraces: Boolean(config.ghostEcho && config.ghostEcho.recordPlayerTraces),
     isSeed: process.env.V5_SEED_SESSION === '1'
 });
 const gameLoopService = createGameLoopService({
