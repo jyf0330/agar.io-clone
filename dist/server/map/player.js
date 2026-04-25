@@ -343,14 +343,16 @@ exports.PlayerManager = class {
     }
   }
   getTopPlayers() {
-    this.data.sort(function (a, b) {
+    const humanPlayers = this.data.filter(function (player) {
+      return !player.isNpc;
+    }).sort(function (a, b) {
       return b.massTotal - a.massTotal;
     });
     var topPlayers = [];
-    for (var i = 0; i < Math.min(10, this.data.length); i++) {
+    for (var i = 0; i < Math.min(10, humanPlayers.length); i++) {
       topPlayers.push({
-        id: this.data[i].id,
-        name: this.data[i].name
+        id: humanPlayers[i].id,
+        name: humanPlayers[i].name
       });
     }
     return topPlayers;
@@ -358,7 +360,9 @@ exports.PlayerManager = class {
   getTotalMass() {
     let result = 0;
     for (let player of this.data) {
-      result += player.massTotal;
+      if (!player.isNpc) {
+        result += player.massTotal;
+      }
     }
     return result;
   }

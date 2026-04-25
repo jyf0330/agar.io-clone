@@ -1,11 +1,11 @@
 # Graph Report - agar.io-clone-master  (2026-04-25)
 
 ## Corpus Check
-- 157 files · ~267,243 words
+- 158 files · ~267,390 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 851 nodes · 1413 edges · 35 communities detected
+- 852 nodes · 1413 edges · 35 communities detected
 - Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 221 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -233,7 +233,7 @@ Nodes (2): loadConfigWithDemoFlag(), loadConfigWithEnv()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `speakPreviousExpectations()` connect `Community 4` to `Community 16`, `Community 3`?**
-  _High betweenness centrality (0.138) - this node is a cross-community bridge._
+  _High betweenness centrality (0.137) - this node is a cross-community bridge._
 - **Why does `ask()` connect `Community 12` to `Community 1`, `Community 2`, `Community 11`, `Community 4`?**
   _High betweenness centrality (0.137) - this node is a cross-community bridge._
 - **Why does `addPlayer()` connect `Community 4` to `Community 0`, `Community 8`, `Community 15`?**

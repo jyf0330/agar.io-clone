@@ -940,6 +940,15 @@
       "norm_label": "settlement.js"
     },
     {
+      "label": "player-manager.js",
+      "file_type": "code",
+      "source_file": "tests/unit/player-manager.js",
+      "source_location": "L1",
+      "id": "tests_unit_player_manager_js",
+      "community": 63,
+      "norm_label": "player-manager.js"
+    },
+    {
       "label": "player-card-storage.js",
       "file_type": "code",
       "source_file": "tests/unit/player-card-storage.js",
@@ -981,7 +990,7 @@
       "source_file": "tests/unit/player-projection.js",
       "source_location": "L1",
       "id": "tests_unit_player_projection_js",
-      "community": 63,
+      "community": 64,
       "norm_label": "player-projection.js"
     },
     {
@@ -1017,7 +1026,7 @@
       "source_file": "tests/unit/materialization-status.js",
       "source_location": "L1",
       "id": "tests_unit_materialization_status_js",
-      "community": 64,
+      "community": 65,
       "norm_label": "materialization-status.js"
     },
     {
@@ -1044,7 +1053,7 @@
       "source_file": "tests/unit/map-visibility.js",
       "source_location": "L1",
       "id": "tests_unit_map_visibility_js",
-      "community": 65,
+      "community": 66,
       "norm_label": "map-visibility.js"
     },
     {
@@ -1053,7 +1062,7 @@
       "source_file": "tests/unit/player-hydration.js",
       "source_location": "L1",
       "id": "tests_unit_player_hydration_js",
-      "community": 66,
+      "community": 67,
       "norm_label": "player-hydration.js"
     },
     {
@@ -1062,7 +1071,7 @@
       "source_file": "tests/unit/connection-status.js",
       "source_location": "L1",
       "id": "tests_unit_connection_status_js",
-      "community": 67,
+      "community": 68,
       "norm_label": "connection-status.js"
     },
     {
@@ -1071,7 +1080,7 @@
       "source_file": "tests/unit/player-card-sync.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_sync_js",
-      "community": 68,
+      "community": 69,
       "norm_label": "player-card-sync.js"
     },
     {
@@ -1098,7 +1107,7 @@
       "source_file": "tests/unit/render-ghost.js",
       "source_location": "L1",
       "id": "tests_unit_render_ghost_js",
-      "community": 69,
+      "community": 70,
       "norm_label": "render-ghost.js"
     },
     {
@@ -1107,7 +1116,7 @@
       "source_file": "tests/unit/relationship-status.js",
       "source_location": "L1",
       "id": "tests_unit_relationship_status_js",
-      "community": 70,
+      "community": 71,
       "norm_label": "relationship-status.js"
     },
     {
@@ -1170,7 +1179,7 @@
       "source_file": "tests/unit/avatar-draft-preview.js",
       "source_location": "L1",
       "id": "tests_unit_avatar_draft_preview_js",
-      "community": 71,
+      "community": 72,
       "norm_label": "avatar-draft-preview.js"
     },
     {
@@ -1179,7 +1188,7 @@
       "source_file": "tests/unit/avatar-draft-candidates.js",
       "source_location": "L1",
       "id": "tests_unit_avatar_draft_candidates_js",
-      "community": 72,
+      "community": 73,
       "norm_label": "avatar-draft-candidates.js"
     },
     {
@@ -1188,7 +1197,7 @@
       "source_file": "tests/unit/server.js",
       "source_location": "L1",
       "id": "tests_unit_server_js",
-      "community": 73,
+      "community": 74,
       "norm_label": "server.js"
     },
     {
@@ -1197,7 +1206,7 @@
       "source_file": "tests/unit/return-memory.js",
       "source_location": "L1",
       "id": "tests_unit_return_memory_js",
-      "community": 74,
+      "community": 75,
       "norm_label": "return-memory.js"
     },
     {
@@ -1206,7 +1215,7 @@
       "source_file": "tests/unit/npc-avatar-paint.js",
       "source_location": "L1",
       "id": "tests_unit_npc_avatar_paint_js",
-      "community": 75,
+      "community": 76,
       "norm_label": "npc-avatar-paint.js"
     },
     {
@@ -1215,7 +1224,7 @@
       "source_file": "tests/unit/avatar-runtime-render.js",
       "source_location": "L1",
       "id": "tests_unit_avatar_runtime_render_js",
-      "community": 76,
+      "community": 77,
       "norm_label": "avatar-runtime-render.js"
     },
     {
@@ -1242,7 +1251,7 @@
       "source_file": "tests/unit/npc-greetings.js",
       "source_location": "L1",
       "id": "tests_unit_npc_greetings_js",
-      "community": 77,
+      "community": 78,
       "norm_label": "npc-greetings.js"
     },
     {
@@ -1251,7 +1260,7 @@
       "source_file": "tests/unit/player-card-advanced-layer-menu.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_advanced_layer_menu_js",
-      "community": 78,
+      "community": 79,
       "norm_label": "player-card-advanced-layer-menu.js"
     },
     {
@@ -1260,7 +1269,7 @@
       "source_file": "tests/unit/player-card-history.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_history_js",
-      "community": 79,
+      "community": 80,
       "norm_label": "player-card-history.js"
     },
     {
@@ -1269,7 +1278,7 @@
       "source_file": "tests/unit/player-card-lock-controls.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_lock_controls_js",
-      "community": 80,
+      "community": 81,
       "norm_label": "player-card-lock-controls.js"
     },
     {
@@ -1278,7 +1287,7 @@
       "source_file": "tests/unit/body-status.js",
       "source_location": "L1",
       "id": "tests_unit_body_status_js",
-      "community": 81,
+      "community": 82,
       "norm_label": "body-status.js"
     },
     {
@@ -1287,7 +1296,7 @@
       "source_file": "tests/unit/ghost-debug-status.js",
       "source_location": "L1",
       "id": "tests_unit_ghost_debug_status_js",
-      "community": 82,
+      "community": 83,
       "norm_label": "ghost-debug-status.js"
     },
     {
@@ -1296,7 +1305,7 @@
       "source_file": "tests/unit/relationship.js",
       "source_location": "L1",
       "id": "tests_unit_relationship_js",
-      "community": 83,
+      "community": 84,
       "norm_label": "relationship.js"
     },
     {
@@ -1305,7 +1314,7 @@
       "source_file": "tests/unit/body.js",
       "source_location": "L1",
       "id": "tests_unit_body_js",
-      "community": 84,
+      "community": 85,
       "norm_label": "body.js"
     },
     {
@@ -1314,7 +1323,7 @@
       "source_file": "tests/unit/virus.js",
       "source_location": "L1",
       "id": "tests_unit_virus_js",
-      "community": 85,
+      "community": 86,
       "norm_label": "virus.js"
     },
     {
@@ -1323,7 +1332,7 @@
       "source_file": "tests/unit/render-part-loot.js",
       "source_location": "L1",
       "id": "tests_unit_render_part_loot_js",
-      "community": 86,
+      "community": 87,
       "norm_label": "render-part-loot.js"
     },
     {
@@ -1332,7 +1341,7 @@
       "source_file": "tests/unit/client-index.js",
       "source_location": "L1",
       "id": "tests_unit_client_index_js",
-      "community": 87,
+      "community": 88,
       "norm_label": "client-index.js"
     },
     {
@@ -1341,7 +1350,7 @@
       "source_file": "tests/unit/ghost-recorder.js",
       "source_location": "L1",
       "id": "tests_unit_ghost_recorder_js",
-      "community": 88,
+      "community": 89,
       "norm_label": "ghost-recorder.js"
     },
     {
@@ -1431,7 +1440,7 @@
       "source_file": "tests/unit/render-pet.js",
       "source_location": "L1",
       "id": "tests_unit_render_pet_js",
-      "community": 89,
+      "community": 90,
       "norm_label": "render-pet.js"
     },
     {
@@ -1440,7 +1449,7 @@
       "source_file": "tests/unit/active-pet.js",
       "source_location": "L1",
       "id": "tests_unit_active_pet_js",
-      "community": 90,
+      "community": 91,
       "norm_label": "active-pet.js"
     },
     {
@@ -1449,7 +1458,7 @@
       "source_file": "tests/unit/body-signature-analysis.js",
       "source_location": "L1",
       "id": "tests_unit_body_signature_analysis_js",
-      "community": 91,
+      "community": 92,
       "norm_label": "body-signature-analysis.js"
     },
     {
@@ -1458,7 +1467,7 @@
       "source_file": "tests/unit/part-loot.js",
       "source_location": "L1",
       "id": "tests_unit_part_loot_js",
-      "community": 92,
+      "community": 93,
       "norm_label": "part-loot.js"
     },
     {
@@ -1467,7 +1476,7 @@
       "source_file": "tests/unit/game-loop-service.js",
       "source_location": "L1",
       "id": "tests_unit_game_loop_service_js",
-      "community": 93,
+      "community": 94,
       "norm_label": "game-loop-service.js"
     },
     {
@@ -1476,7 +1485,7 @@
       "source_file": "tests/unit/player-card-scale.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_scale_js",
-      "community": 94,
+      "community": 95,
       "norm_label": "player-card-scale.js"
     },
     {
@@ -1485,7 +1494,7 @@
       "source_file": "tests/unit/player-card-preview.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_preview_js",
-      "community": 95,
+      "community": 96,
       "norm_label": "player-card-preview.js"
     },
     {
@@ -1566,7 +1575,7 @@
       "source_file": "tests/unit/pet-status.js",
       "source_location": "L1",
       "id": "tests_unit_pet_status_js",
-      "community": 96,
+      "community": 97,
       "norm_label": "pet-status.js"
     },
     {
@@ -1575,7 +1584,7 @@
       "source_file": "tests/unit/connection.js",
       "source_location": "L1",
       "id": "tests_unit_connection_js",
-      "community": 97,
+      "community": 98,
       "norm_label": "connection.js"
     },
     {
@@ -1611,7 +1620,7 @@
       "source_file": "tests/unit/player-card-layers.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_layers_js",
-      "community": 98,
+      "community": 99,
       "norm_label": "player-card-layers.js"
     },
     {
@@ -1656,7 +1665,7 @@
       "source_file": "tests/unit/npc-task-rewards.js",
       "source_location": "L1",
       "id": "tests_unit_npc_task_rewards_js",
-      "community": 99,
+      "community": 100,
       "norm_label": "npc-task-rewards.js"
     },
     {
@@ -1683,7 +1692,7 @@
       "source_file": "tests/unit/player-card-canvas-transform.js",
       "source_location": "L1",
       "id": "tests_unit_player_card_canvas_transform_js",
-      "community": 100,
+      "community": 101,
       "norm_label": "player-card-canvas-transform.js"
     },
     {
@@ -1692,7 +1701,7 @@
       "source_file": "tests/unit/materialization.js",
       "source_location": "L1",
       "id": "tests_unit_materialization_js",
-      "community": 101,
+      "community": 102,
       "norm_label": "materialization.js"
     },
     {
@@ -1719,7 +1728,7 @@
       "source_file": "configs/game/relationship.js",
       "source_location": "L1",
       "id": "configs_game_relationship_js",
-      "community": 102,
+      "community": 103,
       "norm_label": "relationship.js"
     },
     {
@@ -1728,7 +1737,7 @@
       "source_file": "configs/game/body.js",
       "source_location": "L1",
       "id": "configs_game_body_js",
-      "community": 103,
+      "community": 104,
       "norm_label": "body.js"
     },
     {
@@ -1737,7 +1746,7 @@
       "source_file": "configs/game/config.js",
       "source_location": "L1",
       "id": "configs_game_config_js",
-      "community": 104,
+      "community": 105,
       "norm_label": "config.js"
     },
     {
@@ -1746,7 +1755,7 @@
       "source_file": "configs/game/connection.js",
       "source_location": "L1",
       "id": "configs_game_connection_js",
-      "community": 105,
+      "community": 106,
       "norm_label": "connection.js"
     },
     {
@@ -1755,7 +1764,7 @@
       "source_file": "configs/game/materialization.js",
       "source_location": "L1",
       "id": "configs_game_materialization_js",
-      "community": 106,
+      "community": 107,
       "norm_label": "materialization.js"
     },
     {
@@ -4633,7 +4642,7 @@
       "label": "getTotalMass()",
       "file_type": "code",
       "source_file": "apps/server/src/map/player.js",
-      "source_location": "L395",
+      "source_location": "L397",
       "id": "player_gettotalmass",
       "community": 4,
       "norm_label": "gettotalmass()"
@@ -4689,7 +4698,7 @@
       "source_file": "apps/server/src/lib/util.js",
       "source_location": "L1",
       "id": "apps_server_src_lib_util_js",
-      "community": 107,
+      "community": 108,
       "norm_label": "util.js"
     },
     {
@@ -5985,7 +5994,7 @@
       "source_file": "apps/client/src/avatar-draft-config.js",
       "source_location": "L1",
       "id": "apps_client_src_avatar_draft_config_js",
-      "community": 108,
+      "community": 109,
       "norm_label": "avatar-draft-config.js"
     },
     {
@@ -6453,7 +6462,7 @@
       "source_file": "apps/client/src/global.js",
       "source_location": "L1",
       "id": "apps_client_src_global_js",
-      "community": 109,
+      "community": 110,
       "norm_label": "global.js"
     },
     {
@@ -6912,7 +6921,7 @@
       "source_file": "apps/client/src/body-signature-config.js",
       "source_location": "L1",
       "id": "apps_client_src_body_signature_config_js",
-      "community": 110,
+      "community": 111,
       "norm_label": "body-signature-config.js"
     },
     {
@@ -17713,7 +17722,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "apps/server/src/map/player.js",
-      "source_location": "L395",
+      "source_location": "L397",
       "weight": 1.0,
       "_src": "apps_server_src_map_player_js",
       "_tgt": "player_gettotalmass",
