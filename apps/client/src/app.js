@@ -24,6 +24,7 @@ var bodySignatureStorage = require('./body-signature-storage');
 var bodySignatureConfig = require('./body-signature-config');
 var i18n = require('./i18n');
 var socketEmit = require('./socket-emit');
+var debugPanelModule = require('./debug-panel');
 
 var playerNameInput = document.getElementById('playerNameInput');
 var recordConsentInput = document.getElementById('recordConsentInput');
@@ -35,6 +36,7 @@ var speechBubble;
 var paintToast;
 var chatInput;
 var settlementPanel;
+var debugPanel;
 var bodySignatureController;
 var hideStartMenuOnLoad = false;
 var npcFeaturesDisabled = window.location.search.indexOf('npc=0') !== -1 || window.V5_NPC_ENABLED === false;
@@ -213,6 +215,11 @@ window.onload = function () {
     settlementPanel = createSettlementPanel({
         document: document
     });
+    debugPanel = debugPanelModule.createDebugPanel({
+        document: document,
+        window: window
+    });
+    debugPanel.log('调试面板已启动，等待进入游戏。', 'ok');
     chatInput.hide();
     chatInput.setSendHandler(function (text) {
         return window.chat.sendChatText(text);
@@ -256,6 +263,7 @@ window.onload = function () {
         paintToast: paintToast,
         chatInput: npcFeaturesEnabled ? chatInput : null,
         settlementPanel: settlementPanel,
+        debugPanel: debugPanel,
         setLeaderboard: function (nextLeaderboard) {
             leaderboard = nextLeaderboard;
         },
@@ -503,6 +511,22 @@ function animloop() {
 }
 
 function gameLoop() {
+    if (debugPanel) {
+        debugPanel.sampleFrame({
+            socket: socket,
+            gameStart: global.gameStart,
+            playerType: global.playerType,
+            player: player,
+            users: users,
+            foods: foods,
+            fireFood: fireFood,
+            viruses: viruses,
+            partLoot: partLoot,
+            ghosts: ghosts,
+            chatReady: !!window.chat,
+            npcFeaturesEnabled: npcFeaturesEnabled
+        });
+    }
     if (global.gameStart) {
         graph.fillStyle = global.backgroundColor;
         graph.fillRect(0, 0, global.screen.width, global.screen.height);

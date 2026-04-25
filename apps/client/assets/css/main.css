@@ -79,6 +79,127 @@ div {
     display: none;
 }
 
+.debug-panel {
+    position: absolute;
+    right: 10px;
+    bottom: 164px;
+    z-index: 16;
+    width: min(420px, calc(100vw - 20px));
+    max-height: min(58vh, 520px);
+    box-sizing: border-box;
+    overflow: auto;
+    padding: 10px 12px;
+    background: rgba(18, 22, 28, 0.88);
+    color: #f7fbff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.32);
+    text-align: left;
+    pointer-events: all;
+}
+
+.debug-panel.is-collapsed {
+    display: none;
+}
+
+.debug-panel-toggle {
+    position: absolute;
+    right: 10px;
+    bottom: 126px;
+    z-index: 17;
+    min-width: 58px;
+    height: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 6px;
+    background: rgba(18, 22, 28, 0.82);
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    pointer-events: all;
+}
+
+.debug-panel-toggle.is-open {
+    background: rgba(46, 204, 113, 0.9);
+    border-color: rgba(255, 255, 255, 0.42);
+}
+
+.debug-panel-title {
+    margin-bottom: 7px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.debug-panel-line,
+.debug-panel-log li,
+.debug-panel-module,
+.debug-panel-log-title {
+    font-size: 12px;
+    line-height: 1.38;
+}
+
+.debug-panel-line {
+    margin-bottom: 3px;
+    color: rgba(247, 251, 255, 0.9);
+}
+
+.debug-panel-warnings {
+    margin: 7px 0;
+    padding: 7px 8px;
+    background: rgba(255, 204, 102, 0.18);
+    border-left: 3px solid #ffcc66;
+    border-radius: 4px;
+    color: #ffe1a6;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.debug-panel-modules {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 7px;
+}
+
+.debug-panel-module {
+    padding: 3px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.11);
+}
+
+.debug-panel-module.is-ok {
+    color: #a7f3c4;
+}
+
+.debug-panel-module.is-missing {
+    color: #cfd7e2;
+}
+
+.debug-panel-log-title {
+    margin-top: 9px;
+    margin-bottom: 4px;
+    color: rgba(247, 251, 255, 0.64);
+    font-weight: bold;
+}
+
+.debug-panel-log {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.debug-panel-log li {
+    margin-bottom: 2px;
+    color: rgba(247, 251, 255, 0.82);
+}
+
+.debug-panel-log li.is-ok {
+    color: #a7f3c4;
+}
+
+.debug-panel-log li.is-warn {
+    color: #ffd166;
+}
+
 .npc-speech-layer {
     position: absolute;
     inset: 0;
@@ -302,6 +423,18 @@ div {
 }
 
 @media (max-width: 680px) {
+    .debug-panel {
+        right: 8px;
+        bottom: 154px;
+        max-height: 45vh;
+        padding: 9px;
+    }
+
+    .debug-panel-toggle {
+        right: 8px;
+        bottom: 118px;
+    }
+
     .npc-chat-input {
         width: calc(100% - 24px);
         min-width: 0;

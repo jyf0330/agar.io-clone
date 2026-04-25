@@ -15,6 +15,24 @@ function createSocketController(options) {
         }
     }
 
+    function logDebugPanel(message, level) {
+        if (options.debugPanel) {
+            options.debugPanel.log(message, level || 'info');
+        }
+    }
+
+    function markDebugSocketEvent(eventName) {
+        if (options.debugPanel) {
+            options.debugPanel.markSocketEvent(eventName);
+        }
+    }
+
+    function updateDebugPanel(patch) {
+        if (options.debugPanel) {
+            options.debugPanel.update(patch);
+        }
+    }
+
     function assignSocket(nextSocket) {
         socket = nextSocket;
         options.assignSocket(nextSocket);
@@ -84,6 +102,16 @@ function createSocketController(options) {
     }
 
     function handleDisconnect() {
+        markDebugSocketEvent('disconnect');
+        logDebugPanel('Socket 已断开，游戏循环暂停。', 'warn');
+        updateDebugPanel({
+            socket: {
+                connected: false
+            },
+            game: {
+                started: false
+            }
+        });
         options.global.disconnected = true;
         options.global.gameStart = false;
         if (options.chatInput) {
@@ -97,6 +125,8 @@ function createSocketController(options) {
 
     function handleConnectError(error) {
         debug('Connect error: ' + (error && error.message ? error.message : error));
+        markDebugSocketEvent('connect_error');
+        logDebugPanel('连接失败：' + (error && error.message ? error.message : error), 'warn');
         if (socket && socket.active === false) {
             handleDisconnect();
         }
@@ -104,8 +134,16 @@ function createSocketController(options) {
 
     function bindSocket(nextSocket) {
         nextSocket.on('pongcheck', function () {
+            markDebugSocketEvent('pongcheck');
             var latency = Date.now() - options.global.startPingTime;
             debug('Latency: ' + latency + 'ms');
+            updateDebugPanel({
+                socket: {
+                    latencyMs: latency,
+                    connected: true
+                }
+            });
+            logDebugPanel('Ping 返回，延迟 ' + latency + 'ms。', latency > 180 ? 'warn' : 'ok');
             options.getChat().addSystemLine(options.i18n.t('system.ping', {latency: latency}));
         });
 
@@ -113,6 +151,7 @@ function createSocketController(options) {
         nextSocket.on('disconnect', handleDisconnect);
 
         nextSocket.on('welcome', function (playerSettings, gameSizes) {
+            markDebugSocketEvent('welcome');
             var nextPlayer = playerSettings;
             nextPlayer.name = options.global.playerName;
             nextPlayer.screenWidth = options.global.screen.width;
@@ -134,6 +173,16 @@ function createSocketController(options) {
             options.canvasElement.focus();
             options.global.game.width = gameSizes.width;
             options.global.game.height = gameSizes.height;
+            updateDebugPanel({
+                socket: {
+                    connected: true
+                },
+                game: {
+                    started: true,
+                    playerType: options.global.playerType
+                }
+            });
+            logDebugPanel('收到 welcome，地图 ' + gameSizes.width + 'x' + gameSizes.height + '。', 'ok');
             if (options.chatInput) {
                 options.chatInput.show();
             }
@@ -141,43 +190,57 @@ function createSocketController(options) {
         });
 
         nextSocket.on('playerDied', function (data) {
+            markDebugSocketEvent('playerDied');
             var playerName = data.playerEatenName || data.name;
             var playerLabel = isUnnamedCell(playerName) ? options.i18n.t('hud.unnamedCell') : playerName;
+            logDebugPanel('玩家死亡事件：' + playerLabel + ' 被吃掉。', 'info');
             options.getChat().addSystemLine(options.i18n.t('system.playerEaten', {name: playerLabel}));
         });
 
         nextSocket.on('playerDisconnect', function (data) {
+            markDebugSocketEvent('playerDisconnect');
+            logDebugPanel('玩家离开：' + (isUnnamedCell(data.name) ? '未命名单元' : data.name) + '。', 'info');
             options.getChat().addSystemLine(options.i18n.t('system.playerDisconnected', {
                 name: isUnnamedCell(data.name) ? options.i18n.t('hud.unnamedCell') : data.name
             }));
         });
 
         nextSocket.on('playerJoin', function (data) {
+            markDebugSocketEvent('playerJoin');
+            logDebugPanel('玩家加入：' + (isUnnamedCell(data.name) ? '未命名单元' : data.name) + '。', 'info');
             options.getChat().addSystemLine(options.i18n.t('system.playerJoined', {
                 name: isUnnamedCell(data.name) ? options.i18n.t('hud.unnamedCell') : data.name
             }));
         });
 
         nextSocket.on('leaderboard', function (data) {
+            markDebugSocketEvent('leaderboard');
             options.setLeaderboard(data.leaderboard);
+            logDebugPanel('排行榜更新，条目 ' + ((data.leaderboard || []).length) + ' 个。', 'info');
             renderHud(true);
         });
 
         nextSocket.on('playerMetaUpdate', function (metaList) {
+            markDebugSocketEvent('playerMetaUpdate');
             cachePlayerMeta(metaList);
             hydrateLocalPlayerMeta();
+            logDebugPanel('玩家元数据更新，条目 ' + ((metaList || []).length) + ' 个。', 'info');
             renderHud(true);
         });
 
         nextSocket.on('serverMSG', function (data) {
+            markDebugSocketEvent('serverMSG');
             options.getChat().addSystemLine(data);
         });
 
         nextSocket.on('serverSendPlayerChat', function (data) {
+            markDebugSocketEvent('serverSendPlayerChat');
             options.getChat().addChatLine(data.sender, data.message, false);
         });
 
         nextSocket.on('npc:speak', function (data) {
+            markDebugSocketEvent('npc:speak');
+            logDebugPanel('NPC 输出：' + (data.npcName || data.npcId || '未知 NPC') + ' 说话。', 'ok');
             if (options.speechBubble) {
                 options.speechBubble.show(data.npcId, data.text, data.duration || 3000);
             }
@@ -187,12 +250,14 @@ function createSocketController(options) {
         });
 
         nextSocket.on('npc:paint', function (data) {
+            markDebugSocketEvent('npc:paint');
             var localPlayer = options.getPlayer();
             if (!localPlayer) {
                 return;
             }
 
             localPlayer.playerCardPreviewDataUrl = data.previewDataUrl || localPlayer.playerCardPreviewDataUrl;
+            logDebugPanel('NPC 名片绘制输出已收到。', 'ok');
             if (options.paintToast) {
                 options.paintToast.show(data.message || (data.npcName + ' 在你身上画了一笔'), 2000);
             }
@@ -200,12 +265,15 @@ function createSocketController(options) {
         });
 
         nextSocket.on('settlement', function (data) {
+            markDebugSocketEvent('settlement');
+            logDebugPanel('结算输出已收到。', 'ok');
             if (options.settlementPanel) {
                 options.settlementPanel.show(data);
             }
         });
 
         nextSocket.on('serverTellPlayerMove', function (playerData, userData, foodsList, massList, virusList, partLootList, ghostList) {
+            markDebugSocketEvent('serverTellPlayerMove');
             if (options.global.playerType === 'player') {
                 hydrateLocalPlayerMeta();
                 hydratePlayerState(options.getPlayer(), playerData);
@@ -224,7 +292,14 @@ function createSocketController(options) {
         });
 
         nextSocket.on('RIP', function () {
+            markDebugSocketEvent('RIP');
+            logDebugPanel('本机玩家死亡，准备回到开始菜单。', 'warn');
             options.global.gameStart = false;
+            updateDebugPanel({
+                game: {
+                    started: false
+                }
+            });
             if (options.chatInput) {
                 options.chatInput.hide();
             }
@@ -240,8 +315,18 @@ function createSocketController(options) {
         });
 
         nextSocket.on('kick', function (reason) {
+            markDebugSocketEvent('kick');
+            logDebugPanel('本机玩家被踢出：' + (reason || '未提供原因') + '。', 'warn');
             options.global.gameStart = false;
             options.global.kicked = true;
+            updateDebugPanel({
+                socket: {
+                    connected: false
+                },
+                game: {
+                    started: false
+                }
+            });
             if (options.chatInput) {
                 options.chatInput.hide();
             }
@@ -280,6 +365,7 @@ function createSocketController(options) {
 
         socket = options.io({query: 'type=' + type});
         socketType = type;
+        logDebugPanel('正在建立 ' + type + ' Socket 连接。', 'info');
         bindSocket(socket);
         assignSocket(socket);
         return socket;
