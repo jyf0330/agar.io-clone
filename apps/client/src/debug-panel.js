@@ -1,8 +1,12 @@
 'use strict';
 
 var MAX_LOGS = 8;
+var MAX_RECENT_EVENTS = 3;
 var STALE_MOVE_MS = 2500;
 var RENDER_INTERVAL_MS = 250;
+var RECENT_EVENT_IGNORES = {
+    serverTellPlayerMove: true
+};
 
 function createDebugState(now) {
     return {
@@ -21,6 +25,7 @@ function createDebugState(now) {
             lastEventName: '无',
             lastEventAt: 0,
             lastMoveAt: 0,
+            recentEvents: [],
             movePackets: 0,
             metaPackets: 0
         },
@@ -92,6 +97,16 @@ function recordLog(state, message, level, now) {
 function markSocketEvent(state, eventName, now) {
     state.socket.lastEventName = eventName;
     state.socket.lastEventAt = now || state.now || Date.now();
+    state.socket.recentEvents = state.socket.recentEvents || [];
+    if (!RECENT_EVENT_IGNORES[eventName]) {
+        state.socket.recentEvents.unshift({
+            name: eventName,
+            at: state.socket.lastEventAt
+        });
+        if (state.socket.recentEvents.length > MAX_RECENT_EVENTS) {
+            state.socket.recentEvents.length = MAX_RECENT_EVENTS;
+        }
+    }
     if (eventName === 'serverTellPlayerMove') {
         state.socket.movePackets += 1;
         state.socket.lastMoveAt = state.socket.lastEventAt;
@@ -124,6 +139,40 @@ function formatModule(name, enabled) {
         + name + '：' + (enabled ? '有输出' : '未输出') + '</span>';
 }
 
+function getRecentEvents(state) {
+    var events = state.socket.recentEvents || [];
+    if (events.length) {
+        return events;
+    }
+    if (state.socket.lastEventName && state.socket.lastEventName !== '无' && !RECENT_EVENT_IGNORES[state.socket.lastEventName]) {
+        return [{
+            name: state.socket.lastEventName,
+            at: state.socket.lastEventAt
+        }];
+    }
+    return [];
+}
+
+function formatRecentEventsHtml(state, now) {
+    var events = getRecentEvents(state);
+    if (!events.length) {
+        return '无';
+    }
+    return events.map(function (event) {
+        return escapeHtml(event.name) + '（' + formatAge(now, event.at) + '）';
+    }).join(' / ');
+}
+
+function formatRecentEventsText(state, now) {
+    var events = getRecentEvents(state);
+    if (!events.length) {
+        return '无';
+    }
+    return events.map(function (event) {
+        return event.name + '（' + formatAge(now, event.at) + '）';
+    }).join(' / ');
+}
+
 function formatDebugPanel(state) {
     var now = state.now || Date.now();
     var runtimeLabel = state.game.started ? '游戏中' : '未开始';
@@ -139,14 +188,16 @@ function formatDebugPanel(state) {
     }
 
     return [
+        '<div class="debug-panel-header">',
         '<div class="debug-panel-title">调试面板</div>',
+        '<button id="debugPanelCopyButton" class="debug-panel-copy" type="button">复制</button>',
+        '</div>',
         '<div class="debug-panel-line">运行状态：' + runtimeLabel + ' / ' + escapeHtml(state.game.playerType || '未知') + '</div>',
         '<div class="debug-panel-line">帧率：' + (state.frame.fps || 0) + ' FPS / ' + (state.frame.frameMs || 0) + 'ms</div>',
         '<div class="debug-panel-line">Socket：' + socketLabel
             + ' · 延迟：' + (typeof state.socket.latencyMs === 'number' ? state.socket.latencyMs + 'ms' : '未知')
             + '</div>',
-        '<div class="debug-panel-line">最近事件：' + escapeHtml(state.socket.lastEventName || '无')
-            + '（' + formatAge(now, state.socket.lastEventAt) + '）'
+        '<div class="debug-panel-line">最近事件：' + formatRecentEventsHtml(state, now)
             + ' · 移动包 ' + state.socket.movePackets
             + ' · 元数据 ' + state.socket.metaPackets
             + '</div>',
@@ -181,6 +232,69 @@ function formatDebugPanel(state) {
             }).join('') : '<li>暂无调试事件</li>')
             + '</ol>'
     ].join('');
+}
+
+function formatDebugPanelCopyText(state) {
+    var now = state.now || Date.now();
+    var runtimeLabel = state.game.started ? '游戏中' : '未开始';
+    var socketLabel = state.socket.connected ? '已连接' : '未连接';
+    var lines = [
+        '调试面板',
+        '运行状态：' + runtimeLabel + ' / ' + (state.game.playerType || '未知'),
+        '帧率：' + (state.frame.fps || 0) + ' FPS / ' + (state.frame.frameMs || 0) + 'ms',
+        'Socket：' + socketLabel + ' · 延迟：' + (typeof state.socket.latencyMs === 'number' ? state.socket.latencyMs + 'ms' : '未知'),
+        '最近事件：' + formatRecentEventsText(state, now) + ' · 移动包 ' + state.socket.movePackets + ' · 元数据 ' + state.socket.metaPackets,
+        '实体：玩家 ' + state.world.players
+            + ' / 细胞 ' + state.world.cells
+            + ' / 食物 ' + state.world.foods
+            + ' / 喷射 ' + state.world.fireFood
+            + ' / 病毒 ' + state.world.viruses
+            + ' / 部位 ' + state.world.partLoot
+            + ' / 回响 ' + state.world.ghosts,
+        '本机玩家：' + (state.player.name || state.player.id || '未知')
+            + ' · 质量 ' + Math.round(state.player.mass || 0)
+            + ' · 坐标 ' + Math.round(state.player.x || 0) + ',' + Math.round(state.player.y || 0),
+        '模块：NPC ' + (state.modules.npc ? '有输出' : '未输出')
+            + ' / 聊天 ' + (state.modules.chat ? '有输出' : '未输出')
+            + ' / 身体 ' + (state.modules.body ? '有输出' : '未输出')
+            + ' / 跟宠 ' + (state.modules.pet ? '有输出' : '未输出')
+            + ' / 历史回响 ' + (state.modules.ghostDebug ? '有输出' : '未输出')
+            + ' / 实体化 ' + (state.modules.materialization ? '有输出' : '未输出')
+            + ' / 连接 ' + (state.modules.connection ? '有输出' : '未输出')
+            + ' / 名片 ' + (state.modules.playerCard ? '有输出' : '未输出')
+    ];
+
+    if (state.logs.length) {
+        lines.push('中文事件日志：');
+        state.logs.forEach(function (entry) {
+            lines.push('- ' + entry.message);
+        });
+    } else {
+        lines.push('中文事件日志：暂无调试事件');
+    }
+
+    return lines.join('\n');
+}
+
+function copyTextToClipboard(document, win, text) {
+    win = win || document.defaultView;
+    if (win && win.navigator && win.navigator.clipboard && win.navigator.clipboard.writeText) {
+        return win.navigator.clipboard.writeText(text);
+    }
+
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', 'readonly');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        document.execCommand('copy');
+    } finally {
+        document.body.removeChild(textarea);
+    }
+    return Promise.resolve();
 }
 
 function summarizeWorld(snapshot) {
@@ -234,6 +348,7 @@ function summarizeModules(snapshot) {
 
 function createDebugPanel(options) {
     var document = options.document;
+    var win = options.window;
     var root = document.getElementById('debugPanel');
     var toggle = document.getElementById('debugPanelToggle');
     var state = createDebugState(Date.now());
@@ -262,6 +377,25 @@ function createDebugPanel(options) {
         root.innerHTML = formatDebugPanel(state);
         root.className = state.visible ? 'debug-panel' : 'debug-panel is-collapsed';
         toggle.className = state.visible ? 'debug-panel-toggle is-open' : 'debug-panel-toggle';
+        bindCopyButton();
+    }
+
+    function bindCopyButton() {
+        var copyButton = root.querySelector('#debugPanelCopyButton');
+        if (!copyButton) {
+            return;
+        }
+        copyButton.addEventListener('click', function () {
+            copyTextToClipboard(document, win, formatDebugPanelCopyText(state))
+                .then(function () {
+                    recordLog(state, '调试面板内容已复制。', 'ok', Date.now());
+                    render(true);
+                })
+                .catch(function () {
+                    recordLog(state, '复制失败，请手动选择调试面板内容。', 'warn', Date.now());
+                    render(true);
+                });
+        });
     }
 
     toggle.addEventListener('click', function () {
@@ -327,5 +461,6 @@ module.exports = {
     recordLog: recordLog,
     markSocketEvent: markSocketEvent,
     formatDebugPanel: formatDebugPanel,
+    formatDebugPanelCopyText: formatDebugPanelCopyText,
     createDebugPanel: createDebugPanel
 };
