@@ -327,6 +327,7 @@ describe('game-loop-service.js', () => {
     const npc = new playerUtils.Player('npc-mochi');
     const socketEvents = [];
     const clearedTimers = [];
+    const roundEndedPlayers = [];
 
     playerA.init({ x: 100, y: 100 }, config.defaultPlayerMass);
     playerA.clientProvidedData({
@@ -369,6 +370,11 @@ describe('game-loop-service.js', () => {
           }
         };
       },
+      onRoundEnd(players) {
+        players.forEach((player) => {
+          roundEndedPlayers.push(player.id);
+        });
+      },
       getSpectatorIds() { return []; }
     });
 
@@ -381,6 +387,7 @@ describe('game-loop-service.js', () => {
 
     expect(socketEvents.filter((event) => event.name === 'settlement')).to.have.length(2);
     expect(socketEvents.filter((event) => event.name === 'RIP')).to.have.length(2);
+    expect(roundEndedPlayers).to.deep.equal(['player-a', 'player-b']);
     expect(socketEvents.find((event) => event.id === 'player-a' && event.name === 'settlement').payload).to.include({
       endedReason: 'round_end',
       playerId: 'player-a',

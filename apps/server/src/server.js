@@ -97,6 +97,11 @@ const gameLoopService = createGameLoopService({
     ghostRecorder,
     memoryStore,
     getRoundClock: () => roundClock,
+    onRoundEnd() {
+        finalizeRoundMemoryIfNeeded().catch((error) => {
+            console.error('[NPC] round end memory finalizer failed', error);
+        });
+    },
     getSocket: (id) => sockets[id],
     getSpectatorIds: () => spectators.slice()
 });

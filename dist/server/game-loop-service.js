@@ -18,6 +18,7 @@ function createGameLoopService(options) {
   const ghostManager = options.ghostManager;
   const ghostRecorder = options.ghostRecorder;
   const memoryStore = options.memoryStore;
+  const onRoundEnd = typeof options.onRoundEnd === 'function' ? options.onRoundEnd : null;
   const getRoundClock = options.getRoundClock || function () {
     return {
       startedAt: Date.now()
@@ -149,6 +150,13 @@ function createGameLoopService(options) {
       return false;
     }
     const activeHumans = map.players.data.filter(player => player && !player.isNpc);
+    if (activeHumans.length && onRoundEnd) {
+      try {
+        onRoundEnd(activeHumans);
+      } catch (error) {
+        console.warn('[V5] round end hook failed', error.message);
+      }
+    }
     activeHumans.forEach(settlePlayerRoundEnd);
     return activeHumans.length > 0;
   }
