@@ -167,10 +167,12 @@ function createGameLoopService(options) {
         map.players.removePlayerByID(player.id);
     }
 
-    function notifyRoundEnd(activeHumans) {
+    function notifyRoundEnd(activeHumans, context) {
         if (activeHumans.length && onRoundEnd) {
             try {
-                onRoundEnd(activeHumans);
+                onRoundEnd(activeHumans, Object.assign({
+                    forceMemoryFinalize: true
+                }, context || {}));
             } catch (error) {
                 console.warn('[V5] round end hook failed', error.message);
             }
@@ -183,7 +185,9 @@ function createGameLoopService(options) {
         }
 
         const activeHumans = map.players.data.filter((player) => player && !player.isNpc);
-        notifyRoundEnd(activeHumans);
+        notifyRoundEnd(activeHumans, {
+            endedReason: 'round_end'
+        });
         activeHumans.forEach((player) => settlePlayerGameEnd(player, 'round_end'));
         return activeHumans.length > 0;
     }
@@ -198,7 +202,10 @@ function createGameLoopService(options) {
 
         const activeHumans = map.players.data.filter((player) => player && !player.isNpc);
         const winnerName = winner.name || winner.id;
-        notifyRoundEnd(activeHumans);
+        notifyRoundEnd(activeHumans, {
+            endedReason: 'body_complete',
+            winnerName: winnerName
+        });
         activeHumans.forEach((player) => settlePlayerGameEnd(player, 'body_complete', winnerName));
         return activeHumans.length > 0;
     }

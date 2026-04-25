@@ -328,6 +328,7 @@ describe('game-loop-service.js', () => {
     const socketEvents = [];
     const clearedTimers = [];
     const roundEndedPlayers = [];
+    const roundEndContexts = [];
 
     playerA.init({ x: 100, y: 100 }, config.defaultPlayerMass);
     playerA.clientProvidedData({
@@ -370,10 +371,11 @@ describe('game-loop-service.js', () => {
           }
         };
       },
-      onRoundEnd(players) {
+      onRoundEnd(players, context) {
         players.forEach((player) => {
           roundEndedPlayers.push(player.id);
         });
+        roundEndContexts.push(context);
       },
       getSpectatorIds() { return []; }
     });
@@ -388,6 +390,10 @@ describe('game-loop-service.js', () => {
     expect(socketEvents.filter((event) => event.name === 'settlement')).to.have.length(2);
     expect(socketEvents.filter((event) => event.name === 'RIP')).to.have.length(2);
     expect(roundEndedPlayers).to.deep.equal(['player-a', 'player-b']);
+    expect(roundEndContexts[0]).to.include({
+      endedReason: 'round_end',
+      forceMemoryFinalize: true
+    });
     expect(socketEvents.find((event) => event.id === 'player-a' && event.name === 'settlement').payload).to.include({
       endedReason: 'round_end',
       playerId: 'player-a',
@@ -410,6 +416,7 @@ describe('game-loop-service.js', () => {
     const rival = new playerUtils.Player('rival');
     const socketEvents = [];
     const roundEndedPlayers = [];
+    const roundEndContexts = [];
 
     winner.init({ x: 100, y: 100 }, config.defaultPlayerMass);
     winner.clientProvidedData({
@@ -447,10 +454,11 @@ describe('game-loop-service.js', () => {
           durationMs: 90000
         };
       },
-      onRoundEnd(players) {
+      onRoundEnd(players, context) {
         players.forEach((player) => {
           roundEndedPlayers.push(player.id);
         });
+        roundEndContexts.push(context);
       },
       getSocket(id) {
         return {
@@ -474,6 +482,11 @@ describe('game-loop-service.js', () => {
     expect(settlements.every((event) => event.payload.endedReason === 'body_complete')).to.equal(true);
     expect(settlements.every((event) => event.payload.winnerName === 'Alice')).to.equal(true);
     expect(roundEndedPlayers).to.deep.equal(['winner', 'rival']);
+    expect(roundEndContexts[0]).to.include({
+      endedReason: 'body_complete',
+      winnerName: 'Alice',
+      forceMemoryFinalize: true
+    });
     expect(map.players.findByID('winner')).to.equal(null);
     expect(map.players.findByID('rival')).to.equal(null);
   });

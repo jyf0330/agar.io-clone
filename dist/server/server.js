@@ -103,8 +103,10 @@ const gameLoopService = createGameLoopService({
   ghostRecorder,
   memoryStore,
   getRoundClock: () => roundClock,
-  onRoundEnd() {
-    finalizeRoundMemoryIfNeeded().catch(error => {
+  onRoundEnd(_players, context) {
+    finalizeRoundMemoryIfNeeded({
+      force: Boolean(context && context.forceMemoryFinalize)
+    }).catch(error => {
       console.error('[NPC] round end memory finalizer failed', error);
     });
   },
@@ -411,9 +413,10 @@ function refreshNpcRelationshipsForPlayers() {
     });
   });
 }
-async function finalizeRoundMemoryIfNeeded() {
+async function finalizeRoundMemoryIfNeeded(options) {
+  const settings = options || {};
   const elapsedMs = Date.now() - roundClock.startedAt;
-  if (roundMemorySummary.done || roundMemorySummary.started || elapsedMs < roundClock.durationMs) {
+  if (roundMemorySummary.done || roundMemorySummary.started || !settings.force && elapsedMs < roundClock.durationMs) {
     return;
   }
   const humanPlayer = map.players.data.find(player => !player.isNpc);
@@ -511,6 +514,11 @@ const addPlayer = socket => {
       console.log('[CHAT] [' + new Date().getHours() + ':' + new Date().getMinutes() + '] ' + _sender + ': ' + _message);
     }
     if (config.demo && config.demo.enabled && settlement.isDemoSettlementRequest(_message)) {
+      finalizeRoundMemoryIfNeeded({
+        force: true
+      }).catch(error => {
+        console.error('[NPC] demo settlement memory finalizer failed', error);
+      });
       socket.emit('settlement', settlement.buildSettlementSummary({
         player: currentPlayer,
         endedReason: 'demo_quick_end',
