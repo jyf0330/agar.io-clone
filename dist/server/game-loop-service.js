@@ -128,7 +128,7 @@ function createGameLoopService(options) {
     const durationMs = typeof roundClock.durationMs === 'number' ? roundClock.durationMs : 0;
     return durationMs > 0 && now - startedAt >= durationMs;
   }
-  function settlePlayerRoundEnd(player) {
+  function settlePlayerGameEnd(player, endedReason, winnerName) {
     if (!player || player.isNpc) {
       return;
     }
@@ -137,7 +137,8 @@ function createGameLoopService(options) {
     if (playerSocket) {
       playerSocket.emit('settlement', settlement.buildSettlementSummary({
         player,
-        endedReason: 'round_end',
+        endedReason: endedReason,
+        winnerName: winnerName || '',
         recordingConsent: player.consentToRecord !== false,
         historyWritten: player.isReplayAllowed !== false
       }));
@@ -145,11 +146,7 @@ function createGameLoopService(options) {
     }
     map.players.removePlayerByID(player.id);
   }
-  function settleExpiredRound(now) {
-    if (!isRoundExpired(now)) {
-      return false;
-    }
-    const activeHumans = map.players.data.filter(player => player && !player.isNpc);
+  function notifyRoundEnd(activeHumans) {
     if (activeHumans.length && onRoundEnd) {
       try {
         onRoundEnd(activeHumans);
@@ -157,7 +154,27 @@ function createGameLoopService(options) {
         console.warn('[V5] round end hook failed', error.message);
       }
     }
-    activeHumans.forEach(settlePlayerRoundEnd);
+  }
+  function settleExpiredRound(now) {
+    if (!isRoundExpired(now)) {
+      return false;
+    }
+    const activeHumans = map.players.data.filter(player => player && !player.isNpc);
+    notifyRoundEnd(activeHumans);
+    activeHumans.forEach(player => settlePlayerGameEnd(player, 'round_end'));
+    return activeHumans.length > 0;
+  }
+  function settleBodyCompletion() {
+    const winner = map.players.data.find(player => {
+      return player && !player.isNpc && player.materializationStage === 'OVERREAL';
+    });
+    if (!winner) {
+      return false;
+    }
+    const activeHumans = map.players.data.filter(player => player && !player.isNpc);
+    const winnerName = winner.name || winner.id;
+    notifyRoundEnd(activeHumans);
+    activeHumans.forEach(player => settlePlayerGameEnd(player, 'body_complete', winnerName));
     return activeHumans.length > 0;
   }
   function tickPlayer(currentPlayer) {
@@ -277,6 +294,9 @@ function createGameLoopService(options) {
       return;
     }
     map.players.data.forEach(tickPlayer);
+    if (settleBodyCompletion()) {
+      return;
+    }
     map.massFood.move(config.gameWidth, config.gameHeight);
     map.players.handleCollisions(function (gotEaten, eater) {
       const cellGotEaten = map.players.getCell(gotEaten.playerIndex, gotEaten.cellIndex);
@@ -333,6 +353,7 @@ function createGameLoopService(options) {
       }
       map.players.removePlayerByIndex(gotEaten.playerIndex);
     });
+    settleBodyCompletion();
   }
   function gameloop() {
     if (map.players.data.length > 0) {

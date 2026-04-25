@@ -398,4 +398,83 @@ describe('game-loop-service.js', () => {
     expect(map.players.findByID('player-b')).to.equal(null);
     expect(map.players.findByID('npc-mochi')).to.not.equal(null);
   });
+
+  it('should settle all human players when one player reaches overreal body completion', () => {
+    const originalNow = Date.now;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const winner = new playerUtils.Player('winner');
+    const rival = new playerUtils.Player('rival');
+    const socketEvents = [];
+    const roundEndedPlayers = [];
+
+    winner.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    winner.clientProvidedData({
+      name: 'Alice',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    body.applyBodyState(winner, {
+      bodyParts: [
+        body.createBodyPart('HEAD', 1),
+        body.createBodyPart('HAND', 1),
+        body.createBodyPart('FOOT', 1),
+        body.createBodyPart('MOUTH', 1),
+        body.createBodyPart('HEART', 1),
+        body.createBodyPart('SPIKE', 1)
+      ]
+    });
+    rival.init({ x: 240, y: 240 }, config.defaultPlayerMass);
+    rival.clientProvidedData({
+      name: 'Bob',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(winner);
+    map.players.pushNew(rival);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getRoundClock() {
+        return {
+          startedAt: 1700000000000,
+          durationMs: 90000
+        };
+      },
+      onRoundEnd(players) {
+        players.forEach((player) => {
+          roundEndedPlayers.push(player.id);
+        });
+      },
+      getSocket(id) {
+        return {
+          emit(name, payload) {
+            socketEvents.push({id, name, payload});
+          }
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    try {
+      Date.now = () => 1700000001000;
+      service.tickGame();
+    } finally {
+      Date.now = originalNow;
+    }
+
+    const settlements = socketEvents.filter((event) => event.name === 'settlement');
+    expect(settlements).to.have.length(2);
+    expect(settlements.every((event) => event.payload.endedReason === 'body_complete')).to.equal(true);
+    expect(settlements.every((event) => event.payload.winnerName === 'Alice')).to.equal(true);
+    expect(roundEndedPlayers).to.deep.equal(['winner', 'rival']);
+    expect(map.players.findByID('winner')).to.equal(null);
+    expect(map.players.findByID('rival')).to.equal(null);
+  });
 });
