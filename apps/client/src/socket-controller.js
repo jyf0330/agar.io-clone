@@ -25,7 +25,7 @@ function createSocketController(options) {
 
     function findConnectedTargetCardPreview(userData) {
         var player = options.getPlayer();
-        if (!player.connectionTargetId || !userData) {
+        if (!player || !player.connectionTargetId || !userData) {
             return null;
         }
 

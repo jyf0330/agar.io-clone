@@ -454,13 +454,13 @@ function applyTranslations() {
     document.getElementById('bodySignatureSkipButton').textContent = i18n.t('signature.skip');
 }
 
-$("#feed").click(function () {
+document.getElementById('feed').addEventListener('click', function () {
     if (socketEmit.emitIfReady(socket, '1')) {
         window.canvas.reenviar = false;
     }
 });
 
-$("#split").click(function () {
+document.getElementById('split').addEventListener('click', function () {
     if (socketEmit.emitIfReady(socket, '2')) {
         window.canvas.reenviar = false;
     }

@@ -44,4 +44,11 @@ describe('client index html', () => {
     expect(html).to.include('rel="icon"');
     expect(html).to.include('href="img/feed.png"');
   });
+
+  it('should not depend on external jquery for the main menu', () => {
+    const html = fs.readFileSync(path.resolve(__dirname, '../../apps/client/index.html'), 'utf8');
+
+    expect(html).to.not.include('code.jquery.com');
+    expect(html).to.not.include('jquery-');
+  });
 });

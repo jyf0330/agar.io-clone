@@ -122,11 +122,16 @@ function createGameLoopService(options) {
       console.warn('[NPC] accepted suggestion memory write failed', error.message);
     }
   }
-  function isRoundExpired(now) {
-    const roundClock = getRoundClock() || {};
+  function isRoundExpired(now, roundClock) {
+    roundClock = roundClock || getRoundClock() || {};
     const startedAt = typeof roundClock.startedAt === 'number' ? roundClock.startedAt : 0;
     const durationMs = typeof roundClock.durationMs === 'number' ? roundClock.durationMs : 0;
     return durationMs > 0 && now - startedAt >= durationMs;
+  }
+  function restartRoundClock(roundClock, now) {
+    if (roundClock && typeof roundClock.startedAt === 'number') {
+      roundClock.startedAt = now;
+    }
   }
   function settlePlayerGameEnd(player, endedReason, winnerName) {
     if (!player || player.isNpc) {
@@ -158,14 +163,20 @@ function createGameLoopService(options) {
     }
   }
   function settleExpiredRound(now) {
-    if (!isRoundExpired(now)) {
+    const roundClock = getRoundClock() || {};
+    if (!isRoundExpired(now, roundClock)) {
       return false;
     }
     const activeHumans = map.players.data.filter(player => player && !player.isNpc);
+    if (!activeHumans.length) {
+      restartRoundClock(roundClock, now);
+      return false;
+    }
     notifyRoundEnd(activeHumans, {
       endedReason: 'round_end'
     });
     activeHumans.forEach(player => settlePlayerGameEnd(player, 'round_end'));
+    restartRoundClock(roundClock, now);
     return activeHumans.length > 0;
   }
   function settleBodyCompletion() {

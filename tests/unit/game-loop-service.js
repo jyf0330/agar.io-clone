@@ -368,7 +368,8 @@ describe('game-loop-service.js', () => {
         return {
           emit(name, payload) {
             socketEvents.push({id, name, payload});
-          }
+          },
+          disconnect() {}
         };
       },
       onRoundEnd(players, context) {
@@ -403,6 +404,62 @@ describe('game-loop-service.js', () => {
     expect(map.players.findByID('player-a')).to.equal(null);
     expect(map.players.findByID('player-b')).to.equal(null);
     expect(map.players.findByID('npc-mochi')).to.not.equal(null);
+  });
+
+  it('should restart an expired idle round before settling the next player', () => {
+    const originalNow = Date.now;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const roundClock = {
+      startedAt: 1700000000000,
+      durationMs: 5000
+    };
+    const socketEvents = [];
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getRoundClock() {
+        return roundClock;
+      },
+      getSocket(id) {
+        return {
+          emit(name, payload) {
+            socketEvents.push({id, name, payload});
+          }
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    try {
+      Date.now = () => 1700000006000;
+      service.tickGame();
+
+      const player = new playerUtils.Player('late-player');
+      player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+      player.clientProvidedData({
+        name: 'Late',
+        screenWidth: 800,
+        screenHeight: 600
+      });
+      player.lastHeartbeat = new Date().getTime();
+      map.players.pushNew(player);
+
+      Date.now = () => 1700000007000;
+      service.tickGame();
+    } finally {
+      Date.now = originalNow;
+    }
+
+    expect(roundClock.startedAt).to.equal(1700000006000);
+    expect(socketEvents.filter((event) => event.name === 'settlement')).to.have.length(0);
+    expect(socketEvents.filter((event) => event.name === 'RIP')).to.have.length(0);
+    expect(map.players.findByID('late-player')).to.not.equal(null);
   });
 
   it('should settle all human players when one player reaches overreal body completion', () => {
@@ -464,7 +521,8 @@ describe('game-loop-service.js', () => {
         return {
           emit(name, payload) {
             socketEvents.push({id, name, payload});
-          }
+          },
+          disconnect() {}
         };
       },
       getSpectatorIds() { return []; }

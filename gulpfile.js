@@ -55,7 +55,7 @@ function copyClientHtml() {
 }
 
 function copyClientAssets() {
-    return gulp.src([`${PATHS.clientAssets}/**/*.*`], { base: PATHS.clientAssets })
+    return gulp.src([`${PATHS.clientAssets}/**/*.*`], { base: PATHS.clientAssets, encoding: false })
         .pipe(gulp.dest(`./${PATHS.dist}/client/`));
 }
 
