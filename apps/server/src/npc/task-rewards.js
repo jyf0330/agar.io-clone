@@ -2,6 +2,26 @@
 
 const body = require('../body');
 
+const DEFAULT_TASK_RADIUS = 360;
+
+function getNpcPosition(npc) {
+    const player = npc && npc.player ? npc.player : {};
+    return {
+        x: typeof player.x === 'number' ? player.x : 0,
+        y: typeof player.y === 'number' ? player.y : 0
+    };
+}
+
+function isPlayerNearNpc(player, npc, radius) {
+    if (!player || !npc) {
+        return false;
+    }
+
+    const position = getNpcPosition(npc);
+    const taskRadius = typeof radius === 'number' ? radius : DEFAULT_TASK_RADIUS;
+    return Math.hypot((player.x || 0) - position.x, (player.y || 0) - position.y) <= taskRadius;
+}
+
 function createNpcTaskRewardPart(options) {
     const settings = options || {};
     return body.createBodyPart(settings.type || 'HAND', 1, {
@@ -58,6 +78,9 @@ function grantNpcTaskReward(options) {
     const player = settings.player;
     const taskId = settings.taskId || 'find-echo-hand';
     const npcId = npc.id || settings.npcId || '';
+    if (!isPlayerNearNpc(player, npc, settings.taskRadius)) {
+        return null;
+    }
     const position = {
         x: player.x,
         y: player.y
@@ -94,5 +117,6 @@ function isTaskRewardRequest(message) {
 module.exports = {
     createNpcTaskRewardPart,
     grantNpcTaskReward,
+    isPlayerNearNpc,
     isTaskRewardRequest
 };

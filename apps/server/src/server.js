@@ -592,6 +592,16 @@ const addPlayer = (socket) => {
                     sessionId: memorySessionId,
                     mapId: config.mapId || 'fixed-arena'
                 });
+                if (!reward) {
+                    io.emit('npc:speak', {
+                        npcId: activeNpc.id,
+                        npcName: activeNpc.player.name,
+                        text: '先靠近我，这个任务才算交差。',
+                        duration: 3000
+                    });
+                    ghostRecorder.recordChat(currentPlayer, _message, Date.now());
+                    return;
+                }
                 io.emit('npc:speak', {
                     npcId: activeNpc.id,
                     npcName: activeNpc.player.name,

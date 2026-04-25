@@ -67,4 +67,29 @@ describe('npc task rewards', () => {
     expect(rewards.isTaskRewardRequest('附近有什么部位？')).to.equal(false);
     expect(rewards.isTaskRewardRequest('这件部位要不要换？')).to.equal(false);
   });
+
+  it('should require the player to reach the npc before granting the reward', () => {
+    const events = [];
+    const map = new mapUtils.Map(config);
+    const player = new playerUtils.Player('player-1');
+    player.init({ x: 3000, y: 3200 }, config.defaultPlayerMass);
+
+    const result = rewards.grantNpcTaskReward({
+      map,
+      player,
+      npc: { id: 'mochi', player: { name: 'Mochi', x: 280, y: 310 } },
+      memoryStore: {
+        recordEvent(event) {
+          events.push(event);
+        }
+      },
+      sessionId: 'session-now',
+      mapId: 'fixed-arena'
+    });
+
+    expect(result).to.equal(null);
+    expect(map.partLoot.data).to.have.length(0);
+    expect(events).to.have.length(0);
+    expect(rewards.isPlayerNearNpc(player, {player: {x: 280, y: 310}})).to.equal(false);
+  });
 });
