@@ -6,8 +6,9 @@ const settlement = require('./settlement');
 const util = require('./lib/util');
 const {
   createSpectatorSyncData,
-  projectPlayersForSync,
-  projectVisibleWorldForSync
+  projectPlayersMetaForSync,
+  projectPlayersMovementForSync,
+  projectVisibleWorldForMovementSync
 } = require('./player-projection');
 const PET_SUGGESTION_ACCEPT_WINDOW_MS = 30000;
 function createGameLoopService(options) {
@@ -27,8 +28,20 @@ function createGameLoopService(options) {
   const getSocket = options.getSocket;
   const getSpectatorIds = options.getSpectatorIds;
   const initMassLog = util.mathLog(config.defaultPlayerMass, config.slowBase);
+  const syncConfig = config.sync || {};
+  const spectatorUpdateIntervalMs = typeof syncConfig.spectatorUpdateIntervalMs === 'number' ? syncConfig.spectatorUpdateIntervalMs : 100;
+  const syncMetrics = {
+    enabled: Boolean(syncConfig.metricsEnabled),
+    intervalMs: typeof syncConfig.metricsIntervalMs === 'number' ? syncConfig.metricsIntervalMs : 5000,
+    lastLogAt: Date.now(),
+    batches: 0,
+    packets: 0,
+    totalMs: 0,
+    maxMs: 0
+  };
   let leaderboard = [];
   let leaderboardChanged = false;
+  let lastSpectatorUpdateAt = 0;
   const Vector = SAT.Vector;
   function calculateLeaderboard() {
     const topPlayers = map.players.getTopPlayers();
@@ -395,24 +408,55 @@ function createGameLoopService(options) {
     }
     map.balanceMass(config.foodMass, config.gameMass, config.maxFood, config.maxVirus);
   }
-  function updateSpectator(socketId) {
+  function updateSpectator(socketId, now) {
     const socket = getSocket(socketId);
     if (!socket) {
       return;
     }
     const spectatorData = createSpectatorSyncData(socketId, config);
     spectatorData.ghostDebug = map.ghostDebug || null;
-    spectatorData.roundTimer = buildRoundTimer(getRoundClock(), Date.now());
-    socket.emit('serverTellPlayerMove', spectatorData, projectPlayersForSync(map.players.data), map.food.data, map.massFood.data, map.viruses.data, map.partLoot.data, map.ghosts);
+    spectatorData.roundTimer = buildRoundTimer(getRoundClock(), now || Date.now());
+    socket.emit('serverTellPlayerMove', spectatorData, projectPlayersMovementForSync(map.players.data), map.food.data, map.massFood.data, map.viruses.data, map.partLoot.data, map.ghosts);
     if (leaderboardChanged) {
       sendLeaderboard(socket);
     }
   }
+  function recordSyncMetrics(startedAt, packetCount) {
+    if (!syncMetrics.enabled) {
+      return;
+    }
+    const now = Date.now();
+    const durationMs = now - startedAt;
+    syncMetrics.batches += 1;
+    syncMetrics.packets += packetCount;
+    syncMetrics.totalMs += durationMs;
+    syncMetrics.maxMs = Math.max(syncMetrics.maxMs, durationMs);
+    if (now - syncMetrics.lastLogAt < syncMetrics.intervalMs) {
+      return;
+    }
+    console.log('[SYNC] batches=' + syncMetrics.batches + ' packets=' + syncMetrics.packets + ' avgMs=' + (syncMetrics.totalMs / syncMetrics.batches).toFixed(2) + ' maxMs=' + syncMetrics.maxMs);
+    syncMetrics.lastLogAt = now;
+    syncMetrics.batches = 0;
+    syncMetrics.packets = 0;
+    syncMetrics.totalMs = 0;
+    syncMetrics.maxMs = 0;
+  }
+  function sendMetaUpdates() {
+    io.emit('playerMetaUpdate', projectPlayersMetaForSync(map.players.data));
+  }
   function sendUpdates() {
     const now = Date.now();
-    getSpectatorIds().forEach(updateSpectator);
+    const startedAt = now;
+    let packetCount = 0;
+    if (now - lastSpectatorUpdateAt >= spectatorUpdateIntervalMs) {
+      getSpectatorIds().forEach(socketId => {
+        updateSpectator(socketId, now);
+        packetCount += 1;
+      });
+      lastSpectatorUpdateAt = now;
+    }
     map.enumerateVisibleWorld(function (visibleWorld) {
-      const syncPayload = projectVisibleWorldForSync(visibleWorld);
+      const syncPayload = projectVisibleWorldForMovementSync(visibleWorld);
       syncPayload.playerData.ghostDebug = map.ghostDebug || null;
       syncPayload.playerData.roundTimer = buildRoundTimer(getRoundClock(), now);
       const socket = getSocket(syncPayload.playerData.id);
@@ -420,16 +464,19 @@ function createGameLoopService(options) {
         return;
       }
       socket.emit('serverTellPlayerMove', syncPayload.playerData, syncPayload.visiblePlayers, syncPayload.visibleFood, syncPayload.visibleMass, syncPayload.visibleViruses, syncPayload.visiblePartLoot, syncPayload.visibleGhosts);
+      packetCount += 1;
       if (leaderboardChanged) {
         sendLeaderboard(socket);
       }
     });
     leaderboardChanged = false;
+    recordSyncMetrics(startedAt, packetCount);
   }
   return {
     tickGame,
     tickPlayer,
     gameloop,
+    sendMetaUpdates,
     sendUpdates
   };
 }

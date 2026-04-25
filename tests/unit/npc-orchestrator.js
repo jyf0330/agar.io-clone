@@ -204,6 +204,101 @@ describe('npc orchestrator', () => {
         expect(capturedPrompt.user).to.contain('part_pickup');
     });
 
+    it('should cache npc memory reads between hot ticks', () => {
+        const npc = createNpc('mochi');
+        const humanPlayer = createHumanPlayer();
+        const originalNow = Date.now;
+        let summaryReads = 0;
+        let impressionReads = 0;
+        const orchestrator = new Orchestrator({
+            memoryCacheTtlMs: 10000,
+            memoryStore: {
+                listSessionSummaries() {
+                    summaryReads += 1;
+                    return [{summary: '玩家喜欢蓝色', referencedL1EventIds: ['l1-blue']}];
+                },
+                getPersonaImpression() {
+                    impressionReads += 1;
+                    return {
+                        impression: '玩家喜欢蓝绿色。',
+                        evidenceEventIds: ['l1-blue']
+                    };
+                }
+            }
+        });
+
+        try {
+            Date.now = () => 1000;
+            orchestrator.getMemoryForNpc(npc, {players: [humanPlayer, npc.player]});
+            Date.now = () => 5000;
+            orchestrator.getMemoryForNpc(npc, {players: [humanPlayer, npc.player]});
+            Date.now = () => 12000;
+            orchestrator.getMemoryForNpc(npc, {players: [humanPlayer, npc.player]});
+        } finally {
+            Date.now = originalNow;
+        }
+
+        expect(summaryReads).to.equal(2);
+        expect(impressionReads).to.equal(2);
+    });
+
+    it('should skip routine npc intent memory writes by default', async () => {
+        const npc = createNpc('mochi');
+        const humanPlayer = createHumanPlayer();
+        const originalNow = Date.now;
+        const recordedKinds = [];
+        const orchestrator = new Orchestrator({
+            maxCallsPerSec: 0,
+            routineIntentRecordIntervalMs: 10000,
+            recordEvent(event) {
+                recordedKinds.push(event.kind);
+            }
+        });
+
+        orchestrator.registerNpc(npc);
+        try {
+            Date.now = () => 1000;
+            await orchestrator.tick({players: [humanPlayer, npc.player]}, 1000);
+            Date.now = () => 3000;
+            await orchestrator.tick({players: [humanPlayer, npc.player]}, 1000);
+            Date.now = () => 12000;
+            await orchestrator.tick({players: [humanPlayer, npc.player]}, 1000);
+        } finally {
+            Date.now = originalNow;
+        }
+
+        expect(recordedKinds.filter((kind) => kind === 'npc_intent')).to.have.length(0);
+    });
+
+    it('should throttle routine npc intent memory writes when explicitly enabled', async () => {
+        const npc = createNpc('mochi');
+        const humanPlayer = createHumanPlayer();
+        const originalNow = Date.now;
+        const recordedKinds = [];
+        const orchestrator = new Orchestrator({
+            maxCallsPerSec: 0,
+            recordRoutineIntents: true,
+            routineIntentRecordIntervalMs: 10000,
+            recordEvent(event) {
+                recordedKinds.push(event.kind);
+            }
+        });
+
+        orchestrator.registerNpc(npc);
+        try {
+            Date.now = () => 1000;
+            await orchestrator.tick({players: [humanPlayer, npc.player]}, 1000);
+            Date.now = () => 3000;
+            await orchestrator.tick({players: [humanPlayer, npc.player]}, 1000);
+            Date.now = () => 12000;
+            await orchestrator.tick({players: [humanPlayer, npc.player]}, 1000);
+        } finally {
+            Date.now = originalNow;
+        }
+
+        expect(recordedKinds.filter((kind) => kind === 'npc_intent')).to.have.length(2);
+    });
+
     it('should fall back to random walk when the llm call fails', async () => {
         const npc = new NpcState({
             id: 'mochi',

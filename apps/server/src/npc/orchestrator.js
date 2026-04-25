@@ -257,6 +257,11 @@ class Orchestrator {
             roundDurationMs: 90000,
             sessionStartedAt: Date.now(),
             maxPromptTokens: 2000,
+            memoryCacheTtlMs: 10000,
+            recordLlmIntents: true,
+            recordRoutineIntents: false,
+            routineIntentRecordIntervalMs: 10000,
+            useMemoryInRoutineTicks: true,
             ask: wrapper.ask,
             emitEvent: null,
             recordEvent: null,
@@ -267,6 +272,8 @@ class Orchestrator {
         this.callTimestamps = [];
         this.lastHandledChatTs = 0;
         this.pendingChatIntents = {};
+        this.memoryCache = {};
+        this.lastRoutineIntentRecordAt = {};
     }
 
     registerNpc(npc) {
@@ -330,6 +337,13 @@ class Orchestrator {
             };
         }
 
+        const now = Date.now();
+        const cacheKey = [anchorPlayer.id, npc.id].join(':');
+        const cachedMemory = this.memoryCache[cacheKey];
+        if (cachedMemory && now - cachedMemory.loadedAt < this.config.memoryCacheTtlMs) {
+            return cachedMemory.value;
+        }
+
         try {
             const summaries = memoryStore.listSessionSummaries({
                 playerId: anchorPlayer.id,
@@ -338,10 +352,15 @@ class Orchestrator {
             }) || [];
             const impression = memoryStore.getPersonaImpression(anchorPlayer.id, npc.id);
 
-            return {
+            const value = {
                 summaries: summaries.filter(hasSummaryEvidence),
                 impression: hasPersonaEvidence(impression) ? impression : null
             };
+            this.memoryCache[cacheKey] = {
+                loadedAt: now,
+                value: value
+            };
+            return value;
         } catch (error) {
             console.warn('[NPC] memory recall failed', error.message);
             return {
@@ -349,6 +368,31 @@ class Orchestrator {
                 impression: null
             };
         }
+    }
+
+    shouldRecordNpcIntent(npc, source, now) {
+        if (source === 'chat') {
+            return true;
+        }
+        if (source === 'llm' && this.config.recordLlmIntents !== false) {
+            return true;
+        }
+        if (this.config.recordRoutineIntents !== true) {
+            return false;
+        }
+
+        const npcId = npc && npc.id ? npc.id : 'npc';
+        const lastRecordedAt = this.lastRoutineIntentRecordAt[npcId];
+        if (typeof lastRecordedAt !== 'number') {
+            this.lastRoutineIntentRecordAt[npcId] = now;
+            return true;
+        }
+        if (now - lastRecordedAt < this.config.routineIntentRecordIntervalMs) {
+            return false;
+        }
+
+        this.lastRoutineIntentRecordAt[npcId] = now;
+        return true;
     }
 
     buildMemoryByNpc(gameState) {
@@ -437,7 +481,9 @@ class Orchestrator {
                 round_remaining_sec: Math.ceil(roundState.remainingMs / 1000),
                 last_player_action: gameState && gameState.lastPlayerAction ? gameState.lastPlayerAction : 'idle',
                 petContext: buildPetContext(anchorPlayer, gameState),
-                memory: this.getMemoryForNpc(npc, gameState)
+                memory: this.config.useMemoryInRoutineTicks === false
+                    ? {summaries: [], impression: null}
+                    : this.getMemoryForNpc(npc, gameState)
             };
         });
     }
@@ -1031,12 +1077,15 @@ class Orchestrator {
             }
             const parsedIntent = this.resolveIntent(parsedIntents, npc, index, mapSize, safeState);
             const nextIntent = pendingChatIntent || parsedIntent || this.buildFallbackIntent(npc, safeState, mapSize, context);
-            this.recordNpcEvent('npc_intent', npc, safeState, {
-                type: nextIntent.type,
-                params: nextIntent.params || {},
-                reason: nextIntent.reason || '',
-                source: pendingChatIntent ? 'chat' : parsedIntent ? 'llm' : 'fallback'
-            });
+            const intentSource = pendingChatIntent ? 'chat' : parsedIntent ? 'llm' : 'fallback';
+            if (this.shouldRecordNpcIntent(npc, intentSource, now)) {
+                this.recordNpcEvent('npc_intent', npc, safeState, {
+                    type: nextIntent.type,
+                    params: nextIntent.params || {},
+                    reason: nextIntent.reason || '',
+                    source: intentSource
+                });
+            }
 
             if (nextIntent.type === 'speak') {
                 return this.handleNpcSpeak(npc, safeState, {

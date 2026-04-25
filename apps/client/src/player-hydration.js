@@ -25,13 +25,19 @@ const PLAYER_SYNC_FIELDS = [
     'cells'
 ];
 
+function hasField(payload, fieldName) {
+    return Object.prototype.hasOwnProperty.call(payload, fieldName);
+}
+
 function hydratePlayerState(player, playerData) {
     if (!player || !playerData) {
         return player;
     }
 
     PLAYER_SYNC_FIELDS.forEach((fieldName) => {
-        player[fieldName] = playerData[fieldName];
+        if (hasField(playerData, fieldName)) {
+            player[fieldName] = playerData[fieldName];
+        }
     });
 
     return player;

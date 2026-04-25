@@ -124,6 +124,11 @@ const orchestrator = new Orchestrator({
   sessionId: memorySessionId,
   sessionStartedAt: Date.now(),
   roundDurationMs: roundClock.durationMs,
+  memoryCacheTtlMs: config.npc && config.npc.memoryCacheTtlMs,
+  recordLlmIntents: Boolean(config.npc && config.npc.recordLlmIntents),
+  recordRoutineIntents: Boolean(config.npc && config.npc.recordRoutineIntents),
+  routineIntentRecordIntervalMs: config.npc && config.npc.routineIntentRecordIntervalMs,
+  useMemoryInRoutineTicks: Boolean(config.npc && config.npc.useMemoryInRoutineTicks),
   emitEvent(eventName, payload) {
     io.emit(eventName, payload);
   },
@@ -175,6 +180,7 @@ const PET_ALIASES = {
   wugui: 'wugui',
   '乌龟': 'wugui'
 };
+const npcRelationshipCache = {};
 let sockets = {};
 let spectators = [];
 app.use(express.static(path.join(__dirname, '../client')));
@@ -394,15 +400,31 @@ function speakPreviousExpectations(currentPlayer) {
 }
 function refreshNpcRelationshipsForPlayers() {
   const humanPlayers = map.players.data.filter(player => !player.isNpc);
+  const now = Date.now();
+  const ttlMs = config.npc && typeof config.npc.relationshipCacheTtlMs === 'number' ? config.npc.relationshipCacheTtlMs : 10000;
   humanPlayers.forEach(player => {
     ensureActivePetForPlayer(player);
     player.npcRelationships = npcRoster.map(npc => {
       let relationshipValue = npc.personality && npc.personality.relationship_schema && typeof npc.personality.relationship_schema.init_value === 'number' ? npc.personality.relationship_schema.init_value : 0;
+      const cacheKey = [player.id, npc.id].join(':');
+      const cachedRelationship = npcRelationshipCache[cacheKey];
+      if (cachedRelationship && now - cachedRelationship.loadedAt < ttlMs) {
+        relationshipValue = cachedRelationship.relationshipValue;
+        return {
+          npcId: npc.id,
+          npcName: npc.player.name,
+          relationshipValue: relationshipValue
+        };
+      }
       try {
         const impression = memoryStore.getPersonaImpression(player.id, npc.id);
         if (impression && typeof impression.relationshipValue === 'number') {
           relationshipValue = impression.relationshipValue;
         }
+        npcRelationshipCache[cacheKey] = {
+          loadedAt: now,
+          relationshipValue: relationshipValue
+        };
       } catch (error) {
         console.warn('[NPC] relationship HUD refresh failed', error.message);
       }
@@ -470,6 +492,7 @@ const addPlayer = socket => {
         npcsAnchoredToPlayer = true;
         speakPreviousExpectations(currentPlayer);
       }
+      gameLoopService.sendMetaUpdates();
       io.emit('playerJoin', {
         name: currentPlayer.name
       });
@@ -565,6 +588,7 @@ const addPlayer = socket => {
         text: '现在我跟着你。',
         duration: 2500
       });
+      gameLoopService.sendMetaUpdates();
       ghostRecorder.recordChat(currentPlayer, _message, Date.now());
       return;
     }
@@ -722,14 +746,15 @@ if (npcFeaturesEnabled) {
     }, 1000).catch(error => {
       console.error('[NPC] orchestrator tick failed', error);
     });
-  }, 1000);
+  }, config.npc && config.npc.tickIntervalMs ? config.npc.tickIntervalMs : 2000);
   setInterval(() => {
     finalizeRoundMemoryIfNeeded().catch(error => {
       console.error('[NPC] session memory finalizer failed', error);
     });
-  }, 1000);
-  setInterval(refreshNpcRelationshipsForPlayers, 1000);
+  }, config.npc && config.npc.memoryFinalizeIntervalMs ? config.npc.memoryFinalizeIntervalMs : 5000);
+  setInterval(refreshNpcRelationshipsForPlayers, config.npc && config.npc.relationshipRefreshIntervalMs ? config.npc.relationshipRefreshIntervalMs : 10000);
 }
+setInterval(gameLoopService.sendMetaUpdates, config.sync && config.sync.playerMetaUpdateIntervalMs ? config.sync.playerMetaUpdateIntervalMs : 2000);
 setInterval(gameLoopService.sendUpdates, 1000 / config.networkUpdateFactor);
 
 // Don't touch, IP configurations.

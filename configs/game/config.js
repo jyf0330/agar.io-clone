@@ -1,6 +1,7 @@
 const demoModeEnabled = process.env.V5_DEMO_MODE === '1';
 const persistedGhostHistoryEnabled = process.env.V5_GHOST_PERSISTENCE === '1';
 const ghostTraceRecordingEnabled = process.env.V5_GHOST_TRACE_RECORDING === '1';
+const networkUpdateFactor = Number(process.env.V5_NETWORK_UPDATE_FACTOR || 20);
 const defaultRoundDurationMs = 10 * 60 * 1000;
 const npcModeEnabled = process.env.V5_NPC_ENABLED === '0'
     ? process.env.V3_NPC_ENABLED === '1'
@@ -80,11 +81,26 @@ const config = {
         showNearbyEchoHint: demoModeEnabled
     },
     npc: {
-        enabled: npcModeEnabled
+        enabled: npcModeEnabled,
+        tickIntervalMs: 2000,
+        memoryFinalizeIntervalMs: 5000,
+        relationshipRefreshIntervalMs: 30000,
+        relationshipCacheTtlMs: 30000,
+        memoryCacheTtlMs: 10000,
+        recordLlmIntents: process.env.V5_NPC_RECORD_LLM_INTENTS === '1',
+        recordRoutineIntents: process.env.V5_NPC_RECORD_ROUTINE_INTENTS === '1',
+        useMemoryInRoutineTicks: process.env.V5_NPC_ROUTINE_MEMORY === '1',
+        routineIntentRecordIntervalMs: 10000
+    },
+    sync: {
+        playerMetaUpdateIntervalMs: 2000,
+        spectatorUpdateIntervalMs: 100,
+        metricsEnabled: process.env.V5_SYNC_METRICS === '1',
+        metricsIntervalMs: 5000
     },
     slowBase: 4.5,
     logChat: 0,
-    networkUpdateFactor: 40,
+    networkUpdateFactor: networkUpdateFactor,
     maxHeartbeatInterval: 5000,
     foodUniformDisposition: true,
     newPlayerInitialPosition: "farthest",

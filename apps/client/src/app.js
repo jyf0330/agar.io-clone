@@ -39,6 +39,10 @@ var bodySignatureController;
 var hideStartMenuOnLoad = false;
 var npcFeaturesDisabled = window.location.search.indexOf('npc=0') !== -1 || window.V5_NPC_ENABLED === false;
 var npcFeaturesEnabled = !npcFeaturesDisabled || window.location.search.indexOf('npc=1') !== -1 || window.V3_NPC_ENABLED === true;
+var targetSync = socketEmit.createTargetSync({
+    minIntervalMs: 50,
+    keepAliveMs: 250
+});
 
 var debug = function (args) {
     if (console && console.log) {
@@ -565,7 +569,7 @@ function gameLoop() {
             speechBubble.render(users, player, global.screen);
         }
 
-        socketEmit.emitIfReady(socket, '0', window.canvas.target); // playerSendTarget "Heartbeat".
+        targetSync.emitIfNeeded(socket, '0', window.canvas.target); // playerSendTarget "Heartbeat".
     }
 }
 

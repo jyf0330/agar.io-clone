@@ -517,6 +517,91 @@ describe('game-loop-service.js', () => {
     });
   });
 
+  it('should publish cold player metadata outside the movement snapshot', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const player = new playerUtils.Player('player-meta');
+    const ioEvents = [];
+
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'Meta',
+      screenWidth: 800,
+      screenHeight: 600,
+      playerCardPreviewDataUrl: 'data:image/png;base64,card'
+    });
+    map.players.pushNew(player);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: {
+        emit(name, payload) {
+          ioEvents.push({name, payload});
+        }
+      },
+      connectionService: { clearTimer() {} },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    service.sendMetaUpdates();
+
+    expect(ioEvents[0].name).to.equal('playerMetaUpdate');
+    expect(ioEvents[0].payload[0]).to.include({
+      id: 'player-meta',
+      name: 'Meta',
+      playerCardPreviewDataUrl: 'data:image/png;base64,card'
+    });
+    expect(ioEvents[0].payload[0].cells).to.equal(undefined);
+  });
+
+  it('should keep movement snapshots free of cold player metadata', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const player = new playerUtils.Player('player-hot');
+    const socketEvents = [];
+
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'Hot',
+      screenWidth: 800,
+      screenHeight: 600,
+      playerCardPreviewDataUrl: 'data:image/png;base64,card'
+    });
+    map.players.pushNew(player);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() {
+        return {
+          emit(name, playerData, users) {
+            socketEvents.push({name, playerData, users});
+          }
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    service.sendUpdates();
+
+    const moveEvent = socketEvents.find((event) => event.name === 'serverTellPlayerMove');
+    expect(moveEvent.playerData.cells[0].x).to.equal(100);
+    expect(moveEvent.playerData.playerCardPreviewDataUrl).to.equal(undefined);
+    expect(moveEvent.playerData.bodyParts).to.equal(undefined);
+    expect(moveEvent.users[0].playerCardPreviewDataUrl).to.equal(undefined);
+    expect(moveEvent.users[0].equipmentSlots).to.equal(undefined);
+  });
+
   it('should settle all human players when one player reaches overreal body completion', () => {
     const originalNow = Date.now;
     const map = new mapUtils.Map(Object.assign({}, config, {

@@ -36,6 +36,22 @@ function projectActivePetForSync(activePet) {
     return activePet ? Object.assign({}, activePet) : null;
 }
 
+function projectActivePetMovementForSync(activePet) {
+    if (!activePet) {
+        return null;
+    }
+
+    return {
+        petId: activePet.petId || activePet.npcId || null,
+        npcId: activePet.npcId || activePet.petId || null,
+        name: activePet.name || '',
+        active: activePet.active !== false,
+        x: typeof activePet.x === 'number' ? activePet.x : null,
+        y: typeof activePet.y === 'number' ? activePet.y : null,
+        radius: typeof activePet.radius === 'number' ? activePet.radius : null
+    };
+}
+
 function projectPlayerForSync(player) {
     return {
         x: player.x,
@@ -67,14 +83,77 @@ function projectPlayerForSync(player) {
     };
 }
 
+function projectPlayerMovementForSync(player) {
+    return {
+        x: player.x,
+        y: player.y,
+        cells: (player.cells || []).map(projectCellForSync),
+        massTotal: Math.round(player.massTotal),
+        activePet: projectActivePetMovementForSync(player.activePet),
+        hue: player.hue,
+        isNpc: Boolean(player.isNpc),
+        npcId: player.npcId || null,
+        skeletonKey: player.skeletonKey || null,
+        id: player.id,
+        name: player.name
+    };
+}
+
+function projectPlayerMetaForSync(player) {
+    return {
+        materialization: player.materialization,
+        materializationStage: player.materializationStage,
+        connectionStatus: player.connectionStatus,
+        connectionTargetId: player.connectionTargetId,
+        connectionTargetName: player.connectionTargetName,
+        intimacy: player.intimacy,
+        spike: player.spike,
+        pollution: player.pollution,
+        bodyParts: (player.bodyParts || []).map(projectBodyPartForSync),
+        bodyPartCount: player.bodyPartCount,
+        bodyPartCounts: Object.assign({}, player.bodyPartCounts),
+        equipmentSlots: projectEquipmentSlotsForSync(player.equipmentSlots),
+        bodySignature: player.bodySignature ? Object.assign({}, player.bodySignature) : null,
+        activePet: projectActivePetForSync(player.activePet),
+        npcRelationships: (player.npcRelationships || []).map((entry) => Object.assign({}, entry)),
+        playerCardPreviewDataUrl: player.playerCardPreviewDataUrl,
+        hue: player.hue,
+        isNpc: Boolean(player.isNpc),
+        npcId: player.npcId || null,
+        skeletonKey: player.skeletonKey || null,
+        id: player.id,
+        name: player.name
+    };
+}
+
 function projectPlayersForSync(players) {
     return (players || []).map(projectPlayerForSync);
+}
+
+function projectPlayersMovementForSync(players) {
+    return (players || []).map(projectPlayerMovementForSync);
+}
+
+function projectPlayersMetaForSync(players) {
+    return (players || []).map(projectPlayerMetaForSync);
 }
 
 function projectVisibleWorldForSync(visibleWorld) {
     return {
         playerData: projectPlayerForSync(visibleWorld.player),
         visiblePlayers: projectPlayersForSync(visibleWorld.visiblePlayers),
+        visibleFood: visibleWorld.visibleFood,
+        visibleMass: visibleWorld.visibleMass,
+        visiblePartLoot: (visibleWorld.visiblePartLoot || []).map(projectPartLootForSync),
+        visibleGhosts: (visibleWorld.visibleGhosts || []).map(projectGhostForSync),
+        visibleViruses: visibleWorld.visibleViruses
+    };
+}
+
+function projectVisibleWorldForMovementSync(visibleWorld) {
+    return {
+        playerData: projectPlayerMovementForSync(visibleWorld.player),
+        visiblePlayers: projectPlayersMovementForSync(visibleWorld.visiblePlayers),
         visibleFood: visibleWorld.visibleFood,
         visibleMass: visibleWorld.visibleMass,
         visiblePartLoot: (visibleWorld.visiblePartLoot || []).map(projectPartLootForSync),
@@ -115,8 +194,13 @@ function createSpectatorSyncData(socketID, config) {
 }
 
 module.exports = {
+    projectPlayerMetaForSync,
+    projectPlayerMovementForSync,
     projectPlayerForSync,
+    projectPlayersMetaForSync,
+    projectPlayersMovementForSync,
     projectPlayersForSync,
+    projectVisibleWorldForMovementSync,
     projectVisibleWorldForSync,
     projectPartLootForSync,
     projectActivePetForSync,

@@ -6,6 +6,8 @@ const playerUtils = require('../../apps/server/src/map/player');
 const mapUtils = require('../../apps/server/src/map/map');
 const {
   createSpectatorSyncData,
+  projectPlayerMetaForSync,
+  projectPlayerMovementForSync,
   projectPlayerForSync,
   projectPlayersForSync,
   projectVisibleWorldForSync
@@ -74,6 +76,47 @@ describe('player-projection.js', () => {
       active: true
     });
     expect(projected.activePet.memoryKey).to.equal('player-1:doudou');
+  });
+
+  it('should keep high-frequency movement payloads free of cold player metadata', () => {
+    const player = new playerUtils.Player('player-1');
+    player.init({ x: 200, y: 200 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'artist',
+      screenWidth: 800,
+      screenHeight: 600,
+      playerCardPreviewDataUrl: 'data:image/png;base64,card',
+      bodySignature: {
+        slotType: 'HAND',
+        tier: 'echo'
+      }
+    });
+    player.npcRelationships = [{npcId: 'mochi', relationshipValue: 7}];
+
+    const movement = projectPlayerMovementForSync(player);
+    const meta = projectPlayerMetaForSync(player);
+
+    expect(movement).to.include({
+      id: 'player-1',
+      name: 'artist',
+      x: 200,
+      y: 200
+    });
+    expect(movement.cells[0]).to.include({x: 200, y: 200});
+    expect(movement.playerCardPreviewDataUrl).to.equal(undefined);
+    expect(movement.bodyParts).to.equal(undefined);
+    expect(movement.equipmentSlots).to.equal(undefined);
+    expect(movement.npcRelationships).to.equal(undefined);
+    expect(movement.bodySignature).to.equal(undefined);
+
+    expect(meta).to.include({
+      id: 'player-1',
+      name: 'artist',
+      playerCardPreviewDataUrl: 'data:image/png;base64,card'
+    });
+    expect(meta.bodyParts).to.be.an('array').that.is.not.empty;
+    expect(meta.equipmentSlots.rightHand.partType).to.equal('HAND');
+    expect(meta.npcRelationships[0].relationshipValue).to.equal(7);
   });
 
   it('should project visible world state without coupling map visibility to DTO logic', () => {

@@ -6,6 +6,7 @@ function createSocketController(options) {
     var socket = null;
     var socketType = null;
     var lastHudRenderAt = 0;
+    var playerMetaById = {};
     var HUD_RENDER_INTERVAL_MS = 120;
 
     function debug(message) {
@@ -36,6 +37,40 @@ function createSocketController(options) {
         }
 
         return null;
+    }
+
+    function cachePlayerMeta(metaList) {
+        if (!Array.isArray(metaList)) {
+            return;
+        }
+
+        metaList.forEach(function (meta) {
+            if (!meta || !meta.id) {
+                return;
+            }
+            playerMetaById[meta.id] = Object.assign({}, playerMetaById[meta.id] || {}, meta);
+        });
+    }
+
+    function hydrateLocalPlayerMeta() {
+        var player = options.getPlayer();
+        if (!player || !player.id || !playerMetaById[player.id]) {
+            return;
+        }
+
+        hydratePlayerState(player, playerMetaById[player.id]);
+    }
+
+    function mergePlayerMeta(user) {
+        if (!user || !user.id || !playerMetaById[user.id]) {
+            return user;
+        }
+
+        return Object.assign({}, playerMetaById[user.id], user);
+    }
+
+    function mergePlayerMetaList(userData) {
+        return (userData || []).map(mergePlayerMeta);
     }
 
     function renderHud(force) {
@@ -128,6 +163,12 @@ function createSocketController(options) {
             renderHud(true);
         });
 
+        nextSocket.on('playerMetaUpdate', function (metaList) {
+            cachePlayerMeta(metaList);
+            hydrateLocalPlayerMeta();
+            renderHud(true);
+        });
+
         nextSocket.on('serverMSG', function (data) {
             options.getChat().addSystemLine(data);
         });
@@ -166,17 +207,19 @@ function createSocketController(options) {
 
         nextSocket.on('serverTellPlayerMove', function (playerData, userData, foodsList, massList, virusList, partLootList, ghostList) {
             if (options.global.playerType === 'player') {
+                hydrateLocalPlayerMeta();
                 hydratePlayerState(options.getPlayer(), playerData);
             }
+            var mergedUsers = mergePlayerMetaList(userData);
             options.setWorldState({
-                users: userData,
+                users: mergedUsers,
                 foods: foodsList,
                 fireFood: massList,
                 viruses: virusList,
                 partLoot: partLootList || [],
                 ghosts: ghostList || []
             });
-            options.global.targetPlayerCardPreviewDataUrl = findConnectedTargetCardPreview(userData);
+            options.global.targetPlayerCardPreviewDataUrl = findConnectedTargetCardPreview(mergedUsers);
             renderHud(false);
         });
 
@@ -222,6 +265,7 @@ function createSocketController(options) {
         socket.close();
         assignSocket(null);
         socketType = null;
+        playerMetaById = {};
     }
 
     function ensureSocket(type) {

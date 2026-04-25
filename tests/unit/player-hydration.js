@@ -44,4 +44,24 @@ describe('player-hydration.js', () => {
     expect(player.roundTimer.remainingMs).to.equal(599000);
     expect(player.cells[0].mass).to.equal(3);
   });
+
+  it('should preserve cold metadata when movement sync omits those fields', () => {
+    const player = {
+      playerCardPreviewDataUrl: 'data:image/png;base64,card',
+      bodyParts: [{partType: 'HAND'}],
+      npcRelationships: [{npcId: 'mochi', relationshipValue: 8}],
+      cells: []
+    };
+
+    hydratePlayerState(player, {
+      x: 20,
+      y: 30,
+      cells: [{x: 20, y: 30, mass: 10}]
+    });
+
+    expect(player.x).to.equal(20);
+    expect(player.playerCardPreviewDataUrl).to.equal('data:image/png;base64,card');
+    expect(player.bodyParts[0].partType).to.equal('HAND');
+    expect(player.npcRelationships[0].relationshipValue).to.equal(8);
+  });
 });
