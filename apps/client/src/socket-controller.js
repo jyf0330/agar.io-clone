@@ -7,6 +7,7 @@ function createSocketController(options) {
     var socketType = null;
     var lastHudRenderAt = 0;
     var playerMetaById = {};
+    var playerMetaSignatures = {};
     var HUD_RENDER_INTERVAL_MS = 120;
 
     function debug(message) {
@@ -110,15 +111,23 @@ function createSocketController(options) {
 
     function cachePlayerMeta(metaList) {
         if (!Array.isArray(metaList)) {
-            return;
+            return false;
         }
 
+        var changed = false;
         metaList.forEach(function (meta) {
             if (!meta || !meta.id) {
                 return;
             }
+            var signature = JSON.stringify(meta);
+            if (playerMetaSignatures[meta.id] === signature) {
+                return;
+            }
+            playerMetaSignatures[meta.id] = signature;
             playerMetaById[meta.id] = Object.assign({}, playerMetaById[meta.id] || {}, meta);
+            changed = true;
         });
+        return changed;
     }
 
     function hydrateLocalPlayerMeta() {
@@ -281,7 +290,12 @@ function createSocketController(options) {
         nextSocket.on('playerMetaUpdate', function (metaList) {
             var startedAt = Date.now();
             markDebugSocketEvent('playerMetaUpdate');
-            cachePlayerMeta(metaList);
+            var changed = cachePlayerMeta(metaList);
+            if (!changed) {
+                recordDebugMetaPayload(metaList, startedAt);
+                recordDebugHandlerTiming('playerMetaUpdate', startedAt);
+                return;
+            }
             hydrateLocalPlayerMeta();
             logDebugPanel('玩家元数据更新，条目 ' + ((metaList || []).length) + ' 个。', 'info');
             renderHud(true);
@@ -311,12 +325,15 @@ function createSocketController(options) {
         });
 
         nextSocket.on('npc:paint', function (data) {
-            markDebugSocketEvent('npc:paint');
             var localPlayer = options.getPlayer();
             if (!localPlayer) {
                 return;
             }
+            if (data && data.targetId && localPlayer.id && data.targetId !== localPlayer.id) {
+                return;
+            }
 
+            markDebugSocketEvent('npc:paint');
             localPlayer.playerCardPreviewDataUrl = data.previewDataUrl || localPlayer.playerCardPreviewDataUrl;
             logDebugPanel('NPC 名片绘制输出已收到。', 'ok');
             if (options.paintToast) {
@@ -425,6 +442,7 @@ function createSocketController(options) {
         assignSocket(null);
         socketType = null;
         playerMetaById = {};
+        playerMetaSignatures = {};
     }
 
     function ensureSocket(type) {

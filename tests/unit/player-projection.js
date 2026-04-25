@@ -92,6 +92,14 @@ describe('player-projection.js', () => {
       }
     });
     player.npcRelationships = [{npcId: 'mochi', relationshipValue: 7}];
+    player.setActivePet({
+      petId: 'mochi',
+      npcId: 'mochi',
+      name: 'Mochi',
+      x: 146,
+      y: 242,
+      radius: 18
+    });
 
     const movement = projectPlayerMovementForSync(player);
     const meta = projectPlayerMetaForSync(player);
@@ -108,12 +116,24 @@ describe('player-projection.js', () => {
     expect(movement.equipmentSlots).to.equal(undefined);
     expect(movement.npcRelationships).to.equal(undefined);
     expect(movement.bodySignature).to.equal(undefined);
+    expect(movement.activePet).to.include({
+      x: 146,
+      y: 242,
+      radius: 18
+    });
 
     expect(meta).to.include({
       id: 'player-1',
       name: 'artist',
       playerCardPreviewDataUrl: 'data:image/png;base64,card'
     });
+    expect(meta.activePet).to.include({
+      petId: 'mochi',
+      npcId: 'mochi',
+      name: 'Mochi'
+    });
+    expect(meta.activePet.x).to.equal(undefined);
+    expect(meta.activePet.y).to.equal(undefined);
     expect(meta.bodyParts).to.be.an('array').that.is.not.empty;
     expect(meta.equipmentSlots.rightHand.partType).to.equal('HAND');
     expect(meta.npcRelationships[0].relationshipValue).to.equal(7);

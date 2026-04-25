@@ -75,12 +75,8 @@ function createBodyInventoryPanel(options) {
         }
     }
 
-    function render() {
-        const player = typeof settings.getPlayer === 'function' ? settings.getPlayer() : null;
-        const parts = player && Array.isArray(player.bodyParts) ? player.bodyParts : [];
-
+    function renderList(parts) {
         clearList();
-        button.textContent = '部位 ' + parts.length;
 
         if (!parts.length) {
             list.appendChild(createText(document, 'div', 'body-inventory-empty', '还没有吞到部位。'));
@@ -90,6 +86,19 @@ function createBodyInventoryPanel(options) {
         parts.forEach((part) => {
             list.appendChild(renderPart(document, part));
         });
+    }
+
+    function render() {
+        const player = typeof settings.getPlayer === 'function' ? settings.getPlayer() : null;
+        const parts = player && Array.isArray(player.bodyParts) ? player.bodyParts : [];
+
+        button.textContent = '部位 ' + parts.length;
+
+        if (!visible) {
+            return;
+        }
+
+        renderList(parts);
     }
 
     function setVisible(nextVisible) {

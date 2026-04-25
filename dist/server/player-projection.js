@@ -28,7 +28,19 @@ function projectGhostForSync(ghost) {
   return Object.assign({}, ghost);
 }
 function projectActivePetForSync(activePet) {
-  return activePet ? Object.assign({}, activePet) : null;
+  if (!activePet) {
+    return null;
+  }
+  return {
+    petId: activePet.petId || activePet.npcId || null,
+    npcId: activePet.npcId || activePet.petId || null,
+    name: activePet.name || '',
+    personality: activePet.personality || '',
+    ownerPlayerId: activePet.ownerPlayerId || null,
+    active: activePet.active !== false,
+    radius: typeof activePet.radius === 'number' ? activePet.radius : null,
+    memoryKey: activePet.memoryKey || null
+  };
 }
 function projectActivePetMovementForSync(activePet) {
   if (!activePet) {

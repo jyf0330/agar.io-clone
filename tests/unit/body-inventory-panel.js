@@ -97,8 +97,9 @@ describe('body-inventory-panel.js', () => {
     expect(text).to.contain('connectionRangeBonus +15');
   });
 
-  it('should show an empty state when no parts are available', () => {
+  it('should avoid rebuilding the hidden detail list during routine HUD updates', () => {
     const elements = {};
+    let partCount = 1;
     const document = {
       body: createElement('body'),
       createElement: createElement,
@@ -115,11 +116,50 @@ describe('body-inventory-panel.js', () => {
     const panel = createBodyInventoryPanel({
       document: document,
       getPlayer() {
-        return { bodyParts: [] };
+        return {
+          bodyParts: Array.from({length: partCount}).map((_, index) => ({
+            partType: 'HAND',
+            templateId: 'hand-' + index
+          }))
+        };
       }
     });
 
     panel.update();
+    partCount = 3;
+    panel.update();
+
+    expect(elements.bodyInventoryButton.textContent).to.equal('部位 3');
+    expect(elements.bodyInventoryList.children).to.have.length(0);
+
+    elements.bodyInventoryButton.click();
+
+    expect(elements.bodyInventoryList.children).to.have.length(3);
+  });
+
+  it('should show an empty state when opened with no parts available', () => {
+    const elements = {};
+    const document = {
+      body: createElement('body'),
+      createElement: createElement,
+      getElementById(id) {
+        return elements[id] || null;
+      }
+    };
+    elements.bodyInventoryButton = createElement('button');
+    elements.bodyInventoryPanel = createElement('div');
+    elements.bodyInventoryList = createElement('div');
+    elements.bodyInventoryCloseButton = createElement('button');
+    elements.bodyInventoryPanel.appendChild(elements.bodyInventoryList);
+
+    createBodyInventoryPanel({
+      document: document,
+      getPlayer() {
+        return { bodyParts: [] };
+      }
+    });
+
+    elements.bodyInventoryButton.click();
 
     expect(elements.bodyInventoryList.children[0].textContent).to.equal('还没有吞到部位。');
   });
