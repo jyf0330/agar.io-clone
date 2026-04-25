@@ -64,6 +64,9 @@ function createSettlementPanel(options) {
 
         panel.appendChild(createText(document, 'div', 'settlement-title', 'Body Sources'));
         panel.appendChild(createText(document, 'div', 'settlement-meta', 'Result: ' + (data.endedReason || 'round_end')));
+        if (data.winnerName) {
+            panel.appendChild(createText(document, 'div', 'settlement-meta', 'Winner: ' + data.winnerName));
+        }
         panel.appendChild(createText(document, 'div', 'settlement-meta', data.historyWritten ? 'This run entered the history library.' : 'This run was not written to history.'));
         if (data.historyWritten) {
             panel.appendChild(createText(document, 'div', 'settlement-meta', 'You may become a future historical echo.'));

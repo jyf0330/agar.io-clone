@@ -39,6 +39,7 @@ describe('settlement-panel.js', () => {
 
     panel.show({
       endedReason: 'swallowed',
+      winnerName: 'Alice',
       historyWritten: true,
       keyEvents: [{
         eventType: 'picked',
@@ -58,6 +59,7 @@ describe('settlement-panel.js', () => {
     });
 
     expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('Body Sources');
+    expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('Winner: Alice');
     expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('Thread Hand');
     expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('Key Events');
     expect(wrapper.children[0].children.map((child) => child.textContent).join('\n')).to.contain('picked | Thread Hand | ghost_echo @ 120,130');
