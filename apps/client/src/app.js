@@ -20,6 +20,7 @@ var createChatInput = require('./ui/chat-input');
 var createSettlementPanel = require('./ui/settlement-panel');
 var createBodySignatureController = require('./body-signature-controller');
 var bodySignatureStorage = require('./body-signature-storage');
+var bodySignatureConfig = require('./body-signature-config');
 var i18n = require('./i18n');
 var socketEmit = require('./socket-emit');
 
@@ -73,16 +74,21 @@ function enterGame(type) {
         animloop();
 }
 
-function startGame(type) {
+function startGame(type, options) {
+    options = options || {};
     if (bodySignatureController && bodySignatureController.shouldOpen(type)) {
         bodySignatureController.open(type, function (payload) {
             global.bodySignature = payload;
-            startGame(type);
+            // Skip timed avatar draft so play goes straight to the classic arena after V5 signature.
+            startGame(type, { skipAvatarDraft: true });
         });
         return;
     }
 
-    if (avatarDraftController.shouldStartDraft(type)) {
+    // When V5 body signature is on and we already have a stored signature, treat pregame as done
+    // and do not force the gacha card draft before the arena.
+    var v5BodySignatureDone = bodySignatureConfig.enabled && bodySignatureStorage.loadBodySignature();
+    if (!options.skipAvatarDraft && !v5BodySignatureDone && avatarDraftController.shouldStartDraft(type)) {
         avatarDraftController.beginDraftFlow(type);
         return;
     }

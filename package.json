@@ -3,12 +3,18 @@
   "version": "1.0.0",
   "description": "A simple Agar.io clone",
   "main": "dist/server/server.js",
+  "engines": {
+    "node": ">=20 <26",
+    "npm": ">=10"
+  },
   "scripts": {
     "build": "node ./node_modules/gulp/bin/gulp.js build",
     "start": "node ./node_modules/gulp/bin/gulp.js run",
     "watch": "node ./node_modules/gulp/bin/gulp.js watch",
     "dev": "node ./node_modules/gulp/bin/gulp.js watch",
     "test": "node ./node_modules/gulp/bin/gulp.js test",
+    "audit": "npm audit",
+    "audit:prod": "npm audit --omit=dev",
     "w1:online": "node demo/scripts/week1-playthrough-online.js",
     "w1:chat": "node demo/scripts/week1-playthrough-chat.js",
     "w1:offline": "node demo/scripts/week1-playthrough-offline.js",
@@ -46,37 +52,34 @@
     "wb9688 <wbertrums@gmail.com> (https://github.com/wb9688)"
   ],
   "dependencies": {
-    "@babel/core": "^7.21.8",
-    "@babel/eslint-parser": "^7.21.8",
-    "@babel/preset-env": "^7.21.5",
-    "babel-loader": "^9.1.2",
     "better-sqlite3": "^12.9.0",
-    "chai": "^4.3.7",
     "dotenv": "^16.6.1",
-    "eslint": "^8.40.0",
-    "eslint-plugin-import": "^2.27.5",
     "express": "^4.18.2",
-    "gulp": "^4.0.2",
-    "gulp-babel": "^8.0.0",
-    "gulp-eslint": "^6.0.0",
-    "gulp-nodemon": "^2.5.0",
-    "gulp-todo": "^7.1.1",
-    "jshint": "^2.13.6",
-    "mocha": "^10.2.0",
-    "nodemon": "^3.0.1",
     "openai": "^6.34.0",
     "sat": "^0.9.0",
     "socket.io": "^4.6.1",
-    "socket.io-client": "^4.6.1",
-    "sqlite3": "^5.1.6",
-    "uuid": "^9.0.0",
-    "webpack": "^5.82.1",
-    "webpack-stream": "^7.0.0",
     "yaml": "^2.8.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/eslint-parser": "^7.28.6",
+    "@babel/preset-env": "^7.29.2",
     "@types/sat": "^0.0.32",
+    "babel-loader": "^10.1.1",
+    "chai": "^6.2.2",
+    "eslint": "^8.57.1",
+    "eslint-plugin-import": "^2.32.0",
+    "gulp": "^5.0.1",
+    "gulp-babel": "^8.0.0",
+    "mocha": "^11.3.0",
     "nock": "^14.0.13",
-    "plugin-error": "^2.0.1"
+    "nodemon": "^3.1.14",
+    "plugin-error": "^2.0.1",
+    "socket.io-client": "^4.8.3",
+    "webpack": "^5.106.2",
+    "webpack-stream": "^7.0.0"
+  },
+  "overrides": {
+    "serialize-javascript": "7.0.5"
   }
 }

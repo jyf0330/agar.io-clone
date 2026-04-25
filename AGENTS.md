@@ -35,6 +35,7 @@ Prefer the repository scripts instead of inventing alternatives.
 - Dev/watch: `npm run dev`
 - Build: `npm run build`
 - Test: `npm test`
+- Audit: `npm run audit` / production-focused `npm run audit:prod`
 - Start server: `npm start`
 - Week 1 demo audit: `npm run w1:all`
 
@@ -61,8 +62,70 @@ There is no separate typecheck command in this JavaScript project.
 - Every intentional push that should affect the shared cloud server must be
   paired with the matching cloud-server sync/deploy step. State the target host
   or environment, the sync command or mechanism used, and whether it succeeded.
+- Cloud-server sync must respect the runtime state paths in
+  `docs/13-deployment-environments.md`; do not sync SQLite databases, audit
+  logs, local `.env` files, or machine-specific runtime state from a developer
+  checkout.
 - If a change should not be synced to the cloud server, say so explicitly before
   or immediately after pushing.
+
+## Cloud Server Sync
+
+Active agar.io clone cloud target:
+
+- Host/environment: `Hermes Agent-DqxC` at `124.222.83.113`.
+- SSH user: `ubuntu`; `root` does not accept the project key.
+- Server project directory: `/home/ubuntu/apps/agar-io-clone`.
+- PM2 service: `agar-io-clone`.
+- Runtime port: `3000`.
+- The same server also hosts a separate `food` project on port `3001`; nginx
+  port `80` proxies to `food`, not to `agar-io-clone`.
+
+Use the private key from the local desktop rule folder when syncing, but never
+commit or copy the key into this repository. Keep the key path local to the
+operator's machine.
+
+Before syncing:
+
+- Run the narrowest relevant verification locally; for ordinary deploys prefer
+  `npm test` and `npm run build`.
+- Check the worktree and avoid syncing unrelated local artifacts accidentally.
+- If syncing current uncommitted work, say that explicitly in the final status.
+
+Recommended sync command shape:
+
+```bash
+rsync -az --delete \
+  -e 'ssh -i <path-to-agar.pem> -o StrictHostKeyChecking=accept-new' \
+  --exclude '.git/' \
+  --exclude 'node_modules/' \
+  --exclude 'data/' \
+  --exclude '.env' \
+  --exclude '.env.local' \
+  --exclude '.launcher/' \
+  --exclude '.playwright-cli/' \
+  --exclude 'graphify-out/' \
+  --exclude '.DS_Store' \
+  ./ ubuntu@124.222.83.113:/home/ubuntu/apps/agar-io-clone/
+```
+
+After syncing, rebuild and restart on the server:
+
+```bash
+ssh -i <path-to-agar.pem> ubuntu@124.222.83.113 \
+  'set -e; cd /home/ubuntu/apps/agar-io-clone; npm install --no-audit --no-fund; npm run build; pm2 restart agar-io-clone --update-env; pm2 status agar-io-clone --no-color'
+```
+
+Verify the deployed service from the server itself:
+
+```bash
+ssh -i <path-to-agar.pem> ubuntu@124.222.83.113 \
+  'curl -fsS -o /tmp/agario.html -w "%{http_code} %{size_download}\n" --max-time 5 http://127.0.0.1:3000/ && grep -q "开放吞噬" /tmp/agario.html && echo HTML_OK'
+```
+
+If checking from the public internet, use `http://124.222.83.113:3000/`.
+Do not assume `http://124.222.83.113/` is this project; port `80` currently
+belongs to the separate `food` service.
 
 ## Testing Rules
 

@@ -23,12 +23,24 @@ if [[ -z "${NODE_BIN:-}" || ! -x "$NODE_BIN" ]]; then
     exit 1
 fi
 
+if /usr/bin/python3 - <<'PY' >/dev/null 2>&1
+import distutils.version
+PY
+then
+    export PYTHON="/usr/bin/python3"
+    export npm_config_python="/usr/bin/python3"
+fi
+
 function test_local_url() {
     curl -fsS -I --max-time 2 "$URL" >/dev/null 2>&1
 }
 
 function open_game_url() {
     open "$URL" >/dev/null 2>&1 || true
+}
+
+function current_epoch_seconds() {
+    date +%s
 }
 
 function ensure_npm_cli() {
@@ -98,8 +110,8 @@ ensure_dependencies "$npm_cli"
 build_runtime
 
 (
-    deadline=$((EPOCHSECONDS + STARTUP_TIMEOUT_SECONDS))
-    while (( EPOCHSECONDS < deadline )); do
+    deadline=$(($(current_epoch_seconds) + STARTUP_TIMEOUT_SECONDS))
+    while (( $(current_epoch_seconds) < deadline )); do
         if test_local_url; then
             open_game_url
             exit 0

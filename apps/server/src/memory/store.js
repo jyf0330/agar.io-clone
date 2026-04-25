@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const DEFAULT_MEMORY_DB_PATH = path.resolve(process.cwd(), 'data/memory.db');
+const DEFAULT_SQLITE_MAX_BUFFER = 16 * 1024 * 1024;
 
 const schemaSql = `
 CREATE TABLE IF NOT EXISTS sessions (
@@ -259,7 +260,8 @@ function executeSql(query, params, options) {
     ].join('\n');
     const result = childProcess.spawnSync(getPythonExecutable(), ['-c', script], {
         input: payload,
-        encoding: 'utf8'
+        encoding: 'utf8',
+        maxBuffer: parseInt(process.env.MEMORY_SQLITE_MAX_BUFFER || DEFAULT_SQLITE_MAX_BUFFER, 10)
     });
 
     if (result.error) {

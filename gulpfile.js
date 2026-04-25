@@ -2,9 +2,8 @@
 
 const gulp = require('gulp');
 const babel = require('gulp-babel');
-const eslint = require('gulp-eslint');
-const nodemon = require('gulp-nodemon');
-const todo = require('gulp-todo');
+const { ESLint } = require('eslint');
+const nodemon = require('nodemon');
 const webpack = require('webpack-stream');
 const Mocha = require('mocha');
 const fs = require("fs");
@@ -25,14 +24,18 @@ function getWebpackConfig() {
 }
 
 function runServer(done) {
+    let started = false;
     nodemon({
         delay: 10,
         script: './dist/server/server.js',
-        ignore: ['dist/'],
-        ext: 'js html css',
-        done,
-        tasks: [process.env.IS_DEV ? 'dev' : 'build']
-    })
+        watch: ['dist/server'],
+        ext: 'js'
+    }).on('start', () => {
+        if (!started) {
+            started = true;
+            done();
+        }
+    }).on('quit', () => process.exit(0));
 }
 
 function buildServer() {
@@ -78,20 +81,31 @@ function mocha(done) {
     mochaInstance.run(failures => failures ? done(new PluginError('mocha', `${failures} test(s) failed`)) : done());
 }
 
-gulp.task('lint', () => {
-    return gulp.src(['**/*.js', '!node_modules/**/*.js', '!dist/**/*.js', '!graphify-out/**/*.js'])
-        .pipe(eslint())
-        .pipe(eslint.format())
-        .pipe(eslint.failAfterError())
+gulp.task('lint', async () => {
+    const eslint = new ESLint({
+        errorOnUnmatchedPattern: false
+    });
+    const results = await eslint.lintFiles([
+        '*.js',
+        'apps/**/*.js',
+        'configs/**/*.js',
+        'demo/**/*.js',
+        'tests/**/*.js',
+        'tools/**/*.js'
+    ]);
+    const formatter = await eslint.loadFormatter('stylish');
+    const output = formatter.format(results);
+    if (output) {
+        console.log(output);
+    }
+
+    const errorCount = results.reduce((total, result) => total + result.errorCount, 0);
+    if (errorCount > 0) {
+        throw new PluginError('eslint', `${errorCount} lint error(s)`);
+    }
 });
 
 gulp.task('test', gulp.series('lint', mocha));
-
-gulp.task('todo', gulp.series('lint', () => {
-    return gulp.src('apps/**/*.js')
-        .pipe(todo())
-        .pipe(gulp.dest('./'));
-}));
 
 gulp.task('build', gulp.series('lint', gulp.parallel(copyClientHtml, copyClientAssets, buildClientJS, buildServer, mocha)));
 
@@ -99,6 +113,15 @@ gulp.task('dev', gulp.parallel(copyClientHtml, copyClientAssets, buildClientJS, 
 
 gulp.task('run', gulp.series('build', runServer));
 
-gulp.task('watch', gulp.series(setDev, 'dev', runServer));
+gulp.task('watch:sources', () => {
+    gulp.watch([
+        `${PATHS.serverSrc}/**/*.*`,
+        `${PATHS.clientRoot}/index.html`,
+        `${PATHS.clientSrc}/**/*.js`,
+        `${PATHS.clientAssets}/**/*.*`
+    ], gulp.series('dev'));
+});
+
+gulp.task('watch', gulp.series(setDev, 'dev', gulp.parallel(runServer, 'watch:sources')));
 
 gulp.task('default', gulp.series('run'));

@@ -5,6 +5,8 @@ var hydratePlayerState = require('./player-hydration');
 function createSocketController(options) {
     var socket = null;
     var socketType = null;
+    var lastHudRenderAt = 0;
+    var HUD_RENDER_INTERVAL_MS = 120;
 
     function debug(message) {
         if (options.debug) {
@@ -34,6 +36,16 @@ function createSocketController(options) {
         }
 
         return null;
+    }
+
+    function renderHud(force) {
+        var now = Date.now();
+        if (!force && now - lastHudRenderAt < HUD_RENDER_INTERVAL_MS) {
+            return;
+        }
+        lastHudRenderAt = now;
+        options.renderStatusPanel();
+        options.renderPlayerCardPreviews();
     }
 
     function handleDisconnect() {
@@ -113,7 +125,7 @@ function createSocketController(options) {
 
         nextSocket.on('leaderboard', function (data) {
             options.setLeaderboard(data.leaderboard);
-            options.renderStatusPanel();
+            renderHud(true);
         });
 
         nextSocket.on('serverMSG', function (data) {
@@ -165,8 +177,7 @@ function createSocketController(options) {
                 ghosts: ghostList || []
             });
             options.global.targetPlayerCardPreviewDataUrl = findConnectedTargetCardPreview(userData);
-            options.renderStatusPanel();
-            options.renderPlayerCardPreviews();
+            renderHud(false);
         });
 
         nextSocket.on('RIP', function () {

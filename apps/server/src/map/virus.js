@@ -1,12 +1,12 @@
 "use strict";
 
 const util = require('../lib/util');
-const { v4: uuidv4 } = require('uuid');
+const id = require('../lib/id');
 const {getPosition} = require("../lib/entityUtils");
 
 class Virus {
     constructor(position, radius, mass, config) {
-        this.id = uuidv4();
+        this.id = id.createId();
         this.x = position.x;
         this.y = position.y;
         this.radius = radius;

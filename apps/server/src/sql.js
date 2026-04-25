@@ -6,7 +6,9 @@ const childProcess = require('child_process');
 const config = require(path.resolve(process.cwd(), 'config'));
 
 const sqlInfo = config.sqlinfo;
-const dbPath = path.resolve(process.cwd(), 'data/server-db', sqlInfo.fileName);
+const dbPath = process.env.SERVER_DB_PATH
+  ? path.resolve(process.env.SERVER_DB_PATH)
+  : path.resolve(process.cwd(), 'data/server-db', sqlInfo.fileName);
 let database = null;
 let nativeLoadAttempted = false;
 let nativeLoadError = null;

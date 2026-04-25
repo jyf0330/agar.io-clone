@@ -30,7 +30,7 @@ describe('util.js', () => {
   });
 
   describe('validNick', () => {
-    it.skip('should allow empty player nicknames', () => {
+    it('should allow empty player nicknames', () => {
       var bool = util.validNick('');
       expect(bool).to.be.true;
     });
