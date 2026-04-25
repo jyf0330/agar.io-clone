@@ -49,6 +49,18 @@ class GhostRecorder {
         this.lastTraceAtByPlayer = {};
     }
 
+    writeMemory(methodName, payload) {
+        if (!this.memoryStore || typeof this.memoryStore[methodName] !== 'function') {
+            return;
+        }
+
+        try {
+            this.memoryStore[methodName](payload);
+        } catch (error) {
+            console.warn('[V5] ghost recorder memory write failed: ' + methodName + ' ' + error.message);
+        }
+    }
+
     getElapsed(now) {
         return Math.max(0, now - this.startedAt);
     }
@@ -62,7 +74,7 @@ class GhostRecorder {
             return;
         }
 
-        this.memoryStore.recordEvent({
+        this.writeMemory('recordEvent', {
             playerId: player.id,
             npcId: '',
             sessionId: this.sessionId,
@@ -110,7 +122,7 @@ class GhostRecorder {
         }
 
         const cells = player.cells || [];
-        this.memoryStore.recordPlayerTrace({
+        this.writeMemory('recordPlayerTrace', {
             sessionId: this.sessionId,
             playerId: player.id,
             t: this.getElapsed(now || Date.now()),
@@ -128,7 +140,7 @@ class GhostRecorder {
             return;
         }
 
-        this.memoryStore.recordSession({
+        this.writeMemory('recordSession', {
             sessionId: this.sessionId,
             playerId: player.id,
             playerName: player.name || '',
@@ -158,7 +170,7 @@ class GhostRecorder {
             return;
         }
 
-        this.memoryStore.recordChatRecord({
+        this.writeMemory('recordChatRecord', {
             sessionId: this.sessionId,
             playerId: player.id,
             playerName: player.name || '',
@@ -187,7 +199,7 @@ class GhostRecorder {
         }
 
         const elapsed = this.getElapsed(now || Date.now());
-        this.memoryStore.recordItemEvent({
+        this.writeMemory('recordItemEvent', {
             eventId: [this.sessionId, player.id, eventType, elapsed, payload.x, payload.y].join(':'),
             sessionId: this.sessionId,
             playerId: player.id,
@@ -222,7 +234,7 @@ class GhostRecorder {
         }
 
         const elapsed = this.getElapsed(now || Date.now());
-        this.memoryStore.recordPartEvent({
+        this.writeMemory('recordPartEvent', {
             eventId: [this.sessionId, player.id, eventType, elapsed, payload.x, payload.y].join(':'),
             sessionId: this.sessionId,
             playerId: player.id,
@@ -256,7 +268,7 @@ class GhostRecorder {
         }
 
         const elapsed = this.getElapsed(now || Date.now());
-        this.memoryStore.recordCombatEvent({
+        this.writeMemory('recordCombatEvent', {
             eventId: [this.sessionId, player.id, eventType, elapsed, payload.x, payload.y].join(':'),
             sessionId: this.sessionId,
             playerId: player.id,
@@ -278,7 +290,7 @@ class GhostRecorder {
         }
 
         const elapsed = this.getElapsed(now || Date.now());
-        this.memoryStore.recordGhostAnchor({
+        this.writeMemory('recordGhostAnchor', {
             anchorId: [this.sessionId, player.id, eventType, elapsed, x, y].join(':'),
             sourceSessionId: this.sessionId,
             sourcePlayerId: player.id,

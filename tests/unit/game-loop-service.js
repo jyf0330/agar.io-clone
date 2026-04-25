@@ -646,6 +646,56 @@ describe('game-loop-service.js', () => {
     expect(moveEvent.users[0].equipmentSlots).to.equal(undefined);
   });
 
+  it('should keep serverTellPlayerMove argument order aligned with the client socket contract', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const player = new playerUtils.Player('player-sync-order');
+    const socketEvents = [];
+
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'SyncOrder',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    map.players.pushNew(player);
+    map.food.data.push({id: 'food-1', x: 110, y: 110, radius: 4});
+    map.massFood.data.push({id: 'mass-1', x: 120, y: 120, radius: 8});
+    map.viruses.data.push({id: 'virus-1', x: 130, y: 130, radius: 16});
+    map.partLoot.addPart({type: 'HAND', templateId: 'hand-order'}, {x: 140, y: 140}, 'map-pickup');
+    map.ghosts.push({id: 'ghost-1', x: 150, y: 150, radius: 20});
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() {
+        return {
+          emit() {
+            socketEvents.push(Array.prototype.slice.call(arguments));
+          }
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    service.sendUpdates();
+
+    const eventArgs = socketEvents[0];
+    expect(eventArgs[0]).to.equal('serverTellPlayerMove');
+    expect(eventArgs[1].id).to.equal('player-sync-order');
+    expect(eventArgs[2]).to.be.an('array');
+    expect(eventArgs[3][0].id).to.equal('food-1');
+    expect(eventArgs[4][0].id).to.equal('mass-1');
+    expect(eventArgs[5][0].id).to.equal('virus-1');
+    expect(eventArgs[6][0].part.templateId).to.equal('hand-order');
+    expect(eventArgs[7][0].id).to.equal('ghost-1');
+  });
+
   it('should settle all human players when one player completes a foreign body set', () => {
     const originalNow = Date.now;
     const map = new mapUtils.Map(Object.assign({}, config, {

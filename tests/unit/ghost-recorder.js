@@ -384,4 +384,68 @@ describe('ghost recorder', () => {
       y: 130
     });
   });
+
+  it('should keep replay recording fail-open when the memory store throws', () => {
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      recordPlayerTraces: true,
+      memoryStore: {
+        recordEvent() {
+          throw new Error('sqlite unavailable');
+        },
+        recordPlayerTrace() {
+          throw new Error('sqlite unavailable');
+        },
+        recordSession() {
+          throw new Error('sqlite unavailable');
+        },
+        recordChatRecord() {
+          throw new Error('sqlite unavailable');
+        },
+        recordItemEvent() {
+          throw new Error('sqlite unavailable');
+        },
+        recordPartEvent() {
+          throw new Error('sqlite unavailable');
+        },
+        recordCombatEvent() {
+          throw new Error('sqlite unavailable');
+        },
+        recordGhostAnchor() {
+          throw new Error('sqlite unavailable');
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      x: 120,
+      y: 130,
+      massTotal: 42,
+      cells: [{radius: 24}],
+      consentToRecord: true
+    };
+    const originalWarn = console.warn;
+    const warnings = [];
+
+    try {
+      console.warn = function (message) {
+        warnings.push(message);
+      };
+      expect(() => {
+        recorder.recordPlayerSession(player, 1000);
+        recorder.recordPlayers([player], 1200);
+        recorder.recordChat(player, 'hello from now', 1220);
+        recorder.recordItem(player, {type: 'HAND'}, {x: 140, y: 150}, 1240);
+        recorder.recordPartEvent(player, 'part_pickup', {type: 'HAND'}, {x: 150, y: 160}, 1260);
+        recorder.recordCombatEvent(player, 'kill', {id: 'target-1'}, {x: 170, y: 180}, 1280);
+      }).to.not.throw();
+    } finally {
+      console.warn = originalWarn;
+    }
+
+    expect(warnings).to.not.be.empty;
+    expect(warnings[0]).to.contain('ghost recorder memory write failed');
+  });
 });
