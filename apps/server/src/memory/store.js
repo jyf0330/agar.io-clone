@@ -6,6 +6,12 @@ const path = require('path');
 
 const DEFAULT_MEMORY_DB_PATH = path.resolve(process.cwd(), 'data/memory.db');
 const DEFAULT_SQLITE_MAX_BUFFER = 16 * 1024 * 1024;
+const SQLITE_FALLBACK_RETRY_MS = 30000;
+let database = null;
+let nativeLoadAttempted = false;
+let nativeLoadError = null;
+let sqliteFallbackDisabledUntil = 0;
+let sqliteFallbackError = null;
 
 const schemaSql = `
 CREATE TABLE IF NOT EXISTS sessions (
@@ -190,6 +196,102 @@ function getPythonExecutable() {
     return process.env.PYTHON || process.env.PYTHON3 || 'python3';
 }
 
+function getStatus() {
+    return {
+        path: resolveDbPath(),
+        native: Boolean(database),
+        nativeLoadAttempted: nativeLoadAttempted,
+        nativeLoadError: nativeLoadError ? nativeLoadError.message : null,
+        fallbackDisabledUntil: sqliteFallbackDisabledUntil,
+        fallbackError: sqliteFallbackError ? sqliteFallbackError.message : null
+    };
+}
+
+function ensureNativeDatabase() {
+    if (database) {
+        return database;
+    }
+    if (nativeLoadAttempted) {
+        return null;
+    }
+
+    nativeLoadAttempted = true;
+    try {
+        const Database = require('better-sqlite3');
+        const dbPath = resolveDbPath();
+        fs.mkdirSync(path.dirname(dbPath), {recursive: true});
+        database = new Database(dbPath);
+        database.exec(schemaSql);
+        migrateNativeSchema(database);
+    } catch (error) {
+        nativeLoadError = error;
+        database = null;
+    }
+
+    return database;
+}
+
+function ignoreDuplicateColumn(error) {
+    return error && error.message && error.message.indexOf('duplicate column name') !== -1;
+}
+
+function runOptionalMigration(db, sql) {
+    try {
+        db.exec(sql);
+    } catch (error) {
+        if (!ignoreDuplicateColumn(error)) {
+            throw error;
+        }
+    }
+}
+
+function migrateNativeSchema(db) {
+    runOptionalMigration(db, "ALTER TABLE session_summaries ADD COLUMN expectation TEXT DEFAULT ''");
+    runOptionalMigration(db, "ALTER TABLE session_summaries ADD COLUMN referenced_l1_event_ids TEXT DEFAULT '[]'");
+    runOptionalMigration(db, "ALTER TABLE persona_impressions ADD COLUMN evidence_event_ids TEXT DEFAULT '[]'");
+    [
+        'ALTER TABLE events ADD COLUMN event_id TEXT',
+        'ALTER TABLE events ADD COLUMN map_id TEXT',
+        'ALTER TABLE events ADD COLUMN x REAL',
+        'ALTER TABLE events ADD COLUMN y REAL',
+        'ALTER TABLE events ADD COLUMN event_type TEXT',
+        'ALTER TABLE events ADD COLUMN created_at INTEGER'
+    ].forEach(function (columnSql) {
+        runOptionalMigration(db, columnSql);
+    });
+}
+
+function executeNativeSql(query, params, options) {
+    const db = ensureNativeDatabase();
+    if (!db) {
+        return null;
+    }
+
+    const statement = db.prepare(query);
+    if (options && options.mode === 'all') {
+        return {
+            rows: statement.all(params || [])
+        };
+    }
+
+    const result = statement.run(params || []);
+    return {
+        changes: result.changes,
+        lastID: result.lastInsertRowid ? Number(result.lastInsertRowid) : 0
+    };
+}
+
+function emptySqlResult(options) {
+    return options && options.mode === 'all'
+        ? {rows: []}
+        : {changes: 0, lastID: 0};
+}
+
+function isPermissionFailure(error) {
+    const message = error && error.message ? error.message : String(error || '');
+    return message.indexOf('PermissionError') !== -1 || message.indexOf('Operation not permitted') !== -1;
+}
+
 function normalizeLimit(limit, fallback) {
     const parsed = Number(limit);
     if (!Number.isFinite(parsed) || parsed <= 0) {
@@ -199,6 +301,15 @@ function normalizeLimit(limit, fallback) {
 }
 
 function executeSql(query, params, options) {
+    const nativeResult = executeNativeSql(query, params, options);
+    if (nativeResult) {
+        return nativeResult;
+    }
+
+    if (sqliteFallbackDisabledUntil > Date.now()) {
+        return emptySqlResult(options);
+    }
+
     const dbPath = resolveDbPath();
     fs.mkdirSync(path.dirname(dbPath), {recursive: true});
 
@@ -268,7 +379,13 @@ function executeSql(query, params, options) {
         throw result.error;
     }
     if (result.status !== 0) {
-        throw new Error((result.stderr || result.stdout || 'memory sqlite failed').trim());
+        const error = new Error((result.stderr || result.stdout || 'memory sqlite failed').trim());
+        if (isPermissionFailure(error)) {
+            sqliteFallbackError = error;
+            sqliteFallbackDisabledUntil = Date.now() + SQLITE_FALLBACK_RETRY_MS;
+            return emptySqlResult(options);
+        }
+        throw error;
     }
 
     return JSON.parse(result.stdout || '{}');
@@ -970,5 +1087,6 @@ module.exports = {
     addSessionSummary: addSessionSummary,
     listSessionSummaries: listSessionSummaries,
     upsertPersonaImpression: upsertPersonaImpression,
-    getPersonaImpression: getPersonaImpression
+    getPersonaImpression: getPersonaImpression,
+    getStatus: getStatus
 };
