@@ -1,12 +1,12 @@
-# Graph Report - agar.io-clone-master  (2026-04-25)
+# Graph Report - agar.io-clone-master  (2026-04-30)
 
 ## Corpus Check
-- 180 files · ~434,364 words
+- 198 files · ~504,995 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1003 nodes · 1694 edges · 39 communities detected
-- Extraction: 85% EXTRACTED · 15% INFERRED · 0% AMBIGUOUS · INFERRED: 251 edges (avg confidence: 0.8)
+- 1064 nodes · 1780 edges · 41 communities detected
+- Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 276 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -48,31 +48,33 @@
 - [[_COMMUNITY_Community 37|Community 37]]
 - [[_COMMUNITY_Community 38|Community 38]]
 - [[_COMMUNITY_Community 39|Community 39]]
-- [[_COMMUNITY_Community 42|Community 42]]
+- [[_COMMUNITY_Community 40|Community 40]]
+- [[_COMMUNITY_Community 43|Community 43]]
+- [[_COMMUNITY_Community 45|Community 45]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Orchestrator` - 37 edges
-2. `executeSql()` - 28 edges
+2. `executeSql()` - 31 edges
 3. `GhostManager` - 25 edges
-4. `createDebugPanel()` - 20 edges
+4. `createDebugPanel()` - 21 edges
 5. `ask()` - 19 edges
 6. `GhostRecorder` - 18 edges
-7. `ChatClient` - 16 edges
-8. `runScenario()` - 15 edges
-9. `addPlayer()` - 15 edges
-10. `createElement()` - 14 edges
+7. `createElement()` - 17 edges
+8. `ChatClient` - 16 edges
+9. `runScenario()` - 15 edges
+10. `addPlayer()` - 15 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `normalize()` --calls--> `constructor()`  [INFERRED]
-  demo/consistency/score_drift.py → apps/server/src/map/massFood.js
 - `mocha()` --calls--> `run()`  [INFERRED]
   gulpfile.js → apps/server/src/sql.js
+- `normalize()` --calls--> `constructor()`  [INFERRED]
+  demo/consistency/score_drift.py → apps/server/src/map/massFood.js
 - `normalize()` --calls--> `pushAwayCollidingCells()`  [INFERRED]
   demo/consistency/score_drift.py → apps/server/src/map/player.js
-- `main()` --calls--> `get()`  [INFERRED]
-  demo/consistency/run_consistency.py → apps/server/src/llm/cache.js
-- `generate_frames()` --calls--> `append()`  [INFERRED]
-  demo/scripts/generate_bots.py → apps/server/src/llm/audit.js
+- `runScenario()` --calls--> `close()`  [INFERRED]
+  demo/scripts/week1-playthrough-online.js → apps/server/src/sql.js
+- `createPlayer()` --calls--> `init()`  [INFERRED]
+  tests/unit/connection-service.js → apps/server/src/map/player.js
 
 ## Hyperedges (group relationships)
 - **Gameplay Scene** — agar_io_clone_game_ui, grid_arena, food_pellets, virus_cells, leaderboard_panel [EXTRACTED 0.95]
@@ -82,76 +84,76 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.04
-Nodes (46): getActiveNpc(), getActivePetId(), getPosition(), validNick(), addNew(), Food, removeExcess(), createId() (+38 more)
+Cohesion: 0.06
+Nodes (31): clamp(), randomWalkIntent(), buildContextualFallbackUtterance(), pickGreetingFallback(), stableIndex(), buildPetContext(), buildPetQuestionFallbackReply(), estimatePromptTokens() (+23 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.07
-Nodes (55): appendPartHistory(), applyBodyState(), applyOwnedPartDefaults(), applySignatureToParts(), cloneBodyPart(), cloneHistoryChain(), cloneShallowObject(), countBodyParts() (+47 more)
+Cohesion: 0.04
+Nodes (45): getActiveNpc(), getActivePetId(), getPosition(), validNick(), addNew(), Food, removeExcess(), createId() (+37 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.08
-Nodes (20): clamp(), randomWalkIntent(), buildContextualFallbackUtterance(), pickGreetingFallback(), stableIndex(), buildPetContext(), buildPetQuestionFallbackReply(), estimatePromptTokens() (+12 more)
+Cohesion: 0.06
+Nodes (56): append(), getAuditFilePath(), resolveAuditDir(), toDateStamp(), createCacheKey(), ensureDatabase(), get(), loadDatabaseLibrary() (+48 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.07
-Nodes (44): exportSession(), loadSeed(), main(), printUsage(), writeJson(), seedSummaries(), buildFallbackImpression(), clampRelationshipValue() (+36 more)
+Nodes (55): appendPartHistory(), applyBodyState(), applyOwnedPartDefaults(), applySignatureToParts(), cloneBodyPart(), cloneHistoryChain(), cloneShallowObject(), countBodyParts() (+47 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.08
-Nodes (46): append(), getAuditFilePath(), resolveAuditDir(), toDateStamp(), createCacheKey(), ensureDatabase(), get(), loadDatabaseLibrary() (+38 more)
+Cohesion: 0.07
+Nodes (45): exportSession(), loadSeed(), main(), printUsage(), writeJson(), seedSummaries(), addSessionSummary(), buildWhere() (+37 more)
 
 ### Community 5 - "Community 5"
+Cohesion: 0.06
+Nodes (34): createDraftPreviewDataUrl(), drawCircle(), drawLine(), drawRect(), drawShape(), createBodyInventoryPanel(), createElement(), createFallbackElement() (+26 more)
+
+### Community 6 - "Community 6"
 Cohesion: 0.07
 Nodes (15): animloop(), enterGame(), resize(), startGame(), createBodySignatureController(), clearBodySignature(), getStorage(), loadBodySignature() (+7 more)
 
-### Community 6 - "Community 6"
-Cohesion: 0.06
-Nodes (7): GhostManager, PartLootManager, createNpcTaskRewardPart(), getNpcPosition(), grantNpcTaskReward(), isPlayerNearNpc(), recordReward()
-
 ### Community 7 - "Community 7"
-Cohesion: 0.11
-Nodes (42): createDebugPanel(), createDebugState(), error(), escapeHtml(), formatAge(), formatDebugPanel(), formatDebugPanelCopyText(), formatLatestGap() (+34 more)
+Cohesion: 0.12
+Nodes (41): createDebugPanel(), createDebugState(), error(), escapeHtml(), formatAge(), formatDebugPanel(), formatDebugPanelCopyText(), formatLatestGap() (+33 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.08
-Nodes (25): createDraftPreviewDataUrl(), drawCircle(), drawLine(), drawRect(), drawShape(), createBodyInventoryPanel(), createElement(), createFallbackElement() (+17 more)
+Cohesion: 0.07
+Nodes (2): GhostManager, PartLootManager
 
 ### Community 9 - "Community 9"
-Cohesion: 0.1
-Nodes (28): buildChatMessages(), executeChatScenario(), main(), executeOfflineScenario(), main(), buildScenarioOptions(), createDriver(), ensureDir() (+20 more)
+Cohesion: 0.08
+Nodes (25): createLoopHarness(), createPlayer(), createGameLoopService(), Cell, changeCellMass(), checkForCollisions(), clientProvidedData(), constructor() (+17 more)
 
 ### Community 10 - "Community 10"
-Cohesion: 0.08
-Nodes (24): reset(), build_bot_json(), clamp(), generate_frames(), main(), parse_args(), pick_random_target(), 在地图内随机挑一个目标点，留一点边距避免贴墙。 (+16 more)
+Cohesion: 0.09
+Nodes (26): askOpenAI(), normalizeContent(), buildFallbackSummary(), buildTomorrowExpectation(), collectReferencedL1EventIds(), estimateRelationshipDelta(), getEventText(), getNpcName() (+18 more)
 
 ### Community 11 - "Community 11"
+Cohesion: 0.15
+Nodes (8): GhostRecorder, sanitizeReplayChat(), rememberRecentChat(), createNpcTaskRewardPart(), getNpcPosition(), grantNpcTaskReward(), isPlayerNearNpc(), recordReward()
+
+### Community 12 - "Community 12"
 Cohesion: 0.14
 Nodes (23): createDraftId(), getStorage(), loadDrafts(), normalizeDraftPayload(), saveDraft(), createPlayerCardEditor(), createHistoryState(), redo() (+15 more)
 
-### Community 12 - "Community 12"
+### Community 13 - "Community 13"
 Cohesion: 0.1
 Nodes (18): applyTranslations(), renderPlayerCardPreviews(), renderStatusPanel(), formatBodyStatus(), formatConnectionStatus(), formatGhostDebugStatus(), getStorage(), interpolate() (+10 more)
 
-### Community 13 - "Community 13"
-Cohesion: 0.13
-Nodes (21): buildNpcIntentPrompt(), buildNpcReplyPrompt(), buildNpcUtterPrompt(), buildPetQuestionPrompt(), buildSummarizeSessionPrompt(), buildUpdatePersonaImpressionPrompt(), formatMemoryBlock(), formatPetContextBlock() (+13 more)
-
 ### Community 14 - "Community 14"
-Cohesion: 0.15
-Nodes (18): gameLoop(), getAvatarInnerRadius(), shouldUseAvatarRuntimeRender(), cellTouchingBorders(), circlePoint(), drawAvatarCell(), drawBorder(), drawCells() (+10 more)
+Cohesion: 0.14
+Nodes (23): buildScenarioOptions(), createDriver(), ensureDir(), finalizeVideo(), httpGet(), main(), observeNpcActivity(), observeOnline() (+15 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.24
-Nodes (2): GhostRecorder, sanitizeReplayChat()
+Cohesion: 0.13
+Nodes (20): gameLoop(), getAvatarInnerRadius(), shouldUseAvatarRuntimeRender(), cellTouchingBorders(), circlePoint(), drawAvatarCell(), drawBodyAssemblyCell(), drawBorder() (+12 more)
 
 ### Community 16 - "Community 16"
-Cohesion: 0.15
-Nodes (14): clamp(), createBehaviorProfile(), hexToHue(), normalizeIntent(), normalizeNpcKey(), NpcState, assertCardShape(), extractAnchorsText() (+6 more)
-
-### Community 17 - "Community 17"
 Cohesion: 0.19
 Nodes (12): projectActivePetForSync(), projectActivePetMovementForSync(), projectBodyPartForSync(), projectEquipmentSlotsForSync(), projectPartLootForSync(), projectPlayerForSync(), projectPlayerMetaForSync(), projectPlayerMovementForSync() (+4 more)
+
+### Community 17 - "Community 17"
+Cohesion: 0.12
+Nodes (6): createBodyAssemblyPage(), createCharacterPreview(), createConfirmBodyButton(), createMissingPartPanel(), createPartOptionList(), createStatsPanel()
 
 ### Community 18 - "Community 18"
 Cohesion: 0.27
@@ -178,16 +180,16 @@ Cohesion: 0.44
 Nodes (9): analyzeCanvas(), canvasToGrid(), clamp(), compareGrids(), createEmptyGrid(), createReferenceGrid(), getTier(), gridCoverage() (+1 more)
 
 ### Community 24 - "Community 24"
+Cohesion: 0.25
+Nodes (3): buildClientJS(), getWebpackConfig(), mocha()
+
+### Community 25 - "Community 25"
 Cohesion: 0.39
 Nodes (9): Agar.IO Clone game UI, Colored food pellets, Grid-based arena, Leaderboard panel, Mobile joystick and targeting controls, Two simultaneous game viewports, Player cell dragon, Player cell huy (+1 more)
 
-### Community 25 - "Community 25"
+### Community 26 - "Community 26"
 Cohesion: 0.32
 Nodes (5): createController(), createFakeSocket(), createController(), createFakeSocket(), createSocketController()
-
-### Community 26 - "Community 26"
-Cohesion: 0.29
-Nodes (3): createLoopHarness(), createPlayer(), createGameLoopService()
 
 ### Community 27 - "Community 27"
 Cohesion: 0.38
@@ -218,51 +220,63 @@ Cohesion: 0.67
 Nodes (2): clearModule(), loadWrapperFixture()
 
 ### Community 36 - "Community 36"
+Cohesion: 0.67
+Nodes (2): clonePart(), createBodyAssemblyConfig()
+
+### Community 37 - "Community 37"
 Cohesion: 0.83
 Nodes (4): split icon, horizontal separation, left-right arrows, split
 
-### Community 37 - "Community 37"
+### Community 38 - "Community 38"
 Cohesion: 0.5
 Nodes (4): feed mass, feed icon, crosshair/target reticle, feed control
 
-### Community 38 - "Community 38"
+### Community 39 - "Community 39"
 Cohesion: 0.67
 Nodes (4): horizontal separation, player input control, split, split control icon
 
-### Community 39 - "Community 39"
+### Community 40 - "Community 40"
 Cohesion: 0.67
 Nodes (4): Targeting Reticle, Feed Action, Feed Control Icon, Player Control Input
 
-### Community 42 - "Community 42"
+### Community 43 - "Community 43"
+Cohesion: 1.0
+Nodes (2): createElement(), loadChatClientWithDom()
+
+### Community 45 - "Community 45"
 Cohesion: 1.0
 Nodes (2): loadConfigWithDemoFlag(), loadConfigWithEnv()
 
 ## Knowledge Gaps
 - **6 isolated node(s):** `在地图内随机挑一个目标点，留一点边距避免贴墙。`, `朝目标移动最多 max_step，达到/超过则贴上。`, `Grid-based arena`, `crosshair/target reticle`, `feed control` (+1 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 15`** (22 nodes): `recorder.js`, `escapeRegExp()`, `GhostRecorder`, `.canRecordPlayer()`, `.constructor()`, `.getElapsed()`, `.recordChat()`, `.recordChatRecord()`, `.recordCombatEvent()`, `.recordEvent()`, `.recordGhostAnchor()`, `.recordItem()`, `.recordItemEvent()`, `.recordPartEvent()`, `.recordPartLifecycleEvent()`, `.recordPlayers()`, `.recordPlayerSession()`, `.recordPlayerTrace()`, `.recordTypedCombatEvent()`, `.writeMemory()`, `loadForbiddenWords()`, `sanitizeReplayChat()`
+- **Thin community `Community 8`** (41 nodes): `manager.js`, `partLoot.js`, `distance()`, `eventMatchesMap()`, `GhostManager`, `.activateTrace()`, `.canActivateTrace()`, `.constructor()`, `.getActiveGhostCount()`, `.getDebugState()`, `.getEventKey()`, `.getEvents()`, `.getPartEventPosition()`, `.isAnchorCoolingDown()`, `.isInTimeWindow()`, `.isNearAnyPlayer()`, `.loadChatRecords()`, `.loadEvents()`, `.loadPartPickupEvents()`, `.loadTracePoints()`, `.markAnchorTriggered()`, `.pruneGhosts()`, `.spawnGhostPartPickup()`, `.spawnHistoricalItem()`, `.tick()`, `.touchGhostsWithNearbyPlayers()`, `.updateGhostChats()`, `.updateGhostPartPickups()`, `.updateGhostPositions()`, `interpolateTrace()`, `normalizeAnchor()`, `normalizeEvent()`, `canCollectLoot()`, `distance()`, `PartLootManager`, `.addPart()`, `.balanceWorldParts()`, `.collectForPlayer()`, `.constructor()`, `.getSourceType()`, `.normalizePart()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 32`** (5 nodes): `player-card-scale.js`, `canScaleIn()`, `canScaleOut()`, `clampScale()`, `getNextScale()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 34`** (4 nodes): `clearModule()`, `createOpenAiMockServer()`, `loadWrapperFixture()`, `llm-wrapper.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (3 nodes): `loadConfigWithDemoFlag()`, `loadConfigWithEnv()`, `demo-config.js`
+- **Thin community `Community 36`** (4 nodes): `body-assembly-parts.js`, `clonePart()`, `createBodyAssemblyConfig()`, `describePart()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 43`** (3 nodes): `createElement()`, `loadChatClientWithDom()`, `chat-client-behavior.js`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 45`** (3 nodes): `loadConfigWithDemoFlag()`, `loadConfigWithEnv()`, `demo-config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `ask()` connect `Community 4` to `Community 2`, `Community 3`, `Community 13`?**
-  _High betweenness centrality (0.134) - this node is a cross-community bridge._
-- **Why does `addPlayer()` connect `Community 0` to `Community 16`, `Community 1`, `Community 5`, `Community 15`?**
-  _High betweenness centrality (0.133) - this node is a cross-community bridge._
-- **Why does `speakPreviousExpectations()` connect `Community 0` to `Community 3`, `Community 5`, `Community 15`?**
-  _High betweenness centrality (0.116) - this node is a cross-community bridge._
-- **Are the 2 inferred relationships involving `createDebugPanel()` (e.g. with `createElement()` and `createElement()`) actually correct?**
-  _`createDebugPanel()` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `addPlayer()` connect `Community 1` to `Community 11`, `Community 9`, `Community 3`, `Community 6`?**
+  _High betweenness centrality (0.154) - this node is a cross-community bridge._
+- **Why does `speakPreviousExpectations()` connect `Community 1` to `Community 11`, `Community 4`, `Community 6`?**
+  _High betweenness centrality (0.124) - this node is a cross-community bridge._
+- **Why does `listSessionSummaries()` connect `Community 4` to `Community 0`, `Community 1`, `Community 10`?**
+  _High betweenness centrality (0.108) - this node is a cross-community bridge._
+- **Are the 3 inferred relationships involving `createDebugPanel()` (e.g. with `createElement()` and `createElement()`) actually correct?**
+  _`createDebugPanel()` has 3 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 10 inferred relationships involving `ask()` (e.g. with `createCacheKey()` and `get()`) actually correct?**
   _`ask()` has 10 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `在地图内随机挑一个目标点，留一点边距避免贴墙。`, `朝目标移动最多 max_step，达到/超过则贴上。`, `Grid-based arena` to the rest of the system?**
   _6 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.04 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06 - nodes in this community are weakly interconnected._
