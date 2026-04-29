@@ -19,6 +19,7 @@ const PLAYER_SYNC_FIELDS = [
     'bodySignature',
     'activePet',
     'npcRelationships',
+    'bodyAssembly',
     'playerCardPreviewDataUrl',
     'ghostDebug',
     'roundTimer',

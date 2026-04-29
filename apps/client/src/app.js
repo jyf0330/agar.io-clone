@@ -21,6 +21,7 @@ var createChatInput = require('./ui/chat-input');
 var createSettlementPanel = require('./ui/settlement-panel');
 var createBodyInventoryPanel = require('./ui/body-inventory-panel');
 var createBodySignatureController = require('./body-signature-controller');
+var createBodyAssemblyPage = require('./body-assembly/body-assembly-page');
 var bodySignatureStorage = require('./body-signature-storage');
 var bodySignatureConfig = require('./body-signature-config');
 var i18n = require('./i18n');
@@ -38,6 +39,7 @@ var paintToast;
 var chatInput;
 var settlementPanel;
 var bodyInventoryPanel;
+var bodyAssemblyPage;
 var debugPanel;
 var bodySignatureController;
 var hideStartMenuOnLoad = false;
@@ -89,6 +91,11 @@ function enterGame(type) {
 
 function startGame(type, options) {
     options = options || {};
+    if (type === 'player' && bodyAssemblyPage) {
+        bodyAssemblyPage.open(type);
+        return;
+    }
+
     if (bodySignatureController && bodySignatureController.shouldOpen(type)) {
         bodySignatureController.open(type, function (payload) {
             global.bodySignature = payload;
@@ -190,6 +197,15 @@ window.onload = function () {
         submitButton: document.getElementById('bodySignatureSubmitButton'),
         skipButton: document.getElementById('bodySignatureSkipButton'),
         messageEl: document.getElementById('bodySignatureMessage')
+    });
+    bodyAssemblyPage = createBodyAssemblyPage({
+        document: document,
+        saveSelectedBodyPart: function (config) {
+            global.bodyAssembly = config;
+        },
+        enterGameWithBodyConfig: function () {
+            enterGame('player');
+        }
     });
 
     avatarDraftController = createAvatarDraftController({
@@ -599,6 +615,7 @@ function gameLoop() {
                     borderColor: borderColor,
                     mass: users[i].cells[j].mass,
                     name: users[i].name,
+                    bodyAssembly: users[i].bodyAssembly,
                     playerCardPreviewDataUrl: users[i].playerCardPreviewDataUrl,
                     radius: users[i].cells[j].radius,
                     x: users[i].cells[j].x - player.x + global.screen.width / 2,

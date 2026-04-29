@@ -26,6 +26,12 @@ describe('player-hydration.js', () => {
       bodyPartCounts: { HEAD: 1 },
       activePet: {petId: 'mochi', memoryKey: 'player-1:mochi'},
       npcRelationships: [{npcId: 'mochi', relationshipValue: 7}],
+      bodyAssembly: {
+        missingPartType: 'leg_left',
+        layers: {
+          leg_left: {id: 'leg_left_option_02'}
+        }
+      },
       playerCardPreviewDataUrl: 'data:image/png;base64,card',
       ghostDebug: {enabled: true, activeGhostCount: 1},
       roundTimer: {remainingMs: 599000, durationMs: 600000},
@@ -40,6 +46,7 @@ describe('player-hydration.js', () => {
     expect(player.bodyPartCounts.HEAD).to.equal(1);
     expect(player.activePet.memoryKey).to.equal('player-1:mochi');
     expect(player.npcRelationships[0].relationshipValue).to.equal(7);
+    expect(player.bodyAssembly.layers.leg_left.id).to.equal('leg_left_option_02');
     expect(player.ghostDebug.activeGhostCount).to.equal(1);
     expect(player.roundTimer.remainingMs).to.equal(599000);
     expect(player.cells[0].mass).to.equal(3);

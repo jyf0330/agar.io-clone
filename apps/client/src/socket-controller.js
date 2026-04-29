@@ -8,6 +8,7 @@ function createSocketController(options) {
     var lastHudRenderAt = 0;
     var playerMetaById = {};
     var playerMetaSignatures = {};
+    var shouldRespawnOnReconnect = false;
     var HUD_RENDER_INTERVAL_MS = 120;
     var showPetGhostEvents = options.showPetGhostEvents === true;
 
@@ -162,9 +163,35 @@ function createSocketController(options) {
         options.renderPlayerCardPreviews();
     }
 
-    function handleDisconnect() {
+    function isRecoverableDisconnect(reason) {
+        return reason === 'transport close'
+            || reason === 'transport error'
+            || reason === 'ping timeout';
+    }
+
+    function handleReconnect(nextSocket) {
+        markDebugSocketEvent('connect');
+        updateDebugPanel({
+            socket: {
+                connected: true
+            }
+        });
+        if (!shouldRespawnOnReconnect || options.global.kicked) {
+            return;
+        }
+
+        shouldRespawnOnReconnect = false;
+        options.global.disconnected = false;
+        assignSocket(nextSocket);
+        logDebugPanel('Socket 已重新连接，正在恢复游戏。', 'ok');
+        nextSocket.emit('respawn');
+    }
+
+    function handleDisconnect(reason) {
         markDebugSocketEvent('disconnect');
-        logDebugPanel('Socket 已断开，游戏循环暂停。', 'warn');
+        var recoverable = isRecoverableDisconnect(reason) && !options.global.kicked;
+        shouldRespawnOnReconnect = recoverable;
+        logDebugPanel('Socket 已断开，游戏循环暂停。' + (reason ? ' 原因：' + reason + '。' : ''), 'warn');
         updateDebugPanel({
             socket: {
                 connected: false
@@ -178,7 +205,9 @@ function createSocketController(options) {
         if (options.chatInput) {
             options.chatInput.hide();
         }
-        assignSocket(null);
+        if (!recoverable) {
+            assignSocket(null);
+        }
         if (!options.global.kicked) {
             options.render.drawErrorMessage(options.i18n.t('system.disconnected'), options.graph, options.global.screen);
         }
@@ -194,6 +223,10 @@ function createSocketController(options) {
     }
 
     function bindSocket(nextSocket) {
+        nextSocket.on('connect', function () {
+            handleReconnect(nextSocket);
+        });
+
         nextSocket.on('pongcheck', function () {
             markDebugSocketEvent('pongcheck');
             var latency = Date.now() - options.global.startPingTime;
@@ -219,6 +252,7 @@ function createSocketController(options) {
             nextPlayer.screenHeight = options.global.screen.height;
             nextPlayer.target = options.getCanvasTarget();
             nextPlayer.playerCardPreviewDataUrl = options.getPlayerCardPreviewDataUrl();
+            nextPlayer.bodyAssembly = options.global.bodyAssembly || null;
             nextPlayer.bodySignature = options.global.bodySignature || null;
             nextPlayer.consentToRecord = options.global.consentToRecord !== false;
             nextPlayer.isReplayAllowed = nextPlayer.consentToRecord;

@@ -99,6 +99,7 @@ exports.Player = class {
     this.name = null;
     this.admin = false;
     this.playerCardPreviewDataUrl = null;
+    this.bodyAssembly = null;
     this.consentToRecord = true;
     this.isReplayAllowed = true;
     this.activePet = normalizeActivePet(null, id);
@@ -132,6 +133,7 @@ exports.Player = class {
     this.screenWidth = playerData.screenWidth;
     this.screenHeight = playerData.screenHeight;
     this.playerCardPreviewDataUrl = playerData.playerCardPreviewDataUrl || null;
+    this.bodyAssembly = playerData.bodyAssembly || null;
     this.bodySignature = playerData.bodySignature || null;
     this.consentToRecord = playerData.consentToRecord !== false;
     this.isReplayAllowed = this.consentToRecord;

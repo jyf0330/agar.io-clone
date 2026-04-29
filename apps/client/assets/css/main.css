@@ -890,6 +890,261 @@ div {
     display: flex;
 }
 
+.body-assembly-panel {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    box-sizing: border-box;
+    padding: 18px;
+    background:
+        radial-gradient(circle at 50% 42%, rgba(238, 201, 130, 0.28), transparent 33%),
+        linear-gradient(135deg, rgba(36, 24, 17, 0.84), rgba(18, 13, 10, 0.9));
+    color: #2a1b12;
+    pointer-events: all;
+}
+
+.body-assembly-panel.open {
+    display: flex;
+}
+
+.body-assembly-shell {
+    width: min(1120px, calc(100vw - 28px));
+    max-height: calc(100vh - 28px);
+    overflow: auto;
+    box-sizing: border-box;
+    padding: 18px;
+    border: 3px solid #2b1d14;
+    border-radius: 8px;
+    background:
+        linear-gradient(90deg, rgba(87, 52, 25, 0.08) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(87, 52, 25, 0.06) 1px, transparent 1px),
+        #e9d6aa;
+    background-size: 28px 28px, 28px 28px, auto;
+    box-shadow: 0 28px 84px rgba(0, 0, 0, 0.42);
+}
+
+.body-assembly-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(43, 29, 20, 0.32);
+}
+
+.body-assembly-kicker {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0;
+    color: #684423;
+}
+
+.body-assembly-header h2 {
+    margin: 0;
+    font-size: 26px;
+    line-height: 1.1;
+}
+
+.body-assembly-status {
+    min-width: 112px;
+    min-height: 22px;
+    padding-top: 6px;
+    color: #36512d;
+    font-weight: bold;
+    text-align: right;
+}
+
+.body-assembly-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 1fr) 340px;
+    gap: 18px;
+}
+
+.body-assembly-altar {
+    min-height: 540px;
+    border: 3px solid #2b1d14;
+    border-radius: 8px;
+    background:
+        radial-gradient(circle at 50% 46%, rgba(245, 222, 156, 0.7), transparent 34%),
+        radial-gradient(circle at 50% 46%, transparent 0 36%, rgba(81, 49, 27, 0.15) 37% 38%, transparent 39%),
+        rgba(239, 220, 179, 0.62);
+}
+
+.body-assembly-preview {
+    position: relative;
+    width: min(100%, 620px);
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+}
+
+.body-assembly-preview-part {
+    position: absolute;
+    width: 22%;
+    aspect-ratio: 1 / 1;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.body-assembly-preview-part-body {
+    width: 28%;
+}
+
+.body-assembly-preview-part-hand_left,
+.body-assembly-preview-part-hand_right {
+    width: 24%;
+}
+
+.body-assembly-preview-part-leg_left,
+.body-assembly-preview-part-leg_right {
+    width: 23%;
+}
+
+.body-assembly-preview-part.is-missing {
+    border: 3px dashed rgba(43, 29, 20, 0.72);
+    border-radius: 45% 55% 42% 58%;
+    color: rgba(43, 29, 20, 0.72);
+    font-size: 52px;
+    font-weight: bold;
+    background: rgba(251, 242, 213, 0.52);
+}
+
+.body-assembly-preview-part.is-selected {
+    filter: drop-shadow(0 8px 0 rgba(43, 29, 20, 0.12));
+}
+
+.body-assembly-image-shell {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.body-assembly-part-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.body-assembly-part-placeholder {
+    position: absolute;
+    inset: 8%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 8px;
+    border: 2px solid #2b1d14;
+    border-radius: 8px;
+    background: #ead7ad;
+    color: #3b2719;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1.35;
+    text-align: center;
+    white-space: pre-line;
+}
+
+.body-assembly-image-shell.is-placeholder .body-assembly-part-placeholder {
+    display: flex;
+}
+
+.body-assembly-side {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.body-assembly-missing-panel,
+.body-assembly-stats-panel {
+    min-height: 46px;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 2px solid #2b1d14;
+    border-radius: 8px;
+    background: rgba(247, 231, 190, 0.72);
+    line-height: 1.45;
+}
+
+.body-assembly-option-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.body-assembly-option-card {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    grid-template-rows: auto auto 1fr;
+    gap: 4px 10px;
+    align-items: center;
+    min-height: 108px;
+    padding: 8px;
+    border: 3px solid #2b1d14;
+    border-radius: 8px;
+    background: #f0dfb8;
+    color: #2a1b12;
+    cursor: pointer;
+    text-align: left;
+    transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+.body-assembly-option-card:hover,
+.body-assembly-option-card.is-selected {
+    transform: translateY(-2px);
+    background: #f6e8c5;
+    box-shadow: 0 8px 0 rgba(43, 29, 20, 0.15);
+}
+
+.body-assembly-option-card .body-assembly-image-shell {
+    grid-row: 1 / span 3;
+    width: 92px;
+    height: 92px;
+}
+
+.body-assembly-option-title {
+    font-size: 16px;
+}
+
+.body-assembly-option-stats {
+    color: #684423;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.body-assembly-option-description {
+    color: #3c2b1e;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.body-assembly-confirm-button {
+    min-height: 44px;
+    border: 3px solid #2b1d14;
+    border-radius: 8px;
+    background: #7f9b57;
+    color: #fff8df;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.body-assembly-confirm-button:disabled {
+    background: #b0a380;
+    color: rgba(255, 248, 223, 0.72);
+    cursor: default;
+}
+
 .body-signature-panel-inner {
     width: 760px;
     max-width: calc(100vw - 28px);
@@ -1033,6 +1288,35 @@ div {
 }
 
 @media only screen and (max-width: 720px) {
+    .body-assembly-panel {
+        padding: 10px;
+    }
+
+    .body-assembly-shell {
+        width: calc(100vw - 20px);
+        padding: 12px;
+    }
+
+    .body-assembly-header {
+        display: block;
+    }
+
+    .body-assembly-status {
+        text-align: left;
+    }
+
+    .body-assembly-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .body-assembly-altar {
+        min-height: auto;
+    }
+
+    .body-assembly-preview {
+        width: min(100%, 420px);
+    }
+
     .body-signature-panel-inner {
         padding: 18px;
     }

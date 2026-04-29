@@ -22,6 +22,12 @@ describe('player-projection.js', () => {
       screenWidth: 800,
       screenHeight: 600,
       playerCardPreviewDataUrl: 'data:image/png;base64,card',
+      bodyAssembly: {
+        missingPartType: 'leg_left',
+        layers: {
+          leg_left: {id: 'leg_left_option_02', image: 'img/body-assembly/options/leg_left/leg_left_option_02.png'}
+        }
+      },
       bodySignature: {
         slotType: 'HAND',
         templateId: 'hand-open',
@@ -37,6 +43,7 @@ describe('player-projection.js', () => {
 
     expect(projected.name).to.equal('tester');
     expect(projected.playerCardPreviewDataUrl).to.equal('data:image/png;base64,card');
+    expect(projected.bodyAssembly.layers.leg_left.id).to.equal('leg_left_option_02');
     expect(projected.bodySignature).to.deep.equal({
       slotType: 'HAND',
       templateId: 'hand-open',
@@ -112,6 +119,7 @@ describe('player-projection.js', () => {
     });
     expect(movement.cells[0]).to.include({x: 200, y: 200});
     expect(movement.playerCardPreviewDataUrl).to.equal(undefined);
+    expect(movement.bodyAssembly).to.equal(undefined);
     expect(movement.bodyParts).to.equal(undefined);
     expect(movement.equipmentSlots).to.equal(undefined);
     expect(movement.npcRelationships).to.equal(undefined);

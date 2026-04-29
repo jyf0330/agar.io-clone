@@ -327,4 +327,25 @@ describe('socket-controller.js', () => {
     expect(probe.timings).to.include('settlement');
     expect(probe.milestones).to.include('settlement');
   });
+
+  it('should respawn after a recoverable socket reconnect', () => {
+    const {controller, socket, calls} = createController();
+
+    controller.connect('player');
+    socket.handlers.disconnect('transport close');
+    socket.handlers.connect();
+
+    expect(socket.emitted.map((entry) => entry.eventName)).to.deep.equal(['respawn', 'respawn']);
+    expect(calls.debugLogs).to.include('Socket 已重新连接，正在恢复游戏。');
+  });
+
+  it('should not respawn after a server-initiated disconnect', () => {
+    const {controller, socket} = createController();
+
+    controller.connect('player');
+    socket.handlers.disconnect('io server disconnect');
+    socket.handlers.connect();
+
+    expect(socket.emitted.map((entry) => entry.eventName)).to.deep.equal(['respawn']);
+  });
 });

@@ -2,6 +2,12 @@ const FULL_ANGLE = 2 * Math.PI;
 const avatarDraftConfig = require('./avatar-draft-config');
 const avatarRuntimeRender = require('./avatar-runtime-render');
 const avatarImageCache = {};
+const bodyAssemblyImageCache = {};
+const BODY_ASSEMBLY_LAYER_ORDER = ['base', 'head', 'body', 'hand_left', 'hand_right', 'leg_left', 'leg_right'];
+const BODY_ASSEMBLY_CANVAS_SIZE = 1024;
+const BODY_ASSEMBLY_BASE_Z_INDEX = -10;
+const BODY_ASSEMBLY_PART_SCALE = 0.46;
+const BODY_ASSEMBLY_OBJECT_SCALE = 2.75;
 
 const drawRoundObject = (position, radius, graph) => {
     graph.beginPath();
@@ -168,6 +174,75 @@ const getAvatarImage = (previewDataUrl) => {
     return avatarImageCache[previewDataUrl];
 };
 
+const getBodyAssemblyImage = (layer) => {
+    const imagePath = layer && layer.image;
+
+    if (!layer) {
+        return null;
+    }
+    if (layer.imageObject) {
+        return layer.imageObject;
+    }
+    if (!imagePath || typeof Image === 'undefined') {
+        return null;
+    }
+
+    if (!bodyAssemblyImageCache[imagePath]) {
+        const image = new Image();
+        image.src = imagePath;
+        bodyAssemblyImageCache[imagePath] = image;
+    }
+
+    return bodyAssemblyImageCache[imagePath];
+};
+
+const getBodyAssemblyDrawPlan = (bodyAssembly) => {
+    if (!bodyAssembly || !bodyAssembly.layers) {
+        return [];
+    }
+
+    return BODY_ASSEMBLY_LAYER_ORDER
+        .filter((layerId) => bodyAssembly.layers[layerId])
+        .map((layerId) => ({
+            layerId: layerId,
+            layer: bodyAssembly.layers[layerId],
+            anchor: layerId === 'base'
+                ? { x: BODY_ASSEMBLY_CANVAS_SIZE / 2, y: BODY_ASSEMBLY_CANVAS_SIZE / 2, zIndex: BODY_ASSEMBLY_BASE_Z_INDEX }
+                : (bodyAssembly.anchors && bodyAssembly.anchors[layerId])
+        }))
+        .filter((entry) => entry.anchor)
+        .sort((a, b) => a.anchor.zIndex - b.anchor.zIndex);
+};
+
+const drawBodyAssemblyCell = (cell, graph) => {
+    const objectSize = cell.radius * BODY_ASSEMBLY_OBJECT_SCALE;
+    const originX = cell.x - objectSize / 2;
+    const originY = cell.y - objectSize / 2;
+    const partSize = objectSize * BODY_ASSEMBLY_PART_SCALE;
+
+    graph.save();
+    graph.beginPath();
+    graph.arc(cell.x, cell.y, cell.radius, 0, FULL_ANGLE);
+    graph.closePath();
+    graph.fillStyle = 'rgba(236, 212, 162, 0.42)';
+    graph.fill();
+    graph.strokeStyle = cell.borderColor || 'rgba(43, 29, 20, 0.82)';
+    graph.lineWidth = Math.max(2, cell.radius * 0.08);
+    graph.stroke();
+
+    getBodyAssemblyDrawPlan(cell.bodyAssembly).forEach((entry) => {
+        const image = getBodyAssemblyImage(entry.layer);
+        const layerSize = entry.layerId === 'base' ? objectSize : partSize;
+        const layerX = originX + (entry.anchor.x / BODY_ASSEMBLY_CANVAS_SIZE) * objectSize - layerSize / 2;
+        const layerY = originY + (entry.anchor.y / BODY_ASSEMBLY_CANVAS_SIZE) * objectSize - layerSize / 2;
+
+        if (image && (entry.layer.imageObject || image.complete)) {
+            graph.drawImage(image, layerX, layerY, layerSize, layerSize);
+        }
+    });
+    graph.restore();
+};
+
 const drawAvatarCell = (cell, graph) => {
     graph.save();
     graph.beginPath();
@@ -221,7 +296,9 @@ const drawCells = (cells, playerConfig, toggleMassState, borders, graph) => {
         );
 
         // Draw the cell itself
-        if (useAvatarRuntimeRender) {
+        if (cell.bodyAssembly) {
+            drawBodyAssemblyCell(cell, graph);
+        } else if (useAvatarRuntimeRender) {
             drawAvatarCell(cell, graph);
         } else {
             graph.fillStyle = cell.color;
@@ -307,6 +384,7 @@ module.exports = {
     drawPartLoot,
     drawGhost,
     drawPet,
+    drawBodyAssemblyCell,
     drawCells,
     drawErrorMessage,
     drawGrid,
