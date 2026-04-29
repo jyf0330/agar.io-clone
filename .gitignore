@@ -15,6 +15,9 @@ dist/
 .launcher/
 .playwright-cli/
 
+# Local editor workspaces
+demo/*.code-workspace
+
 # Knowledge graph output
 graphify-out/
 
@@ -34,4 +37,5 @@ data/audit/
 data/consistency/
 data/memory/
 data/demo-rehearsal/
+data/test-bugs/
 data/llm-cache.json
