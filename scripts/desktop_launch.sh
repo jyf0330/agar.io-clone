@@ -11,8 +11,9 @@ LOG_DIR="$REPO_ROOT/.launcher"
 LOG_FILE="$LOG_DIR/server.log"
 PID_FILE="$LOG_DIR/server.pid"
 PORT_FILE="$LOG_DIR/server.port"
+STATE_DIR="$LOG_DIR/state"
 
-mkdir -p "$LOG_DIR"
+mkdir -p "$LOG_DIR" "$STATE_DIR/audit"
 cd "$REPO_ROOT"
 
 candidate_ports=("$DEFAULT_PORT" "3060" "3061" "3062")
@@ -202,7 +203,12 @@ fi
 
 echo "Starting server on http://$HOST:$launch_port/"
 echo "Logs: $LOG_FILE"
-nohup env PORT="$launch_port" IP="$HOST" node ./dist/server/server.js >>"$LOG_FILE" 2>&1 &
+nohup env \
+    PORT="$launch_port" \
+    IP="$HOST" \
+    MEMORY_DB_PATH="${MEMORY_DB_PATH:-$STATE_DIR/memory.db}" \
+    LLM_AUDIT_DIR="${LLM_AUDIT_DIR:-$STATE_DIR/audit}" \
+    node ./dist/server/server.js >>"$LOG_FILE" 2>&1 &
 server_pid="$!"
 
 echo "$server_pid" > "$PID_FILE"

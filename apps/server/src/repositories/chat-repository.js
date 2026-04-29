@@ -1,7 +1,7 @@
 const db = require("../sql.js");
 
 const logChatMessage = async (username, message, ipAddress) => {
-    const timestamp = new Date().getTime();
+    const timestamp = Date.now();
 
     return new Promise((resolve) => {
         db.run(

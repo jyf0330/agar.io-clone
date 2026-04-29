@@ -12,7 +12,8 @@ let nativeLoadError = null;
 const schemaSql = `
 CREATE TABLE IF NOT EXISTS failed_login_attempts (
   username TEXT,
-  ip_address TEXT
+  ip_address TEXT,
+  created_at INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS chat_messages (
@@ -49,12 +50,19 @@ function tryLoadNativeDatabase() {
     ensureDatabaseFolder();
     database = new Database(dbPath);
     database.exec(schemaSql);
+    migrateDatabaseSchemaNative(database);
     return database;
   } catch (error) {
     nativeLoadError = error;
     database = null;
   }
   return null;
+}
+function migrateDatabaseSchemaNative(db) {
+  const failedLoginColumns = db.prepare('PRAGMA table_info(failed_login_attempts)').all().map(column => column.name);
+  if (!failedLoginColumns.includes('created_at')) {
+    db.exec('ALTER TABLE failed_login_attempts ADD COLUMN created_at INTEGER');
+  }
 }
 function getPythonExecutable() {
   return process.env.PYTHON || process.env.PYTHON3 || 'python3';
@@ -67,7 +75,7 @@ function runWithPythonSqlite(query, params) {
     query: query,
     params: params || []
   });
-  const script = ['import json, sqlite3, sys', 'payload = json.loads(sys.stdin.read())', 'conn = sqlite3.connect(payload["dbPath"])', 'try:', '    conn.executescript(payload["schemaSql"])', '    cursor = conn.execute(payload["query"], payload["params"])', '    conn.commit()', '    print(json.dumps({"changes": conn.total_changes, "lastID": cursor.lastrowid}))', 'finally:', '    conn.close()'].join('\n');
+  const script = ['import json, sqlite3, sys', 'payload = json.loads(sys.stdin.read())', 'conn = sqlite3.connect(payload["dbPath"])', 'try:', '    conn.executescript(payload["schemaSql"])', '    columns = [row[1] for row in conn.execute("PRAGMA table_info(failed_login_attempts)").fetchall()]', '    if "created_at" not in columns:', '        conn.execute("ALTER TABLE failed_login_attempts ADD COLUMN created_at INTEGER")', '    cursor = conn.execute(payload["query"], payload["params"])', '    conn.commit()', '    print(json.dumps({"changes": conn.total_changes, "lastID": cursor.lastrowid}))', 'finally:', '    conn.close()'].join('\n');
   const result = childProcess.spawnSync(getPythonExecutable(), ['-c', script], {
     input: payload,
     encoding: 'utf8'

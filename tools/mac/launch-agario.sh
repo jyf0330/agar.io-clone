@@ -9,13 +9,14 @@ SCRIPT_ROOT="${0:A:h}"
 REPO_ROOT="${SCRIPT_ROOT:h:h}"
 RUNTIME_BASE="${HOME}/Library/Application Support/AgarioClone"
 RUNTIME_DIR="${RUNTIME_BASE}/runtime"
+STATE_DIR="${RUNTIME_BASE}/state"
 CACHE_DIR="${HOME}/Library/Caches/AgarioClone"
 LOG_DIR="${HOME}/Library/Logs/AgarioClone"
 LOG_FILE="${LOG_DIR}/launcher.log"
-NODE_BIN="/Applications/Codex.app/Contents/Resources/node"
+NODE_BIN="${AGARIO_NODE_BIN:-$(command -v node || true)}"
 
 if [[ ! -x "$NODE_BIN" ]]; then
-    NODE_BIN="$(command -v node || true)"
+    NODE_BIN="/Applications/Codex.app/Contents/Resources/node"
 fi
 
 if [[ -z "${NODE_BIN:-}" || ! -x "$NODE_BIN" ]]; then
@@ -64,6 +65,11 @@ function sync_runtime() {
     mkdir -p "$RUNTIME_DIR"
     rsync -a --delete \
         --exclude '.git/' \
+        --exclude '.launcher/' \
+        --exclude '.env' \
+        --exclude '.env.local' \
+        --exclude '.DS_Store' \
+        --exclude 'data/' \
         --exclude 'graphify-out/' \
         --exclude 'node_modules/' \
         "$REPO_ROOT/" "$RUNTIME_DIR/"
@@ -97,12 +103,13 @@ if test_local_url; then
     exit 0
 fi
 
-mkdir -p "$RUNTIME_BASE" "$CACHE_DIR" "$LOG_DIR"
+mkdir -p "$RUNTIME_BASE" "$STATE_DIR/audit" "$CACHE_DIR" "$LOG_DIR"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
 print "Preparing Agar.io Clone launcher..."
 print "Source repo: $REPO_ROOT"
 print "Runtime copy: $RUNTIME_DIR"
+print "Runtime state: $STATE_DIR"
 
 npm_cli="$(ensure_npm_cli)"
 sync_runtime
@@ -110,8 +117,13 @@ ensure_dependencies "$npm_cli"
 build_runtime
 
 (
-    deadline=$(($(current_epoch_seconds) + STARTUP_TIMEOUT_SECONDS))
-    while (( $(current_epoch_seconds) < deadline )); do
+    deadline=$(( $(current_epoch_seconds) + STARTUP_TIMEOUT_SECONDS ))
+    while true; do
+        now="$(current_epoch_seconds)"
+        if (( now >= deadline )); then
+            break
+        fi
+
         if test_local_url; then
             open_game_url
             exit 0
@@ -124,4 +136,6 @@ build_runtime
 
 print "Starting server on $URL ..."
 cd "$RUNTIME_DIR"
+export MEMORY_DB_PATH="${MEMORY_DB_PATH:-$STATE_DIR/memory.db}"
+export LLM_AUDIT_DIR="${LLM_AUDIT_DIR:-$STATE_DIR/audit}"
 exec "$NODE_BIN" dist/server/server.js

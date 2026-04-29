@@ -16,7 +16,7 @@ const PATHS = {
     clientSrc: 'apps/client/src',
     clientAssets: 'apps/client/assets',
     tests: 'tests',
-    dist: 'dist',
+    dist: process.env.DIST_DIR || 'dist',
 };
 
 function getWebpackConfig() {
@@ -27,8 +27,8 @@ function runServer(done) {
     let started = false;
     nodemon({
         delay: 10,
-        script: './dist/server/server.js',
-        watch: ['dist/server'],
+        script: path.join(PATHS.dist, 'server/server.js'),
+        watch: [path.join(PATHS.dist, 'server')],
         ext: 'js'
     }).on('start', () => {
         if (!started) {
@@ -43,7 +43,7 @@ function buildServer() {
     if (!process.env.IS_DEV) {
         task = task.pipe(babel())
     }
-    return task.pipe(gulp.dest(`${PATHS.dist}/server/`));
+    return task.pipe(gulp.dest(path.join(PATHS.dist, 'server')));
 }
 
 function copyClientHtml() {
@@ -56,13 +56,13 @@ function copyClientHtml() {
 
 function copyClientAssets() {
     return gulp.src([`${PATHS.clientAssets}/**/*.*`], { base: PATHS.clientAssets, encoding: false })
-        .pipe(gulp.dest(`./${PATHS.dist}/client/`));
+        .pipe(gulp.dest(path.join(PATHS.dist, 'client')));
 }
 
 function buildClientJS() {
     return gulp.src([`${PATHS.clientSrc}/*.js`])
         .pipe(webpack(getWebpackConfig()))
-        .pipe(gulp.dest(`${PATHS.dist}/client/js/`));
+        .pipe(gulp.dest(path.join(PATHS.dist, 'client/js')));
 }
 
 function setDev(done) {
@@ -72,9 +72,10 @@ function setDev(done) {
 
 function mocha(done) {
     const mochaInstance = new Mocha()
+    const testRoot = process.env.TEST_DIR || PATHS.tests;
     const files = fs
-        .readdirSync(PATHS.tests, {recursive: true})
-        .filter(x => x.endsWith('.js')).map(x => path.resolve(`${PATHS.tests}/` + x));
+        .readdirSync(testRoot, {recursive: true})
+        .filter(x => x.endsWith('.js')).map(x => path.resolve(testRoot, x));
     for (const file of files) {
         mochaInstance.addFile(file);
     }
