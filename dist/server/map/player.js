@@ -7,6 +7,9 @@ const materialization = require('../materialization');
 const connection = require('../connection');
 const relationship = require('../relationship');
 const body = require('../body');
+const playerKind = require('../player-kind');
+const playerEntry = require('../player-entry');
+const multiplayerPolicy = require('../multiplayer-policy');
 const MIN_SPEED = 6.25;
 const SPLIT_CELL_SPEED = 20;
 const SPEED_DECREMENT = 0.5;
@@ -102,6 +105,7 @@ exports.Player = class {
     this.bodyAssembly = null;
     this.consentToRecord = true;
     this.isReplayAllowed = true;
+    playerKind.markHumanPlayer(this);
     this.activePet = normalizeActivePet(null, id);
     this.screenWidth = null;
     this.screenHeight = null;
@@ -135,17 +139,7 @@ exports.Player = class {
     body.applyBodyState(this);
   }
   clientProvidedData(playerData) {
-    this.name = playerData.name;
-    this.screenWidth = playerData.screenWidth;
-    this.screenHeight = playerData.screenHeight;
-    this.playerCardPreviewDataUrl = playerData.playerCardPreviewDataUrl || null;
-    this.bodyAssembly = playerData.bodyAssembly || null;
-    this.bodySignature = playerData.bodySignature || null;
-    this.consentToRecord = playerData.consentToRecord !== false;
-    this.isReplayAllowed = this.consentToRecord;
-    body.applyBodyState(this, {
-      bodySignature: this.bodySignature
-    });
+    playerEntry.applyPlayerEntryPayload(this, playerData);
     this.setLastHeartbeat();
   }
   setActivePet(pet) {
@@ -326,8 +320,9 @@ exports.Player = class {
   }
 };
 exports.PlayerManager = class {
-  constructor() {
+  constructor(policyConfig) {
     this.data = [];
+    this.multiplayerPolicy = multiplayerPolicy.createMultiplayerPolicy(policyConfig || {});
   }
   pushNew(player) {
     this.data.push(player);
@@ -368,8 +363,8 @@ exports.PlayerManager = class {
   }
   getTopPlayers() {
     const humanPlayers = this.data.filter(function (player) {
-      return !player.isNpc;
-    }).sort(function (a, b) {
+      return this.multiplayerPolicy.isCompetitivePlayer(player);
+    }, this).sort(function (a, b) {
       return b.massTotal - a.massTotal;
     });
     var topPlayers = [];
@@ -384,7 +379,7 @@ exports.PlayerManager = class {
   getTotalMass() {
     let result = 0;
     for (let player of this.data) {
-      if (!player.isNpc) {
+      if (this.multiplayerPolicy.isCompetitivePlayer(player)) {
         result += player.massTotal;
       }
     }

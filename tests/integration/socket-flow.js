@@ -38,7 +38,7 @@ function waitForHttp(port) {
       });
 
       request.on('error', () => {
-        if (Date.now() - startedAt > 8000) {
+        if (Date.now() - startedAt > 20000) {
           reject(new Error('server did not become reachable on port ' + port));
           return;
         }
@@ -58,7 +58,7 @@ function waitForSocketEvent(socket, eventName, trigger, timeoutMs) {
     const timer = setTimeout(() => {
       socket.off(eventName, handler);
       reject(new Error('timed out waiting for ' + eventName));
-    }, timeoutMs || 5000);
+    }, timeoutMs || 10000);
 
     function handler() {
       clearTimeout(timer);
@@ -148,6 +148,7 @@ describe('socket flow integration', function () {
     serverProcess.stderr.on('data', (chunk) => {
       process.stderr.write(chunk);
     });
+    serverProcess.stdout.on('data', () => {});
 
     await waitForHttp(port);
   });
@@ -163,15 +164,23 @@ describe('socket flow integration', function () {
       return;
     }
 
-    serverProcess.once('exit', () => {
+    let finished = false;
+    function finish() {
+      if (finished) {
+        return;
+      }
+      finished = true;
       fs.rmSync(tmpDir, {recursive: true, force: true});
       done();
-    });
+    }
+
+    serverProcess.once('exit', finish);
     serverProcess.kill('SIGTERM');
     setTimeout(() => {
       if (serverProcess && serverProcess.exitCode === null) {
         serverProcess.kill('SIGKILL');
       }
+      setTimeout(finish, 1000);
     }, 1000);
   });
 

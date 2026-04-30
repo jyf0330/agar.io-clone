@@ -15,7 +15,7 @@ exports.Map = class {
     this.viruses = new exports.virusUtils.VirusManager(config.virus);
     this.massFood = new exports.massFoodUtils.MassFoodManager();
     this.partLoot = new exports.partLootUtils.PartLootManager();
-    this.players = new exports.playerUtils.PlayerManager();
+    this.players = new exports.playerUtils.PlayerManager(config);
     this.ghosts = [];
   }
   balanceMass(foodMass, gameMass, maxFood, maxVirus) {
