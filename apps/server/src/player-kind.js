@@ -8,14 +8,14 @@ function getPlayerKind(player) {
     if (!player) {
         return PLAYER_KIND_HUMAN;
     }
-    if (player.playerKind) {
-        return player.playerKind;
-    }
     if (player.isNpc) {
         return PLAYER_KIND_NPC;
     }
     if (player.isBot) {
         return PLAYER_KIND_BOT;
+    }
+    if (player.playerKind) {
+        return player.playerKind;
     }
     return PLAYER_KIND_HUMAN;
 }

@@ -3,6 +3,7 @@
 const SAT = require('sat');
 
 const body = require('./body');
+const multiplayerPolicyFactory = require('./multiplayer-policy');
 const settlement = require('./settlement');
 const util = require('./lib/util');
 const {
@@ -31,6 +32,7 @@ function createGameLoopService(options) {
     const getSocket = options.getSocket;
     const getSpectatorIds = options.getSpectatorIds;
     const initMassLog = util.mathLog(config.defaultPlayerMass, config.slowBase);
+    const multiplayerPolicy = multiplayerPolicyFactory.createMultiplayerPolicy(config);
     const syncConfig = config.sync || {};
     const spectatorUpdateIntervalMs = typeof syncConfig.spectatorUpdateIntervalMs === 'number'
         ? syncConfig.spectatorUpdateIntervalMs
@@ -225,7 +227,7 @@ function createGameLoopService(options) {
             return false;
         }
 
-        const activeHumans = map.players.data.filter((player) => player && !player.isNpc);
+        const activeHumans = map.players.data.filter((player) => player && multiplayerPolicy.isCompetitivePlayer(player));
         if (!activeHumans.length) {
             restartRoundClock(roundClock, now);
             return false;
@@ -241,13 +243,13 @@ function createGameLoopService(options) {
 
     function settleBodyCompletion() {
         const winner = map.players.data.find((player) => {
-            return player && !player.isNpc && body.hasBodyCompletion(player);
+            return player && multiplayerPolicy.canWinRound(player) && body.hasBodyCompletion(player);
         });
         if (!winner) {
             return false;
         }
 
-        const activeHumans = map.players.data.filter((player) => player && !player.isNpc);
+        const activeHumans = map.players.data.filter((player) => player && multiplayerPolicy.isCompetitivePlayer(player));
         const winnerName = winner.name || winner.id;
         notifyRoundEnd(activeHumans, {
             endedReason: 'body_complete',

@@ -1076,7 +1076,7 @@ describe('game-loop-service.js', () => {
       connectionService: { clearTimer() {} },
       getRoundClock() {
         return {
-          startedAt: 1700000000000,
+          startedAt: Date.now(),
           durationMs: 90000
         };
       },
@@ -1116,5 +1116,82 @@ describe('game-loop-service.js', () => {
     });
     expect(map.players.findByID('winner')).to.equal(null);
     expect(map.players.findByID('rival')).to.equal(null);
+  });
+
+  it('should not let non-competitive bots end the round by body completion', () => {
+    const mapConfig = Object.assign({}, config, {
+      botPlayers: {
+        competitive: false
+      },
+      partLoot: {
+        enabled: false
+      }
+    });
+    const map = new mapUtils.Map(mapConfig);
+    const bot = new playerUtils.Player('bot-winner');
+    const human = new playerUtils.Player('human-rival');
+    const socketEvents = [];
+
+    bot.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    bot.clientProvidedData({
+      name: 'Bot_Winner',
+      screenWidth: 800,
+      screenHeight: 600,
+      isBot: true
+    });
+    body.applyBodyState(bot, {
+      bodyParts: [
+        body.createBodyPart('HAND', 1, { sourceType: 'self_created' }),
+        body.createBodyPart('HEAD', 1, { sourceType: 'map_pickup' }),
+        body.createBodyPart('FOOT', 1, { sourceType: 'map_pickup' }),
+        body.createBodyPart('MOUTH', 1, { sourceType: 'npc_reward' }),
+        body.createBodyPart('HEART', 1, { sourceType: 'kill_loot' })
+      ]
+    });
+    human.init({ x: 240, y: 240 }, config.defaultPlayerMass);
+    human.clientProvidedData({
+      name: 'Human',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    body.applyBodyState(human, {
+      bodyParts: [
+        body.createBodyPart('HAND', 1, {
+          originPlayerId: 'human-rival',
+          currentOwnerId: 'human-rival',
+          sourceType: 'self_created'
+        })
+      ]
+    });
+    map.players.pushNew(bot);
+    map.players.pushNew(human);
+
+    const service = createGameLoopService({
+      config: mapConfig,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getRoundClock() {
+        return {
+          startedAt: Date.now(),
+          durationMs: 90000
+        };
+      },
+      getSocket(id) {
+        return {
+          emit(name, payload) {
+            socketEvents.push({id, name, payload});
+          },
+          disconnect() {}
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    service.tickGame();
+
+    expect(socketEvents.filter((event) => event.name === 'settlement')).to.have.length(0);
+    expect(map.players.findByID('bot-winner')).to.equal(bot);
+    expect(map.players.findByID('human-rival')).to.equal(human);
   });
 });

@@ -79,3 +79,11 @@ Bot strategy emits player-like actions:
 `apps/bot-client/src/bot-actions.js` maps those actions onto the existing socket
 protocol: `'0'`, `'1'`, `'2'`, and `'3'`. The game server still receives the
 same input events it receives from a browser player.
+
+## Multiplayer Policy
+
+`apps/server/src/multiplayer-policy.js` defines who counts as a competitive
+multiplayer player. By default, humans and socket bots are competitive, while
+NPC actors are not. Set `V5_BOT_PLAYERS_COMPETITIVE=0` to exclude socket bots
+from leaderboard mass totals and body-completion win conditions while still
+letting them connect and move as live players.

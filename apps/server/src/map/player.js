@@ -9,6 +9,7 @@ const relationship = require('../relationship');
 const body = require('../body');
 const playerKind = require('../player-kind');
 const playerEntry = require('../player-entry');
+const multiplayerPolicy = require('../multiplayer-policy');
 
 const MIN_SPEED = 6.25;
 const SPLIT_CELL_SPEED = 20;
@@ -344,8 +345,9 @@ exports.Player = class {
     }
 }
 exports.PlayerManager = class {
-    constructor() {
+    constructor(policyConfig) {
         this.data = [];
+        this.multiplayerPolicy = multiplayerPolicy.createMultiplayerPolicy(policyConfig || {});
     }
 
     pushNew(player) {
@@ -402,8 +404,8 @@ exports.PlayerManager = class {
 
     getTopPlayers() {
         const humanPlayers = this.data.filter(function (player) {
-            return !player.isNpc;
-        }).sort(function (a, b) { return b.massTotal - a.massTotal; });
+            return this.multiplayerPolicy.isCompetitivePlayer(player);
+        }, this).sort(function (a, b) { return b.massTotal - a.massTotal; });
         var topPlayers = [];
         for (var i = 0; i < Math.min(10, humanPlayers.length); i++) {
             topPlayers.push({
@@ -417,7 +419,7 @@ exports.PlayerManager = class {
     getTotalMass() {
         let result = 0;
         for (let player of this.data) {
-            if (!player.isNpc) {
+            if (this.multiplayerPolicy.isCompetitivePlayer(player)) {
                 result += player.massTotal;
             }
         }

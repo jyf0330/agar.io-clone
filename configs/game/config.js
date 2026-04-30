@@ -92,6 +92,9 @@ const config = {
         useMemoryInRoutineTicks: process.env.V5_NPC_ROUTINE_MEMORY === '1',
         routineIntentRecordIntervalMs: 10000
     },
+    botPlayers: {
+        competitive: process.env.V5_BOT_PLAYERS_COMPETITIVE === '0' ? false : true
+    },
     sync: {
         playerMetaUpdateIntervalMs: 2000,
         spectatorUpdateIntervalMs: 100,
