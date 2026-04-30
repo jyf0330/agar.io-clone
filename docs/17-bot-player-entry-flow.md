@@ -55,9 +55,14 @@ set `isNpc`.
 `apps/bot-client/src/index.js` starts a headless Socket.IO player client:
 
 ```bash
-BOT_SERVER_URL=http://127.0.0.1:3000 BOT_NAME=Bot_One npm run bot:client
+BOT_SERVER_URL=http://127.0.0.1:3000 BOT_PROFILE=doudou npm run bot:client
 ```
 
 The client connects with `query.type = "player"` and sends the same `gotit`
 payload shape as the browser. It is a live socket player, not a server-internal
 `map.players.pushNew()` shortcut.
+
+Bot player profiles live in `demo/bot-players/*.json`. A profile is the
+headless equivalent of the pregame body selection flow: it supplies the bot
+name, generated card preview, `bodySignature`, `bodyAssembly`, and strategy
+settings that later action planning can use.

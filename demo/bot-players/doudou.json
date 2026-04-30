@@ -1,0 +1,23 @@
+{
+  "name": "Doudou_Bot",
+  "color": "#FF9F43",
+  "screenWidth": 1280,
+  "screenHeight": 720,
+  "bodySignature": {
+    "slotType": "FOOT",
+    "templateId": "foot-default",
+    "tier": "bot-profile"
+  },
+  "bodyAssembly": {
+    "selectedParts": {
+      "head": "head-default",
+      "hand": "hand-open",
+      "foot": "foot-default"
+    }
+  },
+  "strategy": {
+    "mode": "wander",
+    "splitMassThreshold": 220,
+    "ejectMassThreshold": 120
+  }
+}

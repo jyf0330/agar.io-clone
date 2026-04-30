@@ -1,0 +1,23 @@
+{
+  "name": "Mochi_Bot",
+  "color": "#FFB7D5",
+  "screenWidth": 1280,
+  "screenHeight": 720,
+  "bodySignature": {
+    "slotType": "HAND",
+    "templateId": "hand-open",
+    "tier": "bot-profile"
+  },
+  "bodyAssembly": {
+    "selectedParts": {
+      "head": "head-default",
+      "hand": "hand-open",
+      "foot": "foot-default"
+    }
+  },
+  "strategy": {
+    "mode": "wander",
+    "splitMassThreshold": 260,
+    "ejectMassThreshold": 140
+  }
+}
