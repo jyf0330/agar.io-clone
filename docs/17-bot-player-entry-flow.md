@@ -49,3 +49,15 @@ player entry payload:
 The server normalizes and applies this payload through
 `apps/server/src/player-entry.js`. Bot entry must use `isBot: true`; it must not
 set `isNpc`.
+
+## Headless Bot Client
+
+`apps/bot-client/src/index.js` starts a headless Socket.IO player client:
+
+```bash
+BOT_SERVER_URL=http://127.0.0.1:3000 BOT_NAME=Bot_One npm run bot:client
+```
+
+The client connects with `query.type = "player"` and sends the same `gotit`
+payload shape as the browser. It is a live socket player, not a server-internal
+`map.players.pushNew()` shortcut.
