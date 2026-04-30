@@ -1,6 +1,7 @@
 'use strict';
 
 const socketIoClient = require('socket.io-client');
+const {applyBotActions, planBotActions} = require('./bot-actions');
 
 const DEFAULT_SERVER_URL = 'http://127.0.0.1:3000';
 const DEFAULT_PROFILE = {
@@ -45,6 +46,22 @@ function createBotClient(options) {
         socket.on('welcome', function (player, game) {
             state.player = player || null;
             state.game = game || null;
+        });
+
+        socket.on('serverTellPlayerMove', function (playerData, visiblePlayers, visibleFood, visibleMass, visibleViruses, visiblePartLoot, visibleGhosts) {
+            state.player = Object.assign({}, state.player || {}, playerData || {});
+            const actions = planBotActions({
+                player: state.player,
+                game: state.game,
+                visiblePlayers,
+                visibleFood,
+                visibleMass,
+                visibleViruses,
+                visiblePartLoot,
+                visibleGhosts,
+                profile
+            });
+            applyBotActions(socket, actions);
         });
 
         return socket;

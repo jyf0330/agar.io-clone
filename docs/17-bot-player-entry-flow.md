@@ -66,3 +66,16 @@ Bot player profiles live in `demo/bot-players/*.json`. A profile is the
 headless equivalent of the pregame body selection flow: it supplies the bot
 name, generated card preview, `bodySignature`, `bodyAssembly`, and strategy
 settings that later action planning can use.
+
+## Action Layer
+
+Bot strategy emits player-like actions:
+
+- `moveTarget`
+- `ejectMass`
+- `split`
+- `attemptConnection`
+
+`apps/bot-client/src/bot-actions.js` maps those actions onto the existing socket
+protocol: `'0'`, `'1'`, `'2'`, and `'3'`. The game server still receives the
+same input events it receives from a browser player.
