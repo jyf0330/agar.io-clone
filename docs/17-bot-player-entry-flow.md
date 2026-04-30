@@ -19,3 +19,33 @@ Competitive multiplayer rules should prefer `playerKind` over ad-hoc `isNpc`
 checks. Bots are competitive players; NPC actors are not. This lets future bot
 clients pick body parts, connect over Socket.IO, and send the same input events
 as human clients without being treated as server-internal pets.
+
+## Shared Entry Payload
+
+Human clients and bot clients both enter through `gotit` with the normalized
+player entry payload:
+
+```json
+{
+  "name": "Bot_One",
+  "screenWidth": 1280,
+  "screenHeight": 720,
+  "playerCardPreviewDataUrl": "data:image/png;base64,...",
+  "bodySignature": {
+    "slotType": "FOOT",
+    "templateId": "foot-default"
+  },
+  "bodyAssembly": {
+    "selectedParts": {
+      "foot": "foot-default"
+    }
+  },
+  "consentToRecord": true,
+  "isReplayAllowed": true,
+  "isBot": true
+}
+```
+
+The server normalizes and applies this payload through
+`apps/server/src/player-entry.js`. Bot entry must use `isBot: true`; it must not
+set `isNpc`.

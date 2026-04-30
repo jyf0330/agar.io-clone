@@ -32,6 +32,7 @@ const {getPosition} = require("./lib/entityUtils");
 const createConnectionService = require('./connection-service');
 const createGameLoopService = require('./game-loop-service');
 const settlement = require('./settlement');
+const playerEntry = require('./player-entry');
 const GhostManager = require('./ghost/manager');
 const GhostRecorder = require('./ghost/recorder');
 const memorySessionId = process.env.MEMORY_SESSION_ID || 'session-' + Date.now();
@@ -478,23 +479,21 @@ const addPlayer = (socket) => {
     var currentPlayer = new mapUtils.playerUtils.Player(socket.id);
 
     socket.on('gotit', function (clientPlayerData) {
-        console.log('[INFO] Player ' + clientPlayerData.name + ' connecting!');
+        const entryPayload = playerEntry.normalizePlayerEntryPayload(clientPlayerData);
+        console.log('[INFO] Player ' + entryPayload.name + ' connecting!');
         currentPlayer.init(generateSpawnpoint(), config.defaultPlayerMass);
 
         if (map.players.findIndexByID(socket.id) > -1) {
             console.log('[INFO] Player ID is already connected, kicking.');
             socket.disconnect();
-        } else if (!util.validNick(clientPlayerData.name)) {
+        } else if (!util.validNick(entryPayload.name)) {
             socket.emit('kick', 'Invalid username.');
             socket.disconnect();
         } else {
-            console.log('[INFO] Player ' + clientPlayerData.name + ' connected!');
+            console.log('[INFO] Player ' + entryPayload.name + ' connected!');
             sockets[socket.id] = socket;
 
-            const sanitizedName = clientPlayerData.name.replace(/(<([^>]+)>)/ig, '');
-            clientPlayerData.name = sanitizedName;
-
-            currentPlayer.clientProvidedData(clientPlayerData);
+            currentPlayer.clientProvidedData(entryPayload);
             ensureActivePetForPlayer(currentPlayer);
             ghostRecorder.recordPlayerSession(currentPlayer, Date.now());
             map.players.pushNew(currentPlayer);

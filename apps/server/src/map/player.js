@@ -8,6 +8,7 @@ const connection = require('../connection');
 const relationship = require('../relationship');
 const body = require('../body');
 const playerKind = require('../player-kind');
+const playerEntry = require('../player-entry');
 
 const MIN_SPEED = 6.25;
 const SPLIT_CELL_SPEED = 20;
@@ -150,17 +151,7 @@ exports.Player = class {
     }
 
     clientProvidedData(playerData) {
-        this.name = playerData.name;
-        this.screenWidth = playerData.screenWidth;
-        this.screenHeight = playerData.screenHeight;
-        this.playerCardPreviewDataUrl = playerData.playerCardPreviewDataUrl || null;
-        this.bodyAssembly = playerData.bodyAssembly || null;
-        this.bodySignature = playerData.bodySignature || null;
-        this.consentToRecord = playerData.consentToRecord !== false;
-        this.isReplayAllowed = this.consentToRecord;
-        body.applyBodyState(this, {
-            bodySignature: this.bodySignature
-        });
+        playerEntry.applyPlayerEntryPayload(this, playerData);
         this.setLastHeartbeat();
     }
 
