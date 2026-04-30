@@ -16,8 +16,8 @@ Use this checklist when changing the bot player entry flow.
 2. Start a bot player with
    `BOT_SERVER_URL=http://127.0.0.1:3000 BOT_PROFILE=doudou npm run bot:client`.
 3. Open a browser player and join the arena.
-4. Confirm the bot appears as a live player, has a card/body profile, moves
-   from server sync updates, can eat food, and disappears when the bot process
-   exits.
+4. Confirm the bot appears as a live player, has a card/body profile with six
+   visible assembly slots, starts with six server body parts, moves from server
+   sync updates, can eat food, and disappears when the bot process exits.
 5. Set `V5_BOT_PLAYERS_COMPETITIVE=0`, restart the server, and confirm bots can
    still join but do not win via body completion.

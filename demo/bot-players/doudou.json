@@ -9,10 +9,14 @@
     "tier": "bot-profile"
   },
   "bodyAssembly": {
+    "missingPartType": "leg_left",
     "selectedParts": {
-      "head": "head-default",
-      "hand": "hand-open",
-      "foot": "foot-default"
+      "head": "head_option_03",
+      "body": "body_option_02",
+      "hand_left": "hand_left_option_01",
+      "hand_right": "hand_right_option_02",
+      "leg_left": "leg_left_option_01",
+      "leg_right": "leg_right_option_01"
     }
   },
   "strategy": {

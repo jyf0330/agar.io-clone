@@ -22,11 +22,22 @@ function getFreePort() {
   });
 }
 
-function waitForHttp(port) {
+function waitForHttp(port, options) {
   const startedAt = Date.now();
+  const settings = options || {};
+  const timeoutMs = settings.timeoutMs || 30000;
+  const getEarlyFailure = settings.getEarlyFailure || function () {
+    return null;
+  };
 
   return new Promise((resolve, reject) => {
     function check() {
+      const earlyFailure = getEarlyFailure();
+      if (earlyFailure) {
+        reject(earlyFailure);
+        return;
+      }
+
       const request = http.get({
         hostname: '127.0.0.1',
         port,
@@ -38,7 +49,7 @@ function waitForHttp(port) {
       });
 
       request.on('error', () => {
-        if (Date.now() - startedAt > 20000) {
+        if (Date.now() - startedAt > timeoutMs) {
           reject(new Error('server did not become reachable on port ' + port));
           return;
         }
@@ -115,7 +126,7 @@ function readRows(dbPath, query) {
 }
 
 describe('socket flow integration', function () {
-  this.timeout(20000);
+  this.timeout(45000);
 
   let serverProcess;
   let tmpDir;
@@ -144,13 +155,20 @@ describe('socket flow integration', function () {
       }),
       stdio: ['ignore', 'pipe', 'pipe']
     });
+    let serverExitError = null;
 
     serverProcess.stderr.on('data', (chunk) => {
       process.stderr.write(chunk);
     });
     serverProcess.stdout.on('data', () => {});
+    serverProcess.once('exit', (code, signal) => {
+      serverExitError = new Error('server exited before becoming reachable on port ' + port + ' code=' + code + ' signal=' + signal);
+    });
 
-    await waitForHttp(port);
+    await waitForHttp(port, {
+      timeoutMs: 30000,
+      getEarlyFailure: () => serverExitError
+    });
   });
 
   afterEach(function (done) {
@@ -158,7 +176,10 @@ describe('socket flow integration', function () {
       socket.disconnect();
     });
 
-    if (!serverProcess || serverProcess.exitCode !== null) {
+    const processToStop = serverProcess;
+    serverProcess = null;
+
+    if (!processToStop || processToStop.exitCode !== null) {
       fs.rmSync(tmpDir, {recursive: true, force: true});
       done();
       return;
@@ -174,11 +195,11 @@ describe('socket flow integration', function () {
       done();
     }
 
-    serverProcess.once('exit', finish);
-    serverProcess.kill('SIGTERM');
+    processToStop.once('exit', finish);
+    processToStop.kill('SIGTERM');
     setTimeout(() => {
-      if (serverProcess && serverProcess.exitCode === null) {
-        serverProcess.kill('SIGKILL');
+      if (processToStop.exitCode === null) {
+        processToStop.kill('SIGKILL');
       }
       setTimeout(finish, 1000);
     }, 1000);

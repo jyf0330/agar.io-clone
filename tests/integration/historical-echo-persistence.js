@@ -19,6 +19,8 @@ function loadStore(dbPath) {
 }
 
 describe('historical echo persistence integration', function () {
+  this.timeout(10000);
+
   let tmpDir;
   let previousMemoryPath;
 

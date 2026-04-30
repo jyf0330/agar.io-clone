@@ -36,8 +36,14 @@ player entry payload:
     "templateId": "foot-default"
   },
   "bodyAssembly": {
+    "missingPartType": "leg_left",
     "selectedParts": {
-      "foot": "foot-default"
+      "head": "head_option_03",
+      "body": "body_option_02",
+      "hand_left": "hand_left_option_01",
+      "hand_right": "hand_right_option_02",
+      "leg_left": "leg_left_option_01",
+      "leg_right": "leg_right_option_01"
     }
   },
   "consentToRecord": true,
@@ -66,6 +72,12 @@ Bot player profiles live in `demo/bot-players/*.json`. A profile is the
 headless equivalent of the pregame body selection flow: it supplies the bot
 name, generated card preview, `bodySignature`, `bodyAssembly`, and strategy
 settings that later action planning can use.
+
+`bodyAssembly.selectedParts` must describe the same six visible assembly slots
+as the browser body-selection page: `head`, `body`, `hand_left`, `hand_right`,
+`leg_left`, and `leg_right`. `apps/bot-client/src/bot-profile.js` expands older
+three-category profile data into those six slots before the `gotit` payload is
+sent.
 
 ## Action Layer
 
