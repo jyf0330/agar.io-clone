@@ -17,18 +17,18 @@ describe('body.js', () => {
 
       expect(player.bodyPartCount).to.equal(bodyConfig.defaultLoadout.length);
       expect(player.bodyParts.map((part) => part.type)).to.deep.equal(bodyConfig.defaultLoadout);
-      expect(player.bodyPartCounts.HEAD).to.equal(0);
-      expect(player.bodyPartCounts.HAND).to.equal(1);
-      expect(player.bodyPartCounts.FOOT).to.equal(0);
-      expect(player.bodyPartCounts.MOUTH).to.equal(0);
+      expect(player.bodyPartCounts.HEAD).to.equal(1);
+      expect(player.bodyPartCounts.HAND).to.equal(2);
+      expect(player.bodyPartCounts.FOOT).to.equal(2);
+      expect(player.bodyPartCounts.MOUTH).to.equal(1);
       expect(player.bodyPartCounts.HEART).to.equal(0);
       expect(player.bodyPartCounts.SPIKE).to.equal(0);
-      expect(player.equipmentSlots.head).to.equal(null);
+      expect(player.equipmentSlots.head.partType).to.equal('HEAD');
       expect(player.equipmentSlots.rightHand.partType).to.equal('HAND');
-      expect(player.equipmentSlots.rightLeg).to.equal(null);
-      expect(player.equipmentSlots.torso).to.equal(null);
-      expect(player.equipmentSlots.leftHand).to.equal(null);
-      expect(player.equipmentSlots.leftLeg).to.equal(null);
+      expect(player.equipmentSlots.leftHand.partType).to.equal('HAND');
+      expect(player.equipmentSlots.rightLeg.partType).to.equal('FOOT');
+      expect(player.equipmentSlots.leftLeg.partType).to.equal('FOOT');
+      expect(player.equipmentSlots.torso.partType).to.equal('MOUTH');
     });
 
     it('should convert a V5 body signature into the starter hand slot', () => {
@@ -58,7 +58,7 @@ describe('body.js', () => {
       expect(signedHand.userStrokeDataUrl).to.equal('data:image/png;base64,stroke');
       expect(signedHand.originPlayerId).to.equal('player-1');
       expect(signedHand.currentOwnerId).to.equal('player-1');
-      expect(player.bodyBonuses.connectionRangeBonus).to.equal(15);
+      expect(player.bodyBonuses.connectionRangeBonus).to.equal(55);
     });
   });
 
@@ -355,6 +355,7 @@ describe('body.js', () => {
           body.createBodyPart('HAND', 1),
           body.createBodyPart('FOOT', 1),
           body.createBodyPart('FOOT', 2),
+          body.createBodyPart('FOOT', 3),
           body.createBodyPart('MOUTH', 1),
           body.createBodyPart('HEART', 1)
         ]
@@ -365,6 +366,18 @@ describe('body.js', () => {
       fastPlayer.move(config.slowBase, config.gameWidth, config.gameHeight, 1);
 
       expect(fastPlayer.x).to.be.greaterThan(defaultPlayer.x);
+    });
+
+    it('should allow a zero movement multiplier to keep a robot stationary', () => {
+      const robot = new playerUtils.Player('robot');
+      robot.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+      robot.bodyBonuses.movementSpeedMultiplier = 0;
+      robot.target = { x: 300, y: 0 };
+
+      robot.move(config.slowBase, config.gameWidth, config.gameHeight, 1);
+
+      expect(robot.x).to.equal(100);
+      expect(robot.y).to.equal(100);
     });
 
     it('should see farther when a player has extra heads', () => {
@@ -416,12 +429,12 @@ describe('body.js', () => {
 
       expect(result.playerData.bodyPartCount).to.equal(bodyConfig.defaultLoadout.length);
       expect(result.playerData.bodyPartCounts.HEART).to.equal(0);
-      expect(result.playerData.bodyParts[0].type).to.equal('HAND');
-      expect(result.playerData.equipmentSlots.head).to.equal(null);
+      expect(result.playerData.bodyParts[0].type).to.equal('HEAD');
+      expect(result.playerData.equipmentSlots.head.partType).to.equal('HEAD');
       expect(result.playerData.equipmentSlots.rightHand.partType).to.equal('HAND');
       expect(result.visiblePlayers[0].bodyPartCount).to.equal(bodyConfig.defaultLoadout.length);
       expect(result.visiblePlayers[0].bodyPartCounts.SPIKE).to.equal(0);
-      expect(result.visiblePlayers[0].equipmentSlots.rightLeg).to.equal(null);
+      expect(result.visiblePlayers[0].equipmentSlots.rightLeg.partType).to.equal('FOOT');
     });
   });
 });

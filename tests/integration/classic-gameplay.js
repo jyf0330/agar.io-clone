@@ -141,7 +141,7 @@ describe('classic gameplay integration', () => {
     expect(player.cells.length).to.be.at.most(config.limitSplit);
   });
 
-  it('should settle and remove a player swallowed by a larger human player', () => {
+  it('should steal one part instead of removing a swallowed player', () => {
     const config = createTestConfig();
     const map = new mapUtils.Map(config);
     const eater = createPlayer('player-eater', 'Eater', {x: 400, y: 400}, 400);
@@ -156,10 +156,12 @@ describe('classic gameplay integration', () => {
 
     harness.service.tickGame();
 
-    expect(map.players.findByID('player-victim')).to.equal(null);
-    expect(eater.massTotal).to.be.greaterThan(400);
-    expect(harness.ioEvents.some((event) => event.name === 'playerDied')).to.equal(true);
-    expect(victimSocket.events.map((event) => event.name)).to.include.members(['settlement', 'RIP']);
-    expect(harness.clearTimerCalls).to.deep.equal(['player-victim']);
+    expect(map.players.findByID('player-victim')).to.equal(victim);
+    expect(eater.massTotal).to.equal(400);
+    expect(eater.bodyPartCount).to.equal(7);
+    expect(victim.bodyPartCount).to.equal(5);
+    expect(harness.ioEvents.some((event) => event.name === 'playerDied')).to.equal(false);
+    expect(victimSocket.events).to.have.length(0);
+    expect(harness.clearTimerCalls).to.deep.equal([]);
   });
 });

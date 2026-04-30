@@ -5,7 +5,11 @@ function shouldUseAvatarRuntimeRender(cell, config, isTouchingBorders) {
         return false;
     }
 
-    if (!cell || !cell.playerCardPreviewDataUrl) {
+    if (!cell) {
+        return false;
+    }
+
+    if (!cell.playerCardPreviewDataUrl && !(cell.isNpc && cell.skeletonKey)) {
         return false;
     }
 

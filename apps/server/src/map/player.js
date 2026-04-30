@@ -66,7 +66,7 @@ class Cell {
         var dist = Math.hypot(target.y, target.x)
         var deg = Math.atan2(target.y, target.x);
         var slowDown = 1;
-        var movementMultiplier = speedMultiplier || 1;
+        var movementMultiplier = typeof speedMultiplier === 'number' ? speedMultiplier : 1;
         if (this.speed <= MIN_SPEED) {
             slowDown = util.mathLog(this.mass, slowBase) - initMassLog + 1;
         }
@@ -118,6 +118,9 @@ exports.Player = class {
         this.screenWidth = null;
         this.screenHeight = null;
         this.timeToMerge = null;
+        this.invincibleUntil = 0;
+        this.speedBoostUntil = 0;
+        this.speedBoostMultiplier = 1;
         this.setLastHeartbeat();
         materialization.applyMaterializationState(this);
         connection.applyConnectionState(this);
@@ -135,6 +138,9 @@ exports.Player = class {
             x: 0,
             y: 0
         };
+        this.invincibleUntil = 0;
+        this.speedBoostUntil = 0;
+        this.speedBoostMultiplier = 1;
         materialization.applyMaterializationState(this);
         connection.applyConnectionState(this);
         relationship.applyRelationshipState(this);
@@ -167,6 +173,25 @@ exports.Player = class {
 
     setLastSplit() {
         this.timeToMerge = Date.now() + 1000 * MERGE_TIMER;
+    }
+
+    startInvincibility(durationMs, speedMultiplier, now) {
+        const startedAt = typeof now === 'number' ? now : Date.now();
+        this.invincibleUntil = startedAt + durationMs;
+        this.speedBoostUntil = this.invincibleUntil;
+        this.speedBoostMultiplier = speedMultiplier;
+    }
+
+    isInvincible(now) {
+        const currentTime = typeof now === 'number' ? now : Date.now();
+        return currentTime < this.invincibleUntil;
+    }
+
+    getMovementSpeedMultiplier(now) {
+        const bodyMultiplier = this.bodyBonuses ? this.bodyBonuses.movementSpeedMultiplier : 1;
+        const currentTime = typeof now === 'number' ? now : Date.now();
+        const boostMultiplier = currentTime < this.speedBoostUntil ? this.speedBoostMultiplier : 1;
+        return bodyMultiplier * boostMultiplier;
     }
 
     loseMassIfNeeded(massLossRate, defaultPlayerMass, minMassLoss) {
@@ -291,7 +316,7 @@ exports.Player = class {
         }
 
         let xSum = 0, ySum = 0;
-        const movementSpeedMultiplier = this.bodyBonuses ? this.bodyBonuses.movementSpeedMultiplier : 1;
+        const movementSpeedMultiplier = this.getMovementSpeedMultiplier();
         for (let i = 0; i < this.cells.length; i++) {
             let cell = this.cells[i];
             cell.move(this.x, this.y, this.target, slowBase, initMassLog, movementSpeedMultiplier);

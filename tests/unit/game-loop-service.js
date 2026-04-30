@@ -66,7 +66,7 @@ describe('game-loop-service.js', () => {
     const hand = player.bodyParts.find((part) => part.templateId === 'hand-thread');
     expect(hand.templateId).to.equal('hand-thread');
     expect(hand.source).to.equal('ghost-echo');
-    expect(player.bodyPartCounts.HAND).to.equal(2);
+    expect(player.bodyPartCounts.HAND).to.equal(3);
     expect(map.partLoot.data).to.have.length(0);
   });
 
@@ -110,7 +110,7 @@ describe('game-loop-service.js', () => {
 
     service.tickGame();
 
-    expect(player.bodyPartCounts.HEAD).to.equal(1);
+    expect(player.bodyPartCounts.HEAD).to.equal(2);
     expect(socketEvents.filter((event) => event.name === 'settlement' || event.name === 'RIP')).to.have.length(0);
     expect(map.players.findByID('player-1')).to.equal(player);
   });
@@ -271,7 +271,8 @@ describe('game-loop-service.js', () => {
     expect(accepted.payload.partType).to.equal('HAND');
   });
 
-  it('should record combat and stolen part events when a player is fully eaten', () => {
+  it('should steal one body part without killing the devoured player', () => {
+    const originalNow = Date.now;
     const map = new mapUtils.Map(Object.assign({}, config, {
       partLoot: {
         enabled: false
@@ -280,7 +281,6 @@ describe('game-loop-service.js', () => {
     const eater = new playerUtils.Player('eater');
     const victim = new playerUtils.Player('victim');
     const recordedPartEvents = [];
-    const recordedCombatEvents = [];
     const socketEvents = [];
 
     eater.init({ x: 100, y: 100 }, config.defaultPlayerMass);
@@ -323,13 +323,6 @@ describe('game-loop-service.js', () => {
             partType: partArg.partType,
             sourceType: partArg.sourceType
           });
-        },
-        recordCombatEvent(playerArg, eventType, targetArg) {
-          recordedCombatEvents.push({
-            playerId: playerArg.id,
-            eventType,
-            targetId: targetArg.id
-          });
         }
       },
       getSocket(id) {
@@ -347,16 +340,355 @@ describe('game-loop-service.js', () => {
       getSpectatorIds() { return []; }
     });
 
-    service.tickGame();
+    try {
+      Date.now = () => 1700000000000;
+      service.tickGame();
+    } finally {
+      Date.now = originalNow;
+    }
 
-    expect(recordedCombatEvents.map((entry) => entry.eventType)).to.deep.equal(['kill', 'swallowed']);
     expect(recordedPartEvents.map((entry) => entry.eventType)).to.deep.equal(['part_stolen', 'part_equipped']);
     expect(recordedPartEvents[0].partType).to.equal('HAND');
     expect(recordedPartEvents[0].sourceType).to.equal('kill_loot');
-    expect(socketEvents.map((event) => event.name)).to.deep.equal(['settlement', 'RIP']);
-    expect(socketEvents[0].payload.endedReason).to.equal('swallowed');
-    expect(socketEvents[0].payload.historyWritten).to.equal(true);
-    expect(map.players.findByID('victim')).to.equal(null);
+    expect(socketEvents).to.have.length(0);
+    expect(map.players.findByID('victim')).to.equal(victim);
+    expect(victim.bodyPartCounts.HAND).to.equal(0);
+    expect(eater.bodyPartCounts.HAND).to.equal(3);
+    expect(victim.invincibleUntil).to.equal(1700000003000);
+    expect(victim.speedBoostUntil).to.equal(1700000003000);
+  });
+
+  it('should protect the devoured player from other eaters after one part is stolen in the same tick', () => {
+    const originalNow = Date.now;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const eaterA = new playerUtils.Player('eater-a');
+    const eaterB = new playerUtils.Player('eater-b');
+    const victim = new playerUtils.Player('victim');
+
+    [eaterA, eaterB].forEach((eater) => {
+      eater.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+      eater.clientProvidedData({
+        name: eater.id,
+        screenWidth: 800,
+        screenHeight: 600
+      });
+      eater.cells[0].setMass(200);
+      eater.massTotal = 200;
+    });
+
+    victim.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    victim.clientProvidedData({
+      name: 'Victim',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    body.applyBodyState(victim, {
+      bodyParts: [
+        body.createBodyPart('HEAD', 1),
+        body.createBodyPart('HAND', 1)
+      ]
+    });
+
+    map.players.pushNew(eaterA);
+    map.players.pushNew(eaterB);
+    map.players.pushNew(victim);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    try {
+      Date.now = () => 1700000000000;
+      service.tickGame();
+    } finally {
+      Date.now = originalNow;
+    }
+
+    expect(victim.bodyPartCount).to.equal(1);
+    expect(victim.invincibleUntil).to.equal(1700000003000);
+    expect(eaterA.bodyPartCount + eaterB.bodyPartCount).to.equal(13);
+  });
+
+  it('should let human players steal one npc robot part without removing the npc', () => {
+    const originalNow = Date.now;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const eater = new playerUtils.Player('eater');
+    const npc = new playerUtils.Player('npc-robot');
+
+    eater.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    eater.clientProvidedData({
+      name: 'Eater',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    eater.cells[0].setMass(200);
+    eater.massTotal = 200;
+
+    npc.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    npc.isNpc = true;
+    npc.name = 'Robot';
+
+    map.players.pushNew(eater);
+    map.players.pushNew(npc);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    try {
+      Date.now = () => 1700000000000;
+      service.tickGame();
+    } finally {
+      Date.now = originalNow;
+    }
+
+    expect(map.players.findByID('npc-robot')).to.equal(npc);
+    expect(map.players.findByID('eater')).to.equal(eater);
+    expect(npc.bodyPartCount).to.equal(5);
+    expect(eater.bodyPartCount).to.equal(7);
+    expect(eater.invincibleUntil).to.equal(0);
+  });
+
+  it('should let npc robots steal one player part', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const npc = new playerUtils.Player('npc-robot');
+    const victim = new playerUtils.Player('victim');
+
+    npc.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    npc.isNpc = true;
+    npc.name = 'Robot';
+    npc.cells[0].setMass(200);
+    npc.massTotal = 200;
+
+    victim.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    victim.clientProvidedData({
+      name: 'Victim',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    body.applyBodyState(victim, {
+      bodyParts: [
+        body.createBodyPart('HAND', 1, {
+          originPlayerId: 'victim',
+          currentOwnerId: 'victim'
+        })
+      ]
+    });
+
+    map.players.pushNew(npc);
+    map.players.pushNew(victim);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    service.tickGame();
+
+    expect(map.players.findByID('victim')).to.equal(victim);
+    expect(victim.bodyPartCounts.HAND).to.equal(0);
+    expect(npc.bodyPartCount).to.equal(7);
+  });
+
+  it('should give the devoured player invincibility when there is no part to steal', () => {
+    const originalNow = Date.now;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const eater = new playerUtils.Player('eater');
+    const victim = new playerUtils.Player('victim');
+
+    eater.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    eater.clientProvidedData({
+      name: 'Eater',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    eater.cells[0].setMass(200);
+    eater.massTotal = 200;
+
+    victim.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    victim.clientProvidedData({
+      name: 'Victim',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    body.applyBodyState(victim, {
+      bodyParts: []
+    });
+
+    map.players.pushNew(eater);
+    map.players.pushNew(victim);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    try {
+      Date.now = () => 1700000000000;
+      service.tickGame();
+    } finally {
+      Date.now = originalNow;
+    }
+
+    expect(map.players.findByID('victim')).to.equal(victim);
+    expect(victim.invincibleUntil).to.equal(1700000003000);
+    expect(victim.speedBoostUntil).to.equal(1700000003000);
+    expect(eater.invincibleUntil).to.equal(0);
+  });
+
+  it('should steal at most one part from the same target per tick', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const eater = new playerUtils.Player('eater');
+    const victim = new playerUtils.Player('victim');
+
+    eater.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    eater.clientProvidedData({
+      name: 'Eater',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    eater.cells[0].setMass(400);
+    eater.massTotal = 400;
+    eater.splitCell(0, 2, config.defaultPlayerMass);
+    eater.cells.forEach((cell) => {
+      cell.x = 100;
+      cell.y = 100;
+      cell.speed = 0;
+    });
+
+    victim.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    victim.clientProvidedData({
+      name: 'Victim',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    body.applyBodyState(victim, {
+      bodyParts: [
+        body.createBodyPart('HEAD', 1),
+        body.createBodyPart('HAND', 1)
+      ]
+    });
+
+    map.players.pushNew(eater);
+    map.players.pushNew(victim);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    service.tickGame();
+
+    expect(victim.bodyPartCount).to.equal(1);
+    expect(eater.bodyPartCount).to.equal(7);
+  });
+
+  it('should only allow movement while invincible', () => {
+    const originalNow = Date.now;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const player = new playerUtils.Player('player-boosted');
+    const victim = new playerUtils.Player('victim');
+
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'Boosted',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    player.cells[0].setMass(200);
+    player.massTotal = 200;
+    player.target = { x: 200, y: 0 };
+    player.invincibleUntil = 1700000003000;
+    player.speedBoostUntil = 1700000003000;
+    player.speedBoostMultiplier = 2;
+
+    victim.init({ x: 150, y: 100 }, config.defaultPlayerMass);
+    victim.clientProvidedData({
+      name: 'Victim',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+
+    map.players.pushNew(player);
+    map.players.pushNew(victim);
+    map.food.data.push({id: 'food-1', x: 100, y: 100, radius: 4});
+    map.massFood.data.push({id: 'mass-1', x: 100, y: 100, mass: 5, radius: 5, speed: 0});
+    map.viruses.data.push({id: 'virus-1', x: 100, y: 100, mass: 15, radius: 10});
+    map.partLoot.addPart({
+      type: 'HAND',
+      templateId: 'hand-boosted',
+      source: 'map-pickup'
+    }, { x: 80, y: 100 }, 'map-pickup');
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    try {
+      Date.now = () => 1700000001000;
+      service.tickGame();
+    } finally {
+      Date.now = originalNow;
+    }
+
+    expect(player.x).to.be.greaterThan(100);
+    expect(player.massTotal).to.equal(200);
+    expect(map.food.data).to.have.length(1);
+    expect(map.massFood.data).to.have.length(1);
+    expect(map.viruses.data).to.have.length(1);
+    expect(map.partLoot.data).to.have.length(1);
+    expect(map.players.findByID('victim')).to.equal(victim);
   });
 
   it('should settle active human players when the round timer expires', () => {

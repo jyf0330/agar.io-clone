@@ -13,6 +13,16 @@ describe('avatar-runtime-render.js', () => {
     }, false)).to.equal(true);
   });
 
+  it('should enable custom runtime rendering for npc skeleton avatars', () => {
+    expect(avatarRuntimeRender.shouldUseAvatarRuntimeRender({
+      isNpc: true,
+      skeletonKey: 'skeleton-b-blob'
+    }, {
+      useOuterRingSkin: true,
+      fallbackToLegacyPlayerRender: true
+    }, false)).to.equal(true);
+  });
+
   it('should fall back to legacy rendering when touching borders and fallback is enabled', () => {
     expect(avatarRuntimeRender.shouldUseAvatarRuntimeRender({
       playerCardPreviewDataUrl: 'data:image/png;base64,abc'

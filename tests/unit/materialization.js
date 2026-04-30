@@ -26,14 +26,15 @@ describe('materialization.js', () => {
     it('should initialize players with materialization derived from equipped body parts', () => {
       const player = new playerUtils.Player('player-1');
       const expectedValue = materialization.resolveMaterializationFromBodyParts(player.bodyParts);
+      const expectedStage = materialization.resolveMaterializationStage(expectedValue);
 
       expect(player.materialization).to.equal(expectedValue);
-      expect(player.materializationStage).to.equal(materialization.STAGES.HOLLOW);
+      expect(player.materializationStage).to.equal(expectedStage);
 
       player.init({ x: 100, y: 120 }, config.defaultPlayerMass);
 
       expect(player.materialization).to.equal(expectedValue);
-      expect(player.materializationStage).to.equal(materialization.STAGES.HOLLOW);
+      expect(player.materializationStage).to.equal(expectedStage);
     });
 
     it('should refresh materialization when body parts change', () => {
@@ -75,9 +76,9 @@ describe('materialization.js', () => {
       });
 
       expect(result.playerData.materialization).to.equal(materialization.resolveMaterializationFromBodyParts(player.bodyParts));
-      expect(result.playerData.materializationStage).to.equal(materialization.STAGES.HOLLOW);
+      expect(result.playerData.materializationStage).to.equal(materialization.resolveMaterializationStage(result.playerData.materialization));
       expect(result.visiblePlayers[0].materialization).to.equal(materialization.resolveMaterializationFromBodyParts(player.bodyParts));
-      expect(result.visiblePlayers[0].materializationStage).to.equal(materialization.STAGES.HOLLOW);
+      expect(result.visiblePlayers[0].materializationStage).to.equal(materialization.resolveMaterializationStage(result.visiblePlayers[0].materialization));
     });
   });
 });

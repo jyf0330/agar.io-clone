@@ -1,6 +1,7 @@
 const FULL_ANGLE = 2 * Math.PI;
 const avatarDraftConfig = require('./avatar-draft-config');
 const avatarRuntimeRender = require('./avatar-runtime-render');
+const avatarSkeletonLoader = require('./avatar-skeleton-loader');
 const avatarImageCache = {};
 const bodyAssemblyImageCache = {};
 const BODY_ASSEMBLY_LAYER_ORDER = ['base', 'head', 'body', 'hand_left', 'hand_right', 'leg_left', 'leg_right'];
@@ -174,6 +175,18 @@ const getAvatarImage = (previewDataUrl) => {
     return avatarImageCache[previewDataUrl];
 };
 
+const getCellAvatarImage = (cell) => {
+    if (cell.isNpc && cell.skeletonKey) {
+        return avatarSkeletonLoader.getSkeletonByKey(cell.skeletonKey);
+    }
+
+    if (cell.playerCardPreviewDataUrl) {
+        return getAvatarImage(cell.playerCardPreviewDataUrl);
+    }
+
+    return null;
+};
+
 const getBodyAssemblyImage = (layer) => {
     const imagePath = layer && layer.image;
 
@@ -251,7 +264,7 @@ const drawAvatarCell = (cell, graph) => {
     graph.fillStyle = 'rgba(255, 255, 255, 0.16)';
     graph.fill();
 
-    const image = getAvatarImage(cell.playerCardPreviewDataUrl);
+    const image = getCellAvatarImage(cell);
     const innerRadius = avatarRuntimeRender.getAvatarInnerRadius(cell);
     if (image && image.complete) {
         graph.save();
@@ -323,6 +336,14 @@ const drawCells = (cells, playerConfig, toggleMassState, borders, graph) => {
         graph.textAlign = 'center';
         graph.textBaseline = 'middle';
         graph.font = 'bold ' + fontSize + 'px sans-serif';
+        if (Number.isFinite(cell.bodyPartCount)) {
+            graph.font = 'bold ' + Math.max(Math.min(cell.radius / 4, 14), 10) + 'px sans-serif';
+            graph.textBaseline = 'bottom';
+            graph.strokeText('部件 ' + Math.round(cell.bodyPartCount), cell.x, cell.y - cell.radius - 6);
+            graph.fillText('部件 ' + Math.round(cell.bodyPartCount), cell.x, cell.y - cell.radius - 6);
+            graph.font = 'bold ' + fontSize + 'px sans-serif';
+            graph.textBaseline = 'middle';
+        }
         graph.strokeText(cell.name, cell.x, cell.y);
         graph.fillText(cell.name, cell.x, cell.y);
 

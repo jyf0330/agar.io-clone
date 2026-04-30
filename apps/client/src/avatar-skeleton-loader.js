@@ -4,16 +4,32 @@ function getAssetUrl(asset) {
     return asset && asset.default ? asset.default : asset;
 }
 
+function loadAsset(assetLoader, assetPath) {
+    try {
+        return getAssetUrl(assetLoader());
+    } catch (error) {
+        return assetPath;
+    }
+}
+
 var SKELETON_SOURCES = {
-    a: getAssetUrl(require('../../../demo/assets/skeleton-bases/skeleton-a-doll.png')),
-    b: getAssetUrl(require('../../../demo/assets/skeleton-bases/skeleton-b-blob.png')),
-    c: getAssetUrl(require('../../../demo/assets/skeleton-bases/skeleton-c-ghost.png')),
-    d: getAssetUrl(require('../../../demo/assets/skeleton-bases/skeleton-d-robot.png')),
-    e: getAssetUrl(require('../../../demo/assets/skeleton-bases/skeleton-e-bean.png')),
-    f: getAssetUrl(require('../../../demo/assets/skeleton-bases/skeleton-f-turtle.png'))
+    a: loadAsset(function () { return require('../../../demo/assets/skeleton-bases/skeleton-a-doll.png'); }, '../../../demo/assets/skeleton-bases/skeleton-a-doll.png'),
+    b: loadAsset(function () { return require('../../../demo/assets/skeleton-bases/skeleton-b-blob.png'); }, '../../../demo/assets/skeleton-bases/skeleton-b-blob.png'),
+    c: loadAsset(function () { return require('../../../demo/assets/skeleton-bases/skeleton-c-ghost.png'); }, '../../../demo/assets/skeleton-bases/skeleton-c-ghost.png'),
+    d: loadAsset(function () { return require('../../../demo/assets/skeleton-bases/skeleton-d-robot.png'); }, '../../../demo/assets/skeleton-bases/skeleton-d-robot.png'),
+    e: loadAsset(function () { return require('../../../demo/assets/skeleton-bases/skeleton-e-bean.png'); }, '../../../demo/assets/skeleton-bases/skeleton-e-bean.png'),
+    f: loadAsset(function () { return require('../../../demo/assets/skeleton-bases/skeleton-f-turtle.png'); }, '../../../demo/assets/skeleton-bases/skeleton-f-turtle.png')
 };
 
 var PLAYER_SKELETON_KEYS = ['a', 'b', 'c', 'd', 'e'];
+var SKELETON_KEY_ALIASES = {
+    'skeleton-a-doll': 'a',
+    'skeleton-b-blob': 'b',
+    'skeleton-c-ghost': 'c',
+    'skeleton-d-robot': 'd',
+    'skeleton-e-bean': 'e',
+    'skeleton-f-turtle': 'f'
+};
 var DEFAULT_SKELETON_SIZE = 320;
 var skeletonImages = {};
 
@@ -67,7 +83,8 @@ function getRandomSkeleton() {
 }
 
 function getSkeletonByKey(key) {
-    return skeletonImages[key] || null;
+    var normalizedKey = SKELETON_KEY_ALIASES[key] || key;
+    return skeletonImages[normalizedKey] || null;
 }
 
 module.exports = {

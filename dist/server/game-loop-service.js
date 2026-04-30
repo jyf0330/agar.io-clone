@@ -11,6 +11,8 @@ const {
   projectVisibleWorldForMovementSync
 } = require('./player-projection');
 const PET_SUGGESTION_ACCEPT_WINDOW_MS = 30000;
+const DEVOUR_INVINCIBILITY_MS = 3000;
+const DEVOUR_SPEED_MULTIPLIER = 2;
 function createGameLoopService(options) {
   const config = options.config;
   const map = options.map;
@@ -225,6 +227,7 @@ function createGameLoopService(options) {
   }
   function tickPlayer(currentPlayer) {
     const socket = getSocket(currentPlayer.id);
+    const now = Date.now();
     if (!currentPlayer.isNpc && currentPlayer.lastHeartbeat < new Date().getTime() - config.maxHeartbeatInterval) {
       if (socket) {
         socket.emit('kick', 'Last heartbeat received over ' + config.maxHeartbeatInterval + ' ago.');
@@ -236,6 +239,9 @@ function createGameLoopService(options) {
     if (!currentPlayer.isNpc && currentPlayer.activePet) {
       currentPlayer.activePet.x = Math.max(0, Math.min(config.gameWidth, currentPlayer.x - 54));
       currentPlayer.activePet.y = Math.max(0, Math.min(config.gameHeight, currentPlayer.y + 42));
+    }
+    if (typeof currentPlayer.isInvincible === 'function' && currentPlayer.isInvincible(now)) {
+      return;
     }
     const isEntityInsideCircle = (point, circle) => {
       return SAT.pointInCircle(new Vector(point.x, point.y), circle);
@@ -344,60 +350,49 @@ function createGameLoopService(options) {
       return;
     }
     map.massFood.move(config.gameWidth, config.gameHeight);
+    const handledDevours = {};
     map.players.handleCollisions(function (gotEaten, eater) {
       const cellGotEaten = map.players.getCell(gotEaten.playerIndex, gotEaten.cellIndex);
       const eaterPlayer = map.players.data[eater.playerIndex];
       const playerGotEaten = map.players.data[gotEaten.playerIndex];
+      const collisionNow = Date.now();
       if (!cellGotEaten || !eaterPlayer || !playerGotEaten) {
         return;
       }
-      if (playerGotEaten.isNpc || eaterPlayer.isNpc) {
+      if (typeof playerGotEaten.isInvincible === 'function' && playerGotEaten.isInvincible(collisionNow) || typeof eaterPlayer.isInvincible === 'function' && eaterPlayer.isInvincible(collisionNow)) {
         return;
       }
-      const massGain = body.getPlayerDevourMassGain(cellGotEaten.mass, eaterPlayer);
-      eaterPlayer.changeCellMass(eater.cellIndex, massGain);
-      const playerDied = map.players.removeCell(gotEaten.playerIndex, gotEaten.cellIndex);
-      if (!playerDied) {
+      const devourKey = [eaterPlayer.id, playerGotEaten.id].join('>');
+      if (handledDevours[devourKey]) {
         return;
       }
+      handledDevours[devourKey] = true;
       const stolenPart = body.stealRandomCorePart(playerGotEaten, eaterPlayer);
+      if (!stolenPart) {
+        if (typeof playerGotEaten.startInvincibility === 'function') {
+          playerGotEaten.startInvincibility(DEVOUR_INVINCIBILITY_MS, DEVOUR_SPEED_MULTIPLIER, collisionNow);
+        }
+        return;
+      }
+      if (typeof playerGotEaten.startInvincibility === 'function') {
+        playerGotEaten.startInvincibility(DEVOUR_INVINCIBILITY_MS, DEVOUR_SPEED_MULTIPLIER, collisionNow);
+      }
       if (ghostRecorder) {
-        const now = Date.now();
         const position = {
           x: eaterPlayer.x,
           y: eaterPlayer.y
         };
-        if (typeof ghostRecorder.recordCombatEvent === 'function') {
-          ghostRecorder.recordCombatEvent(eaterPlayer, 'kill', playerGotEaten, position, now);
-          ghostRecorder.recordCombatEvent(playerGotEaten, 'swallowed', eaterPlayer, position, now);
-        }
-        if (stolenPart && typeof ghostRecorder.recordPartEvent === 'function') {
-          ghostRecorder.recordPartEvent(eaterPlayer, 'part_stolen', stolenPart, position, now, {
+        if (typeof ghostRecorder.recordPartEvent === 'function') {
+          ghostRecorder.recordPartEvent(eaterPlayer, 'part_stolen', stolenPart, position, collisionNow, {
             fromPlayerId: playerGotEaten.id,
             fromPlayerName: playerGotEaten.name
           });
-          ghostRecorder.recordPartEvent(eaterPlayer, 'part_equipped', stolenPart, position, now, {
+          ghostRecorder.recordPartEvent(eaterPlayer, 'part_equipped', stolenPart, position, collisionNow, {
             fromPlayerId: playerGotEaten.id,
             fromPlayerName: playerGotEaten.name
           });
         }
       }
-      const playerSocket = getSocket(playerGotEaten.id);
-      connectionService.clearTimer(playerGotEaten.id);
-      io.emit('playerDied', {
-        name: playerGotEaten.name
-      });
-      if (playerSocket) {
-        playerSocket.emit('settlement', settlement.buildSettlementSummary({
-          player: playerGotEaten,
-          endedReason: 'swallowed',
-          winnerName: eaterPlayer.name || eaterPlayer.id,
-          recordingConsent: playerGotEaten.consentToRecord !== false,
-          historyWritten: playerGotEaten.isReplayAllowed !== false
-        }));
-        playerSocket.emit('RIP');
-      }
-      map.players.removePlayerByIndex(gotEaten.playerIndex);
     });
     settleBodyCompletion();
   }
