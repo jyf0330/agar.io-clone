@@ -7,6 +7,7 @@ const materialization = require('../materialization');
 const connection = require('../connection');
 const relationship = require('../relationship');
 const body = require('../body');
+const playerKind = require('../player-kind');
 
 const MIN_SPEED = 6.25;
 const SPLIT_CELL_SPEED = 20;
@@ -114,6 +115,7 @@ exports.Player = class {
         this.bodyAssembly = null;
         this.consentToRecord = true;
         this.isReplayAllowed = true;
+        playerKind.markHumanPlayer(this);
         this.activePet = normalizeActivePet(null, id);
         this.screenWidth = null;
         this.screenHeight = null;

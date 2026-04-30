@@ -1,6 +1,7 @@
 'use strict';
 
 const {Player} = require('../map/player');
+const playerKind = require('../player-kind');
 
 function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
@@ -119,7 +120,7 @@ class NpcState {
         this.facing = { x: 0, y: 1 };
         this.player = settings.player || new Player(settings.playerId || ('npc:' + this.id));
         this.player.init(spawn, settings.defaultPlayerMass || 10);
-        this.player.isNpc = true;
+        playerKind.markNpcActor(this.player);
         this.player.npcId = this.id;
         this.player.skeletonKey = personality.skeleton || settings.skeletonKey || null;
         this.player.name = settings.name || personality.name || this.id;
