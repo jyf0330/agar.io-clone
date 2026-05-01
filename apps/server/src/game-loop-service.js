@@ -216,6 +216,14 @@ function createGameLoopService(options) {
     }
 
     function notifyRoundEnd(activeHumans, context) {
+        if (balanceTelemetry && typeof balanceTelemetry.recordRoundSettlement === 'function') {
+            balanceTelemetry.recordRoundSettlement({
+                balancePreset: config.balancePreset,
+                endedReason: context && context.endedReason || '',
+                winnerName: context && context.winnerName || '',
+                activeHumanCount: activeHumans.length
+            });
+        }
         if (activeHumans.length && onRoundEnd) {
             try {
                 onRoundEnd(activeHumans, Object.assign({

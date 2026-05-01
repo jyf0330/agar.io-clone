@@ -83,12 +83,41 @@ describe('balance telemetry', () => {
     });
   });
 
+  it('should record round settlement reasons for completion tuning', () => {
+    const sink = [];
+    const telemetry = balanceTelemetry.createBalanceTelemetry({
+      enabled: true,
+      sink,
+      now() {
+        return 3000;
+      }
+    });
+
+    telemetry.recordRoundSettlement({
+      balancePreset: 'standard',
+      endedReason: 'body_complete',
+      winnerName: 'collector',
+      activeHumanCount: 2
+    });
+
+    expect(sink).to.have.length(1);
+    expect(sink[0]).to.include({
+      eventType: 'balance_round_settlement',
+      ts: 3000,
+      balancePreset: 'standard',
+      endedReason: 'body_complete',
+      winnerName: 'collector',
+      activeHumanCount: 2
+    });
+  });
+
   it('should stay silent when disabled', () => {
     const sink = [];
     const telemetry = balanceTelemetry.createBalanceTelemetry({enabled: false, sink});
 
     telemetry.recordWorldSnapshot({map: {}});
     telemetry.recordPartPickup({});
+    telemetry.recordRoundSettlement({});
 
     expect(sink).to.have.length(0);
   });

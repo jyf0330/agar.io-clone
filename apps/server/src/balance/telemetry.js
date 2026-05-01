@@ -139,10 +139,23 @@ function createBalanceTelemetry(options) {
         });
     }
 
+    function recordRoundSettlement(context) {
+        const payload = context || {};
+
+        record({
+            eventType: 'balance_round_settlement',
+            balancePreset: payload.balancePreset || 'standard',
+            endedReason: payload.endedReason || '',
+            winnerName: payload.winnerName || '',
+            activeHumanCount: payload.activeHumanCount || 0
+        });
+    }
+
     return {
         recordWorldSnapshot,
         recordPartPickup,
-        recordDevour
+        recordDevour,
+        recordRoundSettlement
     };
 }
 

@@ -82,6 +82,5 @@ Initial targets are intentionally broad. Tighten them after 20-50 recorded runs.
 
 ## Next Work
 
-The next phase-one slice should add a small report command that summarizes
-`data/balance/*.jsonl` into per-preset metrics, then run bot swarms against
-`demo` and `standard` to establish baseline curves.
+The next slice is the phase-two rhythm loop in
+[21-balance-phase-two-rhythm.md](/Users/macminim4/Documents/New project/jyf0330-repos/agar.io-clone-master/docs/21-balance-phase-two-rhythm.md).

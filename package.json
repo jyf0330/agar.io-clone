@@ -20,6 +20,7 @@
     "coverage:check": "c8 --check-coverage --lines 70 --branches 50 --functions 75 --statements 70 --reporter=text --include='apps/**/*.js' --exclude='dist/**' npm test",
     "audit": "npm audit",
     "audit:prod": "npm audit --omit=dev",
+    "balance:report": "node tools/balance-report.js",
     "w1:online": "node demo/scripts/week1-playthrough-online.js",
     "w1:chat": "node demo/scripts/week1-playthrough-chat.js",
     "w1:offline": "node demo/scripts/week1-playthrough-offline.js",
