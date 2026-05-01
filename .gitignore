@@ -18,6 +18,10 @@ dist/
 # Local editor workspaces
 demo/*.code-workspace
 
+# Generated demo recordings
+demo/videos/*
+!demo/videos/README.md
+
 # Knowledge graph output
 graphify-out/
 
@@ -34,6 +38,7 @@ graphify-out/
 # V3 runtime data (memory / audit / consistency)
 # keep data/demo-longhaul/ under explicit control (see demo/CODING-STANDARDS-v3.md §16)
 data/audit/
+data/balance/
 data/consistency/
 data/memory/
 data/demo-rehearsal/
