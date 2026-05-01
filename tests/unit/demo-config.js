@@ -34,14 +34,15 @@ function loadConfigWithDemoFlag(value) {
 }
 
 describe('demo config', () => {
-  it('should leave normal mode unchanged when V5_DEMO_MODE is off', () => {
+  it('should use the standard balance preset when V5_DEMO_MODE is off', () => {
     const config = loadConfigWithDemoFlag(null);
 
     expect(config.demo.enabled).to.equal(false);
-    expect(config.demo.roundDurationMs).to.equal(480000);
+    expect(config.demo.roundDurationMs).to.equal(720000);
     expect(config.npc.enabled).to.equal(true);
-    expect(config.partLoot.maxWorldParts).to.equal(8);
-    expect(config.ghostEcho.triggerRadius).to.equal(800);
+    expect(config.balancePreset).to.equal('standard');
+    expect(config.partLoot.maxWorldParts).to.equal(10);
+    expect(config.ghostEcho.triggerRadius).to.equal(1000);
   });
 
   it('should make historical echo demo parameters easier to trigger', () => {

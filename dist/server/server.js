@@ -41,6 +41,7 @@ const {
 } = require("./lib/entityUtils");
 const createConnectionService = require('./connection-service');
 const createGameLoopService = require('./game-loop-service');
+const balanceTelemetryFactory = require('./balance/telemetry');
 const settlement = require('./settlement');
 const playerEntry = require('./player-entry');
 const GhostManager = require('./ghost/manager');
@@ -97,6 +98,16 @@ const ghostRecorder = new GhostRecorder({
   recordPlayerTraces: Boolean(config.ghostEcho && config.ghostEcho.recordPlayerTraces),
   isSeed: process.env.V5_SEED_SESSION === '1'
 });
+const balanceTelemetry = balanceTelemetryFactory.createBalanceTelemetry({
+  enabled: Boolean(config.balanceTelemetry && config.balanceTelemetry.enabled),
+  sink(event) {
+    try {
+      balanceTelemetryFactory.appendJsonl(event);
+    } catch (error) {
+      console.warn('[BALANCE] telemetry write failed', error.message);
+    }
+  }
+});
 const gameLoopService = createGameLoopService({
   config,
   map,
@@ -105,6 +116,7 @@ const gameLoopService = createGameLoopService({
   ghostManager,
   ghostRecorder,
   memoryStore,
+  balanceTelemetry,
   getRoundClock: () => roundClock,
   onRoundEnd(_players, context) {
     finalizeRoundMemoryIfNeeded({

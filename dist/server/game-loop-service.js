@@ -33,6 +33,10 @@ function createGameLoopService(options) {
   const initMassLog = util.mathLog(config.defaultPlayerMass, config.slowBase);
   const multiplayerPolicy = multiplayerPolicyFactory.createMultiplayerPolicy(config);
   const syncConfig = config.sync || {};
+  const balanceTelemetry = options.balanceTelemetry || null;
+  const balanceTelemetryConfig = config.balanceTelemetry || {};
+  const balanceSnapshotIntervalMs = typeof balanceTelemetryConfig.snapshotIntervalMs === 'number' ? balanceTelemetryConfig.snapshotIntervalMs : 1000;
+  let lastBalanceSnapshotAt = 0;
   const spectatorUpdateIntervalMs = typeof syncConfig.spectatorUpdateIntervalMs === 'number' ? syncConfig.spectatorUpdateIntervalMs : 100;
   const syncMetrics = {
     enabled: Boolean(syncConfig.metricsEnabled),
@@ -280,6 +284,15 @@ function createGameLoopService(options) {
       currentPlayer.changeCellMass(cellIndex, massGained);
     }
     const partPickups = map.partLoot.collectForPlayer(currentPlayer);
+    if (balanceTelemetry && typeof balanceTelemetry.recordPartPickup === 'function') {
+      partPickups.forEach(pickup => {
+        balanceTelemetry.recordPartPickup({
+          balancePreset: config.balancePreset,
+          player: currentPlayer,
+          pickup
+        });
+      });
+    }
     if (memoryStore && currentPlayer.activePet) {
       partPickups.forEach(pickup => {
         const now = Date.now();
@@ -374,10 +387,26 @@ function createGameLoopService(options) {
         if (typeof playerGotEaten.startInvincibility === 'function') {
           playerGotEaten.startInvincibility(DEVOUR_INVINCIBILITY_MS, DEVOUR_SPEED_MULTIPLIER, collisionNow);
         }
+        if (balanceTelemetry && typeof balanceTelemetry.recordDevour === 'function') {
+          balanceTelemetry.recordDevour({
+            balancePreset: config.balancePreset,
+            eater: eaterPlayer,
+            victim: playerGotEaten,
+            stolenPart: null
+          });
+        }
         return;
       }
       if (typeof playerGotEaten.startInvincibility === 'function') {
         playerGotEaten.startInvincibility(DEVOUR_INVINCIBILITY_MS, DEVOUR_SPEED_MULTIPLIER, collisionNow);
+      }
+      if (balanceTelemetry && typeof balanceTelemetry.recordDevour === 'function') {
+        balanceTelemetry.recordDevour({
+          balancePreset: config.balancePreset,
+          eater: eaterPlayer,
+          victim: playerGotEaten,
+          stolenPart
+        });
       }
       if (ghostRecorder) {
         const position = {
@@ -404,6 +433,15 @@ function createGameLoopService(options) {
       map.players.shrinkCells(config.massLossRate, config.defaultPlayerMass, config.minMassLoss);
     }
     map.balanceMass(config.foodMass, config.gameMass, config.maxFood, config.maxVirus);
+    const now = Date.now();
+    if (balanceTelemetry && typeof balanceTelemetry.recordWorldSnapshot === 'function' && now - lastBalanceSnapshotAt >= balanceSnapshotIntervalMs) {
+      balanceTelemetry.recordWorldSnapshot({
+        balancePreset: config.balancePreset,
+        roundTimer: buildRoundTimer(getRoundClock(), now),
+        map
+      });
+      lastBalanceSnapshotAt = now;
+    }
   }
   function updateSpectator(socketId, now) {
     const socket = getSocket(socketId);

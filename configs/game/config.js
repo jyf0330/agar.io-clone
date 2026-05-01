@@ -2,12 +2,31 @@ const demoModeEnabled = process.env.V5_DEMO_MODE === '1';
 const persistedGhostHistoryEnabled = process.env.V5_GHOST_PERSISTENCE === '1';
 const ghostTraceRecordingEnabled = process.env.V5_GHOST_TRACE_RECORDING === '1';
 const networkUpdateFactor = Number(process.env.V5_NETWORK_UPDATE_FACTOR || 20);
+const balancePresets = require('./balance-presets');
 const defaultRoundDurationMs = 8 * 60 * 1000;
 const npcModeEnabled = process.env.V5_NPC_ENABLED === '0'
     ? process.env.V3_NPC_ENABLED === '1'
     : true;
+const requestedBalancePreset = process.env.V5_BALANCE_PRESET
+    || (demoModeEnabled ? 'demo' : 'standard');
+const balancePresetName = Object.prototype.hasOwnProperty.call(balancePresets, requestedBalancePreset)
+    ? requestedBalancePreset
+    : 'standard';
+
+function mergeDeep(target, source) {
+    Object.keys(source || {}).forEach((key) => {
+        const value = source[key];
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+            target[key] = mergeDeep(Object.assign({}, target[key] || {}), value);
+            return;
+        }
+        target[key] = value;
+    });
+    return target;
+}
 
 const config = {
+    balancePreset: balancePresetName,
     host: "0.0.0.0",
     port: 3000,
     logpath: "logger.php",
@@ -95,6 +114,10 @@ const config = {
     botPlayers: {
         competitive: process.env.V5_BOT_PLAYERS_COMPETITIVE === '0' ? false : true
     },
+    balanceTelemetry: {
+        enabled: process.env.V5_BALANCE_TELEMETRY === '1',
+        snapshotIntervalMs: Number(process.env.V5_BALANCE_SNAPSHOT_INTERVAL_MS || 1000)
+    },
     sync: {
         playerMetaUpdateIntervalMs: 2000,
         spectatorUpdateIntervalMs: 100,
@@ -114,15 +137,6 @@ const config = {
     }
 };
 
-if (demoModeEnabled) {
-    config.partLoot.maxWorldParts = 14;
-    config.partLoot.spawnBatch = 3;
-    config.ghostEcho.timeWindowMs = 60000;
-    config.ghostEcho.triggerRadius = 1200;
-    config.ghostEcho.maxActiveGhosts = 5;
-    config.ghostEcho.anchorCooldownMs = 15000;
-    config.ghostEcho.followTimeoutMs = 45000;
-    config.ghostEcho.debug = true;
-}
+mergeDeep(config, balancePresets[balancePresetName]);
 
 module.exports = config;
