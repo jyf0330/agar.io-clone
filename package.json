@@ -26,7 +26,9 @@
     "w1:audit": "python3 demo/scripts/week1-audit-analysis.py",
     "w1:all": "npm run w1:online && npm run w1:chat && npm run w1:offline && npm run w1:audit",
     "history:dev": "node demo/scripts/history-dev.js",
-    "bot:client": "node apps/bot-client/src/index.js"
+    "bot:client": "node apps/bot-client/src/index.js",
+    "bot:swarm": "node apps/bot-client/src/swarm.js",
+    "bot:test": "node apps/bot-test/src/index.js"
   },
   "repository": {
     "type": "git",

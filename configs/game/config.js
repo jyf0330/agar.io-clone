@@ -2,7 +2,7 @@ const demoModeEnabled = process.env.V5_DEMO_MODE === '1';
 const persistedGhostHistoryEnabled = process.env.V5_GHOST_PERSISTENCE === '1';
 const ghostTraceRecordingEnabled = process.env.V5_GHOST_TRACE_RECORDING === '1';
 const networkUpdateFactor = Number(process.env.V5_NETWORK_UPDATE_FACTOR || 20);
-const defaultRoundDurationMs = 10 * 60 * 1000;
+const defaultRoundDurationMs = 8 * 60 * 1000;
 const npcModeEnabled = process.env.V5_NPC_ENABLED === '0'
     ? process.env.V3_NPC_ENABLED === '1'
     : true;

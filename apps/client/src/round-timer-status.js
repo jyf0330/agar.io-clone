@@ -21,5 +21,14 @@ function formatRoundTimerStatus(roundTimer, i18n) {
         + '</span>';
 }
 
+function formatRoundTimerHud(roundTimer, i18n) {
+    var remainingMs = roundTimer && typeof roundTimer.remainingMs === 'number'
+        ? roundTimer.remainingMs
+        : 8 * 60 * 1000;
+
+    return i18n.t('hud.roundTimer', {time: formatRemainingTime(remainingMs)});
+}
+
 module.exports = formatRoundTimerStatus;
 module.exports.formatRemainingTime = formatRemainingTime;
+module.exports.formatRoundTimerHud = formatRoundTimerHud;

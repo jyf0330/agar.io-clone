@@ -68,6 +68,17 @@ The client connects with `query.type = "player"` and sends the same `gotit`
 payload shape as the browser. It is a live socket player, not a server-internal
 `map.players.pushNew()` shortcut.
 
+To start several player-like bots at once:
+
+```bash
+BOT_SERVER_URL=http://127.0.0.1:3000 BOT_COUNT=4 BOT_PROFILES=doudou,mochi npm run bot:swarm
+```
+
+`BOT_PROFILES` is used round-robin, so the example starts
+`Doudou_Bot_1`, `Mochi_Bot_2`, `Doudou_Bot_3`, and `Mochi_Bot_4`.
+`BOT_COUNT` is capped at 12 to keep local demos from accidentally flooding the
+socket server.
+
 Bot player profiles live in `demo/bot-players/*.json`. A profile is the
 headless equivalent of the pregame body selection flow: it supplies the bot
 name, generated card preview, `bodySignature`, `bodyAssembly`, and strategy

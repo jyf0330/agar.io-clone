@@ -39,3 +39,6 @@ data/memory/
 data/demo-rehearsal/
 data/test-bugs/
 data/llm-cache.json
+
+# Development bot test runtime logs
+logs/bot-test/

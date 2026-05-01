@@ -411,6 +411,13 @@ roundFoodSetting.onchange = settings.toggleRoundFood;
 var c = window.canvas.cv;
 var graph = c.getContext('2d');
 
+function renderRoundTimerHud() {
+    var timerHud = document.getElementById('roundTimerHud');
+    if (timerHud) {
+        timerHud.textContent = formatRoundTimerStatus.formatRoundTimerHud(player.roundTimer, i18n);
+    }
+}
+
 function renderStatusPanel() {
     var status = '<span class="title">' + i18n.t('hud.leaderboard') + '</span>';
     for (var i = 0; i < leaderboard.length; i++) {
@@ -427,7 +434,6 @@ function renderStatusPanel() {
                 status += (i + 1) + '. ' + i18n.t('hud.unnamedCell');
         }
     }
-    status += formatRoundTimerStatus(player.roundTimer, i18n);
     status += formatMaterializationStatus(player);
     status += formatConnectionStatus(player);
     status += formatRelationshipStatus(player);
@@ -437,6 +443,7 @@ function renderStatusPanel() {
         status += formatGhostDebugStatus(player);
     }
     document.getElementById('status').innerHTML = status;
+    renderRoundTimerHud();
     if (bodyInventoryPanel) {
         bodyInventoryPanel.update();
     }

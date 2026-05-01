@@ -15,6 +15,8 @@ Use this checklist when changing the bot player entry flow.
 1. Start the game server with `npm start`.
 2. Start a bot player with
    `BOT_SERVER_URL=http://127.0.0.1:3000 BOT_PROFILE=doudou npm run bot:client`.
+   For several bots, use
+   `BOT_SERVER_URL=http://127.0.0.1:3000 BOT_COUNT=4 BOT_PROFILES=doudou,mochi npm run bot:swarm`.
 3. Open a browser player and join the arena.
 4. Confirm the bot appears as a live player, has a card/body profile with six
    visible assembly slots, starts with six server body parts, moves from server
