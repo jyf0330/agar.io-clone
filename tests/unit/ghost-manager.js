@@ -252,6 +252,30 @@ describe('ghost manager', () => {
     expect(map.ghosts[0].sessionId).to.equal('old-session');
   });
 
+  it('should scope persisted ghost event lookups to the current map and a small replay batch', () => {
+    const eventFilters = [];
+    const manager = new GhostManager({
+      mapId: 'fixed-arena',
+      memoryStore: {
+        listGhostAnchors() {
+          return [];
+        },
+        listEvents(filters) {
+          eventFilters.push(filters);
+          return [];
+        }
+      }
+    });
+
+    manager.getEvents('fixed-arena', 1000);
+
+    expect(eventFilters).to.deep.equal([
+      {kind: 'ghost_trace', limit: 50, mapId: 'fixed-arena'},
+      {kind: 'ghost_chat', limit: 50, mapId: 'fixed-arena'},
+      {kind: 'ghost_item', limit: 50, mapId: 'fixed-arena'}
+    ]);
+  });
+
   it('should cache persisted trigger lookups during hot ticks', () => {
     let anchorLookups = 0;
     let eventLookups = 0;

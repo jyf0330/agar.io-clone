@@ -45,6 +45,36 @@ describe('ghost recorder', () => {
     expect(events[2].payload.part.templateId).to.equal('hand-thread');
   });
 
+  it('should stamp raw replay events with the recorder map id', () => {
+    const events = [];
+    const recorder = new GhostRecorder({
+      sessionId: 'session-now',
+      startedAt: 1000,
+      mapId: 'fixed-arena',
+      recordPlayerTraces: true,
+      memoryStore: {
+        recordEvent(event) {
+          events.push(event);
+        }
+      }
+    });
+    const player = {
+      id: 'player-1',
+      name: 'Live Huy',
+      x: 120,
+      y: 130,
+      consentToRecord: true
+    };
+
+    recorder.recordPlayers([player], 1200);
+
+    expect(events[0]).to.deep.include({
+      kind: 'ghost_trace',
+      mapId: 'fixed-arena'
+    });
+    expect(events[0].payload.mapId).to.equal('fixed-arena');
+  });
+
   it('should keep continuous movement recording off by default', () => {
     const events = [];
     const traces = [];

@@ -24,6 +24,8 @@ describe('bot-profile.js', () => {
     expect(profile.bodyAssembly.selectedParts.leg_left).to.equal('leg_left_option_01');
     expect(profile.bodyAssembly.selectedParts.leg_right).to.equal('leg_right_option_01');
     expect(profile.playerCardPreviewDataUrl).to.match(/^data:image\/svg\+xml;base64,/);
+    expect(profile.strategy.humanize).to.equal(true);
+    expect(profile.strategy.persona).to.equal('greedy-roamer');
   });
 
   it('should expand legacy bot body choices into the six visible assembly slots', () => {

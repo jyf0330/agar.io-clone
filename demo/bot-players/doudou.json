@@ -20,8 +20,17 @@
     }
   },
   "strategy": {
+    "humanize": true,
+    "persona": "greedy-roamer",
     "mode": "wander",
+    "aggression": 0.38,
+    "caution": 0.7,
+    "dangerRadius": 440,
+    "huntRadius": 540,
+    "preyMassRatio": 0.55,
     "splitMassThreshold": 220,
-    "ejectMassThreshold": 120
+    "splitChance": 0.12,
+    "ejectMassThreshold": 120,
+    "ejectMassChance": 0.16
   }
 }

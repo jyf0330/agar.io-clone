@@ -8,6 +8,7 @@ const settlement = require('./settlement');
 const util = require('./lib/util');
 const {
     createSpectatorSyncData,
+    createPlayerMetaSignature,
     projectPlayersMetaForSync,
     projectPlayersMovementForSync,
     projectVisibleWorldForMovementSync
@@ -56,6 +57,7 @@ function createGameLoopService(options) {
     let leaderboard = [];
     let leaderboardChanged = false;
     let lastSpectatorUpdateAt = 0;
+    let lastMetaUpdateSignature = '';
 
     const Vector = SAT.Vector;
 
@@ -567,8 +569,17 @@ function createGameLoopService(options) {
         syncMetrics.maxMs = 0;
     }
 
-    function sendMetaUpdates() {
-        io.emit('playerMetaUpdate', projectPlayersMetaForSync(map.players.data));
+    function sendMetaUpdates(options) {
+        const metaList = projectPlayersMetaForSync(map.players.data);
+        const signature = createPlayerMetaSignature(metaList);
+        const force = options && options.force === true;
+        if (!force && signature === lastMetaUpdateSignature) {
+            return false;
+        }
+
+        lastMetaUpdateSignature = signature;
+        io.emit('playerMetaUpdate', metaList);
+        return true;
     }
 
     function sendUpdates() {

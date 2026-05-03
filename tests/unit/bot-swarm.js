@@ -72,4 +72,25 @@ describe('bot-swarm.js', () => {
     expect(clients[0].options.serverUrl).to.equal('http://game.local');
     expect(connected).to.deep.equal(['Doudou_Bot_1', 'Mochi_Bot_2', 'Doudou_Bot_3']);
   });
+
+  it('should pass the swarm logger to each bot client for event logs', () => {
+    const logger = {log() {}};
+    const clients = startBotSwarm({
+      serverUrl: 'http://game.local',
+      count: 1,
+      profileNames: ['doudou'],
+      loadProfile() {
+        return {name: 'doudou_Bot'};
+      },
+      createClient(options) {
+        return {
+          options,
+          connect() {}
+        };
+      },
+      logger
+    });
+
+    expect(clients[0].options.logger).to.equal(logger);
+  });
 });

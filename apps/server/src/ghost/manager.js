@@ -1,5 +1,7 @@
 "use strict";
 
+const DEFAULT_PERSISTED_EVENT_LIMIT = 50;
+
 function distance(left, right) {
     return Math.hypot(left.x - right.x, left.y - right.y);
 }
@@ -82,10 +84,24 @@ class GhostManager {
         this.eventRefreshIntervalMs = typeof settings.eventRefreshIntervalMs === 'number'
             ? settings.eventRefreshIntervalMs
             : 2000;
+        this.persistedEventLimit = typeof settings.persistedEventLimit === 'number'
+            ? settings.persistedEventLimit
+            : DEFAULT_PERSISTED_EVENT_LIMIT;
         this.eventCacheByMapId = {};
         this.spawnedItemIds = {};
         this.activeGhosts = {};
         this.anchorTriggeredAt = {};
+    }
+
+    getPersistedEventFilters(kind, mapId) {
+        const filters = {
+            kind: kind,
+            limit: this.persistedEventLimit
+        };
+        if (mapId) {
+            filters.mapId = mapId;
+        }
+        return filters;
     }
 
     loadEvents(mapId) {
@@ -104,9 +120,9 @@ class GhostManager {
             : [];
         const recorded = typeof this.memoryStore.listEvents === 'function'
             ? []
-                .concat(this.memoryStore.listEvents({kind: 'ghost_trace', limit: 1000}))
-                .concat(this.memoryStore.listEvents({kind: 'ghost_chat', limit: 1000}))
-                .concat(this.memoryStore.listEvents({kind: 'ghost_item', limit: 1000}))
+                .concat(this.memoryStore.listEvents(this.getPersistedEventFilters('ghost_trace', currentMapId)))
+                .concat(this.memoryStore.listEvents(this.getPersistedEventFilters('ghost_chat', currentMapId)))
+                .concat(this.memoryStore.listEvents(this.getPersistedEventFilters('ghost_item', currentMapId)))
                 .map((event) => normalizeEvent(Object.assign({}, event.payload || {}, {
                     id: event.id,
                     kind: event.kind.replace('ghost_', ''),

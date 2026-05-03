@@ -78,11 +78,13 @@ class GhostRecorder {
             playerId: player.id,
             npcId: '',
             sessionId: this.sessionId,
+            mapId: this.mapId,
             kind: kind,
             payload: Object.assign({
                 sessionId: this.sessionId,
                 ghostId: player.id,
                 name: player.name || '',
+                mapId: this.mapId,
                 t: this.getElapsed(now || Date.now())
             }, payload || {}),
             ts: now || Date.now()

@@ -58,6 +58,13 @@ describe('demo config', () => {
     expect(config.ghostEcho.debug).to.equal(true);
   });
 
+  it('should include heart loot so natural body completion is reachable', () => {
+    const config = loadConfigWithDemoFlag(null);
+    const types = config.partLoot.templates.map((template) => template.type);
+
+    expect(types).to.include('HEART');
+  });
+
   it('should allow V5 npc features to be disabled without breaking legacy opt-in', () => {
     expect(loadConfigWithEnv({V5_NPC_ENABLED: '0'}).npc.enabled).to.equal(false);
     expect(loadConfigWithEnv({V5_NPC_ENABLED: '0', V3_NPC_ENABLED: '1'}).npc.enabled).to.equal(true);

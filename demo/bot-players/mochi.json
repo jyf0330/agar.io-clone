@@ -20,8 +20,17 @@
     }
   },
   "strategy": {
+    "humanize": true,
+    "persona": "careful-forager",
     "mode": "wander",
+    "aggression": 0.18,
+    "caution": 0.95,
+    "dangerRadius": 520,
+    "huntRadius": 420,
+    "preyMassRatio": 0.45,
     "splitMassThreshold": 260,
-    "ejectMassThreshold": 140
+    "splitChance": 0.06,
+    "ejectMassThreshold": 140,
+    "ejectMassChance": 0.1
   }
 }

@@ -29,7 +29,8 @@
     "history:dev": "node demo/scripts/history-dev.js",
     "bot:client": "node apps/bot-client/src/index.js",
     "bot:swarm": "node apps/bot-client/src/swarm.js",
-    "bot:test": "node apps/bot-test/src/index.js"
+    "bot:test": "node apps/bot-test/src/index.js",
+    "bot:summary": "node apps/bot-test/src/summarize-logs.js"
   },
   "repository": {
     "type": "git",

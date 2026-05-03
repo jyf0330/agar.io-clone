@@ -5,6 +5,7 @@ const DEFAULT_CONFIG = {
     roomId: 'test-room-001',
     durationSeconds: 300,
     countdownSeconds: 5,
+    behaviorValidationSeconds: 120,
     logDir: 'logs/bot-test',
     seed: Date.now(),
     serverUrl: process.env.BOT_TEST_SERVER_URL || 'http://127.0.0.1:3000',
@@ -23,6 +24,7 @@ const OPTION_MAP = {
     room: 'roomId',
     duration: 'durationSeconds',
     countdown: 'countdownSeconds',
+    behaviorValidationSeconds: 'behaviorValidationSeconds',
     logDir: 'logDir',
     seed: 'seed',
     serverUrl: 'serverUrl',
@@ -46,6 +48,7 @@ function parseBotTestArgs(argv) {
         roomId: DEFAULT_CONFIG.roomId,
         durationSeconds: DEFAULT_CONFIG.durationSeconds,
         countdownSeconds: DEFAULT_CONFIG.countdownSeconds,
+        behaviorValidationSeconds: DEFAULT_CONFIG.behaviorValidationSeconds,
         logDir: DEFAULT_CONFIG.logDir,
         seed: DEFAULT_CONFIG.seed,
         serverUrl: DEFAULT_CONFIG.serverUrl,
@@ -67,7 +70,7 @@ function parseBotTestArgs(argv) {
 
         if (Object.prototype.hasOwnProperty.call(config.timeouts, mappedKey)) {
             config.timeouts[mappedKey] = parseNumber(nextValue, config.timeouts[mappedKey]);
-        } else if (mappedKey === 'botCount' || mappedKey === 'durationSeconds' || mappedKey === 'countdownSeconds' || mappedKey === 'seed') {
+        } else if (mappedKey === 'botCount' || mappedKey === 'durationSeconds' || mappedKey === 'countdownSeconds' || mappedKey === 'behaviorValidationSeconds' || mappedKey === 'seed') {
             config[mappedKey] = parseNumber(nextValue, config[mappedKey]);
         } else {
             config[mappedKey] = nextValue;
@@ -77,6 +80,7 @@ function parseBotTestArgs(argv) {
     config.botCount = Math.max(1, Math.floor(config.botCount));
     config.durationSeconds = Math.max(1, config.durationSeconds);
     config.countdownSeconds = Math.max(0, config.countdownSeconds);
+    config.behaviorValidationSeconds = Math.max(DEFAULT_CONFIG.behaviorValidationSeconds, config.behaviorValidationSeconds);
     return config;
 }
 

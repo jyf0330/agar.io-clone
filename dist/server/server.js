@@ -44,10 +44,12 @@ const createGameLoopService = require('./game-loop-service');
 const balanceTelemetryFactory = require('./balance/telemetry');
 const settlement = require('./settlement');
 const playerEntry = require('./player-entry');
+const defaultBotSwarm = require('./default-bot-swarm');
 const GhostManager = require('./ghost/manager');
 const GhostRecorder = require('./ghost/recorder');
 const memorySessionId = process.env.MEMORY_SESSION_ID || 'session-' + Date.now();
 const npcFeaturesEnabled = !config.npc || config.npc.enabled !== false;
+let defaultBotClients = [];
 let map = new mapUtils.Map(config);
 const roundClock = {
   startedAt: Date.now(),
@@ -504,7 +506,9 @@ const addPlayer = socket => {
         npcsAnchoredToPlayer = true;
         speakPreviousExpectations(currentPlayer);
       }
-      gameLoopService.sendMetaUpdates();
+      gameLoopService.sendMetaUpdates({
+        force: true
+      });
       io.emit('playerJoin', {
         name: currentPlayer.name
       });
@@ -600,7 +604,9 @@ const addPlayer = socket => {
         text: '现在我跟着你。',
         duration: 2500
       });
-      gameLoopService.sendMetaUpdates();
+      gameLoopService.sendMetaUpdates({
+        force: true
+      });
       ghostRecorder.recordChat(currentPlayer, _message, Date.now());
       return;
     }
@@ -772,4 +778,12 @@ setInterval(gameLoopService.sendUpdates, 1000 / config.networkUpdateFactor);
 // Don't touch, IP configurations.
 var ipaddress = process.env.OPENSHIFT_NODEJS_IP || process.env.IP || config.host;
 var serverport = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || config.port;
-http.listen(serverport, ipaddress, () => console.log('[DEBUG] Listening on ' + ipaddress + ':' + serverport));
+http.listen(serverport, ipaddress, () => {
+  console.log('[DEBUG] Listening on ' + ipaddress + ':' + serverport);
+  defaultBotClients = defaultBotSwarm.startDefaultBotSwarm({
+    env: process.env,
+    serverPort: serverport,
+    logger: console
+  });
+  console.log('[BOT] default socket bot clients retained=' + defaultBotClients.length);
+});

@@ -79,7 +79,9 @@ function startBotSwarm(options) {
     return profiles.map((profile) => {
         const client = createClient({
             serverUrl: settings.serverUrl || DEFAULT_SERVER_URL,
-            profile: profile
+            profile: profile,
+            logger: logger,
+            behaviorLogEveryTicks: settings.behaviorLogEveryTicks
         });
         if (logger && typeof logger.log === 'function') {
             logger.log('[BOT] connecting ' + profile.name + ' to ' + (settings.serverUrl || DEFAULT_SERVER_URL));

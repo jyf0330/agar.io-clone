@@ -162,6 +162,44 @@ describe('socket-controller.js', () => {
     expect(calls.debugLogs).to.have.length(1);
   });
 
+  it('should avoid full JSON stringify while comparing large player metadata', () => {
+    const {controller, socket, calls} = createController();
+    const originalStringify = JSON.stringify;
+    const largePreview = 'data:image/png;base64,' + 'x'.repeat(50000);
+    const meta = [{
+      id: 'player-1',
+      name: 'local',
+      playerCardPreviewDataUrl: largePreview,
+      bodyPartCount: 1,
+      bodyPartCounts: {HAND: 1},
+      activePet: {
+        petId: 'mochi',
+        npcId: 'mochi',
+        name: 'Mochi'
+      }
+    }];
+
+    controller.connect('player');
+    calls.debugLogs.length = 0;
+
+    JSON.stringify = function (value) {
+      if (value && value.playerCardPreviewDataUrl === largePreview) {
+        throw new Error('large metadata should not be stringified as one object');
+      }
+      return originalStringify.apply(JSON, arguments);
+    };
+    try {
+      socket.handlers.playerMetaUpdate(meta);
+      socket.handlers.playerMetaUpdate(meta.map((entry) => Object.assign({}, entry)));
+    } finally {
+      JSON.stringify = originalStringify;
+    }
+
+    expect(calls.renders).to.equal(1);
+    expect(calls.cardRenders).to.equal(1);
+    expect(calls.debugLogs).to.have.length(1);
+  });
+
   it('should ignore npc paint events for other players', () => {
     const {controller, socket, player, calls} = createController();
 
@@ -253,6 +291,44 @@ describe('socket-controller.js', () => {
       [{id: 'ghost-1'}]
     );
     expect(calls.worldState.ghosts).to.deep.equal([{id: 'ghost-1'}]);
+  });
+
+  it('should hydrate spectator round timer from movement sync payloads', () => {
+    const {controller, socket, player, calls} = createController({
+      options: {
+        global: {
+          playerType: 'spectator'
+        }
+      }
+    });
+
+    controller.connect('spectator');
+    socket.handlers.serverTellPlayerMove(
+      {
+        id: 'spectator-1',
+        cells: [],
+        roundTimer: {
+          startedAt: 1000,
+          durationMs: 480000,
+          elapsedMs: 120000,
+          remainingMs: 360000
+        }
+      },
+      [],
+      [],
+      [],
+      [],
+      [],
+      []
+    );
+
+    expect(player.roundTimer).to.deep.equal({
+      startedAt: 1000,
+      durationMs: 480000,
+      elapsedMs: 120000,
+      remainingMs: 360000
+    });
+    expect(calls.renders).to.equal(1);
   });
 
   it('should feed devour probe timings from socket events', () => {

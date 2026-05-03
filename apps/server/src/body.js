@@ -49,6 +49,9 @@ function inferSourceType(source) {
     if (source === 'signature-drawing' || source === 'signature-default') {
         return 'self_created';
     }
+    if (source === 'starter-loadout') {
+        return 'starter_loadout';
+    }
     if (source === 'slot-replacement' || source === 'world') {
         return 'map_pickup';
     }
@@ -231,7 +234,11 @@ function countBodyParts(parts) {
 }
 
 function createDefaultBodyParts() {
-    return normalizeBodyParts(bodyConfig.defaultLoadout.map((type) => ({type: type})));
+    return normalizeBodyParts(bodyConfig.defaultLoadout.map((type) => ({
+        type: type,
+        source: 'starter-loadout',
+        sourceType: 'starter_loadout'
+    })));
 }
 
 function getSignatureType(signature) {
@@ -406,6 +413,7 @@ function isOwnPart(target, part) {
         target
         && target.id
         && part
+        && part.sourceType === 'self_created'
         && (part.originPlayerId === target.id || part.currentOwnerId === target.id)
     );
 }
@@ -414,7 +422,7 @@ function isForeignPart(target, part) {
     if (!part || isOwnPart(target, part)) {
         return false;
     }
-    return part.sourceType !== 'self_created';
+    return part.sourceType !== 'self_created' && part.sourceType !== 'starter_loadout';
 }
 
 function hasBodyCompletion(target) {

@@ -935,6 +935,49 @@ describe('game-loop-service.js', () => {
     expect(ioEvents[0].payload[0].cells).to.equal(undefined);
   });
 
+  it('should skip unchanged player metadata on periodic cold syncs', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const player = new playerUtils.Player('player-meta-stable');
+    const ioEvents = [];
+
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'StableMeta',
+      screenWidth: 800,
+      screenHeight: 600,
+      playerCardPreviewDataUrl: 'data:image/png;base64,' + 'x'.repeat(50000)
+    });
+    map.players.pushNew(player);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: {
+        emit(name, payload) {
+          ioEvents.push({name, payload});
+        }
+      },
+      connectionService: { clearTimer() {} },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    service.sendMetaUpdates();
+    service.sendMetaUpdates();
+    player.bodyPartCount += 1;
+    service.sendMetaUpdates();
+
+    expect(ioEvents.map((event) => event.name)).to.deep.equal([
+      'playerMetaUpdate',
+      'playerMetaUpdate'
+    ]);
+    expect(ioEvents[1].payload[0].bodyPartCount).to.equal(player.bodyPartCount);
+  });
+
   it('should keep movement snapshots free of cold player metadata', () => {
     const map = new mapUtils.Map(Object.assign({}, config, {
       partLoot: {

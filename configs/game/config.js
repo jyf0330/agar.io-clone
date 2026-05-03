@@ -80,6 +80,14 @@ const config = {
                 stats: {
                     echoDetectRange: 10
                 }
+            },
+            {
+                type: 'HEART',
+                templateId: 'heart-default',
+                displayName: 'Map Heart',
+                stats: {
+                    resonanceIntimacy: 1
+                }
             }
         ]
     },

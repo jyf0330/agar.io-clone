@@ -1,6 +1,7 @@
 'use strict';
 
 var hydratePlayerState = require('./player-hydration');
+var playerMetaSignature = require('./player-meta-signature');
 
 function createSocketController(options) {
     var socket = null;
@@ -121,7 +122,7 @@ function createSocketController(options) {
             if (!meta || !meta.id) {
                 return;
             }
-            var signature = JSON.stringify(meta);
+            var signature = playerMetaSignature.createPlayerMetaSignature(meta);
             if (playerMetaSignatures[meta.id] === signature) {
                 return;
             }
@@ -139,6 +140,15 @@ function createSocketController(options) {
         }
 
         hydratePlayerState(player, playerMetaById[player.id]);
+    }
+
+    function hydrateRoundTimer(playerData) {
+        var player = options.getPlayer();
+        if (!player || !playerData || !Object.prototype.hasOwnProperty.call(playerData, 'roundTimer')) {
+            return;
+        }
+
+        player.roundTimer = playerData.roundTimer;
     }
 
     function mergePlayerMeta(user) {
@@ -402,6 +412,8 @@ function createSocketController(options) {
             if (options.global.playerType === 'player') {
                 hydrateLocalPlayerMeta();
                 hydratePlayerState(options.getPlayer(), playerData);
+            } else {
+                hydrateRoundTimer(playerData);
             }
             var mergedUsers = mergePlayerMetaList(userData);
             options.setWorldState({

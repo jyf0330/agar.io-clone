@@ -60,6 +60,51 @@ describe('body.js', () => {
       expect(signedHand.currentOwnerId).to.equal('player-1');
       expect(player.bodyBonuses.connectionRangeBonus).to.equal(55);
     });
+
+    it('should require collected outside material beyond the starter loadout for completion', () => {
+      const player = new playerUtils.Player('player-1');
+      player.init({ x: 100, y: 120 }, config.defaultPlayerMass);
+
+      player.clientProvidedData({
+        name: 'tester',
+        screenWidth: 800,
+        screenHeight: 600,
+        bodySignature: {
+          missingPart: 'HAND',
+          selectedReferenceId: 'hand-thread',
+          tier: 'echo',
+          similarity: 0.82,
+          imageDataUrl: 'data:image/png;base64,stroke',
+          skipped: false
+        }
+      });
+      body.equipBodyPart(player, body.createBodyPart('HEART', 1, {
+        sourceType: 'map_pickup',
+        templateId: 'heart-default'
+      }), { x: 100, y: 120 });
+
+      const ownCompletionTypes = body.getCompletionPartTypes().filter((type) => {
+        return player.bodyParts.some((part) => part.type === type && body.isOwnPart(player, part));
+      });
+
+      expect(ownCompletionTypes).to.deep.equal(['HAND']);
+      expect(body.hasBodyCompletion(player)).to.equal(false);
+
+      body.equipBodyPart(player, body.createBodyPart('HEAD', 1, {
+        sourceType: 'map_pickup',
+        templateId: 'head-default'
+      }), { x: 100, y: 120 });
+      body.equipBodyPart(player, body.createBodyPart('FOOT', 1, {
+        sourceType: 'map_pickup',
+        templateId: 'foot-default'
+      }), { x: 100, y: 120 });
+      body.equipBodyPart(player, body.createBodyPart('MOUTH', 1, {
+        sourceType: 'kill_loot',
+        originPlayerId: 'player-2'
+      }), { x: 100, y: 120 });
+
+      expect(body.hasBodyCompletion(player)).to.equal(true);
+    });
   });
 
   describe('V5 complete part objects', () => {
@@ -338,6 +383,40 @@ describe('body.js', () => {
       expect(body.hasBodyCompletion(partial)).to.equal(false);
       expect(body.hasBodyCompletion(complete)).to.equal(true);
       expect(body.hasBodyCompletion(tooManyOwnParts)).to.equal(false);
+    });
+
+    it('should count equipped outside parts as foreign even after ownership transfer', () => {
+      const player = { id: 'player-1', name: 'Alice' };
+
+      body.applyBodyState(player, {
+        bodyParts: [
+          body.createBodyPart('HAND', 1, {
+            originPlayerId: 'player-1',
+            currentOwnerId: 'player-1',
+            sourceType: 'self_created'
+          }),
+          body.createBodyPart('HEAD', 1, {
+            currentOwnerId: 'player-1',
+            sourceType: 'map_pickup'
+          }),
+          body.createBodyPart('FOOT', 1, {
+            currentOwnerId: 'player-1',
+            sourceType: 'map_pickup'
+          }),
+          body.createBodyPart('MOUTH', 1, {
+            currentOwnerId: 'player-1',
+            sourceType: 'kill_loot',
+            originPlayerId: 'player-2'
+          }),
+          body.createBodyPart('HEART', 1, {
+            currentOwnerId: 'player-1',
+            sourceType: 'kill_loot',
+            originPlayerId: 'player-3'
+          })
+        ]
+      });
+
+      expect(body.hasBodyCompletion(player)).to.equal(true);
     });
   });
 

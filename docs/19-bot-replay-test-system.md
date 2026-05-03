@@ -24,6 +24,24 @@ part is represented in the `gotit` payload as `bodyAssembly` and `bodySignature`
 The test runner therefore keeps "room" and "countdown" as harness-level logs
 while every Bot still uses the same server socket path as a browser player.
 
+## Human-like Operation Coverage
+
+During the default 120-second behavior validation window, every Bot must cover
+these core player operations or the run fails before settlement:
+
+- Randomly complete one missing body part in the `gotit` payload.
+- Receive at least one `serverTellPlayerMove` sync frame.
+- Move toward visible food or run random cruise movement by emitting `0`.
+- Eject mass by emitting `1`.
+- Split by emitting `2`.
+- Attempt connection by emitting `3`.
+
+The battle loop uses a default 4-second skill cooldown. It deterministically
+covers `1`, `2`, and `3` on separate cooldown windows, roughly at 4, 8, and 12
+seconds when ticks are flowing normally, then continues with probabilistic skill
+usage that respects the same cooldown so reports still show varied player-like
+behavior without frame-bursting.
+
 ## Run
 
 Start the game server separately. For quick settlement-driven smoke tests, use
@@ -75,5 +93,24 @@ line with `time`, `level`, `type`, `botId`, `roomId`, `state`, `message`, and
 `data`.
 
 `summary.md` says `测试通过：所有 Bot 成功完成对局结算` only when every Bot reaches
-settlement. Failures include the Bot id, failed stage, last successful event,
-possible cause, and stack or server error data when available.
+settlement and every Bot covers the required human-like operation checklist.
+Failures include the Bot id, failed stage, last successful event, missing
+operation names, possible cause, and stack or server error data when available.
+
+## Concise Data View
+
+Use the summary script when the raw per-Bot logs are too noisy:
+
+```bash
+npm run bot:summary -- --limit 12
+```
+
+It reads `logs/bot-test/*/raw_events.jsonl` and prints a short dated timeline for
+each run. Repeated skills are collapsed so each Bot only contributes its first
+eject, split, and connection attempt, plus room start and settlement events.
+
+To save the view:
+
+```bash
+npm run bot:summary -- --limit 12 --output logs/bot-test/summary-timeline.md
+```

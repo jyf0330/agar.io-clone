@@ -19,6 +19,18 @@ const PATHS = {
     dist: process.env.DIST_DIR || 'dist',
 };
 
+function getRequestedTestFiles() {
+    return process.argv
+        .slice(3)
+        .filter(arg => arg && arg.endsWith('.js'))
+        .map(arg => path.resolve(arg))
+        .filter(file => fs.existsSync(file));
+}
+
+getRequestedTestFiles().forEach(file => {
+    gulp.task(path.relative(process.cwd(), file), done => done());
+});
+
 function getWebpackConfig() {
     return require('./webpack.config.js')(!process.env.IS_DEV)
 }
@@ -72,8 +84,9 @@ function setDev(done) {
 
 function mocha(done) {
     const mochaInstance = new Mocha()
+    const requestedFiles = getRequestedTestFiles();
     const testRoot = process.env.TEST_DIR || PATHS.tests;
-    const files = fs
+    const files = requestedFiles.length ? requestedFiles : fs
         .readdirSync(testRoot, {recursive: true})
         .filter(x => x.endsWith('.js')).map(x => path.resolve(testRoot, x));
     for (const file of files) {
