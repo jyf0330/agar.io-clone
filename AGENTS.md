@@ -49,6 +49,9 @@ There is no separate typecheck command in this JavaScript project.
 - Keep generated output, unrelated formatting, and neighboring code churn out of
   normal diffs.
 - For frontend changes, verify the actual running UI when practical.
+- After changing code, restart the local service bound to port 3000 and open
+  `http://127.0.0.1:3000` in a browser before handing off or claiming
+  verification is complete.
 - When a task finishes or the active context changes, update
   `memory/short_memory.md` only if the next agent would otherwise lose important
   state.

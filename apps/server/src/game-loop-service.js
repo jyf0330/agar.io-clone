@@ -284,10 +284,6 @@ function createGameLoopService(options) {
         const socket = getSocket(currentPlayer.id);
         const now = Date.now();
         if (!currentPlayer.isNpc && currentPlayer.lastHeartbeat < new Date().getTime() - config.maxHeartbeatInterval) {
-            if (socket) {
-                socket.emit('kick', 'Last heartbeat received over ' + config.maxHeartbeatInterval + ' ago.');
-                socket.disconnect();
-            }
             return;
         }
 

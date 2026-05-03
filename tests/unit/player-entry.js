@@ -41,8 +41,13 @@ describe('player-entry.js', () => {
       },
       consentToRecord: false,
       isReplayAllowed: false,
-      isBot: true
+      isBot: true,
+      reconnectToken: ''
     });
+  });
+
+  it('should keep only safe reconnect token characters', () => {
+    expect(playerEntry.normalizeReconnectToken('<b>token:abc_123-bad</b>!')).to.equal('token:abc_123-bad');
   });
 
   it('should apply the shared entry payload to a bot player without using npc flags', () => {
@@ -52,7 +57,8 @@ describe('player-entry.js', () => {
       name: 'Socket Bot',
       screenWidth: 1024,
       screenHeight: 768,
-      isBot: true
+      isBot: true,
+      reconnectToken: 'socket:token-1'
     });
 
     expect(player.name).to.equal('Socket Bot');
@@ -61,5 +67,6 @@ describe('player-entry.js', () => {
     expect(player.playerKind).to.equal('bot');
     expect(player.isBot).to.equal(true);
     expect(player.isNpc).to.equal(false);
+    expect(player.reconnectToken).to.equal('socket:token-1');
   });
 });

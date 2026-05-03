@@ -574,13 +574,50 @@ class SimulatedPlayerClient {
         };
     }
 
+    getMovementChatMessage(targetSource, fallbackMessage) {
+        if (targetSource === '可见食物') {
+            return '我去追食物';
+        }
+        if (targetSource === 'part loot') {
+            return '我去捡部位';
+        }
+        if (targetSource === '随机巡航') {
+            return '我在巡游找目标';
+        }
+        if (targetSource === '避让大玩家') {
+            return '我在躲大玩家';
+        }
+        if (targetSource === '追击小玩家') {
+            return '我去追小玩家';
+        }
+        if (targetSource === 'devour 风险') {
+            return '我在靠近大玩家，测试被吃风险';
+        }
+        return fallbackMessage || '我在行动';
+    }
+
+    getSkillChatMessage(eventName) {
+        if (eventName === '1') {
+            return '我吐出孢子';
+        }
+        if (eventName === '2') {
+            return '我分裂了';
+        }
+        if (eventName === '3') {
+            return '我尝试连接';
+        }
+        return '我使用技能';
+    }
+
     emitBattleSkill(eventName, message, statKey, target, targetSource, now) {
         this.socket.emit(eventName);
         if (statKey) {
             this.behaviorStats[statKey] += 1;
         }
         this.lastSkillAtMs = typeof now === 'number' ? now : this.now();
-        this.logBehavior('战斗技能', message, this.buildWorldSnapshot(target, targetSource));
+        const snapshot = this.buildWorldSnapshot(target, targetSource);
+        this.logBehavior('战斗技能', message, snapshot);
+        this.emitEventChat(this.getSkillChatMessage(eventName), snapshot);
     }
 
     getNextRequiredSkill() {
@@ -777,10 +814,12 @@ class SimulatedPlayerClient {
         }
         const ghost = this.visibleGhosts[0] || {};
         this.behaviorStats.ghostEncounterEvents += 1;
-        this.logBehavior('ghost 出现/遭遇', 'ghost 出现，改向移动', this.buildWorldSnapshot({
+        const snapshot = this.buildWorldSnapshot({
             x: typeof ghost.x === 'number' ? ghost.x : this.lastTarget.x,
             y: typeof ghost.y === 'number' ? ghost.y : this.lastTarget.y
-        }, 'ghost'));
+        }, 'ghost');
+        this.logBehavior('ghost 出现/遭遇', 'ghost 出现，改向移动', snapshot);
+        this.emitEventChat('我看到 ghost，正在绕开', snapshot);
     }
 
     pickBattleTarget(width, height) {
@@ -870,7 +909,9 @@ class SimulatedPlayerClient {
         if (this.isFirstMovementSource(targetSource)
             || this.battleTickCount === 1
             || this.battleTickCount % this.behaviorLogEveryTicks === 0) {
-            this.logBehavior('战斗行为', movement.message, this.buildWorldSnapshot(this.lastTarget, targetSource));
+            const snapshot = this.buildWorldSnapshot(this.lastTarget, targetSource);
+            this.logBehavior('战斗行为', movement.message, snapshot);
+            this.emitEventChat(this.getMovementChatMessage(targetSource, movement.message), snapshot);
         }
         this.recordMovementStats(targetSource);
         const requiredSkill = this.getNextRequiredSkill();

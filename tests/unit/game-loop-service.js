@@ -8,6 +8,46 @@ const mapUtils = require('../../apps/server/src/map/map');
 const playerUtils = require('../../apps/server/src/map/player');
 
 describe('game-loop-service.js', () => {
+  it('should pause a stale player instead of kicking during heartbeat gaps', () => {
+    const map = new mapUtils.Map(config);
+    const player = new playerUtils.Player('player-1');
+    const socketEvents = [];
+    let disconnected = false;
+
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'stale-player',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    player.lastHeartbeat = Date.now() - config.maxHeartbeatInterval - 1000;
+    map.players.pushNew(player);
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket() {
+        return {
+          emit(name, payload) {
+            socketEvents.push({name, payload});
+          },
+          disconnect() {
+            disconnected = true;
+          }
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    service.tickPlayer(player);
+
+    expect(socketEvents.filter((event) => event.name === 'kick')).to.have.length(0);
+    expect(disconnected).to.equal(false);
+    expect(map.players.findByID('player-1')).to.equal(player);
+  });
+
   it('should keep an explicitly active pet following the player without creating a combat body', () => {
     const map = new mapUtils.Map(config);
     const player = new playerUtils.Player('player-1');

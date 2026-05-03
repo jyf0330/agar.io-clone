@@ -16,6 +16,10 @@ function cloneObject(value) {
     return value && typeof value === 'object' ? Object.assign({}, value) : null;
 }
 
+function normalizeReconnectToken(value) {
+    return stripTags(value).replace(/[^\w:-]/g, '').substring(0, 80);
+}
+
 function normalizePlayerEntryPayload(payload) {
     const safePayload = payload || {};
     const consentToRecord = safePayload.consentToRecord !== false;
@@ -29,7 +33,8 @@ function normalizePlayerEntryPayload(payload) {
         bodyAssembly: cloneObject(safePayload.bodyAssembly),
         consentToRecord: consentToRecord,
         isReplayAllowed: consentToRecord && safePayload.isReplayAllowed !== false,
-        isBot: safePayload.isBot === true
+        isBot: safePayload.isBot === true,
+        reconnectToken: normalizeReconnectToken(safePayload.reconnectToken)
     };
 }
 
@@ -48,6 +53,7 @@ function applyPlayerEntryPayload(player, payload) {
     player.playerCardPreviewDataUrl = normalized.playerCardPreviewDataUrl;
     player.bodyAssembly = normalized.bodyAssembly;
     player.bodySignature = normalized.bodySignature;
+    player.reconnectToken = normalized.reconnectToken;
     player.consentToRecord = normalized.consentToRecord;
     player.isReplayAllowed = normalized.isReplayAllowed;
     body.applyBodyState(player, {
@@ -59,5 +65,6 @@ function applyPlayerEntryPayload(player, payload) {
 
 module.exports = {
     normalizePlayerEntryPayload,
+    normalizeReconnectToken,
     applyPlayerEntryPayload
 };

@@ -230,6 +230,51 @@ describe('bot-client.js', () => {
     ]);
   });
 
+  it('should send event chat for fallback wandering and repeat the same movement intent after cooldown', () => {
+    const socket = createFakeSocket();
+    let now = 1000;
+    const client = createBotClient({
+      profile: {name: 'Bot_Wander'},
+      behaviorChatCooldownMs: 5000,
+      now() {
+        return now;
+      },
+      ioFactory() {
+        return socket;
+      }
+    });
+
+    client.connect();
+    socket.emit('welcome', {id: 'bot-1', x: 100, y: 100, massTotal: 20}, {width: 5000, height: 5000});
+    socket.emit(
+      'serverTellPlayerMove',
+      {id: 'bot-1', x: 100, y: 100, massTotal: 20},
+      [],
+      [],
+      [],
+      [],
+      [],
+      []
+    );
+    now += 6000;
+    socket.emit(
+      'serverTellPlayerMove',
+      {id: 'bot-1', x: 120, y: 110, massTotal: 20},
+      [],
+      [],
+      [],
+      [],
+      [],
+      []
+    );
+
+    const wanderMessages = socket.emitted
+      .filter((entry) => entry.eventName === 'playerChat')
+      .map((entry) => entry.payload.message)
+      .filter((message) => message === '我在巡游找目标');
+    expect(wanderMessages).to.have.length(2);
+  });
+
   it('should send event chat for body part pickup, devour, being devoured, and body completion meta updates', () => {
     const socket = createFakeSocket();
     const client = createBotClient({
@@ -355,6 +400,28 @@ describe('bot-client.js', () => {
     expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat').map((entry) => entry.payload)).to.deep.equal([
       {sender: 'Bot_Event', message: '我吃了 Victim_Bot，拿到木勺手'},
       {sender: 'Bot_Event', message: '我被 Hunter_Bot 吃了，失去藤蔓脚'}
+    ]);
+  });
+
+  it('should say when the bot itself is eaten from a death event', () => {
+    const socket = createFakeSocket();
+    const client = createBotClient({
+      profile: {name: 'Bot_Eaten'},
+      behaviorChatCooldownMs: 0,
+      ioFactory() {
+        return socket;
+      }
+    });
+
+    client.connect();
+    socket.emit('welcome', {id: 'bot-1', name: 'Bot_Eaten'}, {width: 5000, height: 5000});
+    socket.emit('playerDied', {
+      playerEatenId: 'bot-1',
+      playerEatenName: 'Bot_Eaten'
+    });
+
+    expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat').map((entry) => entry.payload)).to.include.deep.members([
+      {sender: 'Bot_Eaten', message: '我被吃掉了'}
     ]);
   });
 

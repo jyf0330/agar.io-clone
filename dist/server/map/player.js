@@ -106,6 +106,9 @@ exports.Player = class {
     this.admin = false;
     this.playerCardPreviewDataUrl = null;
     this.bodyAssembly = null;
+    this.reconnectToken = '';
+    this.connected = false;
+    this.disconnectedAt = null;
     this.consentToRecord = true;
     this.isReplayAllowed = true;
     playerKind.markHumanPlayer(this);

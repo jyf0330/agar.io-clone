@@ -176,6 +176,53 @@ describe('simulated player client', () => {
     client.stop();
   });
 
+  it('should send player chat for battle movement, skills, and ghost encounters', () => {
+    const socket = createFakeSocket();
+    let now = 1000;
+    const client = new SimulatedPlayerClient({
+      botId: 'Bot_Chat_All',
+      roomId: 'room_001',
+      random: () => 0.2,
+      now: () => now,
+      logger: {
+        bot() {},
+        error() {}
+      },
+      movementIntervalMs: 100000,
+      skillCooldownMs: 1,
+      behaviorLogEveryTicks: 1,
+      ioFactory() {
+        return socket;
+      }
+    });
+
+    client.connect();
+    socket.emit('connect');
+    socket.emit('welcome', {id: 'socket-chat-all'}, {width: 5000, height: 5000});
+    client.startBattle();
+    socket.emit('serverTellPlayerMove', {id: 'socket-chat-all', x: 100, y: 200, massTotal: 33}, [], [{x: 150, y: 220}], [], [], [], [
+      {id: 'ghost-1', x: 80, y: 90, name: 'Echo'}
+    ]);
+    now += 1;
+    client.tickBattle();
+    now += 1;
+    client.tickBattle();
+    now += 1;
+    client.tickBattle();
+
+    const messages = socket.emitted
+      .filter((entry) => entry.eventName === 'playerChat')
+      .map((entry) => entry.payload.message);
+    client.stop();
+    expect(messages).to.include.members([
+      '我看到 ghost，正在绕开',
+      '我去追食物',
+      '我吐出孢子',
+      '我分裂了',
+      '我尝试连接'
+    ]);
+  });
+
   it('should cover the required human-like player operations during battle validation', () => {
     const socket = createFakeSocket();
     let now = 2000;
@@ -219,11 +266,20 @@ describe('simulated player client', () => {
     expect(stats.connectionAttemptEvents).to.equal(1);
     expect(stats.avoidanceEvents).to.equal(1);
     expect(stats.pursuitEvents).to.equal(1);
-    expect(stats.chatEvents).to.equal(1);
+    expect(stats.chatEvents).to.be.at.least(7);
     expect(socket.emitted.some((entry) => entry.eventName === '0')).to.equal(true);
     expect(socket.emitted.some((entry) => entry.eventName === '1')).to.equal(true);
     expect(socket.emitted.some((entry) => entry.eventName === '2')).to.equal(true);
     expect(socket.emitted.some((entry) => entry.eventName === '3')).to.equal(true);
+    expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat').map((entry) => entry.payload.message)).to.include.members([
+      '我去追食物',
+      '我在巡游找目标',
+      '我在躲大玩家',
+      '我去追小玩家',
+      '我吐出孢子',
+      '我分裂了',
+      '我尝试连接'
+    ]);
     expect(socket.emitted.some((entry) => entry.eventName === 'playerChat' && entry.payload.message === '我吃到了食物，质量 +3')).to.equal(true);
     expect(socket.emitted.some((entry) => entry.eventName === 'playerChat' && entry.payload.message === '我去那边看看')).to.equal(false);
     client.stop();

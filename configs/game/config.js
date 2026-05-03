@@ -142,6 +142,7 @@ const config = {
     logChat: 0,
     networkUpdateFactor: networkUpdateFactor,
     maxHeartbeatInterval: 5000,
+    reconnectTimeoutMs: Number(process.env.V5_RECONNECT_TIMEOUT_MS || 60000),
     foodUniformDisposition: true,
     newPlayerInitialPosition: "farthest",
     massLossRate: 1,

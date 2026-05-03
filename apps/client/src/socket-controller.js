@@ -179,6 +179,53 @@ function createSocketController(options) {
             || reason === 'ping timeout';
     }
 
+    function createReconnectToken() {
+        return [
+            'reconnect',
+            Date.now().toString(36),
+            Math.random().toString(36).substring(2, 12)
+        ].join('-');
+    }
+
+    function getReconnectToken() {
+        if (options.global.playerType !== 'player') {
+            return '';
+        }
+        if (options.global.reconnectToken) {
+            return options.global.reconnectToken;
+        }
+
+        var storage = options.window && options.window.sessionStorage;
+        var storageKey = 'agarReconnectToken';
+        var token = '';
+        try {
+            token = storage && storage.getItem ? storage.getItem(storageKey) : '';
+            if (!token) {
+                token = createReconnectToken();
+                if (storage && storage.setItem) {
+                    storage.setItem(storageKey, token);
+                }
+            }
+        } catch (error) {
+            token = createReconnectToken();
+        }
+
+        options.global.reconnectToken = token;
+        return token;
+    }
+
+    function emitRespawn(nextSocket) {
+        var reconnectToken = getReconnectToken();
+        if (reconnectToken) {
+            nextSocket.emit('respawn', {
+                reconnectToken: reconnectToken
+            });
+            return;
+        }
+
+        nextSocket.emit('respawn');
+    }
+
     function handleReconnect(nextSocket) {
         markDebugSocketEvent('connect');
         updateDebugPanel({
@@ -194,7 +241,7 @@ function createSocketController(options) {
         options.global.disconnected = false;
         assignSocket(nextSocket);
         logDebugPanel('Socket 已重新连接，正在恢复游戏。', 'ok');
-        nextSocket.emit('respawn');
+        emitRespawn(nextSocket);
     }
 
     function handleDisconnect(reason) {
@@ -266,6 +313,7 @@ function createSocketController(options) {
             nextPlayer.bodySignature = options.global.bodySignature || null;
             nextPlayer.consentToRecord = options.global.consentToRecord !== false;
             nextPlayer.isReplayAllowed = nextPlayer.consentToRecord;
+            nextPlayer.reconnectToken = getReconnectToken();
             options.setPlayer(nextPlayer);
             options.getChat().player = nextPlayer;
             nextSocket.emit('gotit', nextPlayer);
@@ -518,7 +566,7 @@ function createSocketController(options) {
 
     function connect(type) {
         var nextSocket = ensureSocket(type);
-        nextSocket.emit('respawn');
+        emitRespawn(nextSocket);
         return nextSocket;
     }
 

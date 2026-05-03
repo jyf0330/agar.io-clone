@@ -1,11 +1,22 @@
 # Short Memory
 
 Current objective:
-- First playable live version should keep Ghost Echo, NPCs, and pets disabled
-  by default so the base multiplayer loop can be profiled without those side
-  systems.
+- Live player disconnects should be recoverable: heartbeat gaps must not kick
+  the player, and a browser reconnect should reclaim the same in-game player.
 
 Recent actions:
+- Added browser reconnect tokens for player clients and server-side retained
+  player binding. Human players with a reconnect token now stay in the map for
+  `config.reconnectTimeoutMs` (default 60000ms) after socket disconnect and a
+  new socket with the same token receives the original player id/state.
+- Removed the heartbeat-timeout `kick` path from `game-loop-service`; stale
+  heartbeat gaps now pause player ticking instead of sending `kick` and forcing
+  a server disconnect.
+- Added regression coverage for heartbeat gaps and Socket.IO reconnect restore.
+  Verification: targeted reconnect tests passed with 38 tests; `npm run build`
+  rebuilt the client/server bundles and passed 391 tests; local service was
+  restarted on `http://127.0.0.1:3000` and a browser smoke confirmed the
+  `开放吞噬` shell loads with the start controls visible and no console errors.
 - Disabled Ghost Echo, NPC, and pet systems by default behind opt-in env flags:
   `V5_GHOST_ENABLED=1`, `V5_NPC_ENABLED=1`, and `V5_PET_ENABLED=1`.
 - Updated server startup so GhostManager/GhostRecorder are only constructed
@@ -19,9 +30,9 @@ Recent actions:
   tests/unit/player-projection.js tests/unit/socket-controller.js
   tests/unit/player-hydration.js` passed and rebuilt the client bundle.
 - Fixed the normal Socket.IO bot event-chat gap in `apps/bot-client/src/`:
-  bots now target visible part loot and chat for food/part intent, chase/avoid
-  intent, split/eject skills, body-part pickup, devour, being devoured, and
-  body completion while keeping pure fallback wandering silent.
+  bots now target visible part loot and chat for food/part/wander/wait intent,
+  chase/avoid intent, split/eject/connect skills, body-part pickup, devour,
+  being devoured, own death, observed death, and body completion.
 - Verification after the bot chat fix: focused bot/client/socket-flow tests
   passed with 28 tests, broader bot/body/game-loop coverage passed with 111
   tests, and full `npm test` passed with 385 tests.
@@ -85,10 +96,11 @@ Recent actions:
 - Added `apps/server/src/default-bot-swarm.js` and wired `server.js` so a normal
   server start defaults to three retained Socket.IO bot clients. Use
   `V5_DEFAULT_BOTS=0` to disable and `V5_DEFAULT_BOT_COUNT` to resize.
-- Removed random/idle chat from `apps/bot-client/src/bot-actions.js` and
+- Removed profile random chatter from `apps/bot-client/src/bot-actions.js` and
   `apps/bot-test/src/simulated-player-client.js`; bots now speak through
-  event chat for food mass gain, body-part pickup, devour, being devoured, and
-  body completion. The bot-test fallback settlement helper no longer sends
+  event/behavior chat for movement intent, skills, ghost encounters, food mass
+  gain, body-part pickup, devour, being devoured, own death, observed death,
+  and body completion. The bot-test fallback settlement helper no longer sends
   `快速结算` as player chat. Doudou/Mochi profile `chatChance` and `chatLines`
   were removed.
 - Verification for the default/chat change: focused tests passed with 39 tests,
@@ -100,6 +112,12 @@ Recent actions:
   plus the human player (`Total players: 4`). Chat rows in
   `data/server-db/db.sqlite3` show event messages like
   `我吃到了食物，质量 +1`.
+- Runtime follow-up: `gulp watch`/the existing `node dist/server/server.js`
+  process does not reload `apps/bot-client/src/` changes automatically. The
+  first 3123 restart attempt failed with `EADDRINUSE` because old PID 34471 was
+  still listening. After killing it and restarting `agar-human-3bots`, a
+  spectator Socket.IO listener on `http://127.0.0.1:3123` received bot chat:
+  `我去捡部位`, `我吃到了食物，质量 +1`, and `我在巡游找目标`.
 
 Next step:
 - If continuing from here, open `http://127.0.0.1:3123` and play against the

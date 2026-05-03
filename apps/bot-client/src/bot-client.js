@@ -232,7 +232,7 @@ function hasLargerVisiblePlayer(player, visiblePlayers) {
 function describeMoveIntent(state, action, visiblePlayers, visibleFood, visiblePartLoot) {
     const target = action && action.target;
     if (!target) {
-        return null;
+        return {key: 'wait', message: '我在等下一步'};
     }
 
     const nearbyPlayer = findNearestTarget(target, visiblePlayers);
@@ -250,7 +250,7 @@ function describeMoveIntent(state, action, visiblePlayers, visibleFood, visibleP
         return {key: 'avoid', message: '我在躲大玩家'};
     }
 
-    return null;
+    return {key: 'wander', message: '我在巡游找目标'};
 }
 
 function sendBehaviorChat(state, socket, profile, key, message) {
@@ -275,10 +275,6 @@ function sendMovementIntentChat(state, socket, profile, actions, visiblePlayers,
         return;
     }
     const key = 'move:' + intent.key;
-    if (state.lastMovementChatKey === key) {
-        return;
-    }
-
     state.lastMovementChatKey = key;
     sendBehaviorChat(state, socket, profile, key, intent.message);
 }
@@ -421,6 +417,17 @@ function handlePlayerMetaUpdate(state, socket, profile, playersMeta) {
     state.player = Object.assign({}, state.player || {}, ownMeta);
 }
 
+function isOwnDeathEvent(profile, state, data) {
+    const safeData = data || {};
+    const playerId = state.player && state.player.id;
+    const playerName = state.player && state.player.name || getProfileName(profile);
+    const eatenId = safeData.playerEatenId || safeData.id || safeData.playerId || '';
+    const eatenName = safeData.playerEatenName || safeData.name || '';
+
+    return Boolean((playerId && eatenId && playerId === eatenId)
+        || (eatenName && (eatenName === playerName || eatenName === getProfileName(profile))));
+}
+
 function createBotClient(options) {
     const settings = options || {};
     const state = {
@@ -524,6 +531,11 @@ function createBotClient(options) {
 
         socket.on('playerDied', function (data) {
             const playerName = data && (data.playerEatenName || data.name) ? (data.playerEatenName || data.name) : 'unknown';
+            if (isOwnDeathEvent(profile, state, data)) {
+                writeBotLog(logger, profile, 'devoured', '自己被吃掉');
+                sendBehaviorChat(state, socket, profile, 'event:ownDied', '我被吃掉了');
+                return;
+            }
             writeBotLog(logger, profile, 'devour', playerName + ' 被吃掉');
             sendBehaviorChat(state, socket, profile, 'event:playerDied:' + playerName, '我看到 ' + playerName + ' 被吃掉了');
         });

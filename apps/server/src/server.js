@@ -184,6 +184,8 @@ const npcRelationshipCache = {};
 
 let sockets = {};
 let spectators = [];
+let reconnectTokens = {};
+let reconnectCleanupTimers = {};
 
 app.use(express.static(path.join(__dirname, '../client')));
 
@@ -214,6 +216,97 @@ function generateSpawnpoint() {
     }
 
     return getPosition(config.newPlayerInitialPosition === 'farthest', radius, humanPlayers)
+}
+
+function getReconnectToken(payload) {
+    return playerEntry.normalizeReconnectToken(payload && payload.reconnectToken);
+}
+
+function clearReconnectCleanup(playerId) {
+    if (reconnectCleanupTimers[playerId]) {
+        clearTimeout(reconnectCleanupTimers[playerId]);
+        delete reconnectCleanupTimers[playerId];
+    }
+}
+
+function removeReconnectToken(player) {
+    if (!player || !player.reconnectToken) {
+        return;
+    }
+    if (reconnectTokens[player.reconnectToken] === player.id) {
+        delete reconnectTokens[player.reconnectToken];
+    }
+}
+
+function bindSocketToPlayer(player, socket, reconnectToken) {
+    if (!player || !socket) {
+        return;
+    }
+
+    if (socket.id !== player.id && sockets[socket.id] === socket) {
+        delete sockets[socket.id];
+    }
+
+    sockets[player.id] = socket;
+    player.connected = true;
+    player.disconnectedAt = null;
+    if (reconnectToken) {
+        player.reconnectToken = reconnectToken;
+        reconnectTokens[reconnectToken] = player.id;
+    }
+    clearReconnectCleanup(player.id);
+}
+
+function removeSocketBinding(player, socket) {
+    if (!player || !socket) {
+        return;
+    }
+    if (sockets[player.id] === socket) {
+        delete sockets[player.id];
+    }
+    if (sockets[socket.id] === socket) {
+        delete sockets[socket.id];
+    }
+}
+
+function findRetainedPlayer(reconnectToken) {
+    const playerId = reconnectToken ? reconnectTokens[reconnectToken] : null;
+    if (!playerId) {
+        return null;
+    }
+    return map.players.findByID(playerId);
+}
+
+function finalizePlayerDisconnect(player, socket) {
+    removeSocketBinding(player, socket);
+    clearReconnectCleanup(player.id);
+    removeReconnectToken(player);
+    if (typeof memoryStore.endSession === 'function') {
+        memoryStore.endSession(memorySessionId, player.id, Date.now());
+    }
+    npcsAnchoredToPlayer = false;
+    connectionService.clearTimer(player.id);
+    map.players.removePlayerByID(player.id);
+    console.log('[INFO] User ' + player.name + ' has disconnected');
+    if (socket && socket.broadcast) {
+        socket.broadcast.emit('playerDisconnect', { name: player.name });
+    } else {
+        io.emit('playerDisconnect', { name: player.name });
+    }
+}
+
+function scheduleReconnectCleanup(player, socket) {
+    const timeoutMs = typeof config.reconnectTimeoutMs === 'number' ? config.reconnectTimeoutMs : 60000;
+    clearReconnectCleanup(player.id);
+    reconnectCleanupTimers[player.id] = setTimeout(() => {
+        if (sockets[player.id]) {
+            return;
+        }
+        finalizePlayerDisconnect(player, socket);
+    }, timeoutMs);
+    if (reconnectCleanupTimers[player.id] && typeof reconnectCleanupTimers[player.id].unref === 'function') {
+        reconnectCleanupTimers[player.id].unref();
+    }
 }
 
 function placeNpcNearPlayer(npc, currentPlayer, index) {
@@ -499,34 +592,41 @@ const addPlayer = (socket) => {
     socket.on('gotit', function (clientPlayerData) {
         const entryPayload = playerEntry.normalizePlayerEntryPayload(clientPlayerData);
         console.log('[INFO] Player ' + entryPayload.name + ' connecting!');
-        currentPlayer.init(generateSpawnpoint(), config.defaultPlayerMass);
+        const existingPlayer = map.players.findByID(currentPlayer.id);
+        const isRestoredPlayer = existingPlayer === currentPlayer && sockets[currentPlayer.id] === socket;
 
-        if (map.players.findIndexByID(socket.id) > -1) {
+        if (existingPlayer && !isRestoredPlayer) {
             console.log('[INFO] Player ID is already connected, kicking.');
             socket.disconnect();
         } else if (!util.validNick(entryPayload.name)) {
             socket.emit('kick', 'Invalid username.');
             socket.disconnect();
         } else {
-            console.log('[INFO] Player ' + entryPayload.name + ' connected!');
-            sockets[socket.id] = socket;
-
+            if (!isRestoredPlayer) {
+                currentPlayer.init(generateSpawnpoint(), config.defaultPlayerMass);
+            }
             currentPlayer.clientProvidedData(entryPayload);
+            bindSocketToPlayer(currentPlayer, socket, entryPayload.reconnectToken);
             ensureActivePetForPlayer(currentPlayer);
             if (ghostRecorder) {
                 ghostRecorder.recordPlayerSession(currentPlayer, Date.now());
             }
-            map.players.pushNew(currentPlayer);
-            if (npcRoster.length && !npcsAnchoredToPlayer) {
-                npcRoster.forEach((npc, index) => {
-                    placeNpcNearPlayer(npc, currentPlayer, index);
-                });
-                npcsAnchoredToPlayer = true;
-                speakPreviousExpectations(currentPlayer);
+            if (isRestoredPlayer) {
+                console.log('[INFO] Player ' + entryPayload.name + ' reconnected!');
+            } else {
+                console.log('[INFO] Player ' + entryPayload.name + ' connected!');
+                map.players.pushNew(currentPlayer);
+                if (npcRoster.length && !npcsAnchoredToPlayer) {
+                    npcRoster.forEach((npc, index) => {
+                        placeNpcNearPlayer(npc, currentPlayer, index);
+                    });
+                    npcsAnchoredToPlayer = true;
+                    speakPreviousExpectations(currentPlayer);
+                }
+                io.emit('playerJoin', { name: currentPlayer.name });
+                console.log('Total players: ' + map.players.data.length);
             }
             gameLoopService.sendMetaUpdates({force: true});
-            io.emit('playerJoin', { name: currentPlayer.name });
-            console.log('Total players: ' + map.players.data.length);
         }
 
     });
@@ -540,7 +640,21 @@ const addPlayer = (socket) => {
         currentPlayer.screenHeight = data.screenHeight;
     });
 
-    socket.on('respawn', () => {
+    socket.on('respawn', (data) => {
+        const reconnectToken = getReconnectToken(data);
+        const retainedPlayer = findRetainedPlayer(reconnectToken);
+        if (retainedPlayer) {
+            currentPlayer = retainedPlayer;
+            currentPlayer.setLastHeartbeat();
+            bindSocketToPlayer(currentPlayer, socket, reconnectToken);
+            socket.emit('welcome', currentPlayer, {
+                width: config.gameWidth,
+                height: config.gameHeight
+            });
+            console.log('[INFO] User ' + currentPlayer.name + ' has reconnected');
+            return;
+        }
+
         map.players.removePlayerByID(currentPlayer.id);
         socket.emit('welcome', currentPlayer, {
             width: config.gameWidth,
@@ -550,15 +664,20 @@ const addPlayer = (socket) => {
     });
 
     socket.on('disconnect', () => {
-        delete sockets[socket.id];
-        if (typeof memoryStore.endSession === 'function') {
-            memoryStore.endSession(memorySessionId, currentPlayer.id, Date.now());
+        if (sockets[currentPlayer.id] && sockets[currentPlayer.id] !== socket) {
+            return;
         }
-        npcsAnchoredToPlayer = false;
-        connectionService.clearTimer(currentPlayer.id);
-        map.players.removePlayerByID(currentPlayer.id);
-        console.log('[INFO] User ' + currentPlayer.name + ' has disconnected');
-        socket.broadcast.emit('playerDisconnect', { name: currentPlayer.name });
+
+        removeSocketBinding(currentPlayer, socket);
+        if (currentPlayer.reconnectToken && !currentPlayer.isBot) {
+            currentPlayer.connected = false;
+            currentPlayer.disconnectedAt = Date.now();
+            scheduleReconnectCleanup(currentPlayer, socket);
+            console.log('[INFO] User ' + currentPlayer.name + ' disconnected; waiting for reconnect');
+            return;
+        }
+
+        finalizePlayerDisconnect(currentPlayer, socket);
     });
 
     function handlePlayerChat(data) {

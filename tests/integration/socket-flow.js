@@ -83,6 +83,30 @@ function waitForSocketEvent(socket, eventName, trigger, timeoutMs) {
   });
 }
 
+function waitForSocketEventMatching(socket, eventName, predicate, trigger, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      socket.off(eventName, handler);
+      reject(new Error('timed out waiting for matching ' + eventName));
+    }, timeoutMs || 10000);
+
+    function handler() {
+      const args = Array.prototype.slice.call(arguments);
+      if (!predicate(args)) {
+        return;
+      }
+      clearTimeout(timer);
+      socket.off(eventName, handler);
+      resolve(args);
+    }
+
+    socket.on(eventName, handler);
+    if (typeof trigger === 'function') {
+      trigger();
+    }
+  });
+}
+
 function createClient(port, type) {
   return ioClient('http://127.0.0.1:' + port, {
     query: {
@@ -235,6 +259,52 @@ describe('socket flow integration', function () {
     expect(moveArgs[6]).to.be.an('array');
   });
 
+  it('should restore a dropped player when the browser reconnects with the same token', async function () {
+    const reconnectToken = 'reconnect-token-01';
+    const firstSocket = createClient(port, 'player');
+    clients.push(firstSocket);
+
+    await waitForSocketEvent(firstSocket, 'connect');
+    const firstWelcome = await waitForSocketEvent(firstSocket, 'welcome', () => {
+      firstSocket.emit('respawn', {reconnectToken});
+    });
+    const firstPlayer = Object.assign({}, firstWelcome[0], {
+      name: 'rejoin_01',
+      screenWidth: 800,
+      screenHeight: 600,
+      target: {x: 75, y: 25},
+      reconnectToken
+    });
+    firstSocket.emit('gotit', firstPlayer);
+
+    const firstMove = await waitForSocketEvent(firstSocket, 'serverTellPlayerMove');
+    const originalId = firstMove[0].id;
+    const originalMass = firstMove[0].massTotal;
+
+    firstSocket.disconnect();
+    await new Promise((resolve) => setTimeout(resolve, 250));
+
+    const secondSocket = createClient(port, 'player');
+    clients.push(secondSocket);
+    await waitForSocketEvent(secondSocket, 'connect');
+    const secondWelcome = await waitForSocketEvent(secondSocket, 'welcome', () => {
+      secondSocket.emit('respawn', {reconnectToken});
+    });
+
+    expect(secondWelcome[0].id).to.equal(originalId);
+    secondSocket.emit('gotit', Object.assign({}, secondWelcome[0], {
+      name: 'rejoin_01',
+      screenWidth: 800,
+      screenHeight: 600,
+      target: {x: 75, y: 25},
+      reconnectToken
+    }));
+
+    const secondMove = await waitForSocketEvent(secondSocket, 'serverTellPlayerMove');
+    expect(secondMove[0].id).to.equal(originalId);
+    expect(secondMove[0].massTotal).to.equal(originalMass);
+  });
+
   it('should sanitize chat, persist audit logs, and record failed admin login attempts', async function () {
     const alice = createClient(port, 'player');
     const bob = createClient(port, 'player');
@@ -266,7 +336,11 @@ describe('socket flow integration', function () {
       waitForSocketEvent(bob, 'serverTellPlayerMove')
     ]);
 
-    const chatPromise = waitForSocketEvent(bob, 'serverSendPlayerChat');
+    const chatPromise = waitForSocketEventMatching(bob, 'serverSendPlayerChat', (args) => {
+      return args[0]
+        && args[0].sender === 'alice_01'
+        && args[0].message === 'hello socket path';
+    });
     alice.emit('playerChat', {
       sender: '<b>alice_01</b>',
       message: '<img src=x>hello socket path'
@@ -282,10 +356,12 @@ describe('socket flow integration', function () {
     expect((await adminMessagePromise)[0]).to.contain('Password incorrect');
 
     await new Promise((resolve) => setTimeout(resolve, 250));
-    expect(readRows(serverDbPath, 'SELECT username, message FROM chat_messages')).to.deep.equal([{
+    const chatRows = readRows(serverDbPath, 'SELECT username, message FROM chat_messages');
+    expect(chatRows.filter((row) => row.username === 'alice_01')).to.deep.equal([{
       username: 'alice_01',
       message: 'hello socket path'
     }]);
+    expect(chatRows.some((row) => row.username.indexOf('_Bot_') > -1 && row.message === '我在巡游找目标')).to.equal(true);
     expect(readRows(serverDbPath, 'SELECT username FROM failed_login_attempts')).to.deep.equal([{
       username: 'alice_01'
     }]);
