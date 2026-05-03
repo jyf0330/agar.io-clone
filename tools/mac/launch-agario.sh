@@ -78,14 +78,14 @@ function ensure_npm_cli() {
 function sync_runtime() {
     mkdir -p "$RUNTIME_DIR"
     rsync -a --delete \
-        --exclude '.git/' \
-        --exclude '.launcher/' \
-        --exclude '.env' \
-        --exclude '.env.local' \
+        --exclude '/.git/' \
+        --exclude '/.launcher/' \
+        --exclude '/.env' \
+        --exclude '/.env.local' \
         --exclude '.DS_Store' \
-        --exclude 'data/' \
-        --exclude 'graphify-out/' \
-        --exclude 'node_modules/' \
+        --exclude '/data/' \
+        --exclude '/graphify-out/' \
+        --exclude '/node_modules/' \
         "$REPO_ROOT/" "$RUNTIME_DIR/"
 }
 
