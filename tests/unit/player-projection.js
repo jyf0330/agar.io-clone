@@ -52,13 +52,7 @@ describe('player-projection.js', () => {
     });
     expect(projected.admin).to.equal(undefined);
     expect(projected.target).to.equal(undefined);
-    expect(projected.activePet).to.include({
-      petId: 'mochi',
-      npcId: 'mochi',
-      ownerPlayerId: 'player-1',
-      active: true
-    });
-    expect(projected.activePet.memoryKey).to.equal('player-1:mochi');
+    expect(projected.activePet).to.equal(null);
     expect(projected.npcRelationships[0].relationshipValue).to.equal(7);
     expect(projected.cells[0].toCircle).to.equal(undefined);
   });

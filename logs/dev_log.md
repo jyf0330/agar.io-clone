@@ -256,3 +256,21 @@
   bot clients, and reached `Total players: 4` when the human player joined.
   Recent `data/server-db/db.sqlite3` chat rows show only event messages like
   `我吃到了食物，质量 +1`.
+
+# 2026-05-04 - First Playable Side Systems Disabled
+
+- Disabled Ghost Echo, NPC, and active-pet systems by default for the first
+  playable profiling pass. They now require explicit opt-in flags:
+  `V5_GHOST_ENABLED=1`, `V5_NPC_ENABLED=1`, and `V5_PET_ENABLED=1`.
+- Server startup now leaves `GhostManager` and `GhostRecorder` unconstructed
+  unless ghost is enabled, and new players start with `activePet=null`.
+  Pet switching and pet assignment are ignored unless pets are enabled.
+- Client NPC event surfaces are now opt-in instead of being enabled by default.
+- Verification: targeted side-system tests passed with 41 tests, and targeted
+  `npm run build -- tests/unit/demo-config.js tests/unit/game-loop-service.js
+  tests/unit/player-projection.js tests/unit/socket-controller.js
+  tests/unit/player-hydration.js` passed and rebuilt dist.
+- Known unrelated gap: full `npm test` still has two bot-client event-chat
+  assertion failures in the dirty working tree; current bot-client behavior
+  sends food-gain and settlement event chat, while those tests expect movement,
+  skill, and body-meta chat too.

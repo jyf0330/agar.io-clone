@@ -5,9 +5,9 @@ const networkUpdateFactor = Number(process.env.V5_NETWORK_UPDATE_FACTOR || 20);
 const botMovementUpdateIntervalMs = Number(process.env.V5_BOT_MOVEMENT_UPDATE_INTERVAL_MS || 250);
 const balancePresets = require('./balance-presets');
 const defaultRoundDurationMs = 8 * 60 * 1000;
-const npcModeEnabled = process.env.V5_NPC_ENABLED === '0'
-    ? process.env.V3_NPC_ENABLED === '1'
-    : true;
+const npcModeEnabled = process.env.V5_NPC_ENABLED === '1';
+const ghostEchoEnabled = process.env.V5_GHOST_ENABLED === '1';
+const petModeEnabled = process.env.V5_PET_ENABLED === '1';
 const requestedBalancePreset = process.env.V5_BALANCE_PRESET
     || (demoModeEnabled ? 'demo' : 'standard');
 const balancePresetName = Object.prototype.hasOwnProperty.call(balancePresets, requestedBalancePreset)
@@ -93,6 +93,7 @@ const config = {
         ]
     },
     ghostEcho: {
+        enabled: ghostEchoEnabled,
         timeWindowMs: 30000,
         triggerRadius: 800,
         maxActiveGhosts: 3,
@@ -119,6 +120,9 @@ const config = {
         recordRoutineIntents: process.env.V5_NPC_RECORD_ROUTINE_INTENTS === '1',
         useMemoryInRoutineTicks: process.env.V5_NPC_ROUTINE_MEMORY === '1',
         routineIntentRecordIntervalMs: 10000
+    },
+    pet: {
+        enabled: petModeEnabled
     },
     botPlayers: {
         competitive: process.env.V5_BOT_PLAYERS_COMPETITIVE === '0' ? false : true

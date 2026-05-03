@@ -8,12 +8,16 @@ function loadConfigWithEnv(env) {
   const original = {
     V5_DEMO_MODE: process.env.V5_DEMO_MODE,
     V5_NPC_ENABLED: process.env.V5_NPC_ENABLED,
-    V3_NPC_ENABLED: process.env.V3_NPC_ENABLED
+    V3_NPC_ENABLED: process.env.V3_NPC_ENABLED,
+    V5_GHOST_ENABLED: process.env.V5_GHOST_ENABLED,
+    V5_PET_ENABLED: process.env.V5_PET_ENABLED
   };
   delete require.cache[configPath];
   delete process.env.V5_DEMO_MODE;
   delete process.env.V5_NPC_ENABLED;
   delete process.env.V3_NPC_ENABLED;
+  delete process.env.V5_GHOST_ENABLED;
+  delete process.env.V5_PET_ENABLED;
   Object.keys(env || {}).forEach((key) => {
     process.env[key] = env[key];
   });
@@ -39,7 +43,9 @@ describe('demo config', () => {
 
     expect(config.demo.enabled).to.equal(false);
     expect(config.demo.roundDurationMs).to.equal(720000);
-    expect(config.npc.enabled).to.equal(true);
+    expect(config.npc.enabled).to.equal(false);
+    expect(config.ghostEcho.enabled).to.equal(false);
+    expect(config.pet.enabled).to.equal(false);
     expect(config.balancePreset).to.equal('standard');
     expect(config.partLoot.maxWorldParts).to.equal(10);
     expect(config.ghostEcho.triggerRadius).to.equal(1000);
@@ -65,8 +71,12 @@ describe('demo config', () => {
     expect(types).to.include('HEART');
   });
 
-  it('should allow V5 npc features to be disabled without breaking legacy opt-in', () => {
+  it('should keep v5 side modules opt-in for the first playable version', () => {
     expect(loadConfigWithEnv({V5_NPC_ENABLED: '0'}).npc.enabled).to.equal(false);
-    expect(loadConfigWithEnv({V5_NPC_ENABLED: '0', V3_NPC_ENABLED: '1'}).npc.enabled).to.equal(true);
+    expect(loadConfigWithEnv({V5_NPC_ENABLED: '1'}).npc.enabled).to.equal(true);
+    expect(loadConfigWithEnv({V3_NPC_ENABLED: '1'}).npc.enabled).to.equal(false);
+    expect(loadConfigWithEnv({V5_NPC_ENABLED: '0', V3_NPC_ENABLED: '1'}).npc.enabled).to.equal(false);
+    expect(loadConfigWithEnv({V5_GHOST_ENABLED: '1'}).ghostEcho.enabled).to.equal(true);
+    expect(loadConfigWithEnv({V5_PET_ENABLED: '1'}).pet.enabled).to.equal(true);
   });
 });

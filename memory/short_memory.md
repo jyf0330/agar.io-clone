@@ -1,13 +1,30 @@
 # Short Memory
 
 Current objective:
-- Full-match bot-test runner: bot-test should follow the real player flow and
-  wait for natural server settlement/game-end events instead of forcing quick
-  settlement. Latest focus: default live play should be one human plus three
-  Socket.IO bots, and bot/player chat should be event-only rather than idle
-  chatter.
+- First playable live version should keep Ghost Echo, NPCs, and pets disabled
+  by default so the base multiplayer loop can be profiled without those side
+  systems.
 
 Recent actions:
+- Disabled Ghost Echo, NPC, and pet systems by default behind opt-in env flags:
+  `V5_GHOST_ENABLED=1`, `V5_NPC_ENABLED=1`, and `V5_PET_ENABLED=1`.
+- Updated server startup so GhostManager/GhostRecorder are only constructed
+  when ghost is enabled; default players now start with `activePet=null`, and
+  pet switching/active-pet assignment only runs when pet is enabled.
+- Updated the client feature gate so NPC event UI is off by default and only
+  appears when explicitly requested.
+- Verification: targeted tests for config, game loop, player projection,
+  socket controller, and hydration passed with 41 tests; targeted
+  `npm run build -- tests/unit/demo-config.js tests/unit/game-loop-service.js
+  tests/unit/player-projection.js tests/unit/socket-controller.js
+  tests/unit/player-hydration.js` passed and rebuilt the client bundle.
+- Fixed the normal Socket.IO bot event-chat gap in `apps/bot-client/src/`:
+  bots now target visible part loot and chat for food/part intent, chase/avoid
+  intent, split/eject skills, body-part pickup, devour, being devoured, and
+  body completion while keeping pure fallback wandering silent.
+- Verification after the bot chat fix: focused bot/client/socket-flow tests
+  passed with 28 tests, broader bot/body/game-loop coverage passed with 111
+  tests, and full `npm test` passed with 385 tests.
 - Added focused bot-test unit coverage for natural settlement waiting, missing
   required timeline events, complete summary timelines, raw JSONL preservation,
   part-loot targeting, ghost encounters, and settlement key-event logging.

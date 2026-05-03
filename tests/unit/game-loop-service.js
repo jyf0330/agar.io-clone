@@ -8,7 +8,7 @@ const mapUtils = require('../../apps/server/src/map/map');
 const playerUtils = require('../../apps/server/src/map/player');
 
 describe('game-loop-service.js', () => {
-  it('should keep the active pet following the player without creating a combat body', () => {
+  it('should keep an explicitly active pet following the player without creating a combat body', () => {
     const map = new mapUtils.Map(config);
     const player = new playerUtils.Player('player-1');
     player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
@@ -16,6 +16,11 @@ describe('game-loop-service.js', () => {
       name: 'collector',
       screenWidth: 800,
       screenHeight: 600
+    });
+    player.setActivePet({
+      petId: 'mochi',
+      npcId: 'mochi',
+      name: 'Mochi'
     });
     map.players.pushNew(player);
 
@@ -44,6 +49,11 @@ describe('game-loop-service.js', () => {
       name: 'collector',
       screenWidth: 800,
       screenHeight: 600
+    });
+    player.setActivePet({
+      petId: 'mochi',
+      npcId: 'mochi',
+      name: 'Mochi'
     });
     map.players.pushNew(player);
     map.partLoot.addPart({
@@ -84,6 +94,11 @@ describe('game-loop-service.js', () => {
       name: 'collector',
       screenWidth: 800,
       screenHeight: 600
+    });
+    player.setActivePet({
+      petId: 'mochi',
+      npcId: 'mochi',
+      name: 'Mochi'
     });
     map.players.pushNew(player);
     map.partLoot.addPart({
@@ -129,6 +144,11 @@ describe('game-loop-service.js', () => {
       name: 'collector',
       screenWidth: 800,
       screenHeight: 600
+    });
+    player.setActivePet({
+      petId: 'mochi',
+      npcId: 'mochi',
+      name: 'Mochi'
     });
     map.players.pushNew(player);
     map.partLoot.addPart({
@@ -216,6 +236,11 @@ describe('game-loop-service.js', () => {
       name: 'collector',
       screenWidth: 800,
       screenHeight: 600
+    });
+    player.setActivePet({
+      petId: 'mochi',
+      npcId: 'mochi',
+      name: 'Mochi'
     });
     map.players.pushNew(player);
     map.partLoot.addPart({

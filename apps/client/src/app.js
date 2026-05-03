@@ -44,7 +44,8 @@ var debugPanel;
 var bodySignatureController;
 var hideStartMenuOnLoad = false;
 var npcFeaturesDisabled = window.location.search.indexOf('npc=0') !== -1 || window.V5_NPC_ENABLED === false;
-var npcFeaturesEnabled = !npcFeaturesDisabled || window.location.search.indexOf('npc=1') !== -1 || window.V3_NPC_ENABLED === true;
+var npcFeaturesRequested = window.location.search.indexOf('npc=1') !== -1 || window.V5_NPC_ENABLED === true;
+var npcFeaturesEnabled = !npcFeaturesDisabled && npcFeaturesRequested;
 var petGhostEventsVisible = window.location.search.indexOf('petghost=1') !== -1 || window.V5_SHOW_PET_GHOST_EVENTS === true;
 var targetSync = socketEmit.createTargetSync({
     minIntervalMs: 50,

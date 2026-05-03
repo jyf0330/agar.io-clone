@@ -19,6 +19,10 @@ const PUSHING_AWAY_SPEED = 1.1;
 const MERGE_TIMER = 15;
 
 function normalizeActivePet(pet, ownerPlayerId) {
+    if (!pet) {
+        return null;
+    }
+
     const safePet = pet || {};
     const petId = safePet.petId || safePet.npcId || 'mochi';
     return {
@@ -118,7 +122,7 @@ exports.Player = class {
         this.consentToRecord = true;
         this.isReplayAllowed = true;
         playerKind.markHumanPlayer(this);
-        this.activePet = normalizeActivePet(null, id);
+        this.activePet = null;
         this.screenWidth = null;
         this.screenHeight = null;
         this.timeToMerge = null;
@@ -157,7 +161,7 @@ exports.Player = class {
     }
 
     setActivePet(pet) {
-        this.activePet = normalizeActivePet(pet, this.id);
+        this.activePet = pet ? normalizeActivePet(pet, this.id) : null;
         return this.activePet;
     }
 

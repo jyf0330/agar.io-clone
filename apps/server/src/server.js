@@ -38,7 +38,9 @@ const defaultBotSwarm = require('./default-bot-swarm');
 const GhostManager = require('./ghost/manager');
 const GhostRecorder = require('./ghost/recorder');
 const memorySessionId = process.env.MEMORY_SESSION_ID || 'session-' + Date.now();
-const npcFeaturesEnabled = !config.npc || config.npc.enabled !== false;
+const npcFeaturesEnabled = Boolean(config.npc && config.npc.enabled);
+const ghostFeaturesEnabled = Boolean(config.ghostEcho && config.ghostEcho.enabled);
+const petFeaturesEnabled = Boolean(config.pet && config.pet.enabled);
 let defaultBotClients = [];
 
 let map = new mapUtils.Map(config);
@@ -49,7 +51,7 @@ const roundClock = {
 const connectionService = createConnectionService({
     players: map.players
 });
-const ghostManager = new GhostManager({
+const ghostManager = ghostFeaturesEnabled ? new GhostManager({
     memoryStore: config.ghostEcho && config.ghostEcho.persistedHistory ? memoryStore : null,
     triggerRadius: config.ghostEcho && config.ghostEcho.triggerRadius,
     timeWindowMs: config.ghostEcho && config.ghostEcho.timeWindowMs,
@@ -85,15 +87,15 @@ const ghostManager = new GhostManager({
             }
         }
     ]
-});
-const ghostRecorder = new GhostRecorder({
+}) : null;
+const ghostRecorder = ghostFeaturesEnabled ? new GhostRecorder({
     memoryStore: memoryStore,
     sessionId: memorySessionId,
     startedAt: roundClock.startedAt,
     mapId: config.mapId || 'fixed-arena',
     recordPlayerTraces: Boolean(config.ghostEcho && config.ghostEcho.recordPlayerTraces),
     isSeed: process.env.V5_SEED_SESSION === '1'
-});
+}) : null;
 const balanceTelemetry = balanceTelemetryFactory.createBalanceTelemetry({
     enabled: Boolean(config.balanceTelemetry && config.balanceTelemetry.enabled),
     sink(event) {
@@ -288,7 +290,6 @@ function bootstrapDefaultNpcs() {
     return ['mochi', 'doudou', 'wugui'].map((cardId, index) => bootstrapNpc(cardId, index));
 }
 
-// V5 pets are part of the main demo path; set V5_NPC_ENABLED=0 to disable them locally.
 if (npcFeaturesEnabled) {
     npcRoster = bootstrapDefaultNpcs();
 }
@@ -320,7 +321,7 @@ function parsePetSwitchMessage(message) {
 }
 
 function ensureActivePetForPlayer(player) {
-    if (!player || player.isNpc || typeof player.setActivePet !== 'function') {
+    if (!petFeaturesEnabled || !player || player.isNpc || typeof player.setActivePet !== 'function') {
         return;
     }
 
@@ -460,6 +461,9 @@ function refreshNpcRelationshipsForPlayers() {
 async function finalizeRoundMemoryIfNeeded(options) {
     const settings = options || {};
     const elapsedMs = Date.now() - roundClock.startedAt;
+    if (!npcFeaturesEnabled) {
+        return;
+    }
     if (roundMemorySummary.done || roundMemorySummary.started || (!settings.force && elapsedMs < roundClock.durationMs)) {
         return;
     }
@@ -509,7 +513,9 @@ const addPlayer = (socket) => {
 
             currentPlayer.clientProvidedData(entryPayload);
             ensureActivePetForPlayer(currentPlayer);
-            ghostRecorder.recordPlayerSession(currentPlayer, Date.now());
+            if (ghostRecorder) {
+                ghostRecorder.recordPlayerSession(currentPlayer, Date.now());
+            }
             map.players.pushNew(currentPlayer);
             if (npcRoster.length && !npcsAnchoredToPlayer) {
                 npcRoster.forEach((npc, index) => {
@@ -584,7 +590,7 @@ const addPlayer = (socket) => {
             return;
         }
 
-        const nextPetId = parsePetSwitchMessage(_message);
+        const nextPetId = petFeaturesEnabled ? parsePetSwitchMessage(_message) : null;
         if (nextPetId) {
             const oldPet = currentPlayer.activePet || null;
             const nextNpc = npcRoster.find((npc) => npc.id === nextPetId);
@@ -619,7 +625,9 @@ const addPlayer = (socket) => {
                 duration: 2500
             });
             gameLoopService.sendMetaUpdates({force: true});
-            ghostRecorder.recordChat(currentPlayer, _message, Date.now());
+            if (ghostRecorder) {
+                ghostRecorder.recordChat(currentPlayer, _message, Date.now());
+            }
             return;
         }
 
@@ -642,7 +650,9 @@ const addPlayer = (socket) => {
                         text: '先靠近我，这个任务才算交差。',
                         duration: 3000
                     });
-                    ghostRecorder.recordChat(currentPlayer, _message, Date.now());
+                    if (ghostRecorder) {
+                        ghostRecorder.recordChat(currentPlayer, _message, Date.now());
+                    }
                     return;
                 }
                 io.emit('npc:speak', {
@@ -651,14 +661,18 @@ const addPlayer = (socket) => {
                     text: '我把一个部位标在你脚边了。',
                     duration: 3500
                 });
-                ghostRecorder.recordItem(currentPlayer, reward.part, reward.loot, Date.now());
-                ghostRecorder.recordPartEvent(currentPlayer, 'npc_reward_part', reward.part, reward.loot, Date.now(), {
-                    taskId: 'find-echo-hand',
-                    npcId: activeNpc.id
-                });
+                if (ghostRecorder) {
+                    ghostRecorder.recordItem(currentPlayer, reward.part, reward.loot, Date.now());
+                    ghostRecorder.recordPartEvent(currentPlayer, 'npc_reward_part', reward.part, reward.loot, Date.now(), {
+                        taskId: 'find-echo-hand',
+                        npcId: activeNpc.id
+                    });
+                }
             }
         }
-        ghostRecorder.recordChat(currentPlayer, _message, Date.now());
+        if (ghostRecorder) {
+            ghostRecorder.recordChat(currentPlayer, _message, Date.now());
+        }
         socket.broadcast.emit('serverSendPlayerChat', {
             sender: currentPlayer.name,
             message: _message.substring(0, 35)
