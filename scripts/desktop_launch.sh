@@ -18,6 +18,24 @@ cd "$REPO_ROOT"
 
 candidate_ports=("$DEFAULT_PORT" "3060" "3061" "3062")
 
+resolve_node_bin() {
+    local candidate
+
+    if [[ -n "${AGAR_NODE_BIN:-}" && -x "$AGAR_NODE_BIN" ]]; then
+        echo "$AGAR_NODE_BIN"
+        return 0
+    fi
+
+    for candidate in "$(command -v node || true)" "/opt/homebrew/bin/node" "/usr/local/bin/node" "/Applications/Codex.app/Contents/Resources/node"; do
+        if [[ -n "$candidate" && -x "$candidate" ]]; then
+            echo "$candidate"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
 is_port_listening() {
     local port="$1"
     lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1
@@ -186,6 +204,13 @@ if [[ ! -x "./node_modules/gulp/bin/gulp.js" ]]; then
     exit 1
 fi
 
+if ! NODE_BIN="$(resolve_node_bin)"; then
+    echo "Unable to find Node.js for the desktop launcher."
+    echo "Install Node.js or set AGAR_NODE_BIN to the node executable path."
+    exit 127
+fi
+export PATH="$(dirname "$NODE_BIN"):$PATH"
+
 if ! launch_port="$(find_free_port)"; then
     echo "No free launcher port found in: ${candidate_ports[*]}"
     exit 1
@@ -194,7 +219,7 @@ fi
 echo "Preparing launcher build..."
 # The desktop launcher only needs runnable client/server assets.
 # Avoid blocking startup on unrelated red tests in a dirty worktree.
-node ./node_modules/gulp/bin/gulp.js dev
+"$NODE_BIN" ./node_modules/gulp/bin/gulp.js dev
 
 if [[ ! -f "./dist/server/server.js" ]]; then
     echo "Build finished but dist/server/server.js is missing."
@@ -208,7 +233,7 @@ nohup env \
     IP="$HOST" \
     MEMORY_DB_PATH="${MEMORY_DB_PATH:-$STATE_DIR/memory.db}" \
     LLM_AUDIT_DIR="${LLM_AUDIT_DIR:-$STATE_DIR/audit}" \
-    node ./dist/server/server.js >>"$LOG_FILE" 2>&1 &
+    "$NODE_BIN" ./dist/server/server.js >>"$LOG_FILE" 2>&1 &
 server_pid="$!"
 
 echo "$server_pid" > "$PID_FILE"

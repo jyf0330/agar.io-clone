@@ -13,16 +13,30 @@ STATE_DIR="${RUNTIME_BASE}/state"
 CACHE_DIR="${HOME}/Library/Caches/AgarioClone"
 LOG_DIR="${HOME}/Library/Logs/AgarioClone"
 LOG_FILE="${LOG_DIR}/launcher.log"
-NODE_BIN="${AGARIO_NODE_BIN:-$(command -v node || true)}"
 
-if [[ ! -x "$NODE_BIN" ]]; then
-    NODE_BIN="/Applications/Codex.app/Contents/Resources/node"
-fi
+function resolve_node_bin() {
+    local candidate
 
-if [[ -z "${NODE_BIN:-}" || ! -x "$NODE_BIN" ]]; then
+    if [[ -n "${AGARIO_NODE_BIN:-}" && -x "$AGARIO_NODE_BIN" ]]; then
+        print -- "$AGARIO_NODE_BIN"
+        return 0
+    fi
+
+    for candidate in "$(command -v node || true)" "/opt/homebrew/bin/node" "/usr/local/bin/node" "/Applications/Codex.app/Contents/Resources/node"; do
+        if [[ -n "$candidate" && -x "$candidate" ]]; then
+            print -- "$candidate"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+if ! NODE_BIN="$(resolve_node_bin)"; then
     print -u2 "Unable to find a usable Node.js runtime."
     exit 1
 fi
+export PATH="${NODE_BIN:h}:$PATH"
 
 if /usr/bin/python3 - <<'PY' >/dev/null 2>&1
 import distutils.version
