@@ -1071,6 +1071,73 @@ describe('game-loop-service.js', () => {
     expect(eventArgs[7][0].id).to.equal('ghost-1');
   });
 
+  it('should throttle socket bot movement syncs without slowing human players', () => {
+    const originalNow = Date.now;
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const human = new playerUtils.Player('human-sync');
+    const bot = new playerUtils.Player('bot-sync');
+    const socketEvents = [];
+
+    human.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    human.clientProvidedData({
+      name: 'HumanSync',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    bot.init({ x: 200, y: 200 }, config.defaultPlayerMass);
+    bot.clientProvidedData({
+      name: 'BotSync',
+      screenWidth: 800,
+      screenHeight: 600,
+      isBot: true
+    });
+    map.players.pushNew(human);
+    map.players.pushNew(bot);
+
+    const service = createGameLoopService({
+      config: Object.assign({}, config, {
+        sync: Object.assign({}, config.sync, {
+          botMovementUpdateIntervalMs: 250
+        })
+      }),
+      map,
+      io: { emit() {} },
+      connectionService: { clearTimer() {} },
+      getSocket(id) {
+        return {
+          emit(name, playerData) {
+            socketEvents.push({name, playerId: id, playerData});
+          }
+        };
+      },
+      getSpectatorIds() { return []; }
+    });
+
+    try {
+      Date.now = () => 1000;
+      service.sendUpdates();
+      Date.now = () => 1100;
+      service.sendUpdates();
+      Date.now = () => 1250;
+      service.sendUpdates();
+    } finally {
+      Date.now = originalNow;
+    }
+
+    expect(socketEvents.map((event) => event.playerId)).to.deep.equal([
+      'human-sync',
+      'bot-sync',
+      'human-sync',
+      'human-sync',
+      'bot-sync'
+    ]);
+    expect(socketEvents.every((event) => event.name === 'serverTellPlayerMove')).to.equal(true);
+  });
+
   it('should settle all human players when one player completes a foreign body set', () => {
     const originalNow = Date.now;
     const map = new mapUtils.Map(Object.assign({}, config, {

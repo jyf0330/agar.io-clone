@@ -2,6 +2,7 @@ const demoModeEnabled = process.env.V5_DEMO_MODE === '1';
 const persistedGhostHistoryEnabled = process.env.V5_GHOST_PERSISTENCE === '1';
 const ghostTraceRecordingEnabled = process.env.V5_GHOST_TRACE_RECORDING === '1';
 const networkUpdateFactor = Number(process.env.V5_NETWORK_UPDATE_FACTOR || 20);
+const botMovementUpdateIntervalMs = Number(process.env.V5_BOT_MOVEMENT_UPDATE_INTERVAL_MS || 250);
 const balancePresets = require('./balance-presets');
 const defaultRoundDurationMs = 8 * 60 * 1000;
 const npcModeEnabled = process.env.V5_NPC_ENABLED === '0'
@@ -129,6 +130,7 @@ const config = {
     sync: {
         playerMetaUpdateIntervalMs: 2000,
         spectatorUpdateIntervalMs: 100,
+        botMovementUpdateIntervalMs: botMovementUpdateIntervalMs,
         metricsEnabled: process.env.V5_SYNC_METRICS === '1',
         metricsIntervalMs: 5000
     },

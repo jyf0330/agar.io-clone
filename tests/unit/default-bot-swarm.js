@@ -30,6 +30,7 @@ describe('default bot swarm', () => {
   it('should start and retain the default socket bot clients', () => {
     const calls = [];
     const clients = [{id: 'one'}, {id: 'two'}, {id: 'three'}];
+    const parentLogs = [];
     const started = startDefaultBotSwarm({
       env: {},
       serverPort: 3123,
@@ -38,7 +39,9 @@ describe('default bot swarm', () => {
         return clients;
       },
       logger: {
-        log() {},
+        log(message) {
+          parentLogs.push(message);
+        },
         warn() {}
       }
     });
@@ -47,6 +50,8 @@ describe('default bot swarm', () => {
       serverUrl: 'http://127.0.0.1:3123',
       count: 3
     });
+    calls[0].logger.log('hidden bot detail');
+    expect(parentLogs).to.have.length(0);
     expect(started).to.equal(clients);
   });
 });

@@ -44,6 +44,10 @@ function createGameLoopService(options) {
     const spectatorUpdateIntervalMs = typeof syncConfig.spectatorUpdateIntervalMs === 'number'
         ? syncConfig.spectatorUpdateIntervalMs
         : 100;
+    const botMovementUpdateIntervalMs = typeof syncConfig.botMovementUpdateIntervalMs === 'number'
+        && syncConfig.botMovementUpdateIntervalMs > 0
+        ? syncConfig.botMovementUpdateIntervalMs
+        : 0;
     const syncMetrics = {
         enabled: Boolean(syncConfig.metricsEnabled),
         intervalMs: typeof syncConfig.metricsIntervalMs === 'number' ? syncConfig.metricsIntervalMs : 5000,
@@ -58,6 +62,7 @@ function createGameLoopService(options) {
     let leaderboardChanged = false;
     let lastSpectatorUpdateAt = 0;
     let lastMetaUpdateSignature = '';
+    const lastBotMovementUpdateAtById = {};
 
     const Vector = SAT.Vector;
 
@@ -582,6 +587,20 @@ function createGameLoopService(options) {
         return true;
     }
 
+    function shouldSkipPlayerMovementSync(player, now) {
+        if (!player || player.isBot !== true || botMovementUpdateIntervalMs <= 0) {
+            return false;
+        }
+
+        const lastUpdateAt = lastBotMovementUpdateAtById[player.id] || 0;
+        if (lastUpdateAt && now - lastUpdateAt < botMovementUpdateIntervalMs) {
+            return true;
+        }
+
+        lastBotMovementUpdateAtById[player.id] = now;
+        return false;
+    }
+
     function sendUpdates() {
         const now = Date.now();
         const startedAt = now;
@@ -595,14 +614,16 @@ function createGameLoopService(options) {
             lastSpectatorUpdateAt = now;
         }
 
-        map.enumerateVisibleWorld(function (visibleWorld) {
+        map.players.data.forEach(function (player) {
+            const socket = getSocket(player.id);
+            if (!socket || shouldSkipPlayerMovementSync(player, now)) {
+                return;
+            }
+
+            const visibleWorld = map.getVisibleWorldForPlayer(player);
             const syncPayload = projectVisibleWorldForMovementSync(visibleWorld);
             syncPayload.playerData.ghostDebug = map.ghostDebug || null;
             syncPayload.playerData.roundTimer = buildRoundTimer(getRoundClock(), now);
-            const socket = getSocket(syncPayload.playerData.id);
-            if (!socket) {
-                return;
-            }
 
             socket.emit(
                 'serverTellPlayerMove',

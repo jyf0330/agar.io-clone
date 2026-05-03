@@ -5,6 +5,10 @@ const path = require('path');
 const DEFAULT_BOT_COUNT = 3;
 const DEFAULT_SERVER_HOST = '127.0.0.1';
 const MAX_BOT_COUNT = 12;
+const QUIET_BOT_LOGGER = {
+    log() {},
+    warn() {}
+};
 
 function parsePositiveInteger(value, fallback) {
     const parsed = parseInt(value, 10);
@@ -36,6 +40,7 @@ function startDefaultBotSwarm(options) {
     const settings = options || {};
     const logger = settings.logger || console;
     const botOptions = resolveDefaultBotSwarmOptions(settings.env, settings.serverPort);
+    const botLogger = settings.botLogger || QUIET_BOT_LOGGER;
 
     if (!botOptions.enabled) {
         if (logger && typeof logger.log === 'function') {
@@ -51,7 +56,7 @@ function startDefaultBotSwarm(options) {
             serverUrl: botOptions.serverUrl,
             count: botOptions.count,
             profileNames: settings.profileNames,
-            logger: logger
+            logger: botLogger
         });
     } catch (error) {
         if (logger && typeof logger.warn === 'function') {
