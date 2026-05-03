@@ -178,6 +178,34 @@ describe('bot-actions.js', () => {
     expect(actions[0].target).to.deep.equal({x: 1275, y: 1020});
   });
 
+  it('should move toward visible body part loot before fallback wandering', () => {
+    const actions = planBotActions({
+      player: {
+        x: 1000,
+        y: 1000,
+        massTotal: 80
+      },
+      game: {
+        width: 5000,
+        height: 5000
+      },
+      visiblePlayers: [],
+      visibleFood: [],
+      visiblePartLoot: [
+        {x: 860, y: 940, part: {partType: 'HEART'}}
+      ],
+      profile: {
+        strategy: {
+          humanize: true
+        }
+      },
+      memory: {},
+      random: randomSequence([0.25, 0.75])
+    });
+
+    expect(actions[0].target).to.deep.equal({x: 860, y: 940});
+  });
+
   it('should steer fallback wandering away from map edges', () => {
     const actions = planBotActions({
       player: {

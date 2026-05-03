@@ -297,6 +297,22 @@ function pickBestFoodTarget(player, visibleFood, strategy) {
         .sort((left, right) => right.score - left.score)[0];
 }
 
+function pickBestPartLootTarget(player, visiblePartLoot) {
+    const parts = Array.isArray(visiblePartLoot) ? visiblePartLoot : [];
+    return parts
+        .filter((loot) => {
+            return loot && typeof loot.x === 'number' && typeof loot.y === 'number';
+        })
+        .map((loot) => {
+            return {
+                x: Math.round(loot.x),
+                y: Math.round(loot.y),
+                distance: distance(player, loot)
+            };
+        })
+        .sort((left, right) => left.distance - right.distance)[0] || null;
+}
+
 function pickNearbyThreat(player, visiblePlayers, strategy) {
     const players = Array.isArray(visiblePlayers) ? visiblePlayers : [];
     const playerMass = getMass(player);
@@ -374,12 +390,13 @@ function planBotActions(context) {
     const forceWander = isStuck || (isHumanized && consumeForcedWander(memory));
     const threat = isHumanized ? pickNearbyThreat(player, safeContext.visiblePlayers, strategy) : null;
     const prey = isHumanized && !threat ? pickNearbyPrey(player, safeContext.visiblePlayers, strategy, random) : null;
+    const partLootTarget = pickBestPartLootTarget(player, safeContext.visiblePartLoot);
     const foodTarget = pickBestFoodTarget(player, safeContext.visibleFood, strategy);
     let target = threat
         ? buildAvoidTarget(player, threat, safeContext.game)
         : (forceWander
             ? buildWanderTarget(player, safeContext.game, strategy, random, memory)
-            : (prey || foodTarget || buildWanderTarget(player, safeContext.game, strategy, random, memory)));
+            : (prey || partLootTarget || foodTarget || buildWanderTarget(player, safeContext.game, strategy, random, memory)));
 
     if (isHumanized && !threat && needsEdgeRecovery(player, target, safeContext.game, strategy)) {
         target = buildWanderTarget(player, safeContext.game, strategy, random, memory);

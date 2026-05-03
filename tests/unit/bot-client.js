@@ -175,8 +175,125 @@ describe('bot-client.js', () => {
       []
     );
 
-    expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat').map((entry) => entry.payload)).to.deep.equal([
+    expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat').map((entry) => entry.payload)).to.include.deep.members([
       {sender: 'Bot_Event', message: '我吃到了食物，质量 +3'}
+    ]);
+  });
+
+  it('should send event chat for movement intent and skill actions', () => {
+    const socket = createFakeSocket();
+    const client = createBotClient({
+      profile: {
+        name: 'Bot_Behavior',
+        strategy: {
+          ejectMassThreshold: 100,
+          splitMassThreshold: 200
+        }
+      },
+      behaviorChatCooldownMs: 0,
+      ioFactory() {
+        return socket;
+      }
+    });
+
+    client.connect();
+    socket.emit('welcome', {id: 'bot-1', massTotal: 250}, {width: 5000, height: 5000});
+    socket.emit(
+      'serverTellPlayerMove',
+      {id: 'bot-1', x: 100, y: 100, massTotal: 250},
+      [],
+      [{x: 180, y: 120}],
+      [],
+      [],
+      [],
+      []
+    );
+    socket.emit(
+      'serverTellPlayerMove',
+      {id: 'bot-1', x: 120, y: 120, massTotal: 250},
+      [],
+      [],
+      [],
+      [],
+      [{x: 240, y: 260, part: {partType: 'HEART'}}],
+      []
+    );
+
+    const messages = socket.emitted
+      .filter((entry) => entry.eventName === 'playerChat')
+      .map((entry) => entry.payload.message);
+    expect(messages).to.include.members([
+      '我去追食物',
+      '我去捡部位',
+      '我吐出孢子',
+      '我分裂了'
+    ]);
+  });
+
+  it('should send event chat for body part pickup, devour, being devoured, and body completion meta updates', () => {
+    const socket = createFakeSocket();
+    const client = createBotClient({
+      profile: {name: 'Bot_Meta'},
+      behaviorChatCooldownMs: 0,
+      ioFactory() {
+        return socket;
+      }
+    });
+
+    client.connect();
+    socket.emit('welcome', {id: 'bot-1', name: 'Bot_Meta', massTotal: 20}, {width: 5000, height: 5000});
+    socket.emit(
+      'serverTellPlayerMove',
+      {id: 'bot-1', x: 100, y: 100, massTotal: 20},
+      [],
+      [],
+      [],
+      [],
+      [],
+      []
+    );
+    socket.emit('playerMetaUpdate', [{
+      id: 'bot-1',
+      name: 'Bot_Meta',
+      bodyPartCount: 4,
+      bodyParts: [
+        {partId: 'own-head', type: 'HEAD', originPlayerId: 'bot-1', currentOwnerId: 'bot-1', sourceType: 'self_created'},
+        {partId: 'foreign-hand', type: 'HAND', currentOwnerId: 'bot-1', sourceType: 'kill_loot'},
+        {partId: 'foreign-foot', type: 'FOOT', currentOwnerId: 'bot-1', sourceType: 'kill_loot'},
+        {partId: 'foreign-mouth', type: 'MOUTH', currentOwnerId: 'bot-1', sourceType: 'kill_loot'}
+      ]
+    }]);
+    socket.emit('playerMetaUpdate', [{
+      id: 'bot-1',
+      name: 'Bot_Meta',
+      bodyPartCount: 5,
+      bodyParts: [
+        {partId: 'own-head', type: 'HEAD', originPlayerId: 'bot-1', currentOwnerId: 'bot-1', sourceType: 'self_created'},
+        {partId: 'foreign-hand', type: 'HAND', currentOwnerId: 'bot-1', sourceType: 'kill_loot'},
+        {partId: 'foreign-foot', type: 'FOOT', currentOwnerId: 'bot-1', sourceType: 'kill_loot'},
+        {partId: 'stolen-mouth', type: 'MOUTH', currentOwnerId: 'bot-1', sourceType: 'kill_loot', displayName: '木勺嘴', historyChain: [
+          {eventType: 'stolen', eventId: 'stolen-1', fromPlayerId: 'victim-1', fromPlayerName: 'Victim_01', toPlayerId: 'bot-1'}
+        ]},
+        {partId: 'map-heart', type: 'HEART', currentOwnerId: 'bot-1', sourceType: 'map_pickup', displayName: '亮晶心', historyChain: [
+          {eventType: 'picked', eventId: 'picked-1', playerId: 'bot-1', playerName: 'Bot_Meta'}
+        ]}
+      ]
+    }]);
+    socket.emit('playerMetaUpdate', [{
+      id: 'bot-1',
+      name: 'Bot_Meta',
+      bodyPartCount: 4,
+      bodyParts: []
+    }]);
+
+    const messages = socket.emitted
+      .filter((entry) => entry.eventName === 'playerChat')
+      .map((entry) => entry.payload.message);
+    expect(messages).to.include.members([
+      '我捡到了 亮晶心',
+      '我吃了 Victim_01，拿到木勺嘴',
+      '我完成身体了',
+      '我被别人吃了，部位数 5 -> 4'
     ]);
   });
 
