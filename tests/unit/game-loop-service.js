@@ -120,6 +120,64 @@ describe('game-loop-service.js', () => {
     expect(map.partLoot.data).to.have.length(0);
   });
 
+  it('should push an immediate meta update when collected loot changes the body image', () => {
+    const map = new mapUtils.Map(Object.assign({}, config, {
+      partLoot: {
+        enabled: false
+      }
+    }));
+    const player = new playerUtils.Player('player-1');
+    const metaUpdates = [];
+    player.init({ x: 100, y: 100 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'collector',
+      screenWidth: 800,
+      screenHeight: 600,
+      bodyAssembly: {
+        missingPartType: 'head',
+        layers: {
+          head: {
+            id: 'head_option_01',
+            image: 'img/body-assembly/options/head/head_option_01.png'
+          }
+        },
+        selectedParts: {
+          head: 'head_option_01'
+        }
+      }
+    });
+    map.players.pushNew(player);
+    map.partLoot.addPart({
+      type: 'HEAD',
+      templateId: 'head_option_03',
+      displayName: '灯笼头',
+      assemblyPartType: 'head',
+      image: 'img/body-assembly/options/head/head_option_03.png',
+      source: 'map-pickup'
+    }, { x: 100, y: 100 }, 'map-pickup');
+
+    const service = createGameLoopService({
+      config,
+      map,
+      io: {
+        emit(name, payload) {
+          if (name === 'playerMetaUpdate') {
+            metaUpdates.push(payload);
+          }
+        }
+      },
+      connectionService: { clearTimer() {} },
+      getSocket() { return null; },
+      getSpectatorIds() { return []; }
+    });
+
+    service.tickPlayer(player);
+
+    expect(player.bodyAssembly.layers.head.id).to.equal('head_option_03');
+    expect(metaUpdates).to.have.length(1);
+    expect(metaUpdates[0][0].bodyAssembly.layers.head.image).to.equal('img/body-assembly/options/head/head_option_03.png');
+  });
+
   it('should not end the round when a default player collects one extra part', () => {
     const map = new mapUtils.Map(Object.assign({}, config, {
       partLoot: {

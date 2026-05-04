@@ -63,6 +63,34 @@ function createSocketController(options) {
         return total;
     }
 
+    function isBotUser(user) {
+        return !!(user && (user.isBot === true || user.playerKind === 'bot'));
+    }
+
+    function countBotUsers(userData) {
+        var total = 0;
+        (userData || []).forEach(function (user) {
+            if (isBotUser(user)) {
+                total += 1;
+            }
+        });
+        return total;
+    }
+
+    function updateKnownPlayerCounts(userData) {
+        if (!Array.isArray(userData)) {
+            return;
+        }
+        options.global.knownPlayerCount = userData.length;
+        options.global.knownBotCount = countBotUsers(userData);
+        updateDebugPanel({
+            world: {
+                players: options.global.knownPlayerCount,
+                bots: options.global.knownBotCount
+            }
+        });
+    }
+
     function recordDebugMovementPayload(userData, foodsList, massList, virusList, partLootList, ghostList, startedAt) {
         if (!options.debugPanel || typeof options.debugPanel.recordMovementPayload !== 'function') {
             return;
@@ -383,6 +411,7 @@ function createSocketController(options) {
         nextSocket.on('playerMetaUpdate', function (metaList) {
             var startedAt = Date.now();
             markDebugSocketEvent('playerMetaUpdate');
+            updateKnownPlayerCounts(metaList);
             var changed = cachePlayerMeta(metaList);
             if (!changed) {
                 recordDebugMetaPayload(metaList, startedAt);
@@ -464,6 +493,9 @@ function createSocketController(options) {
                 hydrateRoundTimer(playerData);
             }
             var mergedUsers = mergePlayerMetaList(userData);
+            if (typeof options.global.knownPlayerCount !== 'number') {
+                updateKnownPlayerCounts(mergedUsers);
+            }
             options.setWorldState({
                 users: mergedUsers,
                 foods: foodsList,

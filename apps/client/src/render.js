@@ -9,6 +9,9 @@ const BODY_ASSEMBLY_CANVAS_SIZE = 1024;
 const BODY_ASSEMBLY_BASE_Z_INDEX = -10;
 const BODY_ASSEMBLY_PART_SCALE = 0.46;
 const BODY_ASSEMBLY_OBJECT_SCALE = 2.75;
+const INVINCIBLE_BLINK_INTERVAL_MS = 160;
+const INVINCIBLE_BLINK_HIGH_ALPHA = 0.92;
+const INVINCIBLE_BLINK_LOW_ALPHA = 0.35;
 
 const drawRoundObject = (position, radius, graph) => {
     graph.beginPath();
@@ -17,6 +20,23 @@ const drawRoundObject = (position, radius, graph) => {
     graph.fill();
     graph.stroke();
 }
+
+const getCurrentAlpha = (graph) => {
+    return typeof graph.globalAlpha === 'number' ? graph.globalAlpha : 1;
+};
+
+const getSelfInvincibleBlinkAlpha = (cell, now) => {
+    const hasActiveDeadline = cell && typeof cell.invincibleUntil === 'number' && now < cell.invincibleUntil;
+    const hasActiveFlag = cell && cell.isInvincible === true;
+
+    if (!cell || cell.isSelf !== true || (!hasActiveDeadline && !hasActiveFlag)) {
+        return 1;
+    }
+
+    return Math.floor(now / INVINCIBLE_BLINK_INTERVAL_MS) % 2 === 0
+        ? INVINCIBLE_BLINK_HIGH_ALPHA
+        : INVINCIBLE_BLINK_LOW_ALPHA;
+};
 
 const drawFood = (position, food, graph) => {
     graph.fillStyle = 'hsl(' + food.hue + ', 100%, 50%)';
@@ -51,7 +71,24 @@ const drawFireFood = (position, mass, playerConfig, graph) => {
 
 const drawPartLoot = (position, loot, graph) => {
     const radius = loot.radius || 28;
-    const label = loot.part && loot.part.type ? loot.part.type : 'PART';
+    const part = loot.part || {};
+    const image = getBodyAssemblyImage(part);
+    const label = part.type ? part.type : 'PART';
+
+    if (image && (part.imageObject || image.complete)) {
+        graph.save();
+        graph.beginPath();
+        graph.arc(position.x, position.y, radius, 0, FULL_ANGLE);
+        graph.closePath();
+        graph.fillStyle = 'rgba(255, 244, 194, 0.82)';
+        graph.strokeStyle = '#5b3a00';
+        graph.lineWidth = 3;
+        graph.fill();
+        graph.stroke();
+        graph.drawImage(image, position.x - radius, position.y - radius, radius * 2, radius * 2);
+        graph.restore();
+        return;
+    }
 
     graph.save();
     graph.beginPath();
@@ -257,6 +294,8 @@ const drawBodyAssemblyCell = (cell, graph) => {
 };
 
 const drawAvatarCell = (cell, graph) => {
+    const inheritedAlpha = getCurrentAlpha(graph);
+
     graph.save();
     graph.beginPath();
     graph.arc(cell.x, cell.y, cell.radius, 0, FULL_ANGLE);
@@ -272,7 +311,7 @@ const drawAvatarCell = (cell, graph) => {
         graph.arc(cell.x, cell.y, innerRadius, 0, FULL_ANGLE);
         graph.closePath();
         graph.clip();
-        graph.globalAlpha = 0.82;
+        graph.globalAlpha = inheritedAlpha * 0.82;
         graph.drawImage(
             image,
             cell.x - innerRadius,
@@ -300,13 +339,21 @@ const drawAvatarCell = (cell, graph) => {
 };
 
 const drawCells = (cells, playerConfig, toggleMassState, borders, graph) => {
+    const now = Date.now();
+
     for (let cell of cells) {
+        const blinkAlpha = getSelfInvincibleBlinkAlpha(cell, now);
         const touchingBorders = cellTouchingBorders(cell, borders);
         const useAvatarRuntimeRender = avatarRuntimeRender.shouldUseAvatarRuntimeRender(
             cell,
             avatarDraftConfig,
             touchingBorders
         );
+
+        if (blinkAlpha < 1) {
+            graph.save();
+            graph.globalAlpha = getCurrentAlpha(graph) * blinkAlpha;
+        }
 
         // Draw the cell itself
         if (cell.bodyAssembly) {
@@ -353,6 +400,10 @@ const drawCells = (cells, playerConfig, toggleMassState, borders, graph) => {
             if (cell.name.length === 0) fontSize = 0;
             graph.strokeText(Math.round(cell.mass), cell.x, cell.y + fontSize);
             graph.fillText(Math.round(cell.mass), cell.x, cell.y + fontSize);
+        }
+
+        if (blinkAlpha < 1) {
+            graph.restore();
         }
     }
 };

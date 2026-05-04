@@ -25,6 +25,7 @@ describe('debug-panel.js', () => {
       },
       world: {
         players: 3,
+        bots: 2,
         cells: 5,
         foods: 120,
         fireFood: 2,
@@ -53,7 +54,7 @@ describe('debug-panel.js', () => {
     expect(html).to.contain('延迟：42ms');
     expect(html).to.contain('最近事件：leaderboard');
     expect(html).to.not.contain('最近事件：serverTellPlayerMove');
-    expect(html).to.contain('玩家 3 / 细胞 5 / 食物 120 / 喷射 2 / 病毒 4 / 部位 1 / 回响 2');
+    expect(html).to.contain('实体：玩家 3 / 机器人 2 / 细胞 5 / 食物 120 / 喷射 2 / 病毒 4 / 部位 1 / 回响 2');
     expect(html).to.contain('NPC：有输出');
     expect(html).to.contain('跟宠：未输出');
     expect(html).to.contain('收到 welcome，地图 2000x2000');
@@ -119,11 +120,50 @@ describe('debug-panel.js', () => {
 
     expect(text).to.contain('调试面板');
     expect(text).to.contain('Socket：已连接 · 延迟：33ms');
+    expect(text).to.contain('实体：玩家 0 / 机器人 0');
     expect(text).to.contain('最近事件：playerMetaUpdate');
     expect(text).to.contain('playerMetaUpdate');
     expect(text).to.not.contain('serverTellPlayerMove');
     expect(text).to.contain('NPC 输出：Mochi 说话。');
     expect(text).to.not.contain('<div');
+  });
+
+  it('should prefer known player and bot totals over the visible world count', () => {
+    const summary = debugPanel.summarizeWorld({
+      playerCount: 5,
+      botCount: 3,
+      users: [
+        {id: 'player-1', cells: [{}]},
+        {id: 'bot-1', playerKind: 'bot', cells: [{}, {}]}
+      ],
+      foods: [{}],
+      fireFood: [],
+      viruses: [{}],
+      partLoot: [],
+      ghosts: []
+    });
+
+    expect(summary).to.include({
+      players: 5,
+      bots: 3,
+      cells: 3,
+      foods: 1,
+      viruses: 1
+    });
+  });
+
+  it('should count visible bot users when known totals are missing', () => {
+    const summary = debugPanel.summarizeWorld({
+      users: [
+        {id: 'player-1', cells: [{}]},
+        {id: 'bot-1', isBot: true, cells: [{}]},
+        {id: 'bot-2', playerKind: 'bot', cells: []}
+      ]
+    });
+
+    expect(summary.players).to.equal(3);
+    expect(summary.bots).to.equal(2);
+    expect(summary.cells).to.equal(2);
   });
 
   it('should record devour-window packet, metadata, handler, gap, and long-task probes', () => {

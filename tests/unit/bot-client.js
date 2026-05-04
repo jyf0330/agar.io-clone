@@ -153,10 +153,16 @@ describe('bot-client.js', () => {
     expect(lines.some((line) => line.indexOf('[BOT][Bot_Log][eat] mass +3 -> 13') > -1)).to.equal(true);
   });
 
-  it('should send event chat when the bot eats food', () => {
+  it('should log routine food gains without sending chat', () => {
     const socket = createFakeSocket();
+    const lines = [];
     const client = createBotClient({
       profile: {name: 'Bot_Event'},
+      logger: {
+        log(message) {
+          lines.push(message);
+        }
+      },
       ioFactory() {
         return socket;
       }
@@ -175,12 +181,11 @@ describe('bot-client.js', () => {
       []
     );
 
-    expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat').map((entry) => entry.payload)).to.include.deep.members([
-      {sender: 'Bot_Event', message: '我吃到了食物，质量 +3'}
-    ]);
+    expect(lines.some((line) => line.indexOf('[BOT][Bot_Event][eat] mass +3 -> 13') > -1)).to.equal(true);
+    expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat')).to.deep.equal([]);
   });
 
-  it('should send event chat for movement intent and skill actions', () => {
+  it('should send event chat for skill actions without movement intent chatter', () => {
     const socket = createFakeSocket();
     const client = createBotClient({
       profile: {
@@ -190,7 +195,6 @@ describe('bot-client.js', () => {
           splitMassThreshold: 200
         }
       },
-      behaviorChatCooldownMs: 0,
       ioFactory() {
         return socket;
       }
@@ -222,15 +226,13 @@ describe('bot-client.js', () => {
     const messages = socket.emitted
       .filter((entry) => entry.eventName === 'playerChat')
       .map((entry) => entry.payload.message);
-    expect(messages).to.include.members([
-      '我去追食物',
-      '我去捡部位',
+    expect(messages).to.deep.equal([
       '我吐出孢子',
       '我分裂了'
     ]);
   });
 
-  it('should send event chat for fallback wandering and repeat the same movement intent after cooldown', () => {
+  it('should not send chat for fallback wandering', () => {
     const socket = createFakeSocket();
     let now = 1000;
     const client = createBotClient({
@@ -268,11 +270,7 @@ describe('bot-client.js', () => {
       []
     );
 
-    const wanderMessages = socket.emitted
-      .filter((entry) => entry.eventName === 'playerChat')
-      .map((entry) => entry.payload.message)
-      .filter((message) => message === '我在巡游找目标');
-    expect(wanderMessages).to.have.length(2);
+    expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat')).to.deep.equal([]);
   });
 
   it('should send event chat for body part pickup, devour, being devoured, and body completion meta updates', () => {
@@ -386,6 +384,7 @@ describe('bot-client.js', () => {
         {
           eventType: 'part_stolen',
           fromPlayerName: 'Victim_Bot',
+          toPlayerName: 'Bot_Event',
           displayName: '木勺手'
         },
         {
@@ -393,6 +392,12 @@ describe('bot-client.js', () => {
           fromPlayerName: 'Bot_Event',
           toPlayerName: 'Hunter_Bot',
           displayName: '藤蔓脚'
+        },
+        {
+          eventType: 'part_stolen',
+          fromPlayerName: 'Other_Bot',
+          toPlayerName: 'Third_Bot',
+          displayName: '旁观部位'
         }
       ]
     });
@@ -423,6 +428,61 @@ describe('bot-client.js', () => {
     expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat').map((entry) => entry.payload)).to.include.deep.members([
       {sender: 'Bot_Eaten', message: '我被吃掉了'}
     ]);
+  });
+
+  it('should log observed deaths without sending chat', () => {
+    const socket = createFakeSocket();
+    const lines = [];
+    const client = createBotClient({
+      profile: {name: 'Bot_Observer'},
+      logger: {
+        log(message) {
+          lines.push(message);
+        }
+      },
+      ioFactory() {
+        return socket;
+      }
+    });
+
+    client.connect();
+    socket.emit('welcome', {id: 'bot-1', name: 'Bot_Observer'}, {width: 5000, height: 5000});
+    socket.emit('playerDied', {
+      playerEatenId: 'other-1',
+      playerEatenName: 'Other_Player'
+    });
+
+    expect(lines.some((line) => line.indexOf('[BOT][Bot_Observer][devour] Other_Player 被吃掉') > -1)).to.equal(true);
+    expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat')).to.deep.equal([]);
+  });
+
+  it('should re-enter the arena after a settlement RIP', () => {
+    const socket = createFakeSocket();
+    const client = createBotClient({
+      profile: {name: 'Bot_Rejoin'},
+      ioFactory() {
+        return socket;
+      }
+    });
+
+    client.connect();
+    socket.emit('connect');
+    socket.emit('RIP');
+    socket.emit('RIP');
+
+    expect(socket.emitted.filter((entry) => entry.eventName === 'respawn')).to.have.length(1);
+
+    socket.emit('welcome', {id: 'bot-rejoin'}, {width: 5000, height: 5000});
+
+    const gotitPayloads = socket.emitted
+      .filter((entry) => entry.eventName === 'gotit')
+      .map((entry) => entry.payload);
+    expect(gotitPayloads).to.have.length(2);
+    expect(gotitPayloads[1]).to.include({
+      name: 'Bot_Rejoin',
+      isBot: true
+    });
+    expect(client.getState().player.id).to.equal('bot-rejoin');
   });
 
   it('should close the socket when a bot client is disconnected', () => {

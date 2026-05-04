@@ -2,6 +2,7 @@
 
 const path = require('path');
 const bodyConfig = require(path.resolve(process.cwd(), 'configs/game/body'));
+const bodyAssemblyParts = require(path.resolve(process.cwd(), 'apps/client/src/data/body-assembly-parts'));
 const materialization = require('./materialization');
 
 const TYPES = Object.freeze({
@@ -134,6 +135,35 @@ function createEquipmentSlots(parts) {
     return slots;
 }
 
+function applyBodyAssemblyVisuals(parts, bodyAssembly) {
+    if (!bodyAssembly) {
+        return parts;
+    }
+
+    const completeAssembly = bodyAssemblyParts.createCompleteBodyAssembly(bodyAssembly);
+    const typeCounts = {};
+
+    return (parts || []).map((part) => {
+        const type = getPartType(part);
+        typeCounts[type] = (typeCounts[type] || 0) + 1;
+        const assemblyPartType = bodyAssemblyParts.getAssemblyPartTypeForBodyPart(type, typeCounts[type], part);
+        const layer = assemblyPartType && completeAssembly.layers
+            ? completeAssembly.layers[assemblyPartType]
+            : null;
+
+        if (!layer) {
+            return part;
+        }
+
+        return cloneBodyPart(Object.assign({}, part, {
+            assemblyPartType: part.assemblyPartType || assemblyPartType,
+            templateId: part.templateId || layer.id,
+            appearanceRef: part.appearanceRef || layer.id,
+            image: part.image || layer.image
+        }));
+    });
+}
+
 function createBodyPart(type, ordinal, overrides) {
     const source = overrides || {};
     const normalizedType = getPartType(type) || getPartType(source);
@@ -142,6 +172,7 @@ function createBodyPart(type, ordinal, overrides) {
     const partId = source.partId || source.id || normalizedType.toLowerCase() + '-' + index;
     const sourceType = source.sourceType || inferSourceType(source.source);
     const slotId = resolveEquipmentSlot(normalizedType, index, source);
+    const assemblyPartType = bodyAssemblyParts.getAssemblyPartTypeForBodyPart(normalizedType, index, source);
     const historyChain = source.historyChain
         ? cloneHistoryChain(source.historyChain)
         : [createHistoryEntry('created', {
@@ -164,7 +195,9 @@ function createBodyPart(type, ordinal, overrides) {
         equipmentSlot: slotId,
         templateId: source.templateId || null,
         stats: cloneShallowObject(source.stats),
-        appearanceRef: source.appearanceRef || source.templateId || null,
+        assemblyPartType: assemblyPartType,
+        appearanceRef: source.appearanceRef || source.image || source.templateId || null,
+        image: source.image || null,
         imageData: source.imageData || null,
         drawingDataRef: source.drawingDataRef || source.userStrokeDataUrl || null,
         originPlayerId: source.originPlayerId || null,
@@ -341,11 +374,17 @@ function equipBodyPart(target, incomingPart, dropPosition) {
     });
     equippedIncomingPart.currentOwnerId = target.id || null;
     const nextParts = existingParts.concat(cloneBodyPart(equippedIncomingPart));
-
-    applyBodyState(target, {
+    const nextBodyAssembly = bodyAssemblyParts.applyPartToBodyAssembly(target.bodyAssembly, equippedIncomingPart);
+    const nextBodyState = {
         bodyParts: nextParts,
         bodySignature: getSignatureType(target.bodySignature) === incomingType ? null : target.bodySignature
-    });
+    };
+
+    if (nextBodyAssembly) {
+        nextBodyState.bodyAssembly = nextBodyAssembly;
+    }
+
+    applyBodyState(target, nextBodyState);
 
     return {
         equippedPart: cloneBodyPart(equippedIncomingPart),
@@ -356,11 +395,15 @@ function equipBodyPart(target, incomingPart, dropPosition) {
 function applyBodyState(target, overrides) {
     const defaultState = createBodyState();
     const sourceParts = overrides && overrides.bodyParts ? overrides.bodyParts : defaultState.bodyParts;
+    const hasBodyAssemblyOverride = overrides && Object.prototype.hasOwnProperty.call(overrides, 'bodyAssembly');
+    const bodyAssembly = hasBodyAssemblyOverride ? overrides.bodyAssembly : target.bodyAssembly;
+    const completeAssembly = bodyAssembly ? bodyAssemblyParts.createCompleteBodyAssembly(bodyAssembly) : bodyAssembly;
     const signature = overrides && Object.prototype.hasOwnProperty.call(overrides, 'bodySignature')
         ? overrides.bodySignature
         : target.bodySignature;
     const bodyState = createBodyState(sourceParts, signature);
-    const ownedParts = applyOwnedPartDefaults(bodyState.bodyParts, target);
+    let ownedParts = applyOwnedPartDefaults(bodyState.bodyParts, target);
+    ownedParts = applyBodyAssemblyVisuals(ownedParts, completeAssembly);
 
     bodyState.bodyParts = ownedParts;
     bodyState.bodyPartCount = ownedParts.length;
@@ -371,8 +414,13 @@ function applyBodyState(target, overrides) {
     const materializationState = materialization.createMaterializationState(
         materialization.resolveMaterializationFromBodyParts(bodyState.bodyParts)
     );
+    const nextOverrides = Object.assign({}, overrides || {});
 
-    return Object.assign(target, defaultState, overrides || {}, bodyState, materializationState);
+    if (hasBodyAssemblyOverride || completeAssembly) {
+        nextOverrides.bodyAssembly = completeAssembly;
+    }
+
+    return Object.assign(target, defaultState, nextOverrides, bodyState, materializationState);
 }
 
 function getStealableParts(target) {

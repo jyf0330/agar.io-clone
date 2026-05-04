@@ -305,6 +305,51 @@ describe('socket flow integration', function () {
     expect(secondMove[0].massTotal).to.equal(originalMass);
   });
 
+  it('should spawn a new human near default bots when only retained humans remain', async function () {
+    const retainedToken = 'retained-human-token-01';
+    const firstSocket = createClient(port, 'player');
+    clients.push(firstSocket);
+
+    await waitForSocketEvent(firstSocket, 'connect');
+    const firstWelcome = await waitForSocketEvent(firstSocket, 'welcome', () => {
+      firstSocket.emit('respawn', {reconnectToken: retainedToken});
+    });
+    firstSocket.emit('gotit', Object.assign({}, firstWelcome[0], {
+      name: 'retained_01',
+      screenWidth: 1280,
+      screenHeight: 720,
+      target: {x: 0, y: 0},
+      reconnectToken: retainedToken
+    }));
+
+    await waitForSocketEventMatching(firstSocket, 'playerMetaUpdate', (args) => {
+      const meta = args[0] || [];
+      return meta.some((entry) => entry && (entry.isBot || entry.playerKind === 'bot'));
+    });
+    await waitForSocketEvent(firstSocket, 'serverTellPlayerMove');
+    firstSocket.disconnect();
+    await new Promise((resolve) => setTimeout(resolve, 250));
+
+    const secondToken = 'fresh-human-token-01';
+    const secondSocket = createClient(port, 'player');
+    clients.push(secondSocket);
+    await waitForSocketEvent(secondSocket, 'connect');
+    const secondWelcome = await waitForSocketEvent(secondSocket, 'welcome', () => {
+      secondSocket.emit('respawn', {reconnectToken: secondToken});
+    });
+    secondSocket.emit('gotit', Object.assign({}, secondWelcome[0], {
+      name: 'fresh_01',
+      screenWidth: 1280,
+      screenHeight: 720,
+      target: {x: 0, y: 0},
+      reconnectToken: secondToken
+    }));
+
+    const secondMove = await waitForSocketEvent(secondSocket, 'serverTellPlayerMove');
+    const visibleBots = secondMove[1].filter((entry) => entry && (entry.isBot || entry.playerKind === 'bot'));
+    expect(visibleBots).to.have.length.above(0);
+  });
+
   it('should sanitize chat, persist audit logs, and record failed admin login attempts', async function () {
     const alice = createClient(port, 'player');
     const bob = createClient(port, 'player');
@@ -361,7 +406,7 @@ describe('socket flow integration', function () {
       username: 'alice_01',
       message: 'hello socket path'
     }]);
-    expect(chatRows.some((row) => row.username.indexOf('_Bot_') > -1 && row.message === '我在巡游找目标')).to.equal(true);
+    expect(chatRows.some((row) => row.username.indexOf('_Bot_') > -1 && row.message === '我在巡游找目标')).to.equal(false);
     expect(readRows(serverDbPath, 'SELECT username FROM failed_login_attempts')).to.deep.equal([{
       username: 'alice_01'
     }]);

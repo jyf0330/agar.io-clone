@@ -60,4 +60,12 @@ describe('client index html', () => {
     expect(html).to.not.include('code.jquery.com');
     expect(html).to.not.include('jquery-');
   });
+
+  it('should keep the arena chat box visible on narrower desktop layouts', () => {
+    const css = fs.readFileSync(path.resolve(__dirname, '../../apps/client/assets/css/main.css'), 'utf8');
+    const narrowChatRule = css.match(/@media only screen\s+and \(max-width\s*:\s*1224px\)\s*{[\s\S]*?#chatbox\s*{([\s\S]*?)}/);
+
+    expect(narrowChatRule && narrowChatRule[1]).to.include('display: block');
+    expect(narrowChatRule && narrowChatRule[1]).to.not.include('display: none');
+  });
 });

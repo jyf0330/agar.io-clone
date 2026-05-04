@@ -4,6 +4,7 @@ const ghostTraceRecordingEnabled = process.env.V5_GHOST_TRACE_RECORDING === '1';
 const networkUpdateFactor = Number(process.env.V5_NETWORK_UPDATE_FACTOR || 20);
 const botMovementUpdateIntervalMs = Number(process.env.V5_BOT_MOVEMENT_UPDATE_INTERVAL_MS || 250);
 const balancePresets = require('./balance-presets');
+const bodyAssemblyParts = require('../../apps/client/src/data/body-assembly-parts');
 const defaultRoundDurationMs = 8 * 60 * 1000;
 const npcModeEnabled = process.env.V5_NPC_ENABLED === '1';
 const ghostEchoEnabled = process.env.V5_GHOST_ENABLED === '1';
@@ -57,40 +58,7 @@ const config = {
         enabled: true,
         maxWorldParts: 8,
         spawnBatch: 1,
-        templates: [
-            {
-                type: 'HAND',
-                templateId: 'hand-open',
-                displayName: 'Map Hand',
-                stats: {
-                    pickupRange: 10
-                }
-            },
-            {
-                type: 'FOOT',
-                templateId: 'foot-default',
-                displayName: 'Map Foot',
-                stats: {
-                    moveSpeed: 10
-                }
-            },
-            {
-                type: 'HEAD',
-                templateId: 'head-default',
-                displayName: 'Map Head',
-                stats: {
-                    echoDetectRange: 10
-                }
-            },
-            {
-                type: 'HEART',
-                templateId: 'heart-default',
-                displayName: 'Map Heart',
-                stats: {
-                    resonanceIntimacy: 1
-                }
-            }
-        ]
+        templates: bodyAssemblyParts.createPartLootTemplates()
     },
     ghostEcho: {
         enabled: ghostEchoEnabled,

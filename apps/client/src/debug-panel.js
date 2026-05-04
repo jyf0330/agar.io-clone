@@ -50,6 +50,7 @@ function createDebugState(now) {
         },
         world: {
             players: 0,
+            bots: 0,
             cells: 0,
             foods: 0,
             fireFood: 0,
@@ -476,6 +477,17 @@ function formatPreviousLogsHtml(state) {
     ].join('');
 }
 
+function formatWorldSummary(state) {
+    return '实体：玩家 ' + (state.world.players || 0)
+        + ' / 机器人 ' + (state.world.bots || 0)
+        + ' / 细胞 ' + (state.world.cells || 0)
+        + ' / 食物 ' + (state.world.foods || 0)
+        + ' / 喷射 ' + (state.world.fireFood || 0)
+        + ' / 病毒 ' + (state.world.viruses || 0)
+        + ' / 部位 ' + (state.world.partLoot || 0)
+        + ' / 回响 ' + (state.world.ghosts || 0);
+}
+
 function formatDebugPanel(state) {
     var now = state.now || Date.now();
     var runtimeLabel = state.game.started ? '游戏中' : '未开始';
@@ -495,6 +507,7 @@ function formatDebugPanel(state) {
         '<div class="debug-panel-title">调试面板</div>',
         '<button id="debugPanelCopyButton" class="debug-panel-copy" type="button">复制</button>',
         '</div>',
+        '<div class="debug-panel-line">' + escapeHtml(formatWorldSummary(state)) + '</div>',
         '<div class="debug-panel-line">运行状态：' + runtimeLabel + ' / ' + escapeHtml(state.game.playerType || '未知') + '</div>',
         '<div class="debug-panel-line">帧率：' + (state.frame.fps || 0) + ' FPS / ' + (state.frame.frameMs || 0) + 'ms</div>',
         '<div class="debug-panel-line">Socket：' + socketLabel
@@ -503,15 +516,6 @@ function formatDebugPanel(state) {
         '<div class="debug-panel-line">最近事件：' + formatRecentEventsHtml(state, now)
             + ' · 移动包 ' + state.socket.movePackets
             + ' · 元数据 ' + state.socket.metaPackets
-            + '</div>',
-        '<div class="debug-panel-line">'
-            + '玩家 ' + state.world.players
-            + ' / 细胞 ' + state.world.cells
-            + ' / 食物 ' + state.world.foods
-            + ' / 喷射 ' + state.world.fireFood
-            + ' / 病毒 ' + state.world.viruses
-            + ' / 部位 ' + state.world.partLoot
-            + ' / 回响 ' + state.world.ghosts
             + '</div>',
         '<div class="debug-panel-line">本机玩家：' + escapeHtml(state.player.name || state.player.id || '未知')
             + ' · 质量 ' + Math.round(state.player.mass || 0)
@@ -545,17 +549,11 @@ function formatDebugPanelCopyText(state) {
     var socketLabel = state.socket.connected ? '已连接' : '未连接';
     var lines = [
         '调试面板',
+        formatWorldSummary(state),
         '运行状态：' + runtimeLabel + ' / ' + (state.game.playerType || '未知'),
         '帧率：' + (state.frame.fps || 0) + ' FPS / ' + (state.frame.frameMs || 0) + 'ms',
         'Socket：' + socketLabel + ' · 延迟：' + (typeof state.socket.latencyMs === 'number' ? state.socket.latencyMs + 'ms' : '未知'),
         '最近事件：' + formatRecentEventsText(state, now) + ' · 移动包 ' + state.socket.movePackets + ' · 元数据 ' + state.socket.metaPackets,
-        '实体：玩家 ' + state.world.players
-            + ' / 细胞 ' + state.world.cells
-            + ' / 食物 ' + state.world.foods
-            + ' / 喷射 ' + state.world.fireFood
-            + ' / 病毒 ' + state.world.viruses
-            + ' / 部位 ' + state.world.partLoot
-            + ' / 回响 ' + state.world.ghosts,
         '本机玩家：' + (state.player.name || state.player.id || '未知')
             + ' · 质量 ' + Math.round(state.player.mass || 0)
             + ' · 坐标 ' + Math.round(state.player.x || 0) + ',' + Math.round(state.player.y || 0),
@@ -619,15 +617,24 @@ function copyTextToClipboard(document, win, text) {
     return Promise.resolve();
 }
 
+function isBotUser(user) {
+    return !!(user && (user.isBot === true || user.playerKind === 'bot'));
+}
+
 function summarizeWorld(snapshot) {
     var users = snapshot.users || [];
     var cells = 0;
+    var bots = 0;
     users.forEach(function (user) {
         cells += Array.isArray(user.cells) ? user.cells.length : 0;
+        if (isBotUser(user)) {
+            bots += 1;
+        }
     });
 
     return {
-        players: users.length,
+        players: typeof snapshot.playerCount === 'number' ? snapshot.playerCount : users.length,
+        bots: typeof snapshot.botCount === 'number' ? snapshot.botCount : bots,
         cells: cells,
         foods: (snapshot.foods || []).length,
         fireFood: (snapshot.fireFood || []).length,
@@ -875,5 +882,6 @@ module.exports = {
     recordLongTask: recordLongTask,
     formatDebugPanel: formatDebugPanel,
     formatDebugPanelCopyText: formatDebugPanelCopyText,
+    summarizeWorld: summarizeWorld,
     createDebugPanel: createDebugPanel
 };

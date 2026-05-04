@@ -313,6 +313,43 @@ describe('body.js', () => {
       expect(originalHistory).to.not.include('dropped');
       expect(result.droppedPart).to.equal(null);
     });
+
+    it('should update the visible body assembly layer when collecting a synced option part', () => {
+      const player = {
+        id: 'player-1',
+        name: 'Alice',
+        bodyAssembly: {
+          missingPartType: 'head',
+          layers: {
+            head: {
+              id: 'head_option_01',
+              name: '怪笑头',
+              image: 'img/body-assembly/options/head/head_option_01.png'
+            }
+          },
+          selectedParts: {
+            head: 'head_option_01'
+          }
+        }
+      };
+      body.applyBodyState(player);
+
+      body.equipBodyPart(player, body.createBodyPart('HEAD', 1, {
+        sourceType: 'map_pickup',
+        templateId: 'head_option_03',
+        assemblyPartType: 'head',
+        displayName: '灯笼头',
+        image: 'img/body-assembly/options/head/head_option_03.png'
+      }), { x: 20, y: 30 });
+
+      const collectedHead = player.bodyParts.find((part) => part.templateId === 'head_option_03');
+
+      expect(collectedHead.image).to.equal('img/body-assembly/options/head/head_option_03.png');
+      expect(collectedHead.assemblyPartType).to.equal('head');
+      expect(player.bodyAssembly.layers.head.id).to.equal('head_option_03');
+      expect(player.bodyAssembly.layers.head.image).to.equal('img/body-assembly/options/head/head_option_03.png');
+      expect(player.bodyAssembly.selectedParts.head).to.equal('head_option_03');
+    });
   });
 
   describe('getPlayerDevourMassGain', () => {

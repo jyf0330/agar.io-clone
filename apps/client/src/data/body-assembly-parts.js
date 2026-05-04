@@ -18,6 +18,23 @@ var PART_LABELS = {
     leg_right: '右腿'
 };
 
+var GAME_PART_TYPE_BY_ASSEMBLY_PART_TYPE = {
+    head: 'HEAD',
+    body: 'HEART',
+    hand_left: 'HAND',
+    hand_right: 'HAND',
+    leg_left: 'FOOT',
+    leg_right: 'FOOT'
+};
+
+var ASSEMBLY_PART_TYPES_BY_GAME_PART_TYPE = {
+    HEAD: ['head'],
+    HEART: ['body'],
+    MOUTH: ['body'],
+    HAND: ['hand_right', 'hand_left'],
+    FOOT: ['leg_right', 'leg_left']
+};
+
 var BASE_PART = {
     id: 'body_base_01',
     name: '身体基底',
@@ -239,6 +256,163 @@ function clonePart(part) {
     });
 }
 
+function isSupportedPartType(partType) {
+    return PART_TYPES.indexOf(partType) !== -1;
+}
+
+function findPartById(partType, partId) {
+    if (!isSupportedPartType(partType) || !partId) {
+        return null;
+    }
+
+    var options = OPTION_PARTS[partType] || [];
+    var fixedPart = FIXED_PARTS[partType];
+    return options.concat(fixedPart ? [fixedPart] : []).find(function (part) {
+        return part && part.id === partId;
+    }) || null;
+}
+
+function normalizeSelectedParts(selectedParts, layers) {
+    var source = selectedParts || {};
+    var sourceLayers = layers || {};
+
+    return PART_TYPES.reduce(function (normalized, partType) {
+        normalized[partType] = source[partType]
+            || (sourceLayers[partType] && sourceLayers[partType].id)
+            || null;
+        return normalized;
+    }, {});
+}
+
+function createSelectedPartsFromLayers(layers) {
+    return PART_TYPES.reduce(function (selectedParts, partType) {
+        selectedParts[partType] = layers[partType] && layers[partType].id
+            ? layers[partType].id
+            : null;
+        return selectedParts;
+    }, {});
+}
+
+function createCompleteBodyAssembly(bodyAssembly) {
+    var source = bodyAssembly || {};
+    var sourceLayers = source.layers || {};
+    var selectedParts = normalizeSelectedParts(source.selectedParts, sourceLayers);
+    var firstSelectedPartType = PART_TYPES.find(function (partType) {
+        return findPartById(partType, selectedParts[partType]) || sourceLayers[partType];
+    });
+    var missingPartType = isSupportedPartType(source.missingPartType)
+        ? source.missingPartType
+        : (firstSelectedPartType || PART_TYPES[0]);
+    var selectedOption = findPartById(missingPartType, selectedParts[missingPartType])
+        || sourceLayers[missingPartType]
+        || OPTION_PARTS[missingPartType][0];
+    var completeAssembly = createBodyAssemblyConfig({
+        missingPartType: missingPartType,
+        selectedOption: selectedOption
+    });
+
+    PART_TYPES.forEach(function (partType) {
+        var selectedPart = findPartById(partType, selectedParts[partType])
+            || sourceLayers[partType]
+            || completeAssembly.layers[partType];
+        if (selectedPart) {
+            completeAssembly.layers[partType] = clonePart(selectedPart);
+        }
+    });
+
+    completeAssembly.selectedParts = createSelectedPartsFromLayers(completeAssembly.layers);
+    completeAssembly.selectedOption = clonePart(completeAssembly.layers[completeAssembly.missingPartType]);
+    return completeAssembly;
+}
+
+function getGamePartTypeForAssemblyPart(assemblyPartType) {
+    return GAME_PART_TYPE_BY_ASSEMBLY_PART_TYPE[assemblyPartType] || null;
+}
+
+function getAssemblyPartTypeForBodyPart(partOrType, ordinal, overrides) {
+    var source = overrides || (typeof partOrType === 'object' ? partOrType : {});
+    var explicitPartType = source && source.assemblyPartType;
+    if (isSupportedPartType(explicitPartType)) {
+        return explicitPartType;
+    }
+
+    var gamePartType = typeof partOrType === 'string'
+        ? partOrType
+        : (partOrType && (partOrType.partType || partOrType.type));
+    var assemblyPartTypes = ASSEMBLY_PART_TYPES_BY_GAME_PART_TYPE[gamePartType] || [];
+    var index = Math.max(0, (typeof ordinal === 'number' ? ordinal : 1) - 1);
+    return assemblyPartTypes[index] || null;
+}
+
+function createPartLootTemplate(partType, option) {
+    return {
+        type: getGamePartTypeForAssemblyPart(partType),
+        templateId: option.id,
+        displayName: option.name,
+        assemblyPartType: partType,
+        image: option.image,
+        stats: option.stats ? Object.assign({}, option.stats) : {}
+    };
+}
+
+function createPartLootTemplates() {
+    return PART_TYPES.reduce(function (templates, partType) {
+        (OPTION_PARTS[partType] || []).forEach(function (option) {
+            templates.push(createPartLootTemplate(partType, option));
+        });
+        return templates;
+    }, []);
+}
+
+function createLayerFromPart(assemblyPartType, part) {
+    var source = part || {};
+    var id = source.templateId || source.id || source.partId || assemblyPartType + '_picked';
+    var catalogPart = findPartById(assemblyPartType, id);
+    var appearanceImage = source.appearanceRef && /\.(png|jpe?g|webp|gif|svg)$/i.test(source.appearanceRef)
+        ? source.appearanceRef
+        : null;
+    var layer = catalogPart ? clonePart(catalogPart) : {
+        id: id,
+        name: source.displayName || source.label || id,
+        image: source.image || appearanceImage,
+        description: source.description || '',
+        stats: source.stats ? Object.assign({}, source.stats) : {}
+    };
+
+    layer.id = id;
+    layer.name = source.displayName || layer.name || id;
+    layer.image = source.image || appearanceImage || layer.image;
+    layer.description = source.description || layer.description || '';
+    layer.stats = source.stats ? Object.assign({}, source.stats) : (layer.stats || {});
+    return layer.image ? layer : null;
+}
+
+function applyPartToBodyAssembly(bodyAssembly, part) {
+    var assemblyPartType = getAssemblyPartTypeForBodyPart(part, 1, part);
+    var layer;
+    var nextAssembly;
+
+    if (!assemblyPartType) {
+        return bodyAssembly ? createCompleteBodyAssembly(bodyAssembly) : bodyAssembly;
+    }
+
+    layer = createLayerFromPart(assemblyPartType, part);
+    if (!layer) {
+        return bodyAssembly ? createCompleteBodyAssembly(bodyAssembly) : bodyAssembly;
+    }
+
+    nextAssembly = createCompleteBodyAssembly(bodyAssembly || {
+        missingPartType: assemblyPartType,
+        selectedParts: {}
+    });
+    nextAssembly.layers[assemblyPartType] = clonePart(layer);
+    nextAssembly.selectedParts = createSelectedPartsFromLayers(nextAssembly.layers);
+    if (nextAssembly.missingPartType === assemblyPartType) {
+        nextAssembly.selectedOption = clonePart(layer);
+    }
+    return nextAssembly;
+}
+
 function createBodyAssemblyConfig(options) {
     var missingPartType = options.missingPartType;
     var selectedOption = options.selectedOption;
@@ -255,7 +429,8 @@ function createBodyAssemblyConfig(options) {
         selectedOption: clonePart(selectedOption),
         fixedParts: FIXED_PARTS,
         layers: layers,
-        anchors: PART_ANCHORS
+        anchors: PART_ANCHORS,
+        selectedParts: createSelectedPartsFromLayers(layers)
     };
 }
 
@@ -266,5 +441,13 @@ module.exports = {
     FIXED_PARTS: FIXED_PARTS,
     OPTION_PARTS: OPTION_PARTS,
     PART_ANCHORS: PART_ANCHORS,
-    createBodyAssemblyConfig: createBodyAssemblyConfig
+    GAME_PART_TYPE_BY_ASSEMBLY_PART_TYPE: GAME_PART_TYPE_BY_ASSEMBLY_PART_TYPE,
+    ASSEMBLY_PART_TYPES_BY_GAME_PART_TYPE: ASSEMBLY_PART_TYPES_BY_GAME_PART_TYPE,
+    findPartById: findPartById,
+    createCompleteBodyAssembly: createCompleteBodyAssembly,
+    createBodyAssemblyConfig: createBodyAssemblyConfig,
+    createPartLootTemplates: createPartLootTemplates,
+    getAssemblyPartTypeForBodyPart: getAssemblyPartTypeForBodyPart,
+    getGamePartTypeForAssemblyPart: getGamePartTypeForAssemblyPart,
+    applyPartToBodyAssembly: applyPartToBodyAssembly
 };

@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 const config = require('../../configs/game/config');
 const playerUtils = require('../../apps/server/src/map/player');
 const mapUtils = require('../../apps/server/src/map/map');
+const playerKind = require('../../apps/server/src/player-kind');
 const {
   createSpectatorSyncData,
   projectPlayerMetaForSync,
@@ -37,11 +38,21 @@ describe('player-projection.js', () => {
     });
     player.admin = true;
     player.target = { x: 99, y: 42 };
+    player.invincibleUntil = 1700000003000;
     player.npcRelationships = [{npcId: 'mochi', relationshipValue: 7}];
 
-    const projected = projectPlayerForSync(player);
+    const originalNow = Date.now;
+    let projected;
+    try {
+      Date.now = () => 1700000000000;
+      projected = projectPlayerForSync(player);
+    } finally {
+      Date.now = originalNow;
+    }
 
     expect(projected.name).to.equal('tester');
+    expect(projected.invincibleUntil).to.equal(1700000003000);
+    expect(projected.isInvincible).to.equal(true);
     expect(projected.playerCardPreviewDataUrl).to.equal('data:image/png;base64,card');
     expect(projected.bodyAssembly.layers.leg_left.id).to.equal('leg_left_option_02');
     expect(projected.bodySignature).to.deep.equal({
@@ -52,6 +63,9 @@ describe('player-projection.js', () => {
     });
     expect(projected.admin).to.equal(undefined);
     expect(projected.target).to.equal(undefined);
+    expect(projected.playerKind).to.equal('human');
+    expect(projected.isBot).to.equal(false);
+    expect(projected.isNpc).to.equal(false);
     expect(projected.activePet).to.equal(null);
     expect(projected.npcRelationships[0].relationshipValue).to.equal(7);
     expect(projected.cells[0].toCircle).to.equal(undefined);
@@ -92,6 +106,7 @@ describe('player-projection.js', () => {
         tier: 'echo'
       }
     });
+    player.invincibleUntil = 1700000003000;
     player.npcRelationships = [{npcId: 'mochi', relationshipValue: 7}];
     player.setActivePet({
       petId: 'mochi',
@@ -102,14 +117,24 @@ describe('player-projection.js', () => {
       radius: 18
     });
 
-    const movement = projectPlayerMovementForSync(player);
-    const meta = projectPlayerMetaForSync(player);
+    const originalNow = Date.now;
+    let movement;
+    let meta;
+    try {
+      Date.now = () => 1700000000000;
+      movement = projectPlayerMovementForSync(player);
+      meta = projectPlayerMetaForSync(player);
+    } finally {
+      Date.now = originalNow;
+    }
 
     expect(movement).to.include({
       id: 'player-1',
       name: 'artist',
       x: 200,
-      y: 200
+      y: 200,
+      invincibleUntil: 1700000003000,
+      isInvincible: true
     });
     expect(movement.cells[0]).to.include({x: 200, y: 200});
     expect(movement.playerCardPreviewDataUrl).to.equal(undefined);
@@ -127,6 +152,8 @@ describe('player-projection.js', () => {
     expect(meta).to.include({
       id: 'player-1',
       name: 'artist',
+      invincibleUntil: 1700000003000,
+      isInvincible: true,
       playerCardPreviewDataUrl: 'data:image/png;base64,card'
     });
     expect(meta.activePet).to.include({
@@ -177,5 +204,31 @@ describe('player-projection.js', () => {
     expect(projectedWorld.visibleGhosts[0].name).to.equal('Past Huy');
     expect(spectatorData.id).to.equal('spectator-1');
     expect(spectatorData.bodyPartCount).to.equal(0);
+    expect(spectatorData.isInvincible).to.equal(false);
+  });
+
+  it('should project bot identity into client DTOs', () => {
+    const player = new playerUtils.Player('bot-1');
+    player.init({ x: 200, y: 200 }, config.defaultPlayerMass);
+    player.clientProvidedData({
+      name: 'Bot_01',
+      screenWidth: 800,
+      screenHeight: 600
+    });
+    playerKind.markBotPlayer(player);
+
+    const full = projectPlayerForSync(player);
+    const movement = projectPlayerMovementForSync(player);
+    const meta = projectPlayerMetaForSync(player);
+
+    [full, movement, meta].forEach((projected) => {
+      expect(projected).to.include({
+        id: 'bot-1',
+        name: 'Bot_01',
+        playerKind: 'bot',
+        isBot: true,
+        isNpc: false
+      });
+    });
   });
 });

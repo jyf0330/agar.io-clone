@@ -13,6 +13,8 @@ describe('player-hydration.js', () => {
       y: 20,
       hue: 30,
       massTotal: 40,
+      invincibleUntil: 1700000003000,
+      isInvincible: true,
       materialization: 50,
       materializationStage: 'REAL',
       connectionStatus: 'CHANNELING',
@@ -42,6 +44,8 @@ describe('player-hydration.js', () => {
 
     expect(player.localOnlyFlag).to.equal(true);
     expect(player.x).to.equal(10);
+    expect(player.invincibleUntil).to.equal(1700000003000);
+    expect(player.isInvincible).to.equal(true);
     expect(player.connectionTargetId).to.equal('target-1');
     expect(player.bodyPartCounts.HEAD).to.equal(1);
     expect(player.activePet.memoryKey).to.equal('player-1:mochi');

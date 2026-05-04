@@ -200,6 +200,35 @@ describe('socket-controller.js', () => {
     expect(calls.debugLogs).to.have.length(1);
   });
 
+  it('should cache known player and bot counts from metadata for the debug panel', () => {
+    const debugUpdates = [];
+    const {controller, socket} = createController({
+      options: {
+        debugPanel: {
+          markSocketEvent() {},
+          update(patch) {
+            debugUpdates.push(patch);
+          },
+          log() {}
+        }
+      }
+    });
+
+    controller.connect('player');
+    socket.handlers.playerMetaUpdate([
+      {id: 'player-1', playerKind: 'human'},
+      {id: 'bot-1', playerKind: 'bot'},
+      {id: 'bot-2', isBot: true}
+    ]);
+
+    expect(debugUpdates[debugUpdates.length - 1]).to.deep.equal({
+      world: {
+        players: 3,
+        bots: 2
+      }
+    });
+  });
+
   it('should ignore npc paint events for other players', () => {
     const {controller, socket, player, calls} = createController();
 

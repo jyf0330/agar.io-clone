@@ -399,6 +399,9 @@ function createGameLoopService(options) {
                 }
             });
         }
+        if (partPickups.length > 0) {
+            sendMetaUpdates({force: true});
+        }
         currentPlayer.virusSplit(cellsToSplit, config.limitSplit, config.defaultPlayerMass);
     }
 

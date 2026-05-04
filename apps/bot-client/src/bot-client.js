@@ -14,7 +14,6 @@ const DEFAULT_PROFILE = {
 const DEFAULT_BEHAVIOR_LOG_EVERY_TICKS = 10;
 const DEFAULT_BEHAVIOR_CHAT_COOLDOWN_MS = 5000;
 const COMPLETION_PART_TYPES = ['HEAD', 'HAND', 'FOOT', 'MOUTH', 'HEART'];
-const TARGET_MATCH_DISTANCE = 180;
 
 function buildEntryPayload(profile) {
     return Object.assign({}, DEFAULT_PROFILE, profile || {}, {
@@ -45,10 +44,6 @@ function sendEventChat(socket, profile, message) {
     });
 }
 
-function distance(left, right) {
-    return Math.hypot((left.x || 0) - (right.x || 0), (left.y || 0) - (right.y || 0));
-}
-
 function getMassTotal(player) {
     if (player && typeof player.massTotal === 'number') {
         return player.massTotal;
@@ -61,19 +56,6 @@ function getMassTotal(player) {
 
 function getPartType(part) {
     return part && (part.partType || part.type || '').toUpperCase();
-}
-
-function getEntityMass(entity) {
-    if (!entity) {
-        return 0;
-    }
-    if (typeof entity.massTotal === 'number') {
-        return entity.massTotal;
-    }
-    if (typeof entity.mass === 'number') {
-        return entity.mass;
-    }
-    return 0;
 }
 
 function countEntries(entries) {
@@ -166,6 +148,16 @@ function isOwnSettlementLoss(profile, state, event) {
         || Boolean(playerId && safeEvent.fromPlayerId === playerId);
 }
 
+function isOwnSettlementGain(profile, state, event) {
+    const safeEvent = event || {};
+    const botName = getProfileName(profile);
+    const playerId = state.player && state.player.id;
+
+    return safeEvent.toPlayerName === botName
+        || safeEvent.actorName === botName
+        || Boolean(playerId && (safeEvent.toPlayerId === playerId || safeEvent.actorId === playerId));
+}
+
 function logSettlementKeyEvent(logger, profile, state, event) {
     const safeEvent = event || {};
     const eventType = safeEvent.eventType || safeEvent.type || '';
@@ -188,7 +180,9 @@ function buildSettlementEventChat(profile, state, event) {
         if (isOwnSettlementLoss(profile, state, safeEvent)) {
             return '我被 ' + getDevourEaterName(safeEvent) + ' 吃了，失去' + displayName;
         }
-        return '我吃了 ' + getDevourVictimName(safeEvent) + '，拿到' + displayName;
+        if (isOwnSettlementGain(profile, state, safeEvent)) {
+            return '我吃了 ' + getDevourVictimName(safeEvent) + '，拿到' + displayName;
+        }
     }
 
     return '';
@@ -205,54 +199,6 @@ function isSettlementWinner(profile, state, settlement) {
         || (winnerName && (winnerName === playerName || winnerName === getProfileName(profile))));
 }
 
-function findNearestTarget(target, entries) {
-    if (!target || typeof target.x !== 'number' || typeof target.y !== 'number') {
-        return null;
-    }
-    return (Array.isArray(entries) ? entries : [])
-        .filter((entry) => entry && typeof entry.x === 'number' && typeof entry.y === 'number')
-        .map((entry) => Object.assign({}, entry, {
-            distance: distance(target, entry)
-        }))
-        .sort((left, right) => left.distance - right.distance)[0] || null;
-}
-
-function hasNearbyTarget(target, entries) {
-    const nearest = findNearestTarget(target, entries);
-    return Boolean(nearest && nearest.distance <= TARGET_MATCH_DISTANCE);
-}
-
-function hasLargerVisiblePlayer(player, visiblePlayers) {
-    const ownMass = getEntityMass(player);
-    return (Array.isArray(visiblePlayers) ? visiblePlayers : []).some((entry) => {
-        return entry && ownMass > 0 && getEntityMass(entry) >= ownMass * 1.2;
-    });
-}
-
-function describeMoveIntent(state, action, visiblePlayers, visibleFood, visiblePartLoot) {
-    const target = action && action.target;
-    if (!target) {
-        return {key: 'wait', message: '我在等下一步'};
-    }
-
-    const nearbyPlayer = findNearestTarget(target, visiblePlayers);
-    if (nearbyPlayer && nearbyPlayer.distance <= TARGET_MATCH_DISTANCE
-        && getEntityMass(state.player) > getEntityMass(nearbyPlayer) * 1.1) {
-        return {key: 'pursue', message: '我去追小玩家'};
-    }
-    if (hasNearbyTarget(target, visiblePartLoot)) {
-        return {key: 'part-loot', message: '我去捡部位'};
-    }
-    if (hasNearbyTarget(target, visibleFood)) {
-        return {key: 'food', message: '我去追食物'};
-    }
-    if (hasLargerVisiblePlayer(state.player, visiblePlayers)) {
-        return {key: 'avoid', message: '我在躲大玩家'};
-    }
-
-    return {key: 'wander', message: '我在巡游找目标'};
-}
-
 function sendBehaviorChat(state, socket, profile, key, message) {
     if (!message) {
         return false;
@@ -266,17 +212,6 @@ function sendBehaviorChat(state, socket, profile, key, message) {
     state.lastBehaviorChatAt[key] = now;
     sendEventChat(socket, profile, message);
     return true;
-}
-
-function sendMovementIntentChat(state, socket, profile, actions, visiblePlayers, visibleFood, visiblePartLoot) {
-    const moveAction = findMoveAction(actions);
-    const intent = describeMoveIntent(state, moveAction, visiblePlayers, visibleFood, visiblePartLoot);
-    if (!intent) {
-        return;
-    }
-    const key = 'move:' + intent.key;
-    state.lastMovementChatKey = key;
-    sendBehaviorChat(state, socket, profile, key, intent.message);
 }
 
 function sendSkillActionChats(state, socket, profile, actions) {
@@ -441,7 +376,8 @@ function createBotClient(options) {
         seenBodyHistoryEvents: {},
         bodyCompleteChatted: false,
         lastBehaviorChatAt: {},
-        lastMovementChatKey: '',
+        needsEntryPayloadOnWelcome: false,
+        respawning: false,
         behaviorChatCooldownMs: typeof settings.behaviorChatCooldownMs === 'number'
             ? settings.behaviorChatCooldownMs
             : DEFAULT_BEHAVIOR_CHAT_COOLDOWN_MS,
@@ -475,7 +411,11 @@ function createBotClient(options) {
             state.seenBodyHistoryEvents = {};
             state.bodyCompleteChatted = false;
             state.lastBehaviorChatAt = {};
-            state.lastMovementChatKey = '';
+            state.respawning = false;
+            if (state.needsEntryPayloadOnWelcome) {
+                state.needsEntryPayloadOnWelcome = false;
+                socket.emit('gotit', buildEntryPayload(profile));
+            }
         });
 
         socket.on('serverTellPlayerMove', function (playerData, visiblePlayers, visibleFood, visibleMass, visibleViruses, visiblePartLoot, visibleGhosts) {
@@ -495,13 +435,11 @@ function createBotClient(options) {
                 memory: state.botMemory
             });
             applyBotActions(socket, actions, {player: state.player, profile});
-            sendMovementIntentChat(state, socket, profile, actions, visiblePlayers, visibleFood, visiblePartLoot);
             sendSkillActionChats(state, socket, profile, actions);
             const nextMassTotal = getMassTotal(state.player);
             if (previousMassTotal !== null && nextMassTotal !== null && nextMassTotal > previousMassTotal) {
                 const massGain = nextMassTotal - previousMassTotal;
                 writeBotLog(logger, profile, 'eat', 'mass +' + massGain + ' -> ' + nextMassTotal);
-                sendEventChat(socket, profile, '我吃到了食物，质量 +' + massGain);
             }
             if (nextMassTotal !== null) {
                 state.lastMassTotal = nextMassTotal;
@@ -537,7 +475,18 @@ function createBotClient(options) {
                 return;
             }
             writeBotLog(logger, profile, 'devour', playerName + ' 被吃掉');
-            sendBehaviorChat(state, socket, profile, 'event:playerDied:' + playerName, '我看到 ' + playerName + ' 被吃掉了');
+        });
+
+        socket.on('RIP', function () {
+            if (state.respawning) {
+                return;
+            }
+            state.player = null;
+            state.lastMassTotal = null;
+            state.lastBodyPartCount = null;
+            state.needsEntryPayloadOnWelcome = true;
+            state.respawning = true;
+            socket.emit('respawn');
         });
 
         return socket;

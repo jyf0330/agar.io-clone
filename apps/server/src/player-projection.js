@@ -1,5 +1,7 @@
 'use strict';
 
+const playerKind = require('./player-kind');
+
 const HASH_MOD = 4294967291;
 
 function hashString(value) {
@@ -104,12 +106,30 @@ function projectActivePetMovementForSync(activePet) {
     };
 }
 
+function getPlayerKindFields(player) {
+    const kind = playerKind.getPlayerKind(player);
+
+    return {
+        playerKind: kind,
+        isBot: kind === playerKind.PLAYER_KIND_BOT,
+        isNpc: kind === playerKind.PLAYER_KIND_NPC
+    };
+}
+
+function isPlayerInvincibleForSync(player) {
+    return !!(player && typeof player.isInvincible === 'function' && player.isInvincible());
+}
+
 function projectPlayerForSync(player) {
+    const kindFields = getPlayerKindFields(player);
+
     return {
         x: player.x,
         y: player.y,
         cells: (player.cells || []).map(projectCellForSync),
         massTotal: Math.round(player.massTotal),
+        invincibleUntil: player.invincibleUntil || 0,
+        isInvincible: isPlayerInvincibleForSync(player),
         materialization: player.materialization,
         materializationStage: player.materializationStage,
         connectionStatus: player.connectionStatus,
@@ -128,7 +148,9 @@ function projectPlayerForSync(player) {
         bodyAssembly: player.bodyAssembly ? Object.assign({}, player.bodyAssembly) : null,
         playerCardPreviewDataUrl: player.playerCardPreviewDataUrl,
         hue: player.hue,
-        isNpc: Boolean(player.isNpc),
+        playerKind: kindFields.playerKind,
+        isBot: kindFields.isBot,
+        isNpc: kindFields.isNpc,
         npcId: player.npcId || null,
         skeletonKey: player.skeletonKey || null,
         id: player.id,
@@ -137,14 +159,20 @@ function projectPlayerForSync(player) {
 }
 
 function projectPlayerMovementForSync(player) {
+    const kindFields = getPlayerKindFields(player);
+
     return {
         x: player.x,
         y: player.y,
         cells: (player.cells || []).map(projectCellForSync),
         massTotal: Math.round(player.massTotal),
+        invincibleUntil: player.invincibleUntil || 0,
+        isInvincible: isPlayerInvincibleForSync(player),
         activePet: projectActivePetMovementForSync(player.activePet),
         hue: player.hue,
-        isNpc: Boolean(player.isNpc),
+        playerKind: kindFields.playerKind,
+        isBot: kindFields.isBot,
+        isNpc: kindFields.isNpc,
         npcId: player.npcId || null,
         skeletonKey: player.skeletonKey || null,
         id: player.id,
@@ -153,9 +181,13 @@ function projectPlayerMovementForSync(player) {
 }
 
 function projectPlayerMetaForSync(player) {
+    const kindFields = getPlayerKindFields(player);
+
     return {
         materialization: player.materialization,
         materializationStage: player.materializationStage,
+        invincibleUntil: player.invincibleUntil || 0,
+        isInvincible: isPlayerInvincibleForSync(player),
         connectionStatus: player.connectionStatus,
         connectionTargetId: player.connectionTargetId,
         connectionTargetName: player.connectionTargetName,
@@ -172,7 +204,9 @@ function projectPlayerMetaForSync(player) {
         bodyAssembly: player.bodyAssembly ? Object.assign({}, player.bodyAssembly) : null,
         playerCardPreviewDataUrl: player.playerCardPreviewDataUrl,
         hue: player.hue,
-        isNpc: Boolean(player.isNpc),
+        playerKind: kindFields.playerKind,
+        isBot: kindFields.isBot,
+        isNpc: kindFields.isNpc,
         npcId: player.npcId || null,
         skeletonKey: player.skeletonKey || null,
         id: player.id,
@@ -222,6 +256,8 @@ function createSpectatorSyncData(socketID, config) {
         y: config.gameHeight / 2,
         cells: [],
         massTotal: 0,
+        invincibleUntil: 0,
+        isInvincible: false,
         materialization: null,
         materializationStage: null,
         connectionStatus: null,
@@ -240,6 +276,8 @@ function createSpectatorSyncData(socketID, config) {
         bodyAssembly: null,
         playerCardPreviewDataUrl: null,
         hue: 100,
+        playerKind: playerKind.PLAYER_KIND_HUMAN,
+        isBot: false,
         isNpc: false,
         npcId: null,
         skeletonKey: null,

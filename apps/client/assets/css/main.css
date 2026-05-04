@@ -645,9 +645,11 @@ div {
 
 .chatbox {
     position: absolute;
+    z-index: 13;
     width: 300px;
     height: 320px;
     background: rgba(22, 22, 22, 0.7);
+    color: #f7fbff;
     bottom: 5px;
     left: 5px;
     border-radius: 5px;
@@ -693,7 +695,12 @@ div {
     background: transparent;
     border: none;
     border-top: 1px solid #DDD;
+    color: #f7fbff;
     outline: none;
+}
+
+.chatbox .chat-input::placeholder {
+    color: rgba(247, 251, 255, 0.72);
 }
 
 #startMenu {
@@ -1633,7 +1640,14 @@ display: none;
 
 @media only screen  and (max-width : 1224px) {
 #chatbox {
-display: none;
+	display: block;
+	width: min(300px, calc(100vw - 20px));
+	height: 220px;
+	bottom: 112px;
+        }
+
+#chatbox .chat-list {
+	height: 185px;
         }
 }
 

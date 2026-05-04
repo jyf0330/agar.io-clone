@@ -73,6 +73,8 @@ function enterGame(type) {
     global.targetPlayerCardPreviewDataUrl = null;
     global.disconnected = false;
     global.kicked = false;
+    global.knownPlayerCount = undefined;
+    global.knownBotCount = undefined;
 
     global.screen.width = window.innerWidth;
     global.screen.height = window.innerHeight;
@@ -566,6 +568,8 @@ function gameLoop() {
             viruses: viruses,
             partLoot: partLoot,
             ghosts: petGhostEventsVisible ? ghosts : [],
+            playerCount: global.knownPlayerCount,
+            botCount: global.knownBotCount,
             chatReady: !!window.chat,
             npcFeaturesEnabled: npcFeaturesEnabled && petGhostEventsVisible
         });
@@ -623,6 +627,9 @@ function gameLoop() {
                     borderColor: borderColor,
                     mass: users[i].cells[j].mass,
                     name: users[i].name,
+                    isSelf: users[i].id === player.id,
+                    invincibleUntil: users[i].invincibleUntil || 0,
+                    isInvincible: users[i].isInvincible === true,
                     isNpc: users[i].isNpc,
                     skeletonKey: users[i].skeletonKey,
                     bodyPartCount: users[i].bodyPartCount,

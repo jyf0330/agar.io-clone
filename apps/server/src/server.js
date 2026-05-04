@@ -204,18 +204,46 @@ io.on('connection', function (socket) {
     }
 });
 
-function generateSpawnpoint() {
-    let radius = util.massToRadius(config.defaultPlayerMass);
-    const humanPlayers = map.players.data.filter((player) => !player.isNpc);
+function clampSpawnCoordinate(value, radius, max) {
+    return Math.max(radius, Math.min(max - radius, Math.round(value)));
+}
 
-    if (!humanPlayers.length) {
+function generateSpawnpointNearPlayer(anchorPlayer, radius) {
+    return {
+        x: clampSpawnCoordinate((anchorPlayer && anchorPlayer.x || config.gameWidth / 2) + 260, radius, config.gameWidth),
+        y: clampSpawnCoordinate((anchorPlayer && anchorPlayer.y || config.gameHeight / 2) + 120, radius, config.gameHeight)
+    };
+}
+
+function generateSpawnpoint(entryPayload) {
+    let radius = util.massToRadius(config.defaultPlayerMass);
+    const players = map.players.data.filter((player) => !player.isNpc);
+    const activePlayers = players.filter((player) => player && sockets[player.id]);
+    const activeHumanPlayers = activePlayers.filter((player) => !player.isBot);
+
+    if (!activePlayers.length) {
         return {
             x: Math.round(config.gameWidth / 2),
             y: Math.round(config.gameHeight / 2)
         };
     }
 
-    return getPosition(config.newPlayerInitialPosition === 'farthest', radius, humanPlayers)
+    if (entryPayload && entryPayload.isBot) {
+        return getPosition(config.newPlayerInitialPosition === 'farthest', radius, activePlayers);
+    }
+
+    if (!activeHumanPlayers.length) {
+        const botAnchor = activePlayers.find((player) => player && player.isBot);
+        if (botAnchor) {
+            return generateSpawnpointNearPlayer(botAnchor, radius);
+        }
+        return {
+            x: Math.round(config.gameWidth / 2),
+            y: Math.round(config.gameHeight / 2)
+        };
+    }
+
+    return getPosition(config.newPlayerInitialPosition === 'farthest', radius, activeHumanPlayers);
 }
 
 function getReconnectToken(payload) {
@@ -603,7 +631,7 @@ const addPlayer = (socket) => {
             socket.disconnect();
         } else {
             if (!isRestoredPlayer) {
-                currentPlayer.init(generateSpawnpoint(), config.defaultPlayerMass);
+                currentPlayer.init(generateSpawnpoint(entryPayload), config.defaultPlayerMass);
             }
             currentPlayer.clientProvidedData(entryPayload);
             bindSocketToPlayer(currentPlayer, socket, entryPayload.reconnectToken);

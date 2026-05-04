@@ -43,4 +43,55 @@ describe('body-assembly-parts.js', () => {
       leg_right: { x: 590, y: 670, zIndex: 5 }
     });
   });
+
+  it('should expose map loot templates using the same option images as the selection UI', () => {
+    const templates = parts.createPartLootTemplates();
+    const headLoot = templates.find((template) => template.templateId === 'head_option_02');
+    const bodyLoot = templates.find((template) => template.templateId === 'body_option_01');
+    const leftHandLoot = templates.find((template) => template.templateId === 'hand_left_option_03');
+    const rightLegLoot = templates.find((template) => template.templateId === 'leg_right_option_02');
+
+    expect(templates).to.have.length(18);
+    expect(headLoot).to.deep.include({
+      type: 'HEAD',
+      assemblyPartType: 'head',
+      displayName: '木偶头',
+      image: 'img/body-assembly/options/head/head_option_02.png'
+    });
+    expect(bodyLoot).to.deep.include({
+      type: 'HEART',
+      assemblyPartType: 'body',
+      image: 'img/body-assembly/options/body/body_option_01.png'
+    });
+    expect(leftHandLoot).to.deep.include({
+      type: 'HAND',
+      assemblyPartType: 'hand_left',
+      image: 'img/body-assembly/options/hand_left/hand_left_option_03.png'
+    });
+    expect(rightLegLoot).to.deep.include({
+      type: 'FOOT',
+      assemblyPartType: 'leg_right',
+      image: 'img/body-assembly/options/leg_right/leg_right_option_02.png'
+    });
+  });
+
+  it('should replace a complete body assembly layer with a picked loot part', () => {
+    const bodyAssembly = parts.createBodyAssemblyConfig({
+      missingPartType: 'head',
+      selectedOption: parts.OPTION_PARTS.head[0]
+    });
+    const updated = parts.applyPartToBodyAssembly(bodyAssembly, {
+      partType: 'HEAD',
+      templateId: 'head_option_03',
+      assemblyPartType: 'head',
+      displayName: '灯笼头',
+      image: 'img/body-assembly/options/head/head_option_03.png'
+    });
+
+    expect(updated.layers.head.id).to.equal('head_option_03');
+    expect(updated.layers.head.name).to.equal('灯笼头');
+    expect(updated.layers.head.image).to.equal('img/body-assembly/options/head/head_option_03.png');
+    expect(updated.selectedParts.head).to.equal('head_option_03');
+    expect(bodyAssembly.layers.head.id).to.equal('head_option_01');
+  });
 });

@@ -5,6 +5,8 @@ const PLAYER_SYNC_FIELDS = [
     'y',
     'hue',
     'massTotal',
+    'invincibleUntil',
+    'isInvincible',
     'materialization',
     'materializationStage',
     'connectionStatus',
