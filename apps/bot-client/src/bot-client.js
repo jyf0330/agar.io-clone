@@ -440,6 +440,7 @@ function createBotClient(options) {
             if (previousMassTotal !== null && nextMassTotal !== null && nextMassTotal > previousMassTotal) {
                 const massGain = nextMassTotal - previousMassTotal;
                 writeBotLog(logger, profile, 'eat', 'mass +' + massGain + ' -> ' + nextMassTotal);
+                sendBehaviorChat(state, socket, profile, 'event:massGain', '我吃到了食物，质量 +' + massGain);
             }
             if (nextMassTotal !== null) {
                 state.lastMassTotal = nextMassTotal;

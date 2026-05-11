@@ -63,6 +63,9 @@ Read these only when the task touches the matching area:
 - `skills/add_npc_behavior.md` - NPC behavior, prompts, memory, relationships.
 - `skills/update_llm_prompt.md` - LLM prompt behavior.
 - `skills/add_bot_test.md` - bot-player tests and reports.
+- `skills/update_test_case_index.md` - single source of truth for game-flow
+  test coverage index maintenance; read it for any task that touches or
+  discusses tests.
 - `skills/add_client_ui_panel.md` - client UI panels and status surfaces.
 - `skills/run_demo_audit.md` - demo/audit flows.
 - `skills/deploy_cloud.md` - cloud sync, rebuild, restart, and verification.
@@ -103,6 +106,10 @@ architecture map.
 - Bug fixes should include or update a regression check when practical.
 - New behavior should be covered by focused unit tests where the existing test
   shape supports it.
+- For any task that touches or discusses tests, read
+  `skills/update_test_case_index.md`; that skill centralizes the rule that
+  `tests/TEST_CASES.md` must exist and stay focused on game-flow coverage when
+  tests change.
 - If automated tests are not practical, document the manual verification path.
 - Do not claim completion without fresh verification, or explicitly say what
   could not be run.

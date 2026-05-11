@@ -153,11 +153,12 @@ describe('bot-client.js', () => {
     expect(lines.some((line) => line.indexOf('[BOT][Bot_Log][eat] mass +3 -> 13') > -1)).to.equal(true);
   });
 
-  it('should log routine food gains without sending chat', () => {
+  it('should send event chat when food increases mass', () => {
     const socket = createFakeSocket();
     const lines = [];
     const client = createBotClient({
       profile: {name: 'Bot_Event'},
+      behaviorChatCooldownMs: 0,
       logger: {
         log(message) {
           lines.push(message);
@@ -182,7 +183,9 @@ describe('bot-client.js', () => {
     );
 
     expect(lines.some((line) => line.indexOf('[BOT][Bot_Event][eat] mass +3 -> 13') > -1)).to.equal(true);
-    expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat')).to.deep.equal([]);
+    expect(socket.emitted.filter((entry) => entry.eventName === 'playerChat').map((entry) => entry.payload)).to.deep.equal([
+      {sender: 'Bot_Event', message: '我吃到了食物，质量 +3'}
+    ]);
   });
 
   it('should send event chat for skill actions without movement intent chatter', () => {

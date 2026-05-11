@@ -1,0 +1,452 @@
+{
+  "source_original": "/Users/macminim4/Documents/aiTown/graphify-out/Gemini_Generated_Image_d1gep4d1gep4d1ge.png",
+  "source_copy": "apps/client/assets/img/parchment-doodle/square-cuts/source-original.png",
+  "transparentized_source": "apps/client/assets/img/parchment-doodle/square-cuts/source-transparentized.png",
+  "contact_sheet": "apps/client/assets/img/parchment-doodle/square-cuts/sheets/square-cuts-contact-sheet.png",
+  "atlas": "apps/client/assets/img/parchment-doodle/square-cuts/atlas/square-atlas.png",
+  "atlas_json": "apps/client/assets/img/parchment-doodle/square-cuts/atlas/square-atlas.json",
+  "note": "Old parchment-doodle cuts were deleted. The baked checkerboard background was converted to alpha, then each asset was exported as a square PNG with neighbor cleanup masks.",
+  "sprites": [
+    {
+      "name": "ui_avatar_parts",
+      "source_rect": {
+        "x": 20,
+        "y": 34,
+        "size": 285
+      },
+      "allowed_rects": [
+        {
+          "x": 25,
+          "y": 34,
+          "w": 245,
+          "h": 295
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/ui_avatar_parts.png",
+      "size": {
+        "width": 285,
+        "height": 285
+      }
+    },
+    {
+      "name": "ui_stats_panel",
+      "source_rect": {
+        "x": 260,
+        "y": 25,
+        "size": 570
+      },
+      "allowed_rects": [
+        {
+          "x": 270,
+          "y": 40,
+          "w": 565,
+          "h": 230
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/ui_stats_panel.png",
+      "size": {
+        "width": 570,
+        "height": 570
+      }
+    },
+    {
+      "name": "ui_timer",
+      "source_rect": {
+        "x": 1170,
+        "y": 24,
+        "size": 520
+      },
+      "allowed_rects": [
+        {
+          "x": 1190,
+          "y": 40,
+          "w": 500,
+          "h": 240
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/ui_timer.png",
+      "size": {
+        "width": 520,
+        "height": 520
+      }
+    },
+    {
+      "name": "ui_minimap_panel",
+      "source_rect": {
+        "x": 2140,
+        "y": 20,
+        "size": 600
+      },
+      "allowed_rects": [
+        {
+          "x": 2160,
+          "y": 25,
+          "w": 570,
+          "h": 405
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/ui_minimap_panel.png",
+      "size": {
+        "width": 600,
+        "height": 600
+      }
+    },
+    {
+      "name": "buff_speed",
+      "source_rect": {
+        "x": 35,
+        "y": 490,
+        "size": 345
+      },
+      "allowed_rects": [
+        {
+          "x": 45,
+          "y": 505,
+          "w": 330,
+          "h": 170
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/buff_speed.png",
+      "size": {
+        "width": 345,
+        "height": 345
+      }
+    },
+    {
+      "name": "buff_consume",
+      "source_rect": {
+        "x": 35,
+        "y": 665,
+        "size": 345
+      },
+      "allowed_rects": [
+        {
+          "x": 45,
+          "y": 675,
+          "w": 335,
+          "h": 145
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/buff_consume.png",
+      "size": {
+        "width": 345,
+        "height": 345
+      }
+    },
+    {
+      "name": "buff_shield",
+      "source_rect": {
+        "x": 35,
+        "y": 845,
+        "size": 345
+      },
+      "allowed_rects": [
+        {
+          "x": 45,
+          "y": 850,
+          "w": 335,
+          "h": 175
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/buff_shield.png",
+      "size": {
+        "width": 345,
+        "height": 345
+      }
+    },
+    {
+      "name": "player_small_player3",
+      "source_rect": {
+        "x": 840,
+        "y": 205,
+        "size": 430
+      },
+      "allowed_rects": [
+        {
+          "x": 855,
+          "y": 210,
+          "w": 370,
+          "h": 390
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/player_small_player3.png",
+      "size": {
+        "width": 430,
+        "height": 430
+      }
+    },
+    {
+      "name": "player_main_doodlehero",
+      "source_rect": {
+        "x": 1125,
+        "y": 520,
+        "size": 640
+      },
+      "allowed_rects": [
+        {
+          "x": 1150,
+          "y": 525,
+          "w": 505,
+          "h": 500
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/player_main_doodlehero.png",
+      "size": {
+        "width": 640,
+        "height": 640
+      }
+    },
+    {
+      "name": "player_large_player2",
+      "source_rect": {
+        "x": 1880,
+        "y": 500,
+        "size": 650
+      },
+      "allowed_rects": [
+        {
+          "x": 1885,
+          "y": 510,
+          "w": 635,
+          "h": 520
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/player_large_player2.png",
+      "size": {
+        "width": 650,
+        "height": 650
+      }
+    },
+    {
+      "name": "resource_bone",
+      "source_rect": {
+        "x": 515,
+        "y": 425,
+        "size": 220
+      },
+      "allowed_rects": [
+        {
+          "x": 520,
+          "y": 430,
+          "w": 210,
+          "h": 210
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_bone.png",
+      "size": {
+        "width": 220,
+        "height": 220
+      }
+    },
+    {
+      "name": "resource_button_blue",
+      "source_rect": {
+        "x": 852,
+        "y": 740,
+        "size": 170
+      },
+      "allowed_rects": [
+        {
+          "x": 855,
+          "y": 745,
+          "w": 165,
+          "h": 165
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_button_blue.png",
+      "size": {
+        "width": 170,
+        "height": 170
+      }
+    },
+    {
+      "name": "resource_candy",
+      "source_rect": {
+        "x": 1286,
+        "y": 335,
+        "size": 160
+      },
+      "allowed_rects": [
+        {
+          "x": 1288,
+          "y": 340,
+          "w": 145,
+          "h": 140
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_candy.png",
+      "size": {
+        "width": 160,
+        "height": 160
+      }
+    },
+    {
+      "name": "resource_star_yellow",
+      "source_rect": {
+        "x": 1400,
+        "y": 300,
+        "size": 190
+      },
+      "allowed_rects": [
+        {
+          "x": 1460,
+          "y": 305,
+          "w": 125,
+          "h": 175
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_star_yellow.png",
+      "size": {
+        "width": 190,
+        "height": 190
+      }
+    },
+    {
+      "name": "resource_rune",
+      "source_rect": {
+        "x": 1895,
+        "y": 265,
+        "size": 180
+      },
+      "allowed_rects": [
+        {
+          "x": 1900,
+          "y": 270,
+          "w": 170,
+          "h": 170
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_rune.png",
+      "size": {
+        "width": 180,
+        "height": 180
+      }
+    },
+    {
+      "name": "resource_eye_right",
+      "source_rect": {
+        "x": 1670,
+        "y": 570,
+        "size": 210
+      },
+      "allowed_rects": [
+        {
+          "x": 1675,
+          "y": 575,
+          "w": 200,
+          "h": 195
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_eye_right.png",
+      "size": {
+        "width": 210,
+        "height": 210
+      }
+    },
+    {
+      "name": "resource_heart",
+      "source_rect": {
+        "x": 1665,
+        "y": 990,
+        "size": 220
+      },
+      "allowed_rects": [
+        {
+          "x": 1680,
+          "y": 1000,
+          "w": 170,
+          "h": 160
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_heart.png",
+      "size": {
+        "width": 220,
+        "height": 220
+      }
+    },
+    {
+      "name": "effect_eye_dash_arrow",
+      "source_rect": {
+        "x": 960,
+        "y": 900,
+        "size": 500
+      },
+      "allowed_rects": [
+        {
+          "x": 970,
+          "y": 900,
+          "w": 430,
+          "h": 290
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/effect_eye_dash_arrow.png",
+      "size": {
+        "width": 500,
+        "height": 500
+      }
+    },
+    {
+      "name": "skill_dash_button",
+      "source_rect": {
+        "x": 1020,
+        "y": 1190,
+        "size": 355
+      },
+      "allowed_rects": [
+        {
+          "x": 1035,
+          "y": 1205,
+          "w": 250,
+          "h": 330
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/skill_dash_button.png",
+      "size": {
+        "width": 355,
+        "height": 355
+      }
+    },
+    {
+      "name": "skill_shield_button",
+      "source_rect": {
+        "x": 1278,
+        "y": 1190,
+        "size": 355
+      },
+      "allowed_rects": [
+        {
+          "x": 1300,
+          "y": 1205,
+          "w": 230,
+          "h": 330
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/skill_shield_button.png",
+      "size": {
+        "width": 355,
+        "height": 355
+      }
+    },
+    {
+      "name": "skill_tornado_button",
+      "source_rect": {
+        "x": 1536,
+        "y": 1190,
+        "size": 355
+      },
+      "allowed_rects": [
+        {
+          "x": 1560,
+          "y": 1205,
+          "w": 250,
+          "h": 330
+        }
+      ],
+      "path": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/skill_tornado_button.png",
+      "size": {
+        "width": 355,
+        "height": 355
+      }
+    }
+  ]
+}

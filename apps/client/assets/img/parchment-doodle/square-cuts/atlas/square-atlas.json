@@ -1,0 +1,323 @@
+{
+  "image": "square-atlas.png",
+  "cell_size": 384,
+  "gutter": 8,
+  "sprites": [
+    {
+      "name": "ui_avatar_parts",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/ui_avatar_parts.png",
+      "frame": {
+        "x": 8,
+        "y": 8,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 20,
+        "y": 34,
+        "size": 285
+      }
+    },
+    {
+      "name": "ui_stats_panel",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/ui_stats_panel.png",
+      "frame": {
+        "x": 400,
+        "y": 8,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 260,
+        "y": 25,
+        "size": 570
+      }
+    },
+    {
+      "name": "ui_timer",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/ui_timer.png",
+      "frame": {
+        "x": 792,
+        "y": 8,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1170,
+        "y": 24,
+        "size": 520
+      }
+    },
+    {
+      "name": "ui_minimap_panel",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/ui_minimap_panel.png",
+      "frame": {
+        "x": 1184,
+        "y": 8,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 2140,
+        "y": 20,
+        "size": 600
+      }
+    },
+    {
+      "name": "buff_speed",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/buff_speed.png",
+      "frame": {
+        "x": 1576,
+        "y": 8,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 35,
+        "y": 490,
+        "size": 345
+      }
+    },
+    {
+      "name": "buff_consume",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/buff_consume.png",
+      "frame": {
+        "x": 1968,
+        "y": 8,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 35,
+        "y": 665,
+        "size": 345
+      }
+    },
+    {
+      "name": "buff_shield",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/buff_shield.png",
+      "frame": {
+        "x": 8,
+        "y": 400,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 35,
+        "y": 845,
+        "size": 345
+      }
+    },
+    {
+      "name": "player_small_player3",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/player_small_player3.png",
+      "frame": {
+        "x": 400,
+        "y": 400,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 840,
+        "y": 205,
+        "size": 430
+      }
+    },
+    {
+      "name": "player_main_doodlehero",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/player_main_doodlehero.png",
+      "frame": {
+        "x": 792,
+        "y": 400,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1125,
+        "y": 520,
+        "size": 640
+      }
+    },
+    {
+      "name": "player_large_player2",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/player_large_player2.png",
+      "frame": {
+        "x": 1184,
+        "y": 400,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1880,
+        "y": 500,
+        "size": 650
+      }
+    },
+    {
+      "name": "resource_bone",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_bone.png",
+      "frame": {
+        "x": 1576,
+        "y": 400,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 515,
+        "y": 425,
+        "size": 220
+      }
+    },
+    {
+      "name": "resource_button_blue",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_button_blue.png",
+      "frame": {
+        "x": 1968,
+        "y": 400,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 852,
+        "y": 740,
+        "size": 170
+      }
+    },
+    {
+      "name": "resource_candy",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_candy.png",
+      "frame": {
+        "x": 8,
+        "y": 792,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1286,
+        "y": 335,
+        "size": 160
+      }
+    },
+    {
+      "name": "resource_star_yellow",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_star_yellow.png",
+      "frame": {
+        "x": 400,
+        "y": 792,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1400,
+        "y": 300,
+        "size": 190
+      }
+    },
+    {
+      "name": "resource_rune",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_rune.png",
+      "frame": {
+        "x": 792,
+        "y": 792,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1895,
+        "y": 265,
+        "size": 180
+      }
+    },
+    {
+      "name": "resource_eye_right",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_eye_right.png",
+      "frame": {
+        "x": 1184,
+        "y": 792,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1670,
+        "y": 570,
+        "size": 210
+      }
+    },
+    {
+      "name": "resource_heart",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/resource_heart.png",
+      "frame": {
+        "x": 1576,
+        "y": 792,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1665,
+        "y": 990,
+        "size": 220
+      }
+    },
+    {
+      "name": "effect_eye_dash_arrow",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/effect_eye_dash_arrow.png",
+      "frame": {
+        "x": 1968,
+        "y": 792,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 960,
+        "y": 900,
+        "size": 500
+      }
+    },
+    {
+      "name": "skill_dash_button",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/skill_dash_button.png",
+      "frame": {
+        "x": 8,
+        "y": 1184,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1020,
+        "y": 1190,
+        "size": 355
+      }
+    },
+    {
+      "name": "skill_shield_button",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/skill_shield_button.png",
+      "frame": {
+        "x": 400,
+        "y": 1184,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1278,
+        "y": 1190,
+        "size": 355
+      }
+    },
+    {
+      "name": "skill_tornado_button",
+      "source": "apps/client/assets/img/parchment-doodle/square-cuts/sprites/skill_tornado_button.png",
+      "frame": {
+        "x": 792,
+        "y": 1184,
+        "w": 384,
+        "h": 384
+      },
+      "source_rect": {
+        "x": 1536,
+        "y": 1190,
+        "size": 355
+      }
+    }
+  ],
+  "image_path": "apps/client/assets/img/parchment-doodle/square-cuts/atlas/square-atlas.png"
+}
